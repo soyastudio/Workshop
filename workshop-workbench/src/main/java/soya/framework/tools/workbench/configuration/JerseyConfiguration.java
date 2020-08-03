@@ -12,9 +12,9 @@ import javax.ws.rs.ApplicationPath;
 
 @Configuration
 @ApplicationPath("/api")
-public class JerseyConfig extends ResourceConfig {
+public class JerseyConfiguration extends ResourceConfig {
 
-    public JerseyConfig() {
+    public JerseyConfiguration() {
 
         register(GsonMessageBodyHandler.class);
         register(MultiPartFeature.class);
