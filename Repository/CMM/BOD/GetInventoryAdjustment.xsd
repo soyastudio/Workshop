@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--   Schema Owner: 	Safeway Inc
+   Date Created:      09 Mar 2018
+   Author:		Saikat Mazumdar
+   Description: BOD for Inventory balance.
+   Name: /SFWY/BOD/GetInventoryBalance.xsd-->
+<!-- edited with XMLSpy v2019 sp2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="../Nouns/InventoryAdjustment.xsd"/>
+	<xs:element name="GetInventoryAdjustment" type="GetInventoryAdjustmentType">
+		<xs:annotation>
+			<xs:documentation>root</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetInventoryAdjustmentType">
+		<xs:annotation>
+			<xs:documentation>Business Object that provides information on Inventory adjustment due to various reasons like short received, damage, theft..</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="DocumentType"/>
+						<xs:element name="DocumentAction" type="DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="InventoryAdjustmentData" type="InventoryAdjustmentType"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

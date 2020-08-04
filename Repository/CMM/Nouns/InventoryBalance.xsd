@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Schema Owner: 	Safeway Inc
+   Date Created:      07 Mar 2018
+   Author:		Saikat Mazumdar
+   Description: Contains commonly used Safeway Inventory schema.
+   Name: /SFWY/Nouns/Inventory.xsd
+-->
+<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="InventoryBalance" type="InventoryBalanceType">
+		<xs:annotation>
+			<xs:documentation>Standard Albertsons companies schema for Inventory balance that represents the quantity of each item (balance) by location.
+
+This is expected to provide a quantity snapshot i.e. all quantity is updated as replacing the entire field, not incremented or decremented by the quantity.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="InventoryBalanceType">
+		<xs:annotation>
+			<xs:documentation>Inventory on Hand.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="InventoryTxn"/>
+			<xs:element name="InventoryType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates Perpetual or Periodic inventory. The periodic and perpetual inventory systems are different methods used to track the quantity of goods on hand.The periodic system relies upon an occasional physical count of the inventory to determine the ending inventory balance and the cost of goods sold, while the perpetual system keeps continual track of inventory balances. Valid values 'PP' for Perpetual Inventory and 'PR' for periodic inventory.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="AvailableQty" minOccurs="0"/>
+			<xs:element ref="AllocatedQty" minOccurs="0"/>
+			<xs:element ref="BlockedQty" minOccurs="0"/>
+			<xs:element ref="InboundTransitQty" minOccurs="0"/>
+			<xs:element name="DayInboundTransitQty" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Number of inventory items that are expected to be received on Inventory transaction Day.
+
+This is a factor of when the item is expected to be received at the warehouse hence same needs to be considered (TBD).</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InProgressReceiving" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>all the Receiving POs in progress currently.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="PurchaseOrderNbr" type="xs:string" minOccurs="0"/>
+						<xs:element name="ItemQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="FutureReceiving" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>All the future receiving POs with appointment date available.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="PurchaseOrderNbr" type="xs:string" minOccurs="0"/>
+						<xs:element name="AppointmentDtTm" type="xs:dateTime" minOccurs="0"/>
+						<xs:element name="ItemQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element ref="StorageUOMCd" minOccurs="0"/>
+			<xs:element ref="ValueClassificationCd" minOccurs="0"/>
+			<xs:element ref="DensityConversionFactor" minOccurs="0"/>
+			<xs:element ref="CatchWgtQty" minOccurs="0"/>
+			<xs:element ref="CatchWgtConversionFactor" minOccurs="0"/>
+			<xs:element ref="CaseWgt" minOccurs="0"/>
+			<xs:element ref="CaseDim" minOccurs="0"/>
+			<xs:element ref="SellingUnitConversionFactor" minOccurs="0"/>
+			<xs:element ref="EachUnitWgt" minOccurs="0"/>
+			<xs:element ref="EachUnitDim" minOccurs="0"/>
+			<xs:element ref="InnerPackConversionFactor" minOccurs="0"/>
+			<xs:element ref="InnerPackWgt" minOccurs="0"/>
+			<xs:element ref="InnerPackDim" minOccurs="0"/>
+			<xs:element ref="VendorPackConversionFactor" minOccurs="0"/>
+			<xs:element ref="PalletTI" minOccurs="0"/>
+			<xs:element ref="PalletHI" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ItemId">
+		<xs:annotation>
+			<xs:documentation>Contains various types of Ids for an item like UPC, GTIN ..etc</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="UPC" type="UPC" minOccurs="0"/>
+			<xs:element name="UPCComponents" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>UPC ID broken into individual Components.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="UPCComponentsType"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GTINID" type="xs:string" minOccurs="0"/>
+			<xs:element name="VendorProductID" type="xs:string" minOccurs="0"/>
+			<xs:element name="ManufProductId" type="xs:string" minOccurs="0"/>
+			<xs:element name="SystemSpecificItemId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Like NDA id for Drugs.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InternalItemId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Albertsons internal unique item Id. Ex Corporate Item Cd</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MCLBRNbr" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Branch identifier, to be used in conjucton with branch item code to make branch item cd unique. Old legacy identifier for warehouse items.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BranchItemCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the old five digit item code used with the MCL branch to identify an item. This is Used to interface to detail files systems not converted to corporate item code and divisional users. It is sometimes referred to as Division Item Code.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BaseProductNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Popularly known as BPN number in eCommerce world. Identifier generated in eCom for a group of similar elements. BPN can represent multiple CICs or UPCs. BPN is used to dispaly items in safeway.com online sales site.
+ Ex Seedless red grapes will have one BPN but there may be multiple varities with in red grapes like crimson red, dark red or light red with different cic/upcs.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ItemDescription" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="InventoryTxn" type="InventoryTxnType">
+		<xs:annotation>
+			<xs:documentation>Inventory Transaction details that has resulted in current Inventory status.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="TxnQty">
+		<xs:annotation>
+			<xs:documentation>Number of inventory items that were part of given transaction.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:decimal">
+				<xs:totalDigits value="14"/>
+				<xs:fractionDigits value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TxnDt" type="xs:dateTime">
+		<xs:annotation>
+			<xs:documentation>Date and time at which the inventory transaction was carried out.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="InventoryFacility" type="FacilityType">
+		<xs:annotation>
+			<xs:documentation>The facility for which Inventory Balance is provided.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="AvailableQty">
+		<xs:annotation>
+			<xs:documentation>Number of inventory items that are available to be used.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:decimal">
+				<xs:totalDigits value="14"/>
+				<xs:fractionDigits value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="InspectedQty" type="QuantityType">
+		<xs:annotation>
+			<xs:documentation>Number of inventory items that have been inspected.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="AllocatedQty">
+		<xs:annotation>
+			<xs:documentation>Number of inventory items that have been allocated for other uses as such are no longer availble unless the allocation is overriden.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:decimal">
+				<xs:totalDigits value="14"/>
+				<xs:fractionDigits value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="BlockedQty">
+		<xs:annotation>
+			<xs:documentation>Number of inventory items that are blocked or unavailable.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:decimal">
+				<xs:totalDigits value="14"/>
+				<xs:fractionDigits value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="InboundTransitQty">
+		<xs:annotation>
+			<xs:documentation>Number of inventory items that are expected to be received.
+
+This is a factor of when the item is expected to be received at the warehouse hence same needs to be considered (TBD).</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:decimal">
+				<xs:totalDigits value="14"/>
+				<xs:fractionDigits value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="StorageUOMCd" type="UOMType">
+		<xs:annotation>
+			<xs:documentation>Storage unit of measure of the item. This is sometimes different from the unit of measure that is used to count a product as it is consumed, sold or accounted for.
+
+Examples in Albertsons area Case, Each etc.			
+			</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="ValueClassificationCd" type="xs:string">
+		<xs:annotation>
+			<xs:documentation>Grouping used to determine the General Ledger accounting effect. These are user defined values, with the exception of the values Total, Material, Labor, Burden, Overhead, Subcontract.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="DensityConversionFactor" type="xs:decimal" default="1">
+		<xs:annotation>
+			<xs:documentation>The density factor is a simple field with a numeric value that enables a conversion rate to the standard density of a liquid.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="CatchWgtQty" type="QuantityType">
+		<xs:annotation>
+			<xs:documentation>Quantity of product as it is shipped.  This quantity is generally used with the CatchWeightConversion Factor.  This provides for the business case in process manufacturing when one is converting such things as the number of chickens that go into a box.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="CatchWgtConversionFactor" type="xs:decimal" default="1">
+		<xs:annotation>
+			<xs:documentation>The catch weight conversion factor is a stock keeping conversion factor for inventory goods.  This is a special conversion factor for when the units of measure can not be converted using arithmetic.  This conversion factor is used with the CatchWgtQty.
+
+Examples of the use of this factor include:
+Number of Chickens to a Box.
+Number of units of a chemical in a barrel.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="CaseWgt" type="WeightType">
+		<xs:annotation>
+			<xs:documentation>Weight of a warehouse shipping unit (single case).</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="CaseDim" type="ShapeDimType">
+		<xs:annotation>
+			<xs:documentation>Dimensions (height, length, width) of one inventory unit (case) and is used to calculate the case cube size.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SellingUnitConversionFactor" type="xs:decimal" default="1">
+		<xs:annotation>
+			<xs:documentation>The conversion factor between inventory item pack and (retail) selling unit pack.
+			
+For example, there may be more than one selling units (aka shelf units) in a case for a scenario where inventory items are stored as cases i.e. StorageUOMCd is Case.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="EachUnitWgt" type="WeightType">
+		<xs:annotation>
+			<xs:documentation> Weight of each inventory unit (each). This applies to items that are stored as single units and not as multiple units in the case.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="EachUnitDim" type="ShapeDimType">
+		<xs:annotation>
+			<xs:documentation>Dimensions (height, length, width) of one inventory unit (each). This applies to items that are stored as single units and not as multiple units in the case.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="InnerPackConversionFactor" type="xs:decimal" default="1">
+		<xs:annotation>
+			<xs:documentation>The conversion factor between (retail) selling unit pack and non-decomposable units within.
+
+For example a selling unit may 3+1 units (inner pack) in it. The latter cannot be sold separately.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="InnerPackWgt" type="WeightType">
+		<xs:annotation>
+			<xs:documentation>Weight of inner pack.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="InnerPackDim" type="ShapeDimType">
+		<xs:annotation>
+			<xs:documentation>Dimensions (height, length, width) of one inner pack and is used to calculate the inner pack cube size.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="VendorPackConversionFactor" type="xs:decimal" default="1">
+		<xs:annotation>
+			<xs:documentation>The conversion factor between vendor pack and inventory item pack (aka case, stock keeping unit etc.).
+
+Need to confirm the appropriateness of this element from InventoryBalance perspective. As by the time InventoryBalance is provided by source system the vendor to inventory storage unit (open vendor pack and split/create inventory pack) is already expected to have been completed. TBD.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="PalletTI" type="xs:integer" nillable="true">
+		<xs:annotation>
+			<xs:documentation>Number of inventory units (cases) that make up a layer on a pallet.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="PalletHI" type="xs:integer" nillable="true">
+		<xs:annotation>
+			<xs:documentation>Number of layers of inventory units (cases) on a pallet.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="InventoryTxnType">
+		<xs:annotation>
+			<xs:documentation>Inventory Transaction details that has resulted in current Inventory status.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporationId"/>
+			<xs:element ref="DivisionId"/>
+			<xs:element ref="InventoryFacility"/>
+			<xs:element ref="DistributionCenterId" minOccurs="0"/>
+			<xs:element ref="WarehouseId" minOccurs="0"/>
+			<xs:element ref="CorporateItemCd" minOccurs="0"/>
+			<xs:element name="FacilityItem" type="ItemId" minOccurs="0"/>
+			<xs:element name="FacilityItemType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates the type of the item, like fianl selling/shipping item, raw material, packing item, expense item..etc</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="TxnQty" minOccurs="0"/>
+			<xs:element ref="Status" minOccurs="0"/>
+			<xs:element ref="TxnDt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time at which the inventory transaction was carried out.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

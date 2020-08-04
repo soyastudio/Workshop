@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Schema Owner: 	Safeway Inc
+   Date Created:      11 Jan 2017
+   Author:		Sai Nuthakki
+   Dsc: contains commonly used Albertson's Purchase order schema.
+   Name: /ABS_CMM_Platform/Nouns/PurchaseOrder.xsd
+-->
+<!-- edited with XMLSpy v2019 sp2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="DeliveryAppointment" type="DeliveryAppointmentType">
+		<xs:annotation>
+			<xs:documentation>Represents a transaction of making a date and time  Appointment to reserve with a facility like a warehouse to deliver goods from vendors / suppliers. Generally Appointment are made by either supplier or the transportation company that brings in the goods.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="DeliveryAppointmentType">
+		<xs:annotation>
+			<xs:documentation>Defines appintments made by the shippers with warehouse facilities to deliver the goods from origin facilities. Sometimes third party vendors  like One Network provides the scheduling service to shippers and transportaiton carriers.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporationId"/>
+			<xs:element ref="DivisionId"/>
+			<xs:element name="FacilityType" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Type of the facility like, DC,  warehouse, Retail Store, Office building, manufacturing plant..etc.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityID" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>A four character code that is used with corporation
+ and division to uniquely identify a facility. A facility may "belong" to
+ only one corporation and one division. A building may house one or more
+facilities. There are two categories for facilities:
+ 1) Operating facility
+ - actively supports the business of the Company
+ - is a distinct business operation within a building
+  - examples: office, processing plant, retail store, truck service
+ shop, or warehouse building  (A warehouse facility includes all warehouse departments that exist within a single building.)
+ - each type of division/business has a different set of possible types of operating facilities: i.e.,
+ - Retail: retail outlets and offices.
+- Wholesale: warehouse facilities, truck service shop, and offices.
+- Processing/Manufacturing: processing plants and offices.
+ 2) Non-operating Facility                                                     
+ - not currently being operated by the Company.
+ - facilities </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityNm" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the facility. ex Tracy DC or Safeway store in Bollinger Canyon San Ramon</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AltFacilityId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Alternate Facility Identifier.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AltFacilityNm" type="xs:string" minOccurs="0"/>
+			<xs:element name="FacilityDockReferenceTxt" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Dock information of the receiving facility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Appointment" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Appointment date time reserved with a afacility like a warehouse to receive goods from vendors / suppliers. Appointment will be made by either supplier or the transportation company that brings in the goods.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="TimePeriodType">
+							<xs:sequence>
+								<xs:element name="AppointmentReferenceNbr" type="xs:string" minOccurs="0"/>
+								<xs:element name="AppointmentType" type="CodeWithDescription" minOccurs="0"/>
+								<xs:element name="AppointmentStatus" type="CodeWithDescription" minOccurs="0"/>
+								<xs:element name="CarrierData" minOccurs="0">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="CarrierCd" type="xs:string" minOccurs="0"/>
+											<xs:element name="CarrierNm" type="xs:string" minOccurs="0"/>
+											<xs:element name="CarrierReferenceKey" type="xs:string" minOccurs="0"/>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="FreightTerm" type="CodeWithDescription" minOccurs="0"/>
+								<xs:element name="CommentTxt" minOccurs="0" maxOccurs="5">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="500"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ReferenceDocument" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ReferenceDocumentType" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Type of the reference document like PO, SO</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ReferenceDocumentNbr" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Business document like Purchase Order or Store Order based on which the goods will be received and appointment is made.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ExpectedReceiveDtTm" type="xs:dateTime" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Expected date and time when the goods are received at the facility. Generally PO contains this info.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="TargetDeliveryDtTm" type="xs:dateTime" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Original target date and time to deliver the shipment</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="TimeZoneCd" type="xs:string" minOccurs="0"/>
+						<xs:element name="ShipmentOrigin" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Shipment origin like shipper/vendor facility</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Facility" type="IdWithNameType" minOccurs="0"/>
+									<xs:element name="Address" type="AddressType" minOccurs="0"/>
+									<xs:element name="FacilityContactNm" type="xs:string" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="ShipmentDestination" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Shipment receiving facility like warehouse</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Facility" type="IdWithNameType" minOccurs="0"/>
+									<xs:element name="Address" type="AddressType" minOccurs="0"/>
+									<xs:element name="FacilityContactNm" type="xs:string" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AppointmentCreatedDtTm" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time when the Appoinment schedule was created in the system.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrgMasterNameType" type="OrgMasterNameType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://collab.safeway.com/it/architecture/AbsOmMaster" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:complexType name="RetailStoreControlType">
+		<xs:annotation>
+			<xs:documentation>Store control data from SSSTOCTL table. Excluded store system related data for security reasons.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="WarehouseSystemInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates whether the store is supported on a Warehousing system like EXPRES.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CustomerAccntNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Customer account number uniquely identifies a store as custome to the company. A party is recognized as a customer on an Accounts Receivable account and a vendor on an Accounts Payable account. Valid customer accounts are on the Accounts Receive Master (ARPMAS_TABLE).  Customer account number together with customer sub account number uniquely identify a customer outlet on the Accounts Receivable Customer Master (ARCMAS_TABLE.)</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CustomerSubAccntNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TruckingGroupCd" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A code trucking assigns to a store which allows stores to be grouped together for load out recap purposes.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TlogZoneInd" type="xs:integer" minOccurs="0"/>
+			<xs:element name="MarketAreaCd" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A code to group stores within a division. Used by item movement history.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RepStoreInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This switch will indicate that this Store is the Representative Store for this Retail Order Group.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ElectronicMarketingInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field is used to indicate the status of the electronic marketing/promo code in a store.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TargetMarketingInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This column indicates if the entity as described in the database is is participating in the target marketing promotion wherein promotions are specific to a population segment. Therefore, on COROGTAB, a value of Y indicates that the rog is participating in target marketing. On, SSSTOCTL, a value of Y indicates that the store is participating in target marketing.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CGOStoreInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A switch Y N or ' ' (space) to allow store to accept information from host for computer assisted ordering.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="StoreClusterId" type="xs:integer" minOccurs="0"/>
+			<xs:element name="NIMRequiredInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if nutrition data is required for this store.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RetailStore">
+		<xs:sequence>
+			<xs:element name="Corporation" type="Abs:CorporationType" minOccurs="0"/>
+			<xs:element name="Division" type="Abs:DivisionType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Information related to the operating division. Ex Norcal with Div Id 25 </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReportingDivision" type="Abs:DivisionType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Information related to the accounts reporting division. Also known as Consolidation division for AP/AR.                            Ex Accounting division 17</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OperatingArea" type="Abs:OperatingAreaType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Organization layer within the operating division. Generally it contains one or more operating districts.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ParentOperatingArea" type="Abs:OperatingAreaType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Sometimes retail facilities may have a different reporting structure, generally a division.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="District" type="Abs:DistrictType" minOccurs="0"/>
+			<xs:element name="Banner" type="Abs:BannerType" minOccurs="0"/>
+			<xs:element name="RetailOrderGroup" type="Abs:RetailOrderGroupType" minOccurs="0"/>
+			<xs:element name="StoreData" type="Abs:RetailStoreType" minOccurs="0"/>
+			<xs:element name="StoreAddressData" type="Abs:AddressType" minOccurs="0"/>
+			<xs:element name="StoreDepartmentData" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="Abs:StoreDepartmentType">
+							<xs:sequence>
+								<xs:element name="DepartmentHours" minOccurs="0" maxOccurs="unbounded">
+									<xs:complexType>
+										<xs:complexContent>
+											<xs:extension base="Abs:StoreDepartmentHourType"/>
+										</xs:complexContent>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="DepartmentHolidayHours" type="HolidayWorkHoursType" minOccurs="0" maxOccurs="unbounded">
+									<xs:annotation>
+										<xs:documentation>Work hours during public holidays</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="StoreDepartmentSectionType" type="Abs:StoreDepartmentSectionType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="StoreHoursData" type="Abs:RetailStoreHourType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="StoreHolidayHours" type="HolidayWorkHoursType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="StoreCheckStandData" type="Abs:StoreCheckStandType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="StoreControlData" type="RetailStoreControlType" minOccurs="0"/>
+			<xs:element name="OrgEntityType" type="Abs:OrgMasterNameType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Generic type to capture different org structures.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

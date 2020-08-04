@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Schema Owner: 	Safeway Inc
+   Date Created:      12 Jan 2016
+   Author:		Sai Nuthakki
+   Description: contains commonly used Safeway Purchase order schema.
+   Name: /SFWY/Nouns/SwyPurchaseOrder.xsd
+-->
+<!-- edited with XMLSpy v2012 (http://www.altova.com) by Jayson Leo P. Soliman (Safeway, Inc.) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:complexType name="PayableType">
+		<xs:annotation>
+			<xs:documentation>Payable is a transaction that represents an invoice from a supplier.  A payable is an open item, approved and ready for payment, in the Accounts Payable ledger.  In some systems it may be called a voucher.  Compare to PurchaseLedgerInvoice, which represents a not yet approved supplier invoice.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="VendorParty" type="PartyType" minOccurs="0"/>
+			<xs:element name="PayerParty" type="PartyType" minOccurs="0"/>
+			<xs:element name="BillToParty" type="PartyType" minOccurs="0"/>
+			<xs:element name="InvoiceCreateDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date the
+invoice was
+created.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BillingPeriodStartTm" type="xs:time" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Beginning of
+the billing
+period.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BillingPeriodEndTm" type="xs:time" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>End of the
+billing period.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InvoiceNbr" type="xs:string" minOccurs="0"/>
+			<xs:element name="VendorOperatorInternalId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The shop’s internal identifier.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PayableTransaction" type="PayableTransactionType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="VendorBusinessNbr" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Shop business
+number (E.g.
+SIRET for
+France).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ProfessionalVendorInd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The shop is a registered business.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VendorVATNbr" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Intra-community VAT number.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CurrencyISOCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>ISO 4217 code
+of the shop's
+currency.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PaymentMethodCd" type="xs:string" minOccurs="0"/>
+			<xs:element name="Payment" type="PaymentType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PayableTransactionType">
+		<xs:annotation>
+			<xs:documentation>Contains different payable amounts and possible VAT.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PayableAmt" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="VATAmt" type="xs:decimal" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="QualifierCd" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>Can be order amount, order shipping amount, order commission amount, etc. This set also contains the VAT associated with a specific payable.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="PaymentType">
+		<xs:annotation>
+			<xs:documentation>Contains payment information such as bank name, account numbers, etc</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="BankParty" type="PartyType" minOccurs="0"/>
+			<xs:element name="PaymentAccount" type="PaymentAccountType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PaymentAccountType">
+		<xs:sequence>
+			<xs:element name="AccountTypeNm" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Can be US ABA Bank Acount Number, Routing Transit Number, Bank Identifier Code</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AccountNbr" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

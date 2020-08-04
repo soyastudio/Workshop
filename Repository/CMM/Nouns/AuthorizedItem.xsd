@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Schema Owner: 	Safeway Inc
+   Date Created:      11 Jan 2017
+   Author:		Sai Nuthakki
+   Dsc: contains commonly used Albertson's Purchase order schema.
+   Name: /ABS_CMM_Platform/Nouns/StoreOrder.xsd
+-->
+<!-- edited with XMLSpy v2014 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Safeway, Inc.) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="AuthorizedItem" type="AuthorizedItemType">
+		<xs:annotation>
+			<xs:documentation>root</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="AuthorizedItemType">
+		<xs:annotation>
+			<xs:documentation>Items authorized to receive from a supplier in a store facility for sale or expense or as a raw material. Suppliers are not allowed to ship the items to facility unless it is pre authorized. Authorizations determne exactly which items from the supplier product line are authorized to deliver for which stores. item sale period may extend beyond receiving authorization period.  This BOD is mainly for DSD items.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporationId"/>
+			<xs:element ref="DivisionId"/>
+			<xs:element ref="RetailStoreId"/>
+			<xs:element name="RetailStoreAuthorizedItem" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="AuthorizedVendor" type="AuthorizedVendor" minOccurs="0"/>
+						<xs:element name="AuthorizedVendorItem" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element ref="CorporateItemCd" minOccurs="0"/>
+									<xs:element name="EffectiveStartDt" type="xs:date" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Authorized Start date to ship items to a facility.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="EffectiveEndDt" type="xs:date" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Authorized end date to ship items to a facility. After this date item shipments from suppliers will not be received in the facility.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AuthorizedVendor">
+		<xs:annotation>
+			<xs:documentation>Vendor Authorized to supply items to store facility,</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="VendorId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>6 digit corporate Nbr that uniquely identifies a vendor within a corporation. A vendor is a Company we purchase from. VEND-NUM is generally used with Vendor Sub-Account Nbr (VEND-SUB-ACNT) or WIMS Sub-Vendor Nbr (WIMS-SUB-VEND).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VendorSubAccountNbr" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identifies a particular outlet of a company we purchase from. EG. The Vancouver outlet of Nabob. This is used by the Accounts Payable System</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BDRVendorId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Unique vendor id within store Back door receiving system.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorNm" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

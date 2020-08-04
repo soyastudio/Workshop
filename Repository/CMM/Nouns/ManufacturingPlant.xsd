@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2014 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Safeway, Inc.) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://collab.safeway.com/it/architecture/AbsOmMaster" xmlns:ns2="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:complexType name="ManufacturingPlant">
+		<xs:annotation>
+			<xs:documentation>Defines ABS Manufacturing Plants like milk plants, bread plants and ice cream plants.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Corporation" type="ns2:CorporationType"/>
+			<xs:element name="Division" type="ns2:DivisionType">
+				<xs:annotation>
+					<xs:documentation>Information related to the operating division. Ex Norcal with Div Id 25 </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReportingDivision" type="ns2:DivisionType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Information related to the accounts reporting division. Also known as Consolidation division for AP/AR.                            Ex Accounting division 17</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OperatingArea" type="ns2:OperatingAreaType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Organization layer within the operating division. Generally it contains one or more operating districts.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ParentOperatingArea" type="ns2:OperatingAreaType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Sometimes retail facilities may have a different reporting structure, generally a division.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="District" type="ns2:DistrictType" minOccurs="0"/>
+			<xs:element name="Banner" type="ns2:BannerType" minOccurs="0"/>
+			<xs:element name="RetailOrderGroup" type="ns2:RetailOrderGroupType" minOccurs="0"/>
+			<xs:element name="ManufacturingPlantData" type="ns2:ManufacturingPlantType" minOccurs="0"/>
+			<xs:element name="AddressData" type="ns2:AddressType" minOccurs="0" maxOccurs="5"/>
+			<xs:element name="DepartmentData" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="ns2:PlantDepartmentType">
+							<xs:sequence>
+								<xs:element name="DepartmentHours" type="ns2:PlantDepartmentHourType" maxOccurs="unbounded"/>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PlantHoursData" type="ns2:PlantHourType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="SupplyFacility" type="ns2:WarehouseType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Manufacturing plant as a warehouse and supply facility that can receive orders from stores or outside customers to fulfill the orders.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VendorType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Inorder for a plant ot be set up as supply facility it need to be added as vendor in vendor master for all billing and accounting purposes.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="VendorId" type="xs:string" minOccurs="0"/>
+						<xs:element name="VendorSubAccntId" type="xs:string" minOccurs="0"/>
+						<xs:element name="WarehouseVendorId" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Identifies the WIMS Vendor number set up by the Buyer. The first character of the number indicates the location e.g. V - Vancouver, E - Edmonton.  Buyer/Merchandisers may break a Vendor outlet into different WIMS Vendors to suit their own purposes. Some of the reasons a Vendor may have several WIMS Vendor records are: 1. Several Buyers buying from the same Vendor. 2. A buyer buying different commodity </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PACSVendorNbr" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="OrgEntityType" type="ns2:OrgMasterNameType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Generic type to capture different org structures.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://www.openapplications.org/oagis/9" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.0  05152019 Sai Nuthakki   Initial Version-->
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/FinanceMaster.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="GetSubLedger" type="GetSubLedgerType">
+		<xs:annotation>
+			<xs:documentation>root</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetSubLedgerType">
+		<xs:annotation>
+			<xs:documentation>Defines Sub-Ledger based on General Ledger Master account details. contains the chart of accounts. All financial subsystems verify the existence of accounts against this. Sub-ledger is an intermediary set of accounts linked to the general ledger. It is a detailed subset of accounts that contains transaction information. It is the subset of general ledger in the accounting it is not possible to record all transaction in general ledger hence transaction are recorded in sub ledger in a different account and their total sum is reflected in general ledger.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="SubLedgerData" type="Abs:SubLedgerType"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

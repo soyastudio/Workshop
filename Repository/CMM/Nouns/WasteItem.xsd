@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--V 1.1  Sai Nuthakki 06/28/2019 New BOD for disposable waste items in various facilites.-->
+	<xs:element name="WasteItem">
+		<xs:annotation>
+			<xs:documentation>Defines disposable waste items from various facilities like warehouse, plants and stores.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="WasteItemType">
+					<xs:sequence minOccurs="0">
+						<xs:element name="WasteItemQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="QuantityUOM" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="WasteItemWt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="WeightUOM" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="LandFillInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates that the waste item needs to go to a Landfill facility.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="5"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="RecycleInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates that the waste item needs to go to a Recycle facility.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="5"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="RankNbr" type="xs:integer" minOccurs="0"/>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="WasteDisposeTransaction">
+		<xs:annotation>
+			<xs:documentation>Transaction that defines waste items disposable event in a facility.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="DivisionId" minOccurs="0"/>
+			<xs:element name="FacilityId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identiifes Albertsons facility like store, warehouse, plant id.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines the type of facility as retail warehouse or plant.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TransactionId" type="xs:integer" minOccurs="0"/>
+			<xs:element name="TransactionDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="TransactionTm" type="xs:time" minOccurs="0"/>
+			<xs:element name="WasteDisposeVendor" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>ServiceProvider who collects the waste from a facility and dispose it off in a landfill or recycling facility.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="WasteDisposeVendorId" type="xs:integer" minOccurs="0"/>
+						<xs:element name="WasteDisposeVendorNm" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="Equipment" minOccurs="0" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="EquipmentType" type="IdWithNameType" minOccurs="0"/>
+									<xs:element name="CapacityWgt" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Capacity of the equipment like a container or truck</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:decimal">
+												<xs:totalDigits value="14"/>
+												<xs:fractionDigits value="4"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="WeightUOM" type="CodeWithDescription" minOccurs="0"/>
+									<xs:element ref="WasteItem" minOccurs="0" maxOccurs="unbounded"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="UserData" type="RecordAuditData" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WasteItemType">
+		<xs:annotation>
+			<xs:documentation>Defines disposable waste items from various facilities like warehouse, plants and stores. General Waste items are card boards, pallet wood, paper, packing materials, bakery items, meat and food items..etc </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="WasteItemId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="10"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="WasteItemNm" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="WasteItemType" type="IdWithNameType" minOccurs="0"/>
+			<xs:element ref="Status" minOccurs="0"/>
+			<xs:element name="USDATrackedInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The USDA tracked value (when ‘Y’es) indicates that the ultimate destination of the shipment/transaction should be tracked with more granularity.
+Normal commodities are only distinguished between ReUse/Recycle and Landfill (two choices), where the USDA data has around 7 different choices (and it’s likely to grow). These choices include ideas like feeding hungry people (food donation), animal feed and composting – in addition to Landfill.
+
+</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="USDAFoodCategory" type="IdWithNameType" minOccurs="0"/>
+			<xs:element name="HazardousMaterialInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates that the waste item belongs to Hazmat class of materials.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

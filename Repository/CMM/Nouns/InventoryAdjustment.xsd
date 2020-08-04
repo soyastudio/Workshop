@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Schema Owner: 	Safeway Inc
+   Date Created:      07 Mar 2018
+   Author:		Saikat Mazumdar
+   Description: Contains commonly used Safeway Inventory schema.
+   Name: /SFWY/Nouns/Inventory.xsd
+-->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--7/10/2020 - Alex Nunes - Add data elements to support EXE adjustments in inventory counts.-->
+	<xs:element name="InventoryAdjustment" type="InventoryAdjustmentType">
+		<xs:annotation>
+			<xs:documentation>Publishes Adjusted Inventory qty in a facility by item. Quantity adjutments can happen due to various reasons like damage, receive short, theft ..etc</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="InventoryAdjustmentType">
+		<xs:annotation>
+			<xs:documentation>Publishes Adjusted Inventory qty in a facility by item. Quantity adjutments can happen due to various reasons like damage, receive short, theft ..etc</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporationId"/>
+			<xs:element ref="DivisionId"/>
+			<xs:element name="FacilityID" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>A four character code that is used with corporation
+ and division to uniquely identify a facility. A facility may "belong" to
+ only one corporation and one division. A building may house one or more
+facilities. There are two categories for facilities:
+ 1) Operating facility
+ - actively supports the business of the Company
+ - is a distinct business operation within a building
+  - examples: office, processing plant, retail store, truck service
+ shop, or warehouse building  (A warehouse facility includes all warehouse departments that exist within a single building.)
+ - each type of division/business has a different set of possible types of operating facilities: i.e.,
+ - Retail: retail outlets and offices.
+- Wholesale: warehouse facilities, truck service shop, and offices.
+- Processing/Manufacturing: processing plants and offices.
+ 2) Non-operating Facility                                                     
+ - not currently being operated by the Company.
+ - facilities </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityType" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Type of the facility like, DC,  warehouse, Retail Store, Office building, manufacturing plant..etc.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the facility. ex Tracy DC or Safeway store in Bollinger Canyon San Ramon</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AltFacilityId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Alternate facility identifier, generally store nbr in char format.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="WarehouseId" minOccurs="0"/>
+			<xs:element ref="DistributionCenterId" minOccurs="0"/>
+			<xs:element name="AdjustmentTxnId" type="xs:string" minOccurs="0"/>
+			<xs:element name="AdjustmentTxnDt" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time at which the inventory adjustment transaction was carried out.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="CorporateItemCd" minOccurs="0"/>
+			<xs:element name="SystemSpecificItemId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Item identifier specific to the system reporting inventory adjustment.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ItemDescription" type="xs:string" minOccurs="0"/>
+			<xs:element name="AdjustedQty" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Adjusted Item quantity.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="QuantityAdjustementType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines the adjustment type as more or less than original.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UOM" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Unit of Measure. Ex each, case, pack, pallet</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AdjustedWt" type="WeightType" minOccurs="0"/>
+			<xs:element name="WeightAdjustementType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines the adjustment type as more or less than original.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AdjustedVol" type="VolumeType" minOccurs="0"/>
+			<xs:element name="VolumeAdjustementType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines the adjustment type as more or less than original.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AdjustmentType" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="ReasonType" type="CodeWithDescription" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>Reasons for the adjustment of item quantity in a facility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AdjustedDt" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="AdjustedBy" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Facility user who adjusted the inventory of an item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TxnTimeZone" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="InvoiceNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Number of the invoice if present.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BranchItemCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the old five digit item code used with the MCL branch to identify an item. This is Used to interface to detail files systems not converted to corporate item code and divisional users. It is sometimes referred to as Division Item Code.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ItemReturnCostAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The cost amount of a returned item.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="15"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InvoiceAllowanceAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Off invoice allowance amount.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="15"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="POTypeCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Purchase order type code. Values are: 'Y', '1' and ''.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PODetailTypeCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Purchase order type code. Values are: 'B', 'W', 'WT', 'X'.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorId" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Vendor Identifier. It's a six character field with zeros (left) padded.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CustomerId" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Customer Identifier</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DocumentNbr" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Document reference number.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RecordSourceCd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Source code. Values are: 'H', 'W' or ''. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="15"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PalletNbr" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Pallet indentifier number..</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="15"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

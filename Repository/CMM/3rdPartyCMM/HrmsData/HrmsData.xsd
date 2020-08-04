@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- edited with XMLSpy v2018 sp1 (x64) (http://www.altova.com) by Ashutosh Rana (TCS) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/hrms" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://collab.safeway.com/it/architecture/info/company" xmlns:ns2="http://collab.safeway.com/it/architecture/info/deptsync" xmlns:ns3="http://collab.safeway.com/it/architecture/info/hrlbragrmnt" xmlns:ns5="http://collab.safeway.com/it/architecture/info/location" xmlns:ns6="http://collab.safeway.com/it/architecture/info/paygroup" xmlns:ns7="http://collab.safeway.com/it/architecture/info/pbsync" xmlns:ns8="http://collab.safeway.com/it/architecture/info/sgl" xmlns:ns9="http://collab.safeway.com/it/architecture/info/salaryGrade" xmlns:ns10="http://collab.safeway.com/it/architecture/info/salaryplan" xmlns:ns11="http://collab.safeway.com/it/architecture/info/wfsync" xmlns:ns12="http://collab.safeway.com/it/architecture/info/jobsync" xmlns:ns13="http://collab.safeway.com/it/architecture/info/action" xmlns:ns14="http://collab.safeway.com/it/architecture/info/taxProfile" xmlns:ns15="http://collab.safeway.com/it/architecture/info/depositSync" targetNamespace="http://collab.safeway.com/it/architecture/info/hrms" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/company" schemaLocation="../HrmsBase/COMPANY_SYNC.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/deptsync" schemaLocation="../HrmsBase/Dept_Sync.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/hrlbragrmnt" schemaLocation="../HrmsBase/HR_LA_LF_JC_SYNC.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/jobsync" schemaLocation="../HrmsBase/Jobcode_sync.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/location" schemaLocation="../HrmsBase/Location_Sync.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/paygroup" schemaLocation="../HrmsBase/PAYGROUP_SYNC.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/pbsync" schemaLocation="../HrmsBase/PERSON_BASIC_SYNC.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/sgl" schemaLocation="../HrmsBase/S_GL_VW_SYNC.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/salaryGrade" schemaLocation="../HrmsBase/SALARY_GRADE_STEP_SYNC.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/wfsync" schemaLocation="../HrmsBase/WORKFORCE_SYNC.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/action" schemaLocation="../HrmsBase/S_ACTN_REASON_RES.V1.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/taxProfile" schemaLocation="../HrmsBase/Tax_profile.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/depositSync" schemaLocation="../HrmsBase/deposit_sync.xsd"/>
+	<xs:element name="HrmsData" type="hrmsDataType">
+		<xs:annotation>
+			<xs:documentation>Root Element of HRMS data.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="hrmsDataType">
+		<xs:sequence>
+			<xs:annotation>
+				<xs:documentation>Base element for HRMS.</xs:documentation>
+			</xs:annotation>
+			<xs:element name="Employee" type="AbsEmployeeType" minOccurs="0"/>
+			<xs:element name="Company" type="companyRefType" minOccurs="0"/>
+			<xs:element name="Department" type="departmentRefType" minOccurs="0"/>
+			<xs:element name="HrLaborAgreement" type="hrLaborAgreementRefType" minOccurs="0"/>
+			<xs:element name="JobCode" type="jobCodeRefType" minOccurs="0"/>
+			<xs:element name="Location" type="locationRefType" minOccurs="0"/>
+			<xs:element name="PayGroup" type="payGroupRefType" minOccurs="0"/>
+			<xs:element name="SalaryGrade" type="salaryGradeRefType" minOccurs="0"/>
+			<xs:element name="Action" type="actionType" minOccurs="0"/>
+			<xs:element name="TaxProfile" type="taxProfileType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AbsEmployeeType">
+		<xs:annotation>
+			<xs:documentation>Albertsons Employee Business Object</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PersonData" type="ns7:S_PERSON_BASIC_SYNC_REStype" minOccurs="0"/>
+			<xs:element name="WorkForceData" type="ns11:S_WORKFORCE_SYNC_REStype" minOccurs="0"/>
+			<xs:element name="Depositdata" type="ns15:S_DEPOSIT_SYNC_REStype" minOccurs="0"/>
+			<xs:element name="companyKey" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Reference to company object in the xml document</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:attribute name="id" type="xs:string"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="departmentKey" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Reference to department object in the xml document</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:attribute name="id" type="xs:string"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="hrLaborAgreementKey" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Reference to hrLaborAgreement object in the xml document</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:attribute name="id" type="xs:string"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="jobCodeKey" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Reference to jobcode object in the xml document</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:attribute name="id" type="xs:string"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="locationKey" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Reference to location object in the xml document</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:attribute name="id" type="xs:string"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="payGroupKey" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Reference to payGroup object in the xml documen</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:attribute name="id" type="xs:string"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="salaryGradeKey" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Reference to salaryGrade object in the xml document</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:attribute name="id" type="xs:string"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="glPayKey" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Reference to GLpay object in the xml document</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:attribute name="id" type="xs:string"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="actionKey" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Reference to action object in the xml document</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:attribute name="id" type="xs:string"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="taxProfileKey" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Reference to taxprofile object in the xml document.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:attribute name="id" type="xs:string"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="companyRefType">
+		<xs:annotation>
+			<xs:documentation>Albertsons company Business Object</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="ns1:S_COMPANY_SYNC_REStype">
+				<xs:attribute name="id" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="departmentRefType">
+		<xs:annotation>
+			<xs:documentation>Albertsons department Business Object</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="ns2:S_DEPT_SYNC_REStype">
+				<xs:attribute name="id" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="hrLaborAgreementRefType">
+		<xs:annotation>
+			<xs:documentation>Albertsons HRlabor Business Object</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="ns3:HR_LABOR_AGRMNTMsgDataRecord_TypeShape">
+				<xs:attribute name="id" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="jobCodeRefType">
+		<xs:annotation>
+			<xs:documentation>Albertsons jobcode Business Object</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="ns12:S_JOBCODE_SYNC_REStype">
+				<xs:attribute name="id" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="salaryGradeRefType">
+		<xs:annotation>
+			<xs:documentation>Albertsons salaryGrade Business Object</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="ns9:SAL_PLAN_TBLMsgDataRecord_TypeShape">
+				<xs:attribute name="id" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="locationRefType">
+		<xs:annotation>
+			<xs:documentation>Albertsons Location Business Object</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="ns5:S_LOCATION_SYNC_REStype">
+				<xs:attribute name="id" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="payGroupRefType">
+		<xs:annotation>
+			<xs:documentation>Albertsons payGroup Business Object</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="ns6:PAYGROUP_TBLMsgDataRecord_TypeShape">
+				<xs:attribute name="id" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="glPayRefType">
+		<xs:annotation>
+			<xs:documentation>Albertsons Group Ledger Business Object</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="ns8:DEPT_TBLMsgDataRecord_TypeShape">
+				<xs:attribute name="id" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="actionType">
+		<xs:annotation>
+			<xs:documentation>Albertsons Group Ledger Business Object</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="ns13:S_ACTION_SYNC_REStype">
+				<xs:attribute name="id" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="taxProfileType">
+		<xs:annotation>
+			<xs:documentation>Albertsons company Business Object</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="ns14:S_TAXPROFILE_REStype">
+				<xs:attribute name="id" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

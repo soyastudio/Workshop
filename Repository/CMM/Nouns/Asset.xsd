@@ -1,0 +1,1285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.0  Alex Nunes 7/16/2019 Initial version -->
+	<!--V1.0 Alex Nunes 8/1/2019 Added depreciation book information for an asset.-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:include schemaLocation="FinanceMaster.xsd"/>
+	<xs:element name="Asset" type="AssetType">
+		<xs:annotation>
+			<xs:documentation>root element.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="AssetType">
+		<xs:annotation>
+			<xs:documentation>An asset type is a grouping of one or more asset items that are grouped together, or "combined," for depreciation purposes. It also contains many of the selection and sorting fields that are used for reporting.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="AssetRecord">
+				<xs:annotation>
+					<xs:documentation>An asset record is a grouping of one or more asset items that are grouped together, or "combined," for depreciation
+purposes. The Asset file also contains many of the selection and sorting
+fields that are used for reporting.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="AssetNbr"/>
+						<xs:element name="AssetDsc">
+							<xs:annotation>
+								<xs:documentation>A description of the asset.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DisposalAssetNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>If the asset is partially disposed of, this field contains the original asset number of a new asset record that is created due to the partial disposal. If the asset is fully disposed of, this field contains the same value as the Asset field on this record.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ClassificationInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field contains the asset's classification. Capital and Operating refer to leased assets; Purchased refers to non-leased assets.  Valid values are: P = Purchased C = Capital O = Operating.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LeaseCompanyId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The lessor company for the leased asset.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LeaseNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The lease number associated with a leased asset.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="19"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="TagNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The tag is a user definable identifier assigned to an asset.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="12"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AssetAttribute" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Additional information about the asset.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="AttributeNm">
+										<xs:annotation>
+											<xs:documentation>This is the attribute name assigned to an object to track additional  information.   Attribute values can be used in  selection and sorting for reporting and analysis.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="12"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AttributeVal">
+										<xs:annotation>
+											<xs:documentation>This is the value for the attribute. </xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="32"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="AssetGroup">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="AssetGroupNbr">
+										<xs:annotation>
+											<xs:documentation>The asset group assigned to the associated asset record. Represents a parent number used for report grouping.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AssetGroupDsc">
+										<xs:annotation>
+											<xs:documentation>This field contains the description of the asset group.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="30"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="RestrictInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This flag indicates whether the assets belonging to an asset group are required to be associated with a specific asset  type or asset type and subtype. Valid values are: Y = Yes, N = No.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AssetGroupDeprecInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This field indicates whether all assets belonging to the asset group should be adjusted, transfered,and disposed as a group.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="ObjectId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is the object identifier. It is used to relate commitments or posted transactions back to the originating subsystems. Each subsystem record that is updated as a commitment or posted transaction is assigned an object identifier. The object identifier is maintained in the subsystem files and in the Activity Commitments Detail and Activity Transaction files. The object identifier is a unique key used to drill back from Activity Management to the subsystems.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="12"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="StatusCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field identifies the transaction status of the asset record. Valid values are: 1 = Entered.  2 = Active (updated).  3 = Post Active Process.  9 = Disposed.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ProcessCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field identifies whether the asset item record is in the process of being adjusted, disposed of, or transferred. Valid values are: ADJ = Adjustment, DSP = Disposal,  TRF = Transfer. Blank = The asset item is not being  adjusted, disposed of, or transferred.
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ProcessDt" type="DateType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The last date an adjustment, disposal, or transfer was processed for the asset record.
+</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="DepreciableInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field identifies whether the asset is depreciable. Valid values are: D = Depreciable.  N = Non-Depreciable.
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SimulatedInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field identifies whether the asset is simulated, which means the asset is a representation, not a real asset.  Simulated assets can be used to experiment and test strategies.  Valid values are: Y = Yes N = No.
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="WIPInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field identifies whether the asset is considered work in process, which means the asset is real, but not yet complete. If this field is Yes, the asset is on hold and cannot be released.  Valid values are: N = No.  Y = Yes.
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="TaxExemptInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field identifies whether the asset is exempt from taxation. Valid values are: Y = Yes N = No.
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="UsedInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field identifies whether the asset has already been used at the time it was purchased. Valid values are: N = No.  Y = Yes.
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ItemTotalQty" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The total number of items that make up this asset record.
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ItemTotalBaseCostAmt" type="AmountType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The total cost of the asset items in company base currency.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ItemTotalBaseTaxAmt" type="AmountType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The total tax amount associated with the asset items in the company base currency.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ItemTotalTranCostAmt" type="AmountType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The total cost of the asset items in the currency of the transaction.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ItemTotalTranTaxAmt" type="AmountType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The total tax amount associated with the asset items in the currency of the transaction.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CurrencyCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The transaction currency code assigned to the asset.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ItemLastDt" type="DateType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The highest (latest) purchase date of all of the items that make up the asset.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ItemLastSequenceNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The last sequence number assigned to an asset item for this asset record.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="6"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AssetCompanyId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The general ledger company number associated with the asset record. Used for posting associated asset transaction entries to the general ledger.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="Location">
+							<xs:complexType>
+								<xs:sequence minOccurs="0">
+									<xs:element name="LocationNm">
+										<xs:annotation>
+											<xs:documentation>The location assigned to the asset.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="15"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="LocationDsc">
+										<xs:annotation>
+											<xs:documentation>The description of the asset location.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="30"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AddressLocation" type="AddressType" minOccurs="0"/>
+									<xs:element name="LevelCharacterNbr" minOccurs="0" maxOccurs="3">
+										<xs:annotation>
+											<xs:documentation>This field determines the number of characters used for location detail levels. The system uses this field to parse the location detail bar code into its components. The total of the three levels cannot exceed 14 characters.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:integer">
+												<xs:totalDigits value="2"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element ref="DivisionId" minOccurs="0"/>
+						<xs:element name="AssetTypeCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field identifies the asset type.  Asset types are user-defined and represent a grouping of like assets.  Asset types are used to group assets into reporting classes and to default common asset definition data.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AssetSubTypeCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field identifies the asset subtype. An asset subtype represents a more detailed grouping of assets within an asset type. Asset subtypes are used to group assets into reporting classes and allow common asset definition data to default.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AcccountGroup">
+							<xs:annotation>
+								<xs:documentation>This is the account group assigned to the asset. Account groups are user-defined and are used to identify the general ledger accounts used to create journal entries when assets are processed (added, adjusted, transferred, or disposed of).</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="AcccountGroupCd">
+										<xs:annotation>
+											<xs:documentation>This is the account group assigned to the asset. Account groups are user-defined and are used to identify the general ledger accounts used to create journal entries when assets are processed (added, adjusted, transferred, or disposed of).</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AccountGroupDsc">
+										<xs:annotation>
+											<xs:documentation>The user-defined description of the account group.  </xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="30"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element ref="AccountingUnitId" minOccurs="0"/>
+						<xs:element name="AcccountingUnitGroup">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="AcccountingUnitGrpCd">
+										<xs:annotation>
+											<xs:documentation>Accounting unit groups group and identify the accounting units to use when you create journal entries for adding, adjusting, transferring, or disposing of assets. Changes to accounting unit groups are dynamic, affecting all assets using the accounting unit group. Accounting unit group names are user-definable, and accounting unit groups are set up by company.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AcccountingUnitGrpDsc">
+										<xs:annotation>
+											<xs:documentation>This field displays the description of  the accounting unit group.  </xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="30"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AstAcccountingUnitId" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the accounting unit used to create journal entries for an asset. It is a shorthand notation representing the variable level number. The accounting unit must be defined in the GL Names file as a posting accounting unit.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="15"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AcmAcccountingUnitId" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the accounting unit to which accumulated depreciation is posted.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="15"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ExpAcccountingUnitId" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the accounting unit to which depreciation expense is posted.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="15"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ClrAcccountingUnitId" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the accounting unit posted to when adding an asset through other applications (such as Activity Management or Accounts Payable).</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="15"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ProAcccountingUnitId" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the accounting unit posted to when cash or items of value are realized in the disposal of an asset.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="15"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="CosAcccountingUnitId" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the expense accounting unit posted to when a cost is associated with asset disposal.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="15"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="GanAcccountingUnitId" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the accounting unit posted to when a gain is realized in asset disposal.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="15"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="LosAcccountingUnitId" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the accounting unit posted to when a loss occurs in asset disposal.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="15"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="DgnAcccountingUnitId" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the deferred gain accounting unit posted to when a disposal is a like-kind exchange.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="15"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="DlsAcccountingUnitId" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the deferred loss accounting unit posted to when a disposal is a like-kind exchange.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="15"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="ActivityDsc" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The activity assigned to the asset item.  Activities are the processes or procedures that produce work. Cost objects (products, services, customers, and so on) are the reasons for performing the activity. Activities and cost object activities are used synonymously in the Lawson Activity Management system. 
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="15"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DeprecActivityDsc" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Activities are the processes or procedures that produce work. Cost objects (products, services, customers, and so on) are the reasons for performing the activity. 
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="15"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AcctCategoryCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Account categories are groupings of costs, revenues, or a combination of both used for reporting and inquiries for activities in the Activity Management system. All transactions are posted to an account category within an activity. You can assign a specific General Ledger account or range of accounts (company, accounting unit, account, and subaccount) that make up the transactions posted to an account category using AC07.1 (Account Assignment).  Period-to-date, year-to-date, and life-to-date balances are maintained by account category for activities. Account categories must be assigned to activities before you do any budgeting or transaction processing.  Valid account category types are: cost revenue accrual pass thru.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="15"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="OriginCompanyId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Identifies the AP company if the resource type = V.  Identifies the HR company if the resource type = E.  It is blank for type A, P or Q resources.  </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ProcessLastSequenceNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The last sequence number assigned to the last process created for the asset.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="6"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="TranLastSequenceNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The sequence number assigned to the last transaction created for the asset.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="6"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CommLastSequenceNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The sequence number of the last comment defined for the asset.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="6"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
+						<xs:element name="InventoryInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>You can  indicate whether the asset should be included as part of the physical inventory.  This value defaults from the asset type and can be overridden when the asset is created. If the asset is not part of the physical inventory, it will be ignored in the inventory reports.  Valid values are: Y = Yes N = No.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AssetOwnerNm" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field contains the name of the person responsible for keeping track of the asset in invnetory.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ReinstateInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field indicates that the disposal has been reinstated.  N = No Y = Yes.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ReinstateDt" type="DateType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The date of the last disposal reinstatement.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="LIndex" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>BLANK. DB Only.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AstSet6Ind" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>BLANK. DB Only.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AstSet8Ind" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>BLANK. DB Only.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LatAstInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>BLANK. DB Only.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ConcurNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>BLANK. DB Only.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="6"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DepreciationBook" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>The Asset Book stores the asset book records used to depreciate assets. Each asset book record describes the depreciation parameters needed to depreciate an asset, based on a specific depreciation book assigned to the asset.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element ref="BookId"/>
+									<xs:element name="StatusCd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This field identifies the status of the book. Valid values are: A = Active, I = Inactive. </xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="LifeMonthsNbr" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The life value of the asset, expressed in months. Note: The asset life can be different for each depreciation book used.
+</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:integer">
+												<xs:totalDigits value="4"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="RemainingLifeMonNbr" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The asset life remaining, expressed in months. This value represents the number of months the Asset Management system will continue to depreciate the asset.
+</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:decimal">
+												<xs:totalDigits value="7"/>
+												<xs:fractionDigits value="3"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="BasedBookCalcAmt" type="AmountType" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The amount on which the depreciation calculations are based. Note: The depreciation basis amount can be different for each depreciation book used.  
+</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="MethodCd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The method the book uses to calculate depreciation for the asset. Standard depreciation methods are predefined.  Additional methods can be user defined for the following kinds of methods: compute statements, annual percent tables, and annual and period units of production tables. Valid predefined values are: SL = Straight Line.  200DB = 200 percent declining balance.  175DB = 175 percent declining balance.  150DB = 150 percent declining balance.  125DB = 125 percent declining balance.  SYD = Sum of the year's digits.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="MethodSwitchInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This field indicates whether the Asset Management system has switched the depreciation method to the optimizing method. Valid values are: N = No.  Y = Yes.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ServiceStartDt" type="xs:date" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The date the asset was placed in service.  Note:  The in-service date can be different for each depreciation book used.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="ConventionCd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The depreciation convention assigned to the book. This value is used to determine the first and last years' depreciation amounts to take. Valid values are: FM = Full Month.  HM = Modified Half Month.  MM = Mid Month.  NM = Next Month.  HY = Half Year.  MY = Modified Half Year.  FY = Full Year.  AD = Actual Days.  MQ = Mid Quarter.  Note: See data file text for the Method file for more information on each convention.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="2"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="DepreciationStartDt" type="xs:date" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The date depreciation calculations began or will begin for the asset.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="LifeYearsNbr" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The total life value of the asset, expressed in years. This value is calculated by dividing the Life value by 12.
+</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:decimal">
+												<xs:totalDigits value="5"/>
+												<xs:fractionDigits value="2"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="CurrPeriodDeprecInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This field indicates whether depreciation has been calculated for the current period.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AssetLifeCurrPeriondNbr" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the current period portion of the asset life.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:decimal">
+												<xs:totalDigits value="5"/>
+												<xs:fractionDigits value="3"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="CurrPeriodDeprecAmt" type="AmountType" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the current period depreciation for this book. This amount includes only the business use, not the personal use, portion of the depreciation.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="CurrPeriodAllowedDeprecAmt" type="AmountType" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the current period depreciation allowed for the book. This amount is equivalent to the full depreciation, including business and personal use.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="YearToDateDeprecAmt" type="AmountType" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the year-to-date depreciation amount for the book. This amount includes only the business use, not the personal use, portion of the depreciation.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="YearToDateDeprecAllowedAmt" type="AmountType" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the year-to-date depreciation allowed for the book. This amount is equivalent to the full depreciation, including business and personal use.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="YearToDateDeprecOverrideAmt" type="AmountType" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the year-to-date depreciation override amount.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="LifeToDateDeprecAmt" type="AmountType" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the life-to-date depreciation amount for the book. This amount includes only the business use, not the personal use, portion of the depreciation. </xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="LifeToDateDeprecAllowedAmt" type="AmountType" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the life-to-date depreciation allowed for the book. This amount is equivalent to the full depreciation, including business and personal use.  </xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="LastCloseBalanceAmt" type="AmountType" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the balance in the last-closed period for this  book.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="FirstLastYearDeprecCalcInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This field is an internal, system-maintained value used to control depreciation calculations during the first and last years of an asset's life.  Valid values are: F = First. This is the first in-service year for the asset.  M = Middle. The asset is in a year other than the first or last.  L = Last. This is the last in-service year for the asset.  C = Completely Depreciated. The asset no longer participates in depreciation calculations.  P = Post Recovery. The system will continue to depreciate the asset beyond the original asset life.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="YTDInactiveMonthsNbr" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the number of inactive months for the book year-to-date.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:decimal">
+												<xs:totalDigits value="5"/>
+												<xs:fractionDigits value="3"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="LTDInactiveMonthsNbr" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the number of inactive months for the book life-to-date.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:decimal">
+												<xs:totalDigits value="5"/>
+												<xs:fractionDigits value="3"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="SalvageAmt" type="AmountType" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The salvage value of the asset at the end of the asset's life. It can be zero.  If the depreciation method is STL (Straight Line), the basis used for the depreciation calculation is the asset cost less this salvage value.  If the depreciation method is DDB (Double Declining Balance), 150 (150% Declining Balance), or 175 (175% Declining Balance), the basis used for the depreciation calculation is the asset cost. Depreciation will be taken until the total amount taken is equal to the asset cost less this salvage value.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="BusinessUsagePct" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The business percent usage of the asset. If this value is less than 100 percent, the value is used in depreciation calculations.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:decimal">
+												<xs:totalDigits value="5"/>
+												<xs:fractionDigits value="2"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="PersonalUseCd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The personal use code assigned to the asset. A personal use code defines the personal use options that asset books use to calculate  depreciation, tax credits, and annual depreciation limits up to twenty years. The code is user definable.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="FirstYearExpenseAmt" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the new first year expense amount. It represents the amount to expense for the First Year Expense option. This U.S. tax option allows you to expense and not depreciate a total dollar amount for the assets of each eligible company.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="TaxCreditTableTxt" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>A user-defined tax credit table, which defines tax credit percentages and annual tax credit recapture percentages for up to twenty years. Asset books use tax credit tables to calculate tax credits. </xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="PropertyTaxCreditQualifAmt" type="AmountType" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>If you are taking a tax credit for used property, this field contains the amount that qualifies for the credit. </xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="TaxCreditAmt" type="AmountType" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the amount of tax credit taken for this asset.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="InsuranceMethodTxt" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The method used to calculate insurance values for the asset.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AssetInsuranceAmt" type="AmountType" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The actual insurance value of the asset.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="CalcAssetInsuranceAmt" type="AmountType" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The calculated insurance value for the asset.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="ReplaceMethodTxt" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The method used to calculate replacement values for the asset.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="CalcAssetReplaceAmt" type="AmountType" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The calculated replacement value for the asset.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AssetItem" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>An asset item describes
+detailed information about an item that makes up an asset record. One or more
+asset items make up an asset, which is stored in the Asset file and is used
+for depreciating and reporting on the asset. Each Asset Item file record has
+one related record in the Asset.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="SequenceNbr">
+							<xs:annotation>
+								<xs:documentation>A unique sequence number assigned to the asset item.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="6"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AssetItemNbr">
+							<xs:annotation>
+								<xs:documentation>The number assigned to the asset item.  The item number must be unique within an asset, but can be duplicated from asset  to asset.                                An asset can be composed of more than one asset item, but the items are depreciated as a common asset unit. Items are not depreciated separately.  However, items can be partially or separately transferred or disposed of.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="32"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AssetItemDsc">
+							<xs:annotation>
+								<xs:documentation>The asset item description. </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ProcessCd">
+							<xs:annotation>
+								<xs:documentation>This field identifies whether the asset item record is in the process of being adjusted, disposed of, or transferred. Valid values are: ADJ = Adjustment, DSP = Disposal,  TRF = Transfer. Blank = The asset item is not being  adjusted, disposed of, or transferred.
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PurchaseDt" type="DateBaseType">
+							<xs:annotation>
+								<xs:documentation>The date the asset item was purchased. This purchased date can be different from the in-service dates for the  depreciation books used. </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ItemQty">
+							<xs:annotation>
+								<xs:documentation>The number of units that make up the asset item. Each unit of an item is  exactly the same as every other unit of the item. </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="8"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ItemBaseCostAmt" type="AmountType">
+							<xs:annotation>
+								<xs:documentation>This field identifies the unit cost of an item defined by this record in the company base currency. The item cost is multiplied by the item quantity to calculate the total cost amount to be added to the asset cost. The sum of the products of all associated item cost and item quantity fields must equal the total asset cost stored in the Asset file.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ItemTaxBaseAmt" type="AmountType">
+							<xs:annotation>
+								<xs:documentation>This field identifies the unit tax amount of an item defined by this asset record in the company base currency.  This amount is multiplied by the item quantity to calculate the total tax amount to be added to the asset tax. The sum of the products of all associated item tax and item quantity fields must equal the total asset tax amount in the Asset file.
+</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ItemUnitCostAmt" type="AmountType">
+							<xs:annotation>
+								<xs:documentation>This field identifies the unit cost of an item defined by this record in the transaction currency.
+</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ItemUnitTaxAmt" type="AmountType">
+							<xs:annotation>
+								<xs:documentation>This field identifies the unit tax amount of an item defined by this asset record in the transaction currency.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PurchaseOrderNbr">
+							<xs:annotation>
+								<xs:documentation>The purchase order number field is an optional field for your reference. It is assumed to contain the original purchase order number on which this asset item was included. </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="14"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PurchaseOrderRelNbr">
+							<xs:annotation>
+								<xs:documentation>Used to identify a purchase order release (created from a Blanket or Standing order).</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PurchaseOrderCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The purchase order code.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="VendorNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation> The vendor number associated with the asset item record.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="9"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="VendorNm" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The name of the vendor associated with the asset item.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="InvoiceNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The invoice number associated with the asset item.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="22"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="InvoiceSuffixNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The invoice number associated with the asset item.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="6"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DistribSequenceNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The distribution sequence number associated with the asset item.
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ModelNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The model number of the asset item. Represents the manufacturer identifier of an asset brand.  
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SerialNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This optional field is used for the serial number of the asset. The serial number represents a unique manufacturer identifier of an asset by model.
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ActivityDsc" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The activity assigned to the asset item.  Activities are the processes or procedures that produce work. Cost objects (products, services, customers, and so on) are the reasons for performing the activity. Activities and cost object activities are used synonymously in the Lawson Activity Management system. 
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="15"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CategoryCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The account category assigned to the asset item.  Account categories are groupings of costs, revenues, or a combination of both used for reporting and inquiries for activities in the Lawson Activity Management system. All transactions are posted to an account category within an activity.
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="5"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
+						<xs:element name="BARCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field contains the bar / upc code assigned to the asset item.
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AssetLocationTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The field contains the asset location detail.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="15"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LastInventoryDt" type="DateBaseType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field contains the system-generated date of the last inventory.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="LastInventoryTm" type="TimeBaseType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field contains the system-generated time of the last inventory.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="InvItemConditionInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field contains an assessment of the inventory item's condition. Valid values are: G = Good F = Fair D = Damaged.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ObjectId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is the object identifier. It is used to relate commitments or posted transactions back to the originating subsystems. Each subsystem record that is updated as a commitment or posted transaction is assigned an object identifier. The object identifier is maintained in the subsystem files and in the Activity Commitments Detail and Activity Transaction files. The object identifier is a unique key used to drill back from Activity Management to the subsystems.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="12"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element ref="CompanyId" minOccurs="0"/>
+						<xs:element name="XrefObjectId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is the object identifier. It is used to relate commitments or posted transactions back to the originating subsystems. Each subsystem record that is updated as a commitment or posted transaction is assigned an object identifier. The object identifier is maintained in the subsystem files and in the Activity Commitments Detail and Activity Transaction files. The object identifier is a unique key used to drill back from Activity Management to the subsystems.
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AsiSet6Ind" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>BLANK. Only on DB
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="RGrant" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>BLANK. Only on DB
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,941 @@
+<?xml version="1.0"?>
+<!-- edited with XMLSpy v2018 sp1 (x64) (http://www.altova.com) by Ashutosh Rana (TCS) -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/pbsync" targetNamespace="http://collab.safeway.com/it/architecture/info/pbsync" elementFormDefault="qualified">
+	<xsd:element name="S_PERSON_BASIC_SYNC_RES" type="S_PERSON_BASIC_SYNC_REStype"/>
+	<xsd:complexType name="S_PERSON_BASIC_SYNC_REStype">
+		<xsd:sequence>
+			<xsd:element name="PERSON" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="EMPLID" type="xsd:int" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>This field denotes Employee ID</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="BIRTHDATE" type="xsd:date" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>This field denotes Date of Birth.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="BIRTHPLACE" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>This field denotes Place of Birth</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="BIRTHCOUNTRY" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>This field denotes Country of Birth</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="BIRTHSTATE" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>This field denotes State of Birth</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="DT_OF_DEATH" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>This field denotes Date of Death.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="LAST_CHILD_UPDDTM" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Used to indicate the last update to any data belonging to this logical object. For PER_ORG_ASGN - this means any update to its children in JOB_DATA that do not have their own date.  For PERSON - this means any update to its children in PERSONAL_DATA that do not have their own date.</xsd:documentation>
+								<xsd:documentation>LAST_CHILD_UPDDTM is a datetime.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="PERS_DATA_EFFDT" minOccurs="0">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="EMPLID" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>This field denotes EmployeeID</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="EFFDT" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>This field denotes Effective Date</xsd:documentation>
+											<xsd:documentation>EFFDT is a date.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="MAR_STATUS" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Denotes Maital status of emloyee and is a character of length 1</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="MAR_STATUS_DT" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>This is the date that the employee's Marital status is/was effective.
+/* Marital Status date is stored redundantly on PERS_DATA_EFFDT for two reasons. 
+   1. To allow the date to be entered prior to the first PERS_DATA_EFFDT so that the actual date for the marital status on the hire row can be entered. This is the only time that the field is enterable by the user.
+   2. To allow for easier reporting on the data via SQR and Crystal. This is denormalizing the PERS_DATA_EFFDT record, but the number of requests for this redundancy coupled with the need for #1, has provided the justification for denormalizing this information and taking on the added maintenance. */</xsd:documentation>
+											<xsd:documentation>MAR_STATUS_DT is a date.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="SEX" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Denotes gender of the employee. Character of length 1.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="HIGHEST_EDUC_LVL" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Denotes the Highest level of education of employee. Character of length 2.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="FT_STUDENT" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Flag denotes Full-time student</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="LANG_CD" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Language code</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="ALTER_EMPLID" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Alternate EmployeeID. Character of length 11</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="LASTUPDDTTM" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Specifies the date and time of the last update to an entry.  This field is maintained by PeopleSoft and is used in a variety of contexts.</xsd:documentation>
+											<xsd:documentation>LASTUPDDTTM is a datetime.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="LASTUPDOPRID" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Specifies the User ID which made the last update to an entry.  This field is maintained by PeopleSoft and is used in a variety of contexts.</xsd:documentation>
+											<xsd:documentation>LASTUPDOPRID is a character of length 30</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="PERS_DATA_USF" minOccurs="0">
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="EMPLID" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>EmployeeID</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="EFFDT" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Effective Date</xsd:documentation>
+														<xsd:documentation>EFFDT is a date.</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="GVT_CRED_MIL_SVCE" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>GVT_CRED_MIL_SVCE is a character of length 6. Allows Numbers only</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="GVT_MILITARY_COMP" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>GVT_MILITARY_COMP is a character value indicating the type of Uniformed service exercised by a person like Air Force, Army,Coast Guard ,Marines or Navy.Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="GVT_MIL_GRADE" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>GVT_MIL_GRADE indicates the Military grade value of an person. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="GVT_MIL_RESRVE_CAT" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>GVT_MIL_RESRVE_CAT indicates the Reserve Category provided for a person like army, airforce, navy or coast guard. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="GVT_MIL_SEP_RET" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>GVT_MIL_SEP_RET is a character value which denotes Military Separation Status of a person. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="GVT_MIL_SVCE_END" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>GVT_MIL_SVCE_END is a date value which indicates Military service end date of a person</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="GVT_MIL_SVCE_START" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>GVT_MIL_SVCE_START is a date value which indicates Military service end date of a person</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="GVT_MIL_VERIFY" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>GVT_MIL_VERIFY  indicates the Military Service verification number and a character of length 1. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="GVT_PAR_NBR_LAST" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>GVT_PAR_NBR_LAST identifies the Last personnel action request number which is a number of length 6 with a decimal position of 0</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="GVT_UNIF_SVC_CTR" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>GVT_UNIF_SVC_CTR is used to Notify the Military Pay Center of a person. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="GVT_VET_PREF_APPT" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>GVT_VET_PREF_APPT indicates Veterans Preference which is a character of length 1. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="GVT_VET_PREF_RIF" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>GVT_VET_PREF_RIF indicates Veterans Preference incase of Reduction in Force which is a character of length 1.</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="GVT_CHANGE_FLAG" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>GVT_CHANGE_FLAG is used to indicate if there is any change in flag value and its a character of length 1</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="GVT_DRAFT_STATUS" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>GVT_DRAFT_STATUS is the draft status value which denotes whether it is 'R' registered or 'NR' NotRegistered or 'X' Not applicalable</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="GVT_YR_ATTAINED" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>GVT_YR_ATTAINED is a date value indicating the attained year</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="DISABLED_VET" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>DISABLED_VET indicates the Disabled Veteran which is a character of length 1</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="DISABLED" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>A flag that indicates whether or not (Y or N) a dependent is a disabled.</xsd:documentation>
+														<xsd:documentation>DISABLED is a character of length 1. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="GVT_DISABILITY_CD" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>GVT_DISABILITY_CD denotes the disability code value which is a character of length 2</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="GRADE" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>GRADE indicates the salary grade value of an employee which is  a character of length 3</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="SAL_ADMIN_PLAN" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>SAL_ADMIN_PLAN indicates the Salary Administration plan of an employee which is a character of length 4</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="GVT_CURR_AGCY_EMPL" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>GVT_CURR_AGCY_EMPL indicates whether he is a Current Agency Employee or not(Y/N) and it is  a character of length 1</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="GVT_CURR_FED_EMPL" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>GVT_CURR_FED_EMPL indicates whether he is a Current Federal Employee or not(Y/N) and it is a character of length 1</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="GVT_HIGH_PAY_PLAN" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>GVT_HIGH_PAY_PLAN indicates the Highest Pay Plan of an employee and it is a character of length 2</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="GVT_HIGH_GRADE" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>GVT_HIGH_GRADE  indicates the Highest Grade value of an employee and it is a character of length 3</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="GVT_PREV_AGCY_EMPL" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>GVT_PREV_AGCY_EMPL indicates whether he is a Previous Agency Employee or not(Y/N) and itis a character of length 1</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="GVT_PREV_FED_EMPL" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>GVT_PREV_FED_EMPL indicates whether he is a Previous Federal Employee or not(Y/N) and itis a character of length 1</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="GVT_SEP_INCENTIVE" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>GVT_SEP_INCENTIVE denotes Separation Incentive value of an employee which can be a Buyout or Early Retirement or Other Incentive reasons  and it is a character of length 1</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="GVT_SEP_INCENT_DT" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>GVT_SEP_INCENT_DT is the Separation Incentive Date of an employee</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="GVT_TENURE" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>GVT_TENURE  indicates the Highest Career Tenure Value of an employee wheather it is permanent or conditional or indefinite type   and it is  a character of length 1</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="GVT_PAY_PLAN" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>GVT_PAY_PLAN is used to indicate the Pay Plan of an employee a character of length 2</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="BARG_UNIT" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>BARG_UNIT is a value used to define the bargaining unit which is a character of length 4</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="PERS_NID" minOccurs="0">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="EMPLID" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>This field denotes EmployeeID</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="COUNTRY" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>This Field denotes Country</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="NATIONAL_ID_TYPE" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>This field denotes type of national identifier</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="NATIONAL_ID" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>This field denotes the value of national identifier</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="SSN_KEY_FRA" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>This field denotes the key to link SSN for global payroll</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="PRIMARY_NID" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>This field denotes the Primary National identifier</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="TAX_REF_ID_SGP" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>This field denotes the tax refund ID</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="LASTUPDDTTM" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>This field denotes the Last updated time of the record</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="LASTUPDOPRID" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>This field denotes the OPRID of individual who last updated the record.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="NAME_TYPE_VW" minOccurs="0">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="EMPLID" type="xsd:string" minOccurs="0"/>
+									<xsd:element name="ORDER_BY_SEQ" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Added in Mouse Over Label</xsd:documentation>
+											<xsd:documentation>ORDER_BY_SEQ is a number of length 2 with a decimal position of 0</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="NAME_TYPE" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>NAME_TYPE is a character of length 3. Allows Uppercase characters including numbers</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="NAMES" minOccurs="0">
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="EMPLID" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>This field denotes the EmployeeID</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="NAME_TYPE" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>This field denotes the type of the name</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="EFFDT" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>This field denotes the effective date</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="EFF_STATUS" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>This field denotes Effective date Status</xsd:documentation>
+														<xsd:documentation>EFF_STATUS is a character of length 1. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="COUNTRY_NM_FORMAT" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Supported Name Format Types</xsd:documentation>
+														<xsd:documentation>COUNTRY_NM_FORMAT is a character of length 3. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="NAME" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>This field denotes the Name of employee</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="NAME_INITIALS" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>This field denotes the initails of name.</xsd:documentation>
+														<xsd:documentation>NAME_INITIALS is a character of length 6</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="NAME_PREFIX" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>This field denotes prefix to the name</xsd:documentation>
+														<xsd:documentation>NAME_INITIALS is a character of length 6</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="NAME_SUFFIX" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>This field denotes the suffix to the name.</xsd:documentation>
+														<xsd:documentation>NAME_INITIALS is a character of length 6</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="NAME_ROYAL_PREFIX" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>This field denotes the Royalprefix to the name if present</xsd:documentation>
+														<xsd:documentation>NAME_INITIALS is a character of length 6</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="NAME_ROYAL_SUFFIX" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>This field denotes the royal suffix to the name if present</xsd:documentation>
+														<xsd:documentation>NAME_INITIALS is a character of length 6</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="NAME_TITLE" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>This field denotes the name title</xsd:documentation>
+														<xsd:documentation>NAME_INITIALS is a character of length 6</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="LAST_NAME_SRCH" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Last name without special characters</xsd:documentation>
+														<xsd:documentation>NAME_INITIALS is a character of length 6</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="FIRST_NAME_SRCH" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>First name without special characters</xsd:documentation>
+														<xsd:documentation>NAME_INITIALS is a character of length 6</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="LAST_NAME" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>This field denotes the last name</xsd:documentation>
+														<xsd:documentation>NAME_INITIALS is a character of length 6</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="FIRST_NAME" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>This field denotes the First name</xsd:documentation>
+														<xsd:documentation>NAME_INITIALS is a character of length 6</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="MIDDLE_NAME" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>This field denotes the middle name</xsd:documentation>
+														<xsd:documentation>NAME_INITIALS is a character of length 6</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="SECOND_LAST_NAME" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>This field denotes Mother surname(if applicable)</xsd:documentation>
+														<xsd:documentation>NAME_INITIALS is a character of length 6</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="SECOND_LAST_SRCH" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Second last name without special characters</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="NAME_AC" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>GVT_MILITARY_COMP is a character of length 1. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="PREF_FIRST_NAME" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>GVT_MILITARY_COMP is a character of length 1. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="PARTNER_LAST_NAME" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>The Partner Last Name is being used by the Netherlands for the employee name formatting, where a person can choose to use the partners last name as their prefered last name.</xsd:documentation>
+														<xsd:documentation>PARTNER_LAST_NAME is a character of length 30</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="PARTNER_ROY_PREFIX" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>The Partner Royal Prefix is being used by the Netherlands for the employee name formatting, where a person can choose to use the partners last name and prefix as their prefered last name.</xsd:documentation>
+														<xsd:documentation>PARTNER_ROY_PREFIX is a character of length 15</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="LAST_NAME_PREF_NLD" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>The field Last Name Preference is used in the Netherlands specific for people who are married to indicated their preference regarding the last name, which can be 4 choices based on the own last name and the partners last name.</xsd:documentation>
+														<xsd:documentation>LAST_NAME_PREF_NLD is a character of length 1. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="NAME_DISPLAY" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Display Name - name formatted for Display based on the Country</xsd:documentation>
+														<xsd:documentation>NAME_DISPLAY is a character of length 50</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="NAME_FORMAL" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Formal Name - name formatted for Formal Display by COuntry. Normally used in Correspondence.</xsd:documentation>
+														<xsd:documentation>NAME_FORMAL is a character of length 60</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="NAME_DISPLAY_SRCH" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Uppercase version of Name to improve performance on searches.</xsd:documentation>
+														<xsd:documentation>NAME_DISPLAY_SRCH is a character of length 50. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="LASTUPDDTTM" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Specifies the date and time of the last update to an entry.  This field is maintained by PeopleSoft and is used in a variety of contexts.</xsd:documentation>
+														<xsd:documentation>LASTUPDDTTM is a datetime.</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="LASTUPDOPRID" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Specifies the User ID which made the last update to an entry.  This field is maintained by PeopleSoft and is used in a variety of contexts.</xsd:documentation>
+														<xsd:documentation>LASTUPDOPRID is a character of length 30</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="ADDRESS_TYPE_VW" minOccurs="0">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="EMPLID" type="xsd:int" minOccurs="0"/>
+									<xsd:element name="ORDER_BY_SEQ" type="xsd:byte" minOccurs="0"/>
+									<xsd:element name="ADDRESS_TYPE" type="xsd:string" minOccurs="0"/>
+									<xsd:element name="ADDRESSES" minOccurs="0">
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="EMPLID" type="xsd:int" minOccurs="0"/>
+												<xsd:element name="ADDRESS_TYPE" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>ADDRESS_TYPE is a character of length 4. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="EFFDT" type="xsd:date" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>ADDRESS_TYPE is a character of length 4. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="EFF_STATUS" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>ADDRESS_TYPE is a character of length 4. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="COUNTRY" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>ADDRESS_TYPE is a character of length 4. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="ADDRESS1" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>ADDRESS_TYPE is a character of length 4. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="ADDRESS2" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>ADDRESS_TYPE is a character of length 4. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="ADDRESS3" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>ADDRESS_TYPE is a character of length 4. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="ADDRESS4" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>ADDRESS_TYPE is a character of length 4. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="CITY" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>ADDRESS_TYPE is a character of length 4. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="NUM1" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>ADDRESS_TYPE is a character of length 4. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="NUM2" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>ADDRESS_TYPE is a character of length 4. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="HOUSE_TYPE" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>ADDRESS_TYPE is a character of length 4. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="ADDR_FIELD1" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>House Type</xsd:documentation>
+														<xsd:documentation>HOUSE_TYPE is a character of length 2. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="ADDR_FIELD2" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>House Type</xsd:documentation>
+														<xsd:documentation>HOUSE_TYPE is a character of length 2. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="ADDR_FIELD3" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>House Type</xsd:documentation>
+														<xsd:documentation>HOUSE_TYPE is a character of length 2. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="COUNTY" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>House Type</xsd:documentation>
+														<xsd:documentation>HOUSE_TYPE is a character of length 2. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="STATE" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>House Type</xsd:documentation>
+														<xsd:documentation>HOUSE_TYPE is a character of length 2. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="POSTAL" type="xsd:short" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>House Type</xsd:documentation>
+														<xsd:documentation>HOUSE_TYPE is a character of length 2. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="GEO_CODE" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>House Type</xsd:documentation>
+														<xsd:documentation>HOUSE_TYPE is a character of length 2. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="IN_CITY_LIMIT" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>House Type</xsd:documentation>
+														<xsd:documentation>HOUSE_TYPE is a character of length 2. Allows Uppercase characters including numbers</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="ADDRESS1_AC" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Alternate Character Address 2</xsd:documentation>
+														<xsd:documentation>ADDRESS2_AC is a character of length 55</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="ADDRESS2_AC" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Alternate Character Address 2</xsd:documentation>
+														<xsd:documentation>ADDRESS2_AC is a character of length 55</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="ADDRESS3_AC" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Alternate Character Address 2</xsd:documentation>
+														<xsd:documentation>ADDRESS2_AC is a character of length 55</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="CITY_AC" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Alternate Character City</xsd:documentation>
+														<xsd:documentation>CITY_AC is a character of length 30</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="REG_REGION" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Alternate Character City</xsd:documentation>
+														<xsd:documentation>CITY_AC is a character of length 30</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="LASTUPDDTTM" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Alternate Character City</xsd:documentation>
+														<xsd:documentation>CITY_AC is a character of length 30</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="LASTUPDOPRID" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Alternate Character City</xsd:documentation>
+														<xsd:documentation>CITY_AC is a character of length 30</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="EMAIL_ADDRESSES" minOccurs="0">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="EMPLID" type="xsd:string" minOccurs="0"/>
+									<xsd:element name="E_ADDR_TYPE" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>E_ADDR_TYPE is a character of length 4</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="EMAIL_ADDR" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>E_ADDR_TYPE is a character of length 4</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="PREF_EMAIL_FLAG" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>E_ADDR_TYPE is a character of length 4</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="PERSON_IMCHAT" minOccurs="0">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="EMPLID" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>This field denotes EmployeeID</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="MCF_IM_PROTOCOL" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>MCF_IM_PROTOCOL is a character of length 4. Allows Uppercase characters including numbers. Denotes the Protocol of IM</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="MCFIMDOMAIN" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>MCF_IM_PROTOCOL is a character of length 4. Allows Uppercase characters including numbers. Denotes domain of IM.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="MCF_IMUSERID" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>MCF_IM_PROTOCOL is a character of length 4. Allows Uppercase characters including numbers. Denotes UserID of IM.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="PREF_CHATID_FLAG" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>MCF_IM_PROTOCOL is a character of length 4. Allows Uppercase characters including numbers.Denotes preferred ChatID flag.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="PERSONAL_PHONE" minOccurs="0">
+							<xsd:complexType mixed="true">
+								<xsd:sequence>
+									<xsd:element name="EMPLID" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>This field denotes EmployeeID</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="PHONE_TYPE" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>PHONE_TYPE indicates the phone number of the employee.
+ The system formats the number based on the standard phone number format for the person's country as indicated in the address. 
+If no special formatting is specified for the selected address country, the format is 000/000-0000.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="COUNTRY_CODE" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>COUNTRY_CODE is a character value to indicate the country code of an employee </xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="PHONE" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>PHONE is a character value indicating the telephone information of an employee</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="EXTENSION" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>EXTENSION is a character value indicates Phone number extension with respect to the location of an employee</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="PERS_SMOKER" minOccurs="0">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="EMPLID" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>This field denotes EMPLID</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="SMOKER_DT" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>SMOKER_DT is a date value indicates  the date on which the person started smoking. A person's smoker status affects benefits eligibility and rate determination in PeopleSoft Human Resources (HR) Manage Base Benefits and is required for regulatory reporting.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="SMOKER" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>A flag that indicates whether or not (Y or N) an employee or dependent is a smoker.</xsd:documentation>
+											<xsd:documentation>SMOKER is a character of length 1. Allows Uppercase characters including numbers</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="PERS_DATA_USA" minOccurs="0">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="EMPLID" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>This field denotes EmployeeID</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="EFFDT" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>This field denotes Effective date</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="US_WORK_ELIGIBILTY" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>US_WORK_ELIGIBILTY is a character of length 1. Allows Uppercase characters including numbers. Denotes if  person is eligible to work in States.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="MILITARY_STATUS" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Veteran Status / Military Status</xsd:documentation>
+											<xsd:documentation>MILITARY_STATUS is a character of length 1. Allows Uppercase characters including numbers</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="CITIZEN_PROOF1" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Proof of citizenship 1.</xsd:documentation>
+											<xsd:documentation>MILITARY_STATUS is a character of length 1. Allows Uppercase characters including numbers</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="CITIZEN_PROOF2" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Proof of citizenship 2.</xsd:documentation>
+											<xsd:documentation>MILITARY_STATUS is a character of length 1. Allows Uppercase characters including numbers</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="MEDICARE_ENTLD_DT" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Date of medicare enttlement</xsd:documentation>
+											<xsd:documentation>MILITARY_STATUS is a character of length 1. Allows Uppercase characters including numbers</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="PERSON_SA" minOccurs="0">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="EMPLID" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>This field denotes EmployeeID</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="VA_BENEFIT" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>VA_BENEFIT is a character value indicating the Veterans Benefit is applicable or not(Y/N) which is of length 1</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="CAMPUS_ID" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>CAMPUS_ID is a character value indicating the campus Id of an employee which of length 16</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="DEATH_CERTIF_NBR" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>DEATH_CERTIF_NBR is a character value of death Certificate number and of length 10</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="FERPA" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>FERPA is a value indicates whether an employee is applicable for the  Family Educational Rights and Privacy Act or not (Y/N)and it is a character of length 1. Allows Uppercase characters including numbers</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="PLACE_OF_DEATH" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>PLACE_OF_DEATH is a character value to denote the place of death of a person</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="DIVERS_ETHNIC" minOccurs="0">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="EMPLID" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>This field denotes EmployeeID</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="REG_REGION" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>region where there are specific laws and regulations that are addressed by functionality in PeopleSoft Human Resources</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="ETHNIC_GRP_CD" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Code that depicts ethnical background</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="SETID" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>This field denotes SETID</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="APS_EC_NDS_AUS" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Denotes if Etnic group in Asia Pacific Australia</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="PRIMARY_INDICATOR" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Primary ethnic group indicator</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="PSOPRDEFN" minOccurs="0">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="EMPLID" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>This field denotes employee id.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="EMAILID" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>This field denotes the emailid</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

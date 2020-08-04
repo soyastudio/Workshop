@@ -1,0 +1,564 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--V1.0 Jayson Leo Soliman 9/19 initial version-->
+	<!--V 1.1  Alex Nunes  9/20/2018 Added missing datatype for PriceAreaCd in ItemPriceType-->
+	<!--V 1.2 Patrick Oliver 6/19/19 Added UnitPricing sequence with elements: UnitPriceTableNumber, UnitPriceMeasure,  SellingUnitSize, LabelPriceUnit, UnitPriceMultiplicationFactor-->
+	<xs:complexType name="ItemPrice">
+		<xs:annotation>
+			<xs:documentation>Contains current and pending  retail regular prices for albertsons items at price area level.It also includes store specific regular price overrides. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Item" type="ItemType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains basic item information related to pricing such as UPC, Price area, etc</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ItemPriceMessageType" type="CodeWithName" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines published item price message type.
+C - Current Price
+P - Pending item price (future price)
+S - Store Item Price, in case stores overrides the price locally.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CurrentPrice" type="CurrentPriceType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>SSIMS Definition: This contains the current Billing Retail Price of the item including Long Term specials but not including AD pricing. A matching record must exist in the SSITMPOS table. Values in this table are changed according to records in the Pending Price Change table and Pending AD Item Tables. When a value is changed the old value is recorded in the History Price Change Table.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PendingPrice" type="PendingPriceType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>SSIMS Definition: This table contains a record of retail billing price changes. Records are either pending or recently applied. There must be a matching SSITMPRC record. For LTS's there must be a SSITMURX record that links to a SSPENDADI record for the LTS. Records that have been applied are copied to the History Price Changes Table and deleted within four weeks.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StoreItemPrice" type="StoreItemPriceType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation> This segment holds store specific retail prices by Rog, Facility, Item and Date.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ItemType">
+		<xs:annotation>
+			<xs:documentation>Contains information about Albertsons Items</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="Abs:CorporationId"/>
+			<xs:element ref="Abs:DivisionId"/>
+			<xs:element ref="Abs:ROGCd"/>
+			<xs:element name="PriceAreaCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Price areas are groups of stores within a ROG that have the same Pricing structure. This is the individual price area within the Price Area group. Price areas are found on the Price Area Facility Table (SSPAFACL_TABLE).</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="Abs:CorporateItemCd" minOccurs="0"/>
+			<xs:element name="RetailScanCd" type="UPC"/>
+			<xs:element name="UPCType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Shows which of the Consumer, Multipack, or Case UPCs is used to make up the right 5 digitis of the UPC. One of these must be chosen.Called UNIT_TYPE in legacy systems.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CommonRetailCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Used to establish a corporate set of items at the retail level. The Common Retail Cd is different from Common Cd although users may choose to set both Cds the same.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="6"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ItemDsc" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="POSItemDsc" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Abreviated Dsc of the item that will appear on scanner store receipts.</xs:documentation>
+								<xs:documentation>Dsc of the item in retail POS.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="RetailItemDsc" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Description of item in Retail systems.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="InternetItemDsc" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Dsc used in internet for various promotions.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="WarehouseItemDsc" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is the Dsc of a warehoused item. It contains the brand and Dsc of the item. The brand occurs first. The space after the brand is located using the column brand end position. The space before the flavor/type in the Dsc is located using the column SUFFIXPOS.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="40"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="VendorItemDsc" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Item Dsc provided by the vendor</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="UnitPricing" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> SSIMS Definition: This contains attributes used by programs to translate the Unit Pricing table number to the descriptive unit that is printed on labels.                   </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="UnitPriceTableNumber" type="xs:short" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Unit Price Table Number  </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="UnitPriceMeasure" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Unit Price Measure. UseD in the calculation of unit price for each item.   </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="7"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SellingUnitSize" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Size of the selling unit to be expressed in label units for customer cost comparisions.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="40"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LabelPriceUnit" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Unit of measure that price will be per on labels.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="UnitPriceMultiplicationFactor" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Unit price multiplication factor. A mathematical conversion factor used to convert each Unit of Measure.
+  OZ==> LB(16) , LB ==> OZ,(1/16) OZ ==> QT (32)......etc.              </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PriceType">
+		<xs:annotation>
+			<xs:documentation>Contains basic pricing attributes applicable to different kinds of pricing (Current, Pending, History)</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PriceMethodCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identifies the method of item pricing.
+G = Group Price Method – if customer is purchasing in groups (Limit Quantity), Alternate Price is used.  Items not purchased in these groups are charged at        Regular Price.
+M = Minimum Price Method – if customer purchases a minimum amount (Limit Quantity), Alternate Price is used.  If customer purchases below a minimum        amount, Regular Price is used.
+R = Regular Price Method – Regular Price is always used.
+L = Limit Quantity Pricing – if customer purchases an amount under the limit (Limit Quantity), Alternate Price is used.  If customer purchases an amount over the limit, Regular Price is used. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ItemLimtQty" type="xs:integer" minOccurs="0"/>
+			<xs:element name="ItemPriceAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the retail price charged to the customer for each shelf unit, or if the price factor is > 1, for price factor number of units. EG. It is the '.99 cents' in '2/.99 cents'. It is also used as the over the limit price.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="12"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ItemPriceFactor" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the number of shelf items received for the price e.g. it is the '2' in '2/99 cents'.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AlternatePriceAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is an alternate price charged if Price Method is not R and the Limit Quantity purchased.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="12"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AlternatePriceFactor" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The number of items that are associated with the Alternate Price, ie: the 2 in “2 for $1.80.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReasonCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LongTermSpecialInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>shows whether or not a UPC price is an LTS. (Long Term Special)</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OriginTxt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="HistoryPriceType">
+		<xs:annotation>
+			<xs:documentation>Contains attributes specific to Historical Pricing</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Price" type="PriceType" minOccurs="0"/>
+			<xs:element name="EffectiveStartDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="EffectiveEndDt" type="xs:date" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CurrentPriceType">
+		<xs:annotation>
+			<xs:documentation>Contains attributes specific to Current Pricing</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Price" type="PriceType" minOccurs="0"/>
+			<xs:element name="PriceWarInd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The price war flag indicates that this item is involved in a price war with competitors in this price area.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SensitiveItemCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Sensitive item code identifies the pricing strategy assigned to the item's category and the targeted competitor type as defined at SCOP sessions (if the category has been through SCOP); it can change by Price Area.  If multiple sensitivity values apply and Pre-priced is one of those values, a '9' must be entered in the Sensitive Item field. Pre-priced overrides everything at the ROG level.  Item sensitivity automatically copies to all items that share a Common Retail Code; there is no turn-off option.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RegularRetailItemPriceAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the regular billing store retail that was last seen at the store by the consumer. If the item is currently on regular retail, this will be the same as the retail in the PRICE column. If the item is currently on LTS, this column will contain the retail of the item prior to being on LTS - it will not match the retail in PRICE. If the item is currently on Ad (and not on LTS), it will contain the retail of the item prior to being on Ad - it will match the retail in PRICE. If the item is currently on both Ad and LTS, it will contain the previous regular (non-LTS) retail - it will not match the retail in PRICE, since that would be the LTS retail.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="12"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RegularRetailItemPriceFactor" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the price factor associated with the underlying Regular Price fields.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RegularRetailItemAltPriceAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the alternate price associated with the underlying Regular Price fields.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="12"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RegularRetailItemAltPriceFactor" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the alternate price associated with the underlying Regular Price fields.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RegularItemLimitQty" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>limited quantity associated with the underlying Regular Price fields.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RegularPriceMethodCd" type="xs:string" minOccurs="0"/>
+			<xs:element name="AdvertisedPriceInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>shows whether or not a UPC price has an AD currently running.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ChangeToCurrentPriceDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date of the last price change to this item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SensitiveItem" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Price sensitive information for an item that can affect pricing policies.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="SensitiveItemInd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="5"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SensitiveTier" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="SensitiveRole" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="SensitiveClass" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="SensitiveChannel" type="CodeWithDescription" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PriceStatus" type="StatusType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines the current  price status if it is active or deleted.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PriceStatusReset" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If this flag is on then POS must resend this price to the store group with Remarks: POS Should reset to blank after use. sourced from pos_load in ssitmprc.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="StoreItemPriceType">
+		<xs:annotation>
+			<xs:documentation>Override prices within individual stores</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="Abs:RetailStoreId" minOccurs="0"/>
+			<xs:element name="RetailScanCd" type="Abs:UPC" minOccurs="0"/>
+			<xs:element name="EffectiveStartDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="EffectiveEndDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="PriceMethodCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identifies the method of item pricing.
+G = Group Price Method – if customer is purchasing in groups (Limit Quantity), Alternate Price is used.  Items not purchased in these groups are charged at        Regular Price.
+M = Minimum Price Method – if customer purchases a minimum amount (Limit Quantity), Alternate Price is used.  If customer purchases below a minimum        amount, Regular Price is used.
+R = Regular Price Method – Regular Price is always used.
+L = Limit Quantity Pricing – if customer purchases an amount under the limit (Limit Quantity), Alternate Price is used.  If customer purchases an amount over the limit, Regular Price is used. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ItemLimtQty" type="xs:integer" minOccurs="0"/>
+			<xs:element name="ItemPriceAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the retail price charged to the customer for each shelf unit, or if the price factor is > 1, for price factor number of units. EG. It is the '.99 cents' in '2/.99 cents'. It is also used as the over the limit price.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="12"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ItemPriceFactor" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the number of shelf items received for the price e.g. it is the '2' in '2/99 cents'.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AlternatePriceAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is an alternate price charged if Price Method is not R and the Limit Quantity purchased.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="12"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AlternatePriceFactor" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The number of items that are associated with the Alternate Price, ie: the 2 in “2 for $1.80.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReasonCd" type="xs:string" minOccurs="0"/>
+			<xs:element name="CommonCdUsedInd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if Common Code was used to create Bib.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PromotionInd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This indicates if the item is on Ad or Long Term Special on the delivery date, as 'out of stock's do not have the selection list quantity adjusted for ADs, or LTSs.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PriceOverrideInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This tells the POS system that the normal price precedence rules do not apply, and that this price will override LTS and regular prices</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BIBTypeCd" type="xs:string" minOccurs="0"/>
+			<xs:element name="BIBTagNbr" type="xs:string" minOccurs="0"/>
+			<xs:element name="SignHeaderId" type="xs:string" minOccurs="0"/>
+			<xs:element name="SignTypeCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SignCount1" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> SGNCOUNT1 is the count of TALKER signs for this item.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="1"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SignCount2" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> SGNCOUNT2 is the count of the MOULDING signs for this item.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="1"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SignCount3" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>SGNCOUNT3 is the count of the DISPLAY signs for this item.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="1"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PriceChangeBy" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>UserId of the person changed the price</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PriceChangeTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time when the change happened.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PendingPriceType">
+		<xs:annotation>
+			<xs:documentation>Contains attributes specific to Pending Item Price</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Price" type="PriceType" minOccurs="0"/>
+			<xs:element name="EffectiveStartDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="EffectiveEndDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="LinkDate" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This code ties together the start and end changes of a long term special. Starts carry the end record date and end records or adjustment records carry the start date.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OldItemPriceAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Old item price as represented in SSPENPRC PRICE_O</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="12"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OldItemPriceFactor" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Old Item Price Factor as represented in SSPENPRC PRICE_FCTR_O</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="POSPriceSendInd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field is used by the Point of Sale system to determine if the price has been sent to the stores. POS_CD in SSPENPRC</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MasterUpdateProcessInd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This byte is used to indicate that the Master Updating program has already processed the pending record.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ChangeDtTm" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identifies the date and time when the last change was made to the information on a table row.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BillingDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the effective Billing Date for the stores. In most cases this date will be the same as the Effective Date for a Retail Price Change. For selected LTS items the Billing Date can be set to be BEFORE the Effective </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UnitTypeNbr" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Shows which of the Consumer, Multipack, or Case UPCs is used to make up the right 5 digitis of the UPC. One of these must be chosen.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PendingPriceReasonCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This switch tells POS if the price is an advance or decline Remarks: Must be set by file maintenance program</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CommonCd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> For retai only lCommon Cd links items with common pricing structures.  All packs of 60 gm jello jelly powder will have the same common Cd. They will get the same price. When used with the cost subCd similar packs will get the same cost.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="5"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AdSelectId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is an interanl identification number used by the Merchandisers to separate ADs that run in the same period.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

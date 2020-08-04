@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2014 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Safeway, Inc.) -->
+<xs:schema xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://collab.safeway.com/it/architecture/AbsOmMaster" xmlns:ns2="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:complexType name="AccountingFacility">
+		<xs:annotation>
+			<xs:documentation>AccountingFacility business object captures store/facility organizational structure from the accounting point of view. It differs from Internal Org Master in terms of content and granularity.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Company" type="Abs:CompanyType">
+				<xs:annotation>
+					<xs:documentation>An accounting Organization which consists of an entire company within some legal framework. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Division" type="Abs:DivisionType">
+				<xs:annotation>
+					<xs:documentation>Information related to the operating division. Ex Norcal with Div Id 25 </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OperatingArea" type="Abs:OperatingAreaType">
+				<xs:annotation>
+					<xs:documentation>Organization layer within the operating division. Generally it contains one or more operating districts.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ParentOperatingArea" type="Abs:OperatingAreaType">
+				<xs:annotation>
+					<xs:documentation>Sometimes retail facilities may have a different reporting structure, generally a division.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="District" type="Abs:DistrictType">
+				<xs:annotation>
+					<xs:documentation>A district is a group of facilities. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Banner" type="Abs:BannerType">
+				<xs:annotation>
+					<xs:documentation>Defines Banner and related information. Banner is the marketing identifer in a particular georgraphic area of the division or region.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityData" type="Abs:FacilityType">
+				<xs:annotation>
+					<xs:documentation>General information about the store/facility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Region" type="Abs:RegionType">
+				<xs:annotation>
+					<xs:documentation>Region is a group of Divisions within a Corporation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ROG" type="Abs:RetailOrderGroupType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Retail Ordering Group.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityDepartmentData" type="Abs:FacilityDepartmentType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Defines store departments based on its function.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityDepartmentSectionType" type="Abs:FacilityDepartmentSectionType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Defines various sections within a department of  a retail store facility.A store facility is physically divided into different departments and sections.Ex:Grocery department can have sections like Grocery main meal,Snacks,Family care grocery,Home care grocery,Soft Drinks,Candy,Meals ingredients.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

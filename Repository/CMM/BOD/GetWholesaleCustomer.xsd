@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2014 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Safeway, Inc.) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/WholesaleCustomer.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="GetWholesaleCustomer" type="GetWholesaleCustomer">
+		<xs:annotation>
+			<xs:documentation>Business object that provides Information  about Wholesale Customers who can place orders to Albertsons shipping facilities like warehouses or manufacturing plants to purchase goods in bulk on a periodic basis. Unlike a Retail customer who pays thru POS termianl or thru online transaction for the goods and services purchased, for wholesale customer Albertsons will raise an invoice for the goods shipped form it's facilities.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetWholesaleCustomer">
+		<xs:annotation>
+			<xs:documentation>Business object that provides Information  about Wholesale Customers who can place orders to Albertsons shipping facilities like warehouses or manufacturing plants to purchase goods in bulk on a periodic basis. Unlike a Retail customer who pays thru POS termianl or thru online transaction for the goods and services purchased, for wholesale customer Albertsons will raise an invoice for the goods shipped form it's facilities.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="WholesaleCustomerData" type="Abs:WholesaleCustomerType"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

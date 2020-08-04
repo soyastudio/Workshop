@@ -1,0 +1,1821 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"description": "Offer Copient JSON Schema. Author: Daniel Cheung Date: 4/30/2020. Modified on 6/12/2020 by Alex Nunes. Reason: move notification group to Offer section.",
+	"offer": {
+		"type": "object",
+		"properties": {
+			"IncentiveId": {
+				"type": "integer",
+				"description": "Incentive Id."
+			},
+			"DeployInd": {
+				"type": "boolean",
+				"description": "If this field is true, then offer will be marked for deployment to the store as part of the request. If this field is false, then offer will not be marked for deployment to the store as part of the request."
+			},
+			"DeferDeployInd": {
+				"type": "boolean",
+				"description": "If this field is true, if (offer ⇾ deploy) is true, then deployment will be deferred. If this field is false, offer will not be deferred deployed."
+			},
+			"EngineTypeNm": {
+				"type": "string",
+				"description": "Type of Engine that generated the offer.",
+				"enum": [
+					"CPE",
+					"USAIRMILES",
+					"CPE Instant Win"
+				]
+			},
+			"LastUpdateTs": {
+				"description": "Date and time stamp of the last time the offer was modified.",
+				"type": "string",
+				"format": "date-time"
+			},
+			"general": {
+				"type": "object",
+				"properties": {
+					"identification": {
+						"type": "object",
+						"properties": {
+							"OfferNm": {
+								"type": "string",
+								"description": "Name of the offer.",
+								"minLength": 1,
+								"maxLength": 100
+							},
+							"OfferDsc": {
+								"type": "string",
+								"description": "Complete description of the offer.",
+								"minLength": 0,
+								"maxLength": 4000
+							},
+							"OfferExternaId": {
+								"type": "string",
+								"description": "External Offer Id. Ex: Offers from TOGM, OMS and EMOM.",
+								"minLength": 0,
+								"maxLength": 20
+							},
+							"CategoryDsc": {
+								"type": "string",
+								"description": "Category of the offer. This must match an existing category defined in Logix (ex. 007-J4U Manufacturer Coupons.",
+								"minLength": 1,
+								"maxLength": 255
+							},
+							"VendorCouponCd": {
+								"type": "string",
+								"description": "Not used functionally in the Offer delivery, mainly for reporting after the fact.",
+								"minLength": 0,
+								"maxLength": 20
+							}
+						},
+						"required": [
+							"OfferNm",
+							"OfferDsc",
+							"OfferExternalId",
+							"CategoryCd",
+							"VendoCouponCd"
+						]
+					},
+					"priority": {
+						"type": "object",
+						"properties": {
+							"PriorityNm": {
+								"type": "string",
+								"description": "The name of the priority (ex. High, Medium, JPriority1, ...). this field must already be defined in Logix.",
+								"minLength": 1,
+								"maxLength": 50
+							},
+							"FooterPriorityMsgTxt": {
+								"type": "integer",
+								"description": "Only used when the priority is set to Footer Printed Message. This field will define within a footer printed message (i.e. Scorecard offer) the ordering of the receipt print on the customer receipt.",
+								"minimum": 0
+							}
+						},
+						"required": [
+							"PriorityNm",
+							"FooterPriorityMsgTxt"
+						]
+					},
+					"dates": {
+						"type": "object",
+						"properties": {
+							"testing": {
+								"type": "object",
+								"properties": {
+									"TestingStartDt": {
+										"type": "string",
+										"description": "Start date for testing. Testing dates are where the offer is active ONLY for testing locations.",
+										"format": "date"
+									},
+									"TestingEndDt": {
+										"type": "string",
+										"description": "Etart date for testing. Testing dates are where the offer is active ONLY for testing locations.",
+										"format": "date"
+									}
+								},
+								"required": [
+									"TestingStartDt",
+									"TestingEndDt"
+								]
+							},
+							"eligibility": {
+								"type": "object",
+								"properties": {
+									"EligibilityStartDt": {
+										"type": "string",
+										"description": "Start date for eligibility. Eligibility dates define when notifications (offer ⇾ notifications]) can be given to the customer",
+										"format": "date"
+									},
+									"EligibilityEndDt": {
+										"type": "string",
+										"description": "End date for eligibility. Eligibility dates define when notifications (offer ⇾ notifications]) can be given to the customer",
+										"format": "date"
+									}
+								},
+								"required": [
+									"EligibilityStartDt",
+									"EligibilityEndDt"
+								]
+							},
+							"production": {
+								"type": "object",
+								"properties": {
+									"ProductionStartDt": {
+										"type": "string",
+										"description": "Start date for production. Active offers will be given to the customer during the production dates",
+										"format": "date"
+									},
+									"ProductionEndDt": {
+										"type": "string",
+										"description": "End date for production. Active offers will be given to the customer during the production dates",
+										"format": "date"
+									}
+								},
+								"required": [
+									"ProductionStartDt",
+									"ProductionEndDt"
+								]
+							}
+						},
+						"required": [
+							"testing",
+							"eligibility",
+							"production"
+						]
+					},
+					"limits": {
+						"type": "object",
+						"properties": {
+							"eligibility": {
+								"type": "object",
+								"properties": {
+									"EligibilityFrequencyNm": {
+										"type": "string",
+										"description": "Eligibility frequency description enumaration.",
+										"enum": [
+											"No Limit",
+											"Once Per Transaction",
+											"Once Per Day",
+											"Once Per Week",
+											"Once Per Offer",
+											"Custom"
+										]
+									},
+									"LimitNbr": {
+										"type": "number",
+										"description": "Number of times eligibility is awarded."
+									},
+									"PeriodQty": {
+										"type": "number",
+										"description": "The quantity of period the eligibility is to be distributed."
+									},
+									"QuantityType": {
+										"type": "string",
+										"description": "The quantity type of period the eligibility is to be distributed.",
+										"enum": [
+											"Hours Since Last Awarded",
+											"Days Since Start Of Incentive"
+										]
+									}
+								},
+								"required": [
+									"EligibilityFrequencyNm"
+								]
+							},
+							"reward": {
+								"type": "object",
+								"properties": {
+									"RewardsFrequencyNm": {
+										"type": "string",
+										"description": "Reward frequency description enumarion.",
+										"enum": [
+											"No Limit",
+											"Once Per Transaction",
+											"Once Per Day",
+											"Once Per Week",
+											"Once Per Offer",
+											"Custom"
+										]
+									},
+									"LimitNbr": {
+										"type": "number",
+										"description": "Number of times reward is awarded."
+									},
+									"PeriodQty": {
+										"type": "number",
+										"description": "The quantity of period the reward is to be distributed."
+									},
+									"QuantityType": {
+										"type": "string",
+										"description": "The quantity type of period the reward is to be distributed",
+										"enum": [
+											"Hours Since Last Awarded",
+											"Days Since Start Of Incentive"
+										]
+									}
+								},
+								"required": [
+									"RewardsFrequencyNm"
+								]
+							}
+						},
+						"required": [
+							"eligibility",
+							"reward"
+						]
+					},
+					"inboundoutbound": {
+						"type": "object",
+						"properties": {
+							"CreationSourceNm": {
+								"type": "string",
+								"description": "The source that created the offer (ex. Logix, couponsInc). The source must already exist in Logix.",
+								"minLength": 1,
+								"maxLength": 100
+							},
+							"OutboundSourceNm": {
+								"type": "string",
+								"description": "The outbound source. The source must already exist in Logix.",
+								"minLength": 1,
+								"maxLength": 100
+							},
+							"ChargebackVendorId": {
+								"type": "string",
+								"description": "The chargeback vendor (used to reconcile redemptions). The chargeback vendor must already exist in Logix.",
+								"minLength": 1,
+								"maxLength": 50
+							}
+						},
+						"required": [
+							"CreationSourceNm",
+							"OutboundSourceNm",
+							"ChargebackVendorId"
+						]
+					},
+					"employees": {
+						"type": "object",
+						"properties": {
+							"EmployeeEligibilityTypNm": {
+								"type": "string",
+								"description": "None - No employee filtering, available to everyone.\rEmployees Only - Only employees are eligible\rEmployees Excluded - Only non-employees are eligible",
+								"enum": [
+									"None",
+									"Employees Only",
+									"Employees Excluded"
+								]
+							}
+						},
+						"required": [
+							"EmployeeEligibilityTypNm"
+						]
+					},
+					"advanced": {
+						"type": "object",
+						"properties": {
+							"EosDeferInd": {
+								"type": "boolean",
+								"description": "True - Offer rewards are calculated and delivered at End Of Sale. False - Offer rewards are calculated and delivered at Total"
+							},
+							"reporting": {
+								"type": "object",
+								"properties": {
+									"ImpressionInd": {
+										"type": "boolean",
+										"description": "True - Offer will generate impressions. False - Offer will not generate impressions"
+									},
+									"RedemptionInd": {
+										"type": "boolean",
+										"description": "True - Offer will generate redemption history records for redemptions. False - Offer will not generate redemption history records for redemptions"
+									}
+								},
+								"required": [
+									"ImpressionInd",
+									"RedemptionInd"
+								]
+							},
+							"IssuanceInd": {
+								"type": "boolean",
+								"description": "True - Offer will generate issuance records when redeemed. False - Offer will not generate issuance records when redeemed"
+							},
+							"ManufacturerCouponInd": {
+								"type": "boolean",
+								"description": "True - Offer discounts will be treated as manufacturer coupon (payment). False - Offer will not be treated as manufacturer coupon\rManufacturer coupons will behave differently than non-manufacturer coupon when it comes to net of discounts as well as chargeback"
+							}
+						},
+						"required": [
+							"EosDeferInd",
+							"Reporting",
+							"IssuanceInd",
+							"ManufacturerCouponInd"
+						]
+					}
+				},
+				"required": [
+					"identification",
+					"priority",
+					"dates",
+					"limits",
+					"inboundoutbound",
+					"employees",
+					"advanced"
+				]
+			},
+			"conditions": {
+				"properties": {
+					"storedvalue": {
+						"properties": {
+							"tiers": {
+								"type": "array",
+								"minItems": 1,
+								"maxItems": 11,
+								"items": {
+									"type": "object",
+									"properties": {
+										"TierQty": {
+											"type": "integer",
+											"description": "The specific quantities required for each tier If enginetype = CPE Instant Win, then tiers array count cannot be more than 1.",
+											"minimum": 1,
+											"maximum": 999999999
+										}
+									},
+									"required": [
+										"TierQty"
+									]
+								}
+							},
+							"ProgramNm": {
+								"type": "string",
+								"description": "The name of the required stored value program. Stored value program must already exist in Logix",
+								"minLength": 1,
+								"maxLength": 255
+							}
+						},
+						"type": "object",
+						"required": [
+							"ProgramNm",
+							"tiers"
+						]
+					},
+					"tenders": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"TenderNm": {
+									"type": "string",
+									"description": "the specific tender name (ex. MasterCard) required tender name must already exist in Logix.",
+									"minLength": 1,
+									"maxLength": 255
+								},
+								"ExcludedAmt": {
+									"type": "number",
+									"description": "If this tender condition is exclusion, then this will be the amount required to be excluded.",
+									"minimum": 0,
+									"maximum": 999999999,
+									"multipleOf": 0.01
+								},
+								"tiers": {
+									"type": "array",
+									"minItems": 1,
+									"maxItems": 11,
+									"items": {
+										"type": "object",
+										"properties": {
+											"TenderAmt": {
+												"type": "number",
+												"description": "The amount of tender required for the tier amounts must be ascending for each subsequent tier",
+												"minimum": 0,
+												"maximum": 999999999,
+												"multipleOf": 0.01
+											}
+										},
+										"required": [
+											"TenderAmt"
+										]
+									}
+								}
+							},
+							"required": [
+								"TenderNm",
+								"ExcludedAmt",
+								"tiers"
+							]
+						}
+					},
+					"times": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"StartTm": {
+									"type": "string",
+									"description": "Start time of the offer. Format: HH:MM:SS\rformat is in 24 hour time.",
+									"format": "time"
+								},
+								"EndTm": {
+									"type": "string",
+									"description": "End time of the offer. Format: HH:MM:SS\rformat is in 24 hour time.",
+									"format": "time"
+								}
+							},
+							"required": [
+								"StartTm",
+								"EndTm"
+							]
+						}
+					},
+					"triggercodes": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"TriggerCd": {
+									"type": "string",
+									"description": "The trigger code required",
+									"pattern": "^[0-9]{14}$"
+								},
+								"DisplayCashierMessageifUnusedInd": {
+									"type": "boolean",
+									"description": "true - trigger code was scanned but the offer was not redeemed, show cashier message. false - trigger code was scanned but the offer was not redeemed, do not show cashier message"
+								},
+								"RequirementDsc": {
+									"type": "string",
+									"enum": [
+										"Once Per Transaction",
+										"Once Per Redemption"
+									],
+									"description": "Once Per Transaction - Customer only needs to scan the trigger code once to get discount on every product eligible. Once Per Redemption - Customer needs to scan a separate trigger code for each product eligible to get discount."
+								}
+							},
+							"required": [
+								"TriggerCd",
+								"DisplayCashierMessageifUnusedInd",
+								"RequirementDsc"
+							]
+						}
+					},
+					"customers": {
+						"type": "object",
+						"properties": {
+							"included": {
+								"type": "array",
+								"minItems": 1,
+								"items": {
+									"type": "object",
+									"properties": {
+										"CustomerGroupNm": {
+											"type": "string",
+											"": "Name of the customer group that's eligible for the offer. The customer group must already exist in Logix.",
+											"minLength": 1,
+											"maxLength": 255
+										}
+									},
+									"required": [
+										"CustomerGroupNm"
+									]
+								}
+							},
+							"excluded": {
+								"type": "array",
+								"minItems": 0,
+								"items": {
+									"type": "object",
+									"properties": {
+										"CustomerGroupNm": {
+											"type": "string",
+											"description": "Name of the customer group that is NOT eligible for the offer. The customer group must already exist in Logix.",
+											"minLength": 0,
+											"maxLength": 255
+										}
+									},
+									"not": {
+										"properties": {
+											"CustomerGroupNm": {
+												"enum": [
+													"Any Customer",
+													"Any Cardholder",
+													"New Cardholders"
+												]
+											}
+										}
+									},
+									"required": [
+										"CustomerGroupNm"
+									]
+								}
+							}
+						},
+						"required": [
+							"included",
+							"excluded"
+						]
+					},
+					"products": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"IncProductGroupNm": {
+									"type": "string",
+									"description": "Name of the product group. The product group must already exist in Logix. Customers must buy the products that are defined in the product group",
+									"minLength": 1,
+									"maxLength": 200
+								},
+								"ExcProductGroupNm": {
+									"type": "string",
+									"description": "Name of the product group. The product group must already exist in Logix. Customers will not be eligible if they purchase products from this group",
+									"minLength": 0,
+									"maxLength": 200
+								},
+								"ProductComboConditionOper": {
+									"type": "string",
+									"description": "When there are multiple product group conditions, the product combo determines if the requirement is: Customer must satisfy ALL product group conditions. Customer must satisfy at least ONE product group condition.",
+									"enum": [
+										"And",
+										"Or"
+									]
+								},
+								"AmountType": {
+									"type": "string",
+									"description": "Items - Customer must purchase X items\rDollars - Customer must purchase X dollars\rWeight/Volume - Customer must purchase X kg / gal\rQty 1 At Price - Customer must buy 1 item at $X",
+									"enum": [
+										"Items",
+										"Dollars",
+										"Weight/Volume",
+										"Qty 1 At Price"
+									]
+								},
+								"UniqueProductInd": {
+									"type": "boolean",
+									"description": "true - Customer must buy x unique items from the product group. false - Customer can buy x number of items from the product group"
+								},
+								"MinPurchaseAmt": {
+									"type": "number",
+									"description": "Smallest purchase amount required for the product group.",
+									"minimum": 0,
+									"maximum": 999999999
+								},
+								"accumulation": {
+									"type": "object",
+									"properties": {
+										"MinAmt": {
+											"type": "number",
+											"description": "The minimum amount for the offer to start accumulating purchase amounts.",
+											"minimum": 0,
+											"maximum": 999999999
+										},
+										"LimitNbr": {
+											"type": "number",
+											"description": "The limit on how much the offer can accumulate on the product group.",
+											"minimum": 0,
+											"maximum": 999999999
+										},
+										"PeriodDayNbr": {
+											"type": "integer",
+											"description": "The time (number of days) limit on how much the offer can accumulate on the product group.",
+											"minimum": 0,
+											"maximum": 999999999
+										}
+									},
+									"required": [
+										"MinAmt",
+										"LimitNbr",
+										"PeriodDayNbr"
+									]
+								},
+								"tiers": {
+									"type": "array",
+									"minItems": 1,
+									"maxItems": 11,
+									"items": {
+										"type": "object",
+										"properties": {
+											"ProductAmt": {
+												"type": "number",
+												"description": "The amount of product required for the offer. Amounts must be ascending for subsequent tiers.",
+												"minimum": 0,
+												"maximum": 999999999
+											}
+										},
+										"required": [
+											"ProductAmt"
+										]
+									}
+								}
+							},
+							"not": {
+								"properties": {
+									"excluded": {
+										"enum": [
+											"Any Product"
+										]
+									}
+								}
+							},
+							"required": [
+								"IncProductGroupNm",
+								"ExcProductGroupNm",
+								"ProductComboConditionOper",
+								"AmountType",
+								"UniqueProductInd",
+								"MinPurchaseAmt",
+								"accumulation",
+								"tiers"
+							]
+						}
+					},
+					"DisqualifierProductGroupNm": {
+						"type": "string",
+						"description": "The product group where items are disqualified. Product group must already exist in Logix.",
+						"minLength": 1,
+						"maxLength": 200
+					},
+					"points": {
+						"type": "object",
+						"properties": {
+							"ProgramNm": {
+								"type": "string",
+								"description": "The points program name that is required. Points program must already exist in Logix.",
+								"minLength": 1,
+								"maxLength": 255
+							},
+							"tiers": {
+								"type": "array",
+								"minItems": 1,
+								"maxItems": 11,
+								"items": {
+									"type": "object",
+									"properties": {
+										"PointQty": {
+											"type": "integer",
+											"description": "The specific quantities of points required per tier. If enginetype = CPE Instant Win, then tiers array count cannot be more than 1",
+											"minimum": 1,
+											"maximum": 999999999
+										}
+									},
+									"required": [
+										"PointQty"
+									]
+								}
+							}
+						},
+						"required": [
+							"ProgramNm",
+							"tiers"
+						]
+					},
+					"day": {
+						"type": "object",
+						"properties": {
+							"MondayInd": {
+								"type": "boolean",
+								"description": "The offer is active on Mondays."
+							},
+							"TuesdayInd": {
+								"type": "boolean",
+								"description": "The offer is active on Tuedays."
+							},
+							"WednesdayInd": {
+								"type": "boolean",
+								"description": "The offer is active on Wednesdays."
+							},
+							"ThursdayInd": {
+								"type": "boolean",
+								"description": "The offer is active on Thrusdays."
+							},
+							"FridayInd": {
+								"type": "boolean",
+								"description": "The offer is active on Fridays."
+							},
+							"SaturdayInd": {
+								"type": "boolean",
+								"description": "The offer is active on Saturdays."
+							},
+							"SundayInd": {
+								"type": "boolean",
+								"description": "The offer is active on Sundays."
+							}
+						},
+						"required": [
+							"MondayInd",
+							"TuesdayInd",
+							"WednesdayInd",
+							"ThursdayInd",
+							"FridayInd",
+							"SaturdayInd",
+							"SundayInd"
+						]
+					},
+					"attributes": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"AttributeNm": {
+									"type": "string",
+									"description": "The name of the attribute. Attribute must already exist in Logix.",
+									"minLength": 1,
+									"maxLength": 100
+								},
+								"AttributeComboOper": {
+									"description": "And - when there are multiple attribute conditions, ALL must be satisfied. Or - when there are multiple attribute conditions, AT LEAST ONE must be satisfied",
+									"type": "string",
+									"enum": [
+										"And",
+										"Or"
+									]
+								},
+								"values": {
+									"type": "array",
+									"minItems": 1,
+									"items": {
+										"type": "object",
+										"properties": {
+											"AttributeVal": {
+												"type": "string",
+												"description": "The value of the attribute. The attribute value must already exist in logix.\r",
+												"minLength": 1,
+												"maxLength": 100
+											}
+										},
+										"required": [
+											"AttributeVal"
+										]
+									}
+								}
+							},
+							"required": [
+								"AttributeNm",
+								"AttributeComboOper",
+								"AttributeVal"
+							]
+						}
+					},
+					"cardtypes": {
+						"type": "array",
+						"minItems": 1,
+						"items": {
+							"type": "object",
+							"properties": {
+								"AardTypeNm": {
+									"type": "string",
+									"description": "The name of the card type.",
+									"minLength": 1,
+									"maxLength": 100
+								}
+							},
+							"required": [
+								"CardTypeNm"
+							]
+						}
+					},
+					"Enterpriseinstantwin": {
+						"type": "object",
+						"properties": {
+							"PrizeNbr": {
+								"type": "number",
+								"description": "The number of prizes.",
+								"pattern": "^[0-9]{4}$"
+							},
+							"PrizeFrequencyNbr": {
+								"type": "string",
+								"description": "Per Offer - When the number of prizes for Per Offer",
+								"enum": [
+									"Per Offer"
+								]
+							}
+						},
+						"required": [
+							"PrizeNbr",
+							"PrizeFrequencyNbr"
+						]
+					}
+				},
+				"type": "object",
+				"not": {
+					"properties": {
+						"DisqualifierProductGroupNm": {
+							"enum": [
+								"Any Product"
+							]
+						}
+					},
+					"required": [
+						"DisqualifierProductGroupNm"
+					]
+				}
+			},
+			"rewards": {
+				"type": "object",
+				"properties": {
+					"discount": {
+						"type": "object",
+						"properties": {
+							"productgroup": {
+								"type": "object",
+								"properties": {
+									"DiscountType": {
+										"type": "string",
+										"description": "Item Level - item level discount\rDepartment Level - department level discount\rBasket Level - basket / department (set chargeback) level discount",
+										"enum": [
+											"Item Level",
+											"Department Level",
+											"Basket Level"
+										]
+									},
+									"IncProductGroupNm": {
+										"type": "string",
+										"description": "Product group discounted",
+										"minLength": 1,
+										"maxLength": 200
+									},
+									"ExcProductGroupNm": {
+										"type": "string",
+										"description": "Product group excluded from discount.",
+										"minLength": 0,
+										"maxLength": 200
+									}
+								},
+								"required": [
+									"DiscountType",
+									"IncProductGroupNm",
+									"ExcProductGroupNm"
+								]
+							},
+							"chargebackdepartment": {
+								"type": "object",
+								"properties": {
+									"DepartmentNm": {
+										"type": "string",
+										"description": "name of the chargeback department (i.e. General Merchandise) chargeback department must already exist in Logix.",
+										"minLength": 1,
+										"maxLength": 200
+									},
+									"DepartmentId": {
+										"type": "string",
+										"description": "Defines a code that uniquely identifies the departments based on its function. Chargeback department (i.e. 301) chargeback department must already exist in Logix.",
+										"minLength": 1,
+										"maxLength": 40
+									}
+								},
+								"required": [
+									"DepartmentNm",
+									"DepartmentId"
+								]
+							},
+							"distribution": {
+								"type": "object",
+								"properties": {
+									"DistributionType": {
+										"type": "string",
+										"description": "Fixed Amount Off - Cents off discount\rPrice Point (Items) - Price point on single item\rPercent Off - Percent discount\rStored Value - Stored value discount (stored value have dollar value)\rFree - Free Item\rFixed Amount Off (Weight/Volume) - Fixed discount per Kg / gal\rPrice Point (Weight/Volume) - Price point per kg / gal\rSpecial Pricing - Price Point - Sequence of price points per each discounted item.",
+										"enum": [
+											"Fixed Amount Off",
+											"Price Point (Items)",
+											"Percent Off",
+											"Stored Value",
+											"Free",
+											"Fixed Amount Off (Weight/Volume)",
+											"Price Point (Weight/Volume)",
+											"Special Pricing - Price Point"
+										]
+									},
+									"tiers": {
+										"type": "array",
+										"minItems": 1,
+										"maxItems": 11,
+										"items": {
+											"type": "object",
+											"properties": {
+												"TierAmt": {
+													"type": "number",
+													"description": "The amount discounted.",
+													"minimum": 0,
+													"maximum": 999999999,
+													"multipleOf": 0.001
+												},
+												"TierItemLimitNbr": {
+													"type": "integer",
+													"description": "Maximum items that can be discounted",
+													"minimum": 0,
+													"maximum": 999999999
+												},
+												"TierMaxDollarItemLimitAmt": {
+													"type": "number",
+													"description": "Maximum dollars that can be discounted from the item.",
+													"minimum": 0,
+													"maximum": 999999999,
+													"multipleOf": 0.001
+												},
+												"TierReceiptTxt": {
+													"type": "string",
+													"description": "The display text on the receipt for the discount line item.",
+													"minLength": 0,
+													"maxLength": 100
+												},
+												"PercentOffLimitLevel1Amt": {
+													"type": "number",
+													"description": "Used for percent off discounts.",
+													"minimum": 0,
+													"maximum": 999999999,
+													"multipleOf": 0.001
+												},
+												"DiscountAmountTypelevel2": {
+													"type": "string",
+													"description": "Only for percent off discounts. The discount type once level1 limit has been reached",
+													"enum": [
+														"None",
+														"Fixed Amount Off",
+														"Price Point (Items)",
+														"Percent Off",
+														"Free",
+														"Fixed Amount Off (Weight/Volume)",
+														"Price Point (Weight/Volume)"
+													]
+												},
+												"TierLevel2Amt": {
+													"type": "number",
+													"description": "Used only for percent off discounts. The amount of level 2 discount.",
+													"minimum": 0,
+													"maximum": 999999999,
+													"multipleOf": 0.001
+												},
+												"PercentOffLimitLevel2Amt": {
+													"type": "number",
+													"description": "Used only for percent off discounts. The limit if level 2 discount is also percent off discount",
+													"minimum": 0,
+													"maximum": 999999999,
+													"multipleOf": 0.001
+												},
+												"DiscountAmountTypelevel3": {
+													"type": "string",
+													"enum": [
+														"None",
+														"Fixed Amount Off",
+														"Price Point (Items)",
+														"Percent Off",
+														"Free",
+														"Fixed Amount Off (Weight/Volume)",
+														"Price Point (Weight/Volume)"
+													]
+												},
+												"Amountlevel3": {
+													"type": "number",
+													"description": "Used only for percent off discounts. The discount type for level 3 discounts.",
+													"minimum": 0,
+													"maximum": 999999999,
+													"multipleOf": 0.001
+												},
+												"Weightvolumelimit": {
+													"type": "object",
+													"properties": {
+														"maxWeightLimitVal": {
+															"type": "number",
+															"description": "The maximum weight or volume that can be discounted.",
+															"minimum": 0,
+															"maximum": 999999999,
+															"multipleOf": 0.001
+														},
+														"weightLimitType": {
+															"type": "string",
+															"description": "Total - the weight volume limit applies to total weight / volume that is discounted by this offer\rPer Item - the limit applies on a per item basis",
+															"enum": [
+																"Total",
+																"Per Item"
+															]
+														}
+													},
+													"required": [
+														"MaxWeightLimitVal",
+														"WeightLimitType"
+													]
+												},
+												"prices": {
+													"type": "array",
+													"minItems": 1,
+													"items": {
+														"type": "object",
+														"properties": {
+															"SpecialPriceAmt": {
+																"type": "number",
+																"description": "The special pricing price.",
+																"exclusiveMinimum": 0,
+																"maximum": 999999999,
+																"multipleOf": 0.001
+															},
+															"RestartPointInd": {
+																"type": "boolean",
+																"description": "True - special pricing starts with this particular price. False - special pricing does not start with this particular price"
+															}
+														},
+														"required": [
+															"SpecialPriceAmt",
+															"RestartPointInd"
+														]
+													}
+												},
+												"StoredValueProgramNm": {
+													"type": "string",
+													"description": "Used for stored value discounts. The stored value program to discount. Stored value program must already exist in Logix.",
+													"minLength": 0,
+													"maxLength": 200
+												}
+											}
+										}
+									}
+								},
+								"required": [
+									"type",
+									"tiers"
+								]
+							},
+							"scorecard": {
+								"type": "object",
+								"properties": {
+									"ScorecardEnableInd": {
+										"description": "True discount scorecard is enabled. False discount is not displayed on scorecard.",
+										"type": "boolean"
+									},
+									"ScorecardNm": {
+										"description": "The scorecard name to display line item on\rscorecard must already exist in Logix.",
+										"type": "string",
+										"minLength": 0,
+										"maxLength": 100
+									},
+									"ScorecardLineTxt": {
+										"description": "The line item for the discount scorecard.",
+										"type": "string",
+										"minLength": 0,
+										"maxLength": 100
+									}
+								},
+								"required": [
+									"ScorecardEnableInd",
+									"ScorecardNm",
+									"ScorecardLineTxt"
+								]
+							},
+							"advanced": {
+								"type": "object",
+								"properties": {
+									"ComputeDiscountInd": {
+										"description": "Affects for weight/volume discounts. True - CPE will calculate the total discount by taking amount x weight or volume. False - CPE will not calculate the total discount and only send the price per volume to POS",
+										"type": "boolean"
+									},
+									"BestdealInd": {
+										"description": "True - will evaluate all other best deal offers on the same item and only give the one that gives the highest discount. False - will process as incremental discount",
+										"type": "boolean"
+									},
+									"AllowNegativeInd": {
+										"description": "True - discount will be given even if the amount is greater than the item's price. False - discount will not give the discount if the amount is greater than the item's price",
+										"type": "boolean"
+									},
+									"FlexNegativeInd": {
+										"description": "True - if the discount is more than the item price, CPE will flex it so the item's net price is $0. False - the CPE will not flex the discount if it is more than the item price.",
+										"type": "boolean"
+									}
+								},
+								"required": [
+									"ComputeDiscountInd",
+									"BestdealInd",
+									"AllowNegativeInd",
+									"FlexNegativeInd"
+								]
+							}
+						},
+						"required": [
+							"productgroup",
+							"chargebackdepartment",
+							"distribution",
+							"scorecard",
+							"advanced"
+						]
+					},
+					"printedmessage": {
+						"type": "object",
+						"properties": {
+							"tiers": {
+								"type": "array",
+								"minItems": 1,
+								"maxItems": 11,
+								"items": {
+									"type": "object",
+									"properties": {
+										"PrintedMessageTxt": {
+											"type": "string",
+											"description": "Defines the printed message for each tear earned. If enginetype = CPE Instant Win, then tiers array count cannot be more than 1",
+											"minLength": 0,
+											"maxLength": 4000
+										}
+									},
+									"required": [
+										"PrintedMessageTxt"
+									]
+								}
+							}
+						},
+						"required": [
+							"tiers"
+						]
+					},
+					"groupmembership": {
+						"type": "object",
+						"properties": {
+							"tiers": {
+								"type": "array",
+								"minItems": 1,
+								"maxItems": 11,
+								"items": {
+									"type": "object",
+									"properties": {
+										"ConsumerGroupNm": {
+											"type": "string",
+											"description": "The list of customer groups to add the customer to, depending on earned tier. If enginetype = CPE Instant Win, then tiers array count cannot be more than 1.",
+											"minLength": 1,
+											"maxLength": 255
+										}
+									},
+									"not": {
+										"properties": {
+											"name": {
+												"enum": [
+													"Any Customer",
+													"Any Cardholder",
+													"New Cardholders"
+												]
+											}
+										}
+									},
+									"required": [
+										"ConsumerGroupNm"
+									]
+								}
+							}
+						},
+						"required": [
+							"tiers"
+						]
+					},
+					"points": {
+						"type": "array",
+						"minItems": 1,
+						"items": {
+							"type": "object",
+							"properties": {
+								"ProgramNm": {
+									"type": "string",
+									"description": "The points program to award the customer with. The points program must already exist in logix.",
+									"minLength": 1,
+									"maxLength": 255
+								},
+								"ChargebackDepartmentCd": {
+									"type": "string",
+									"description": "The department to chargeback the earned points to. The department must already exist in logix.",
+									"minLength": 1,
+									"maxLength": 200
+								},
+								"Maximumadjustment": {
+									"type": "object",
+									"properties": {
+										"pointMaxAdjustmentInd": {
+											"type": "boolean",
+											"description": "True - there is a maximum adjustment for rewarded points. False - there will not be any maximum adjustment for rewarded points"
+										},
+										"maxPointAllowNbr": {
+											"type": "integer",
+											"description": "Maximum number of points that can be awarded to the customer this transaction.",
+											"minimum": 0,
+											"maximum": 999999999
+										}
+									},
+									"required": [
+										"PointMaxAdjustmentInd",
+										"MaxPointAllowNbr"
+									]
+								},
+								"scorecard": {
+									"type": "object",
+									"properties": {
+										"ScorecardEnableInd": {
+											"type": "boolean",
+											"description": "True - rewarded points will print on scorecard. False - rewarded points will not print on scorecard"
+										},
+										"ProgramNm": {
+											"type": "string",
+											"description": "Points program to add points to. Points program must already exist in Logix",
+											"minLength": 0,
+											"maxLength": 100
+										},
+										"ScorecardLineTxt": {
+											"type": "string",
+											"description": "The scorecard line item text.",
+											"minLength": 0,
+											"maxLength": 100
+										}
+									},
+									"required": [
+										"PcorecardEnableInd",
+										"programNm",
+										"ScorecardLineTxt"
+									]
+								},
+								"tiers": {
+									"type": "array",
+									"minItems": 1,
+									"maxItems": 11,
+									"items": {
+										"type": "object",
+										"properties": {
+											"TierPointNbr": {
+												"type": "integer",
+												"description": "Number of points to reward for the given tier. Numbers must be ascending for each sequential tier",
+												"minimum": -99999999,
+												"maximum": 99999999
+											}
+										},
+										"not": {
+											"properties": {
+												"amount": {
+													"const": 0
+												}
+											}
+										},
+										"required": [
+											"TierPointNbr"
+										]
+									}
+								}
+							},
+							"required": [
+								"ProgramNm",
+								"maximumadjustment",
+								"chargebackdepartment",
+								"scorecard",
+								"tiers"
+							]
+						}
+					},
+					"cashiermessage": {
+						"type": "object",
+						"properties": {
+							"DisplayImmediatelyInd": {
+								"type": "boolean",
+								"description": "True - cashier message will display as soon as customer qualifies for it. False - cashier message will display at end of sale if the customer qualifies for it."
+							},
+							"tiers": {
+								"type": "array",
+								"minItems": 1,
+								"maxItems": 11,
+								"items": {
+									"type": "object",
+									"properties": {
+										"MessageLine1Txt": {
+											"type": "string",
+											"description": "First line of the 2x20 display.",
+											"minLength": 0,
+											"maxLength": 20
+										},
+										"MessageLine2Txt": {
+											"type": "string",
+											"description": "Second line of the 2x20 display.",
+											"minLength": 0,
+											"maxLength": 20
+										},
+										"BeepType": {
+											"type": "string",
+											"description": "Do Not Beep - cashier message will not beep\rBeep Once - cashier message will beep once\rBeep Until Cleared - cashier message will keep beeping until checker presses CLEAR\rBeep For Duration (Seconds) - cashier message will beep for XX seconds",
+											"enum": [
+												"Do Not Beep",
+												"Beep Once",
+												"Beep Until Cleared",
+												"Beep For Duration (Seconds)"
+											]
+										},
+										"BeepDurationSec": {
+											"type": "integer",
+											"description": "Only used for beep type = Beep For Duration (Seconds)\rwill beep for this many seconds.",
+											"minimum": 0,
+											"maximum": 99
+										}
+									},
+									"required": [
+										"MessageLine1Txt",
+										"MessageLine2Txt",
+										"BeepType",
+										"BeepDurationSec"
+									]
+								}
+							}
+						},
+						"required": [
+							"DisplayImmediatelyInd"
+						]
+					},
+					"frankingmessage": {
+						"type": "object",
+						"properties": {
+							"tiers": {
+								"type": "array",
+								"minItems": 1,
+								"maxItems": 11,
+								"items": {
+									"type": "object",
+									"properties": {
+										"FrankedMessageTxt": {
+											"type": "string",
+											"description": "Franked text to display on the printer.",
+											"minLength": 0,
+											"maxLength": 38
+										},
+										"FrankInd": {
+											"type": "string",
+											"description": "Determines whether or not both the POS data and franking message should be franked on the printer.",
+											"enum": [
+												"Apply POS Data Only",
+												"Apply Franking Message Only",
+												"Apply POS And Franking"
+											]
+										},
+										"OpencashDrawerInd": {
+											"description": "True - the cash drawer will open. False - the cash drawer will remain closed.",
+											"type": "boolean"
+										},
+										"MessagerOverrideInd": {
+											"description": "True - manager override code will be required to frank. False - manager override code will not be required to frank.",
+											"type": "boolean"
+										},
+										"Cashiermessage": {
+											"description": "",
+											"type": "object",
+											"properties": {
+												"displayImmediatelyInd": {
+													"type": "boolean",
+													"description": "True - cashier message will display as soon as customer qualifies for it. False - cashier message will display at end of sale if the customer qualifies for it."
+												},
+												"tiers": {
+													"type": "array",
+													"minItems": 1,
+													"maxItems": 11,
+													"items": {
+														"type": "object",
+														"properties": {
+															"MessageLine1Txt": {
+																"type": "string",
+																"description": "First line of the 2x20 display.",
+																"minLength": 0,
+																"maxLength": 20
+															},
+															"MessageLine2Txt": {
+																"type": "string",
+																"description": "Second line of the 2x20 display.",
+																"minLength": 0,
+																"maxLength": 20
+															},
+															"BeepType": {
+																"type": "string",
+																"description": "Do Not Beep - cashier message will not beep\rBeep Once - cashier message will beep once\rBeep Until Cleared - cashier message will keep beeping until checker presses CLEAR\rBeep For Duration (Seconds) - cashier message will beep for XX seconds.",
+																"enum": [
+																	"Do Not Beep",
+																	"Beep Once",
+																	"Beep Until Cleared",
+																	"Beep For Duration (Seconds)"
+																]
+															},
+															"BeepDurationSec": {
+																"type": "integer",
+																"description": "Only used for beep type = Beep For Duration (Seconds)\rwill beep for this many seconds.",
+																"minimum": 0,
+																"maximum": 99
+															}
+														},
+														"required": [
+															"Messageline1Txt",
+															"Messageline2Txt",
+															"BeepType",
+															"BeepDurationSec"
+														]
+													}
+												}
+											},
+											"required": [
+												"DisplayImmediatelyInd"
+											]
+										}
+									},
+									"required": [
+										"FrankedMessageTxt",
+										"FrankInd",
+										"OpencashDrawerInd",
+										"MessagerOverrideInd",
+										"cashiermessage"
+									]
+								}
+							}
+						},
+						"required": [
+							"tiers"
+						]
+					},
+					"storedvalue": {
+						"type": "object",
+						"properties": {
+							"ProgramNm": {
+								"type": "string",
+								"description": "Stored value program name. Stored value program must already exist in Logix.",
+								"minLength": 1,
+								"maxLength": 100
+							},
+							"tiers": {
+								"type": "array",
+								"minItems": 1,
+								"maxItems": 11,
+								"items": {
+									"type": "object",
+									"properties": {
+										"StoredValueNbr": {
+											"type": "integer",
+											"description": "The number of stored values to award to the customer. The amounts must be ascending for each sequential tier.",
+											"minimum": -99999999,
+											"maximum": 99999999
+										}
+									},
+									"not": {
+										"properties": {
+											"StoredValueNbr": {
+												"const": 0
+											}
+										}
+									},
+									"required": [
+										"StoredValueNbr"
+									]
+								}
+							},
+							"scorecard": {
+								"type": "object",
+								"properties": {
+									"ScorecardEnableInd": {
+										"type": "boolean",
+										"description": "True - stored value awarded will show up on scorecard. False - stored value awarded will not show up on scorecard."
+									},
+									"ScorecardNm": {
+										"type": "string",
+										"description": "Name of the scorecard to display\rscorecard must already exist in Logix.",
+										"minLength": 0,
+										"maxLength": 100
+									},
+									"ScorecardTxt": {
+										"type": "string",
+										"description": "Text to show on the scorecard.",
+										"minLength": 0,
+										"maxLength": 100
+									}
+								},
+								"required": [
+									"ScorecardEnableInd",
+									"ScorecardNm",
+									"ScorecardTxt"
+								]
+							}
+						},
+						"required": [
+							"ProgramNm",
+							"tiers",
+							"scorecard"
+						]
+					}
+				}
+			},
+			"notifications": {
+				"type": "object",
+				"description": "Notifications are given to the customer when only the customer condition is satisfied.",
+				"properties": {
+					"printedmessage": {
+						"type": "object",
+						"properties": {
+							"PrintedMessageTxt": {
+								"type": "string",
+								"description": "Printed message to be shown on receipt.",
+								"minLength": 0,
+								"maxLength": 4000
+							}
+						},
+						"required": [
+							"printedMessageTxt"
+						]
+					},
+					"cashiermessage": {
+						"type": "object",
+						"properties": {
+							"MessageLine1Txt": {
+								"type": "string",
+								"description": "First line of 2x20 display.",
+								"minLength": 0,
+								"maxLength": 20
+							},
+							"MessageLine2Txt": {
+								"type": "string",
+								"description": "Second line of 2x20 display.",
+								"minLength": 0,
+								"maxLength": 20
+							},
+							"Beeptype": {
+								"type": "string",
+								"description": "Do Not Beep - cashier message will not beep\rBeep Once - cashier message will beep once\rBeep Until Cleared - cashier message will keep beeping until checker presses CLEAR\rBeep For Duration (Seconds) - cashier message will beep for XX seconds.",
+								"enum": [
+									"Do Not Beep",
+									"Beep Once",
+									"Beep Until Cleared",
+									"Beep For Duration (Seconds)"
+								]
+							},
+							"BeepDurationSec": {
+								"type": "integer",
+								"desription": "Only used for beep type = Beep For Duration (Seconds)\rwill beep for this many seconds.",
+								"minimum": 0,
+								"maximum": 99
+							},
+							"DisplayImmediatelyInd": {
+								"type": "boolean",
+								"description": "True - cashier message will display as soon as customer is eligible. False - cashier message will display at end of sale if customer is eligible"
+							}
+						},
+						"required": [
+							"MessageLine1Txt",
+							"MessageLine2Txt",
+							"BeepType",
+							"BeepDurationSec",
+							"DisplayImmediatelyInd"
+						]
+					},
+					"accumulationprintedmessage": {
+						"type": "object",
+						"properties": {
+							"AcumulationPrintedMessageInd": {
+								"type": "string",
+								"description": "Accumulation message text to print on bottom of the receipt.",
+								"minLength": 0,
+								"maxLength": 4000
+							}
+						},
+						"required": [
+							"AcumulationPrintedMessageInd"
+						]
+					}
+				},
+				"required": ""
+			},
+			"locations": {
+				"type": "object",
+				"properties": {
+					"storegroups": {
+						"type": "object",
+						"properties": {
+							"included": {
+								"type": "array",
+								"items": {
+									"description": "Name of the store group to deploy\rstore group must already exist in Logix.",
+									"type": "object",
+									"properties": {
+										"StoreGroupNm": {
+											"type": "string",
+											"minLength": 1,
+											"maxLength": 200
+										}
+									},
+									"required": [
+										"StoreGroupNm"
+									]
+								}
+							},
+							"ExcludedStoreGroupNm": {
+								"type": "string",
+								"minLength": 0,
+								"maxLength": 200
+							}
+						},
+						"required": [
+							"included",
+							"ExcludedStoreGroupNm"
+						],
+						"not": {
+							"properties": {
+								"ExcludedStoreGroupNm": {
+									"const": "All Stores"
+								}
+							}
+						}
+					},
+					"terminals": {
+						"type": "object",
+						"properties": {
+							"included": {
+								"type": "array",
+								"items": {
+									"type": "object",
+									"properties": {
+										"TerminalNm": {
+											"type": "string",
+											"description": "Terminal name where offer is active. Terminal name must already exist in logix.",
+											"minLength": 1,
+											"maxLength": 100
+										}
+									},
+									"required": [
+										"TerminalNm"
+									]
+								}
+							},
+							"excluded": {
+								"type": "array",
+								"items": {
+									"type": "object",
+									"properties": {
+										"TerminalNm": {
+											"type": "string",
+											"description": "Terminal name where the offer is not active in (excluded). Terminal name must already exist in Logix.",
+											"minLength": 1,
+											"maxLength": 100
+										}
+									},
+									"required": [
+										"TerminalNm"
+									],
+									"not": {
+										"properties": {
+											"TerminalNm": {
+												"const": "All CPE Terminals"
+											}
+										}
+									}
+								}
+							}
+						},
+						"required": [
+							"included",
+							"excluded"
+						]
+					}
+				}
+			}
+		}
+	},
+	"productgroups": {
+		"type": "array",
+		"items": {
+			"productgroup": {
+				"type": "object",
+				"properties": {
+					"ProductGroupNm": {
+						"description": "The name of the product group as defined in Logix UI",
+						"type": "string",
+						"minLength": 1,
+						"maxLength": 100
+					},
+					"ProductGroupDsc": {
+						"description": "The description of the product group as defined in Logix UI",
+						"type": "string",
+						"minLength": 0,
+						"maxLength": 100
+					},
+					"LastUpdateTs": {
+						"description": "Date and time stamp of the last time the offer was modified.",
+						"type": "string",
+						"format": "date-time"
+					},
+					"products": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"ExtProductId": {
+									"description": "The identifier for each product, it can be any of the following Items (UPC), Departments, Mix Match, Manufacturer Family Code, Pool Code.",
+									"type": "string",
+									"minLength": 1,
+									"maxLength": 14
+								},
+								"ProductTypeNm": {
+									"description": "The type of the identifier for the above product.",
+									"type": "string",
+									"enum": [
+										"Items (UPC)",
+										"Departments",
+										"Mix Match",
+										"Manufacturer Family Code",
+										"Pool Code"
+									]
+								},
+								"ProductDsc": {
+									"description": "The description of the item itself.",
+									"type": "string",
+									"minLength": 1,
+									"maxLength": 100
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"storegroups": {
+		"type": "array",
+		"items": {
+			"storegroup": {
+				"type": "object",
+				"properties": {
+					"StoreGroupNm": {
+						"description": "The name of the store group as defined in Logix UI.",
+						"type": "string",
+						"minLength": 1,
+						"maxLength": 100
+					},
+					"LastUpdateTs": {
+						"description": "Date and time stamp of the last time the offer was modified.",
+						"type": "string",
+						"format": "date-time"
+					},
+					"stores": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"ExtLocationCd": {
+									"description": "The identifier for each store as defined in Safeway, right now, the format is of qDDSSSS, where D is division number, S is store number.",
+									"type": "string",
+									"minLength": 1,
+									"maxLength": 7
+								},
+								"StoreNm": {
+									"description": "The name of the store as defined in Logix UI, this is typically the same as above extlocationcode.",
+									"type": "string",
+									"minLength": 1,
+									"maxLength": 100
+								},
+								"StoreDsc": {
+									"description": "The description of the store as defined in Logix UI.",
+									"type": "string",
+									"minLength": 0,
+									"maxLength": 1000
+								},
+								"StoreTestingInd": {
+									"description": "This is an indicator to the Logix application that if this is a lab or a production store.",
+									"type": "boolean"
+								},
+								"AddressTxt": {
+									"description": "The address of the store.",
+									"type": "string",
+									"minLength": 0,
+									"maxLength": 200
+								},
+								"CityNm": {
+									"description": "The city where the store is in.",
+									"type": "string",
+									"minLength": 0,
+									"maxLength": 100
+								},
+								"StateCd": {
+									"description": "The state where the store is in.",
+									"type": "string",
+									"minLength": 0,
+									"maxLength": 50
+								},
+								"PostalCd": {
+									"description": "The postal code where the store is in.",
+									"type": "string",
+									"minLength": 0,
+									"maxLength": 20
+								},
+								"CountryNm": {
+									"description": "The country where the store is in.",
+									"type": "string",
+									"minLength": 0,
+									"maxLength": 50
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

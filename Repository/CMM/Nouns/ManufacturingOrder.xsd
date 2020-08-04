@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:ns1="http://collab.safeway.com/it/architecture/AbsOmMaster" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.9.8">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--7/10/2019 - Alex Nunes - Made Material data group optional to facilitate mapping completion based on the data science team data feed query.-->
+	<!--7/22/2019 - Alex Nunes - Added Division Id for external vendor-->
+	<xs:element name="ManufacturingOrder" type="ManufacturingOrderType">
+		<xs:annotation>
+			<xs:documentation>Root element.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="ManufacturingOrderType">
+		<xs:annotation>
+			<xs:documentation>Manufacturing order is a broad term used when manufacturing one or several products. A manufacturing order can either be planned or released. A planned order, in turn, can be fixed or automatically re-planned. Manufacturing orders can be created for Product which are defined in the product’s basic data. Information about the planned order such as lead time, capacity requirements planning and resource demands are based on the product structure that is defined in product data. The product structure forms a combination of Material and routing lists.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="Abs:CorporationId"/>
+			<xs:element ref="Abs:DivisionId"/>
+			<xs:element name="VendorCorporationId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>External coprporation Id used by third party vendor.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorDivisionId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>External division Id used by third party vendor.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="ManufacturingPlantId"/>
+			<xs:element name="ManufacturingOrderId" type="xs:int">
+				<xs:annotation>
+					<xs:documentation>Unique identenfier for the production order.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UPC" type="UPC" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Case UPC.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UOM" type="UOMType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Case unit of measurement.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ProductionCloseDt" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Production close Date</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GrossWeightAmt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="10"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="NetWeightAmt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="10"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EQFactorVal" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Equivalized factor value.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="18"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ProductHighLevelNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Highest level of Product number.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="15"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MOHighLevelNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Highest level of Manufacturing Order number.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LevelSeqNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RefOrderNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CostingPerformedCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ProductStructureTypeCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="StartTm" type="TimeBaseType" minOccurs="0"/>
+			<xs:element name="FinishTm" type="TimeBaseType" minOccurs="0"/>
+			<xs:element name="SheduleNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Schedule Number.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="11"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MOEntryAudit" type="RecordAuditData" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Equivalized factor value.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OperationData" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Production operation transactions.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="OperationNbr">
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SequenceNbr">
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="12"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ManufacturingProductId">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="15"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="WorkCentreCd">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="8"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="EmployeeId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element ref="DepartmentId" minOccurs="0"/>
+						<xs:element name="PlanningAreaId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="8"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="TransactionDt" type="DateBaseType" minOccurs="0"/>
+						<xs:element name="TransactionTm" type="TimeBaseType" minOccurs="0"/>
+						<xs:element name="LaborRunTimeQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="7"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="MachineRunTimeQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="7"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ManufaturedQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="15"/>
+									<xs:fractionDigits value="6"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ScrapQty" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Scrap quantity.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="20"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="OperationStartDt" type="DateBaseType" minOccurs="0"/>
+						<xs:element name="OperationStartTm" type="TimeBaseType" minOccurs="0"/>
+						<xs:element name="OperationFinishDt" type="DateBaseType" minOccurs="0"/>
+						<xs:element name="OperationFinishTm" type="TimeBaseType" minOccurs="0"/>
+						<xs:element name="OperationEntryAudit" type="RecordAuditData" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="MaterialData" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="UPC" type="UPC" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Material or Ingridient UPC.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="LotNbr" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Identification number assigned to a particular quantity or lot of material from a single manufacturer.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="IssuedQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="20"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="UOM" type="UOMType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Manufacturing unit of measurement. </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PackageSize" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Package size of the material.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ShippingWeight" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Shipping weight of the product.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="NetWeight" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Net weight of the product.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

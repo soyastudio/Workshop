@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<xs:schema xmlns="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://www.openapplications.org/oagis/9" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="../Nouns/StoreItemSchematic.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="GetStoreItemSchematic" type="GetStoreItemSchematic">
+		<xs:annotation>
+			<xs:documentation>Business object that provides retail store schematics data. It provides information about the placement of items in retail store aisle and the corresponding planogram data with rack, shelf and slot information for each item. Schematics is meant for optimum utilization of the retial spce, inventory control and consumer experience. Basically this BOD gives information about planograms and items that can go with it. Data from this BOD need to be combined with 'GetStoreSchematic' BOD to get complete picture from a store perspective.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetStoreItemSchematic">
+		<xs:annotation>
+			<xs:documentation>Business object that provides retail store schematics data. It provides information about the placement of items in retail store aisle and the corresponding planogram data with rack, shelf and slot information for each item. Schematics is meant for optimum utilization of the retial spce, inventory control and consumer experience.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="StoreItemSchematicData" type="StoreItemSchematic"/>
+		</xs:sequence>
+		<xs:attribute name="VersionId" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>Version Id for the BOD instance</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="ReleaseId" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>ReleaseId for the BOD instance</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="SystemEnvironmentCd" type="xs:string" use="optional" default="Production">
+			<xs:annotation>
+				<xs:documentation>Prod, Test, QA</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+</xs:schema>

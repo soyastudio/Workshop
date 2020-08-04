@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Schema Owner: 	Safeway Inc
+   Date Created:      07 Mar 2018
+   Author:		Saikat Mazumdar
+   Description: Contains commonly used Safeway Inventory schema.
+   Name: /SFWY/Nouns/Inventory.xsd
+-->
+<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="RetailStoreSalesSummary" type="RetailStoreSalesSummaryType">
+		<xs:annotation>
+			<xs:documentation>Standard Albertsons companies schema for retail sales summary for a facility and day. Generally the sales summary is at Department and Section level with in a sales facility. This data is also known as FSM (facility Sales Management) Data.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="RetailStoreSalesSummaryType">
+		<xs:annotation>
+			<xs:documentation>Standard Albertsons companies schema for retail sales summary for a facility and day. Generally the sales summary is at Department and Section level with in a sales facility by Week Day.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporationId"/>
+			<xs:element ref="DivisionId" minOccurs="0"/>
+			<xs:element name="ReportingDivisionId">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="RetailStoreId"/>
+			<xs:element ref="TxnDt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time for which the sales summary was reported.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AccountingYearNbr" type="xs:integer" minOccurs="0"/>
+			<xs:element name="AccountingWeekNbr" type="xs:integer" minOccurs="0"/>
+			<xs:element name="WeekDayNbr" type="xs:integer" minOccurs="0"/>
+			<xs:element name="SectionSales" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Summary sales at each section and Day level.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Department" type="IdWithNameType" minOccurs="0"/>
+						<xs:element name="Section" type="IdWithNameType" minOccurs="0"/>
+						<xs:element name="NetSalesAmt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CouponCnt" type="xs:integer" minOccurs="0"/>
+						<xs:element name="CouponAmt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="GLAccountGroupType" type="CodeWithName" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>A two digit identifier used to group General Ledger accounts            
+created for a specific purpose.  
+Valid values: 
+'LI' - Live data        
+ 'RC' - Recode data                    
+ 'BA' - Annual budget data             
+ 'BP' - Period budget data             
+ 'BQ' - Quarterly budget data          
+ 'BW' - Weekly budget data             
+</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="FacilitySales" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Summary Sales at Summary type and Sub type level.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="SummaryType" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Defines type of the summary level. ex gross Sales, Net Sales, Receivables, Tender Received, Bank Deposits ..etc</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SummarySubType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Defines a Sub type with in a Summary type.
+Ex : If Summary type is Bank Deposits, Sub type can be Deposits by Cash, Deposits by Check, Wireless debit, Wilreless credit..etc</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:complexContent>
+									<xs:extension base="CodeWithDescription">
+										<xs:sequence>
+											<xs:element ref="EffectiveTimePeriod" minOccurs="0"/>
+											<xs:element name="DebitCreditInd" minOccurs="0">
+												<xs:simpleType>
+													<xs:restriction base="xs:string">
+														<xs:maxLength value="5"/>
+													</xs:restriction>
+												</xs:simpleType>
+											</xs:element>
+										</xs:sequence>
+									</xs:extension>
+								</xs:complexContent>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Department" type="IdWithNameType" minOccurs="0"/>
+						<xs:element name="Section" type="IdWithNameType" minOccurs="0"/>
+						<xs:element name="AccountNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The prime account number from the Master Chart of Accounts,         
+designates the account classification.     </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SubAccountNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Sub account number defines a detailed classification of an account.        
+For example, for the cash prime account number 110, some of the sub        
+account numbers are:                                                       
+001 - Cash on hand - retail stores                                         
+002 - Extra change (floating) funds                                        
+003 - Armored car funds                                                    
+004 - Cash held for change - retail stores                                 
+                                                                           
+Prime account number together with sub account number uniquely identify    
+an account on the Master Chart of Accounts .                 
+The sub account number identifies the type of data element         
+within the account classification.                                 
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SecondaryAccountInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates if secondary account and sub account numbers need to be considered for a particular Sumary type/subtype.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SecondaryAccountNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SecondarySubAccountNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="GLAmountType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="SequenceNbr" type="xs:integer" minOccurs="0"/>
+						<xs:element name="SummaryTransactionAmt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ReferenceType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="TxnDt" type="xs:dateTime">
+		<xs:annotation>
+			<xs:documentation>Date and time at which the inventory transaction was carried out.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+</xs:schema>

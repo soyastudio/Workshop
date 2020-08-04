@@ -1,0 +1,721 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" id="fsxml">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--5/8/2020 - Alex Nunes - Jira change EBC-10803 Added few data ements.-->
+	<xs:complexType name="NutritionIngredientType">
+		<xs:annotation>
+			<xs:documentation>Complex Type for Nutrition Ingredient</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Item">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="IngredientId" default="@DFLT" altova:Ordinal="0">
+							<xs:annotation>
+								<xs:documentation>Ingredient identification. Any of the foods or substances that are combined to make a particular product.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="IngredientNm" default="." altova:Ordinal="4">
+							<xs:annotation>
+								<xs:documentation>Albertsons' ingredient Description.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="90"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="IngredientDeclarationTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This holds the declaration text for the indgredient.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2000"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="UOMCd" default="LB" minOccurs="0" altova:Ordinal="1">
+							<xs:annotation>
+								<xs:documentation>Ingredient's default unit of measure.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="UnitScaleWt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The unit scale weight is the measured or scaled
+weight of 1 package, or 1 yield or 1 unit of a
+product or an ingredient. Baking may reduce this
+weight.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="9"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="UnitNetWt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The unit net weight is the weight of a single
+package or unit of a product or an ingredient. This
+is the weight after baking.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="9"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CompoundInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This indicates if the ingredient is a COMPOUND
+(combination) of different ingredients of which
+each has a declaration and nutrient data.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="BatchNetWt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is the weight after cooking of a batch of a
+product or an ingredient. This can be contrasted
+with UnitNetWt which is the weight of a single
+unit. It can also be contrasted with the batch scale
+weight which is the weight before cooking.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="9"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="YieldQty" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The number of packages of the specified net
+weight for the product that are produced from the
+quantities of the ingredients in the product formula.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="5"/>
+									<xs:fractionDigits value="0"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element ref="CorporateItemCd" minOccurs="0"/>
+						<xs:element name="CalculationInd" default="0" minOccurs="0" altova:Ordinal="2">
+							<xs:annotation>
+								<xs:documentation>Determines when item is to be calculated. 
+The choices are:
+- 0=All calc - Always calculate the item.
+- 1=Cost only - Calculate only for costs.
+- 2=Tech only - Calculate only for parameters.
+- 3=No calc - Never calculate the item.
+Most items use the default Calculation Type, which is All calc.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ScaleInd" default="0" minOccurs="0" altova:Ordinal="3">
+							<xs:annotation>
+								<xs:documentation>Determines the  method for scaling items. 
+The choices are:
+- 0=Linear
+- 1=No Scaling
+- 2=Auto Adjust to Total
+- 3=Equal Adjust to Total
+Most items use the default Scale Type, which is Linear.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="StatusCd" default="0" minOccurs="0" altova:Ordinal="5">
+							<xs:annotation>
+								<xs:documentation>A code for a item (ingredient) that describes how far along in the development process the object
+is (status), whether to hold development or manufacture (hold), and the current level or authorization
+(approval)
+0=None
+100=Experimental
+200=RA Approved
+500=Approved
+600=Inactive
+700=Rejected
+888=Pending Delete
+999=Deleted</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ClassificationCd" minOccurs="0" altova:Ordinal="7">
+							<xs:annotation>
+								<xs:documentation>An organized set of objects. An ingredient can be assigned to one class. </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ComponentInd" default="1" minOccurs="0" altova:Ordinal="8">
+							<xs:annotation>
+								<xs:documentation>Refers to ingredients (items). Component types include: 
+1=raw material
+2=packaging material
+3=discrete non-packaging material (such as a labor value) cost
+4=process instructions for equipment
+6=user instructions
+8=raw material
+9=grouping set (for labeling).</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LineBreakCd" minOccurs="0" altova:Ordinal="10">
+							<xs:annotation>
+								<xs:documentation>Specify how line breaks are formatted in spreadsheets and parameter equations.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="HoldCd" minOccurs="0" altova:Ordinal="11">
+							<xs:annotation>
+								<xs:documentation>Indicates why a workflow associated with the object has been placed on hold.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="FirstEffectiveDt" type="xs:dateTime" minOccurs="0" altova:Ordinal="12">
+							<xs:annotation>
+								<xs:documentation>Date ingredient can start to be used in production.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="LastEffectiveDt" type="xs:dateTime" minOccurs="0" altova:Ordinal="13">
+							<xs:annotation>
+								<xs:documentation>Date ingredient can no longer be used in production.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CASNbr" minOccurs="0" altova:Ordinal="21">
+							<xs:annotation>
+								<xs:documentation> CAS Registry Numbers (often referred to as CAS RN® or CAS Numbers) are universally used to provide a unique, unmistakable identifier for chemical substances. A CAS Registry Number itself has no inherent chemical significance but provides an unambiguous way to identify a chemical substance or molecular structure when there are many possible systematic, generic, proprietary or trivial names.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="32"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CommonNm" minOccurs="0" altova:Ordinal="22">
+							<xs:annotation>
+								<xs:documentation>Common name for an ingredient (item).</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="90"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="BioEngineeredInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This indicates if the ingredients contains any BIO engineered sub ingredients. Values are '0' or '1'.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="BioEngineeredSubIngrTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates all the sub ingredients that are bio engineered.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="500"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="VIDSourceTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Source of where this Vendor Ingredient document ( VID ) came from either from a PI ( 1World Sync application ) or via an xls spreadsheet on a email.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="VIDType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is type of Ingredient some of the values are REGULAR, CATALOG, OFF THE SHELF  , USDA OR COMPOUND ingredient.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AliasCd1" minOccurs="0" altova:Ordinal="23">
+							<xs:annotation>
+								<xs:documentation>Use these fields to enter additional codes or names by which the item is known. These codes can
+be used for translation purposes, too.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AliasCd2" minOccurs="0" altova:Ordinal="24">
+							<xs:annotation>
+								<xs:documentation>Use these fields to enter additional codes or names by which the item is known. These codes can
+be used for translation purposes, too.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AliasCd3" minOccurs="0" altova:Ordinal="25">
+							<xs:annotation>
+								<xs:documentation>Use these fields to enter additional codes or names by which the item is known. These codes can
+be used for translation purposes, too.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AliasCd4" minOccurs="0" altova:Ordinal="26">
+							<xs:annotation>
+								<xs:documentation>Use these fields to enter additional codes or names by which the item is known. These codes can
+be used for translation purposes, too.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AliasCd5" minOccurs="0" altova:Ordinal="27">
+							<xs:annotation>
+								<xs:documentation>Use these fields to enter additional codes or names by which the item is known. These codes can
+be used for translation purposes, too.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AliasCd6" minOccurs="0" altova:Ordinal="28">
+							<xs:annotation>
+								<xs:documentation>Use these fields to enter additional codes or names by which the item is known. These codes can
+be used for translation purposes, too.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AliasCd7" minOccurs="0" altova:Ordinal="29">
+							<xs:annotation>
+								<xs:documentation>Use these fields to enter additional codes or names by which the item is known. These codes can
+be used for translation purposes, too.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AliasCd8" minOccurs="0" altova:Ordinal="30">
+							<xs:annotation>
+								<xs:documentation>Use these fields to enter additional codes or names by which the item is known. These codes can
+be used for translation purposes, too.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ThresholdPct" type="xs:double" default="0" minOccurs="0" altova:Ordinal="35">
+							<xs:annotation>
+								<xs:documentation>Used for ingredient statements only. Percentage of the ingredient that requires it to be shown on the statement.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="AuxiliaryItemCd" minOccurs="0" altova:Ordinal="38">
+							<xs:annotation>
+								<xs:documentation>This indicates the Item Code in other systems, usually the same as the ingredient Id (item).</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="FormulaTypeFlag" type="xs:short" minOccurs="0" Abs:readonly="True" altova:Ordinal="45">
+							<xs:annotation>
+								<xs:documentation>Tells if this is a manufacturing or costing formula.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="UOMLabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True" altova:Ordinal="49">
+							<xs:annotation>
+								<xs:documentation>Unit of measure lable text.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CalculationLabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True" altova:Ordinal="50">
+							<xs:annotation>
+								<xs:documentation>Calculation label text.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ScaleLabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True" altova:Ordinal="51">
+							<xs:annotation>
+								<xs:documentation>Scale label text.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="StatusLabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True" altova:Ordinal="52">
+							<xs:annotation>
+								<xs:documentation>Status label text.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ClassificationLabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True" altova:Ordinal="54">
+							<xs:annotation>
+								<xs:documentation>Ingredient classification label text.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ComponentLabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True" altova:Ordinal="55">
+							<xs:annotation>
+								<xs:documentation>Component label text.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="LineBreakLabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True" altova:Ordinal="56">
+							<xs:annotation>
+								<xs:documentation>Line Break label text.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="HoldLabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True" altova:Ordinal="57">
+							<xs:annotation>
+								<xs:documentation>Hold label text,</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="IngredientTrademarks" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Trademarks related to a particular ingredient.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="LineNbr" type="xs:short" default="0">
+										<xs:annotation>
+											<xs:documentation>Row number on the table.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="IngredientId" default="@DFLT">
+										<xs:annotation>
+											<xs:documentation>Ingredient identification. Any of the foods or substances that are combined to make a particular product.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="TrademarkInd" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The type of a Trademark, note or warning 'T' --
+Trademark 'N' -- Note 'W' -- Warning.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="TrademarkNoteSeq" type="xs:short" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>A number to sequence trademarks before warnings before notes. trademarks:1 warnings:2 notes:3</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="TrademarkNoteTxt" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The text of a trademark note or warning associated with ingredient.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="150"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="TrademarkId" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>A unique identifier for trademarks notes or
+warnings to be associated with Ingredients.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="12"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Sub-ingredients" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>List of sub-ingredients of this ingredient.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="LineNbr" type="xs:short" default="0">
+										<xs:annotation>
+											<xs:documentation>Row number on the table.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="IngredientId" default="@DFLT">
+										<xs:annotation>
+											<xs:documentation>Ingredient identification. Any of the foods or substances that are combined to make a particular product.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="SubIngredientId">
+										<xs:annotation>
+											<xs:documentation>SubIngredient identification. Any of the foods or substances that are combined to make a particular product.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="SubIngredientWeightQty" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This the weight of the sub-ingredient in the ingredient. This is AS MEASURED or DERIVED from a percentage of the scale weight of the compound ingredient. </xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:decimal">
+												<xs:totalDigits value="9"/>
+												<xs:fractionDigits value="4"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="SubIngredientWeightUMO" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Weight Unit of Measure of the Sub-ingredient.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="3"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="IngredientLabel" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Ingredient statement (label) information.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="LineNbr" type="xs:short" default="0">
+										<xs:annotation>
+											<xs:documentation>Row number on the table.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="IngredientId" default="@DFLT">
+										<xs:annotation>
+											<xs:documentation>Ingridient Identification. Any of the foods or substances that are combined to make a particular product.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="LanguageCd" default="" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Ingredient statement language.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="20"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="IngredientLabelTyp" default="" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Ingredient statement type.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="30"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="IngredientLableTxt" default="" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Ingredient statement for the ingredient.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="2000"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="IngredientLablePluralTxt" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Ingredient statement for the ingredient, if used multiple times in a formula.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="250"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="LanguageLabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True">
+										<xs:annotation>
+											<xs:documentation>Language label text.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="CategoryLabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True">
+										<xs:annotation>
+											<xs:documentation>Category label text.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="IngredientInfo" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Nutritional and Allergen information.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="LineNbr" type="xs:short" default="0">
+										<xs:annotation>
+											<xs:documentation>Row number on the table.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="IngredientId" default="@DFLT">
+										<xs:annotation>
+											<xs:documentation>Ingridient Identification. Any of the foods or substances that are combined to make a particular product.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ParemeterCd" default="">
+										<xs:annotation>
+											<xs:documentation>Paremeter Code.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="20"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ParemeterDsc" type="xs:string" minOccurs="0" Abs:readonly="True">
+										<xs:annotation>
+											<xs:documentation>Paremeter description.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="ParemeterVal" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Parameter's value.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="40"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ParemeterFormattedVal" type="xs:string" minOccurs="0" Abs:readonly="True">
+										<xs:annotation>
+											<xs:documentation>Parameter's value (formatted).</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="ParemeterUOMCd" type="xs:string" minOccurs="0" Abs:readonly="True">
+										<xs:annotation>
+											<xs:documentation>Parameter Unit of measure code.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="ParemeterLabelTxt" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Parameter label text.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="21"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="CalculationInd" default="0" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicates how parameter is being calculated. 
+The choices are:
+- 0=All calc - Always calculate the item.
+- 1=Cost only - Calculate only for costs.
+- 2=Tech only - Calculate only for parameters.
+- 3=No calc - Never calculate the item.
+Most items use the default Calculation Type, which is All calc.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="CalculationLabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True">
+										<xs:annotation>
+											<xs:documentation>Calculation Level label text.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+					<xs:attribute name="KEYCOLUMNS" type="xs:string" default="IngredientId" Abs:readonly="True"/>
+					<xs:attribute name="KEYS" type="xs:string" default="@DFLT\@DFLT" Abs:readonly="True"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

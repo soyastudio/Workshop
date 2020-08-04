@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2014 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Safeway, Inc.) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/ShipmentSchedule.xsd"/>
+	<xs:element name="GetShipmentSchedule" type="GetShipmentSchedule">
+		<xs:annotation>
+			<xs:documentation>Business object that provides information about the transportation schedules for a shipment. Generally these schedules are prepared by the transportation systems like CAMS Prospero based on the schedules in a store order.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetShipmentSchedule">
+		<xs:annotation>
+			<xs:documentation>Business object that provides information about the transportation schedules for a shipment. Generally these schedules are prepared by the transportation systems like CAMS Prospero based on the schedules in a store order.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ShipmentScheduleData" type="Abs:ShipmentScheduleType"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

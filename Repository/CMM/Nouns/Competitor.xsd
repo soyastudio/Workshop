@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2019 sp2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.0 Jayson Leo Soliman 09/14/18 Initial Version-->
+	<!--V1.1 Jayson Leo Soliman 09/14/18 removed competitor Market Share since there is no data to populate the object-->
+	<xs:include schemaLocation="../Global/AbsGlobalComponents.xsd"/>
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--V1.2 Patrick Oliver 08/13/19 - Updated location sequence to contain ShortDescription-->
+	<xs:complexType name="Competitor">
+		<xs:sequence>
+			<xs:element name="Competitor" type="CompetitorType">
+				<xs:annotation>
+					<xs:documentation>Contains information about Albertsons Competitors. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CompetitorFacility" type="CompetitorFacilityType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>This provides address information         
+about a competitor's facility within a specified location.       </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CompetitorFacilityType">
+		<xs:annotation>
+			<xs:documentation>This provides address information         
+about a competitor's facility within a specified location.       </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="CompetitorFacilityCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the unique identifier of a specific competitor s store in a       
+specified location. See SMCMPFAC.                                         
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GeographicalLocationCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is a code that identifies a geographical location.  
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CompetitorAddress" type="AddressType" minOccurs="0"/>
+			<xs:element name="DefaultPriceMethodCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The default price method that will be used in the Price        
+Check system to default on the Price Check Report to be        
+scanned by the handheld when performing price checks.      </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="DivisionId" minOccurs="0"/>
+			<xs:element name="ROGCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>ROG stands for  Retail Ordering Group , which identifies a group of      
+stores that generally order their items from the same set of warehouses, 
+are in the same retail division. The stores in the group may order from  
+more than one distribution center. However, for any particular item, the 
+stores will order it from the same distribution center.                  
+See COROGTAB.                                                            
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Location" type="IdWithNameType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Location name generally known as like Bay area, Sacramento region..etc</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PriceAreaRetailSection" type="PriceAreaRetailSectionType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>This is a master table that contains competitor codes, their   
+store locations and corresponding market areas (Retail Section, P/A).    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PriceAreaRetailSectionType">
+		<xs:annotation>
+			<xs:documentation>This contains competitor codes, their   
+store locations and corresponding market areas (ROG, P/A).   </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="RetailSectionCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>That part of the store the item is sold in. Sections are subordinate    
+to departments - EG. Milk and Bulk food sections are in the Grocery     
+Department.  The section is defined for the product class, and does     
+not vary by ROG or division.                                            
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PriceAreaCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This represents a group of stores who charge the same price for the     
+item.                                                                   
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CloseDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is a date that indicates when something was closed.    
+This could be a competitor's store, a warehouse, etc.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityRankingNbr" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field will be used to rank a facility.                
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

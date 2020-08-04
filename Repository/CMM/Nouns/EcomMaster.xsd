@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.0  02142020  Sai Nuthakki   Initial Version-->
+	<!--V1.1  06092020  Sai Nuthakki   Added ShoppingCartType-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:complexType name="ShoppingCartType">
+		<xs:annotation>
+			<xs:documentation>Defines customer shopping cart with items selected to include in customer order.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CartNbr"/>
+			<xs:element ref="RetailStoreId"/>
+			<xs:element name="CartStatus" type="StatusType" minOccurs="0"/>
+			<xs:element ref="CustomerType" minOccurs="0"/>
+			<xs:element ref="Customer" minOccurs="0"/>
+			<xs:element ref="DeliveryServiceType" minOccurs="0"/>
+			<xs:element ref="DeliveryReceiveType" minOccurs="0"/>
+			<xs:element name="CartSourceType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Source system for the Shopping cart data </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CartCreateTs" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="CartUpdateTs" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="MFCInd" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if the shopping cart i screated for an MFC(Micro Fullfilment Center) fullfillment.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="BookingNbr" minOccurs="0"/>
+			<xs:element name="CartItem" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="UPCId" type="UPC" minOccurs="0"/>
+						<xs:element ref="BaseProductNbr" minOccurs="0"/>
+						<xs:element name="ItemQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="UOM" type="UOMType" minOccurs="0"/>
+						<xs:element name="AllowedQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SubstitutionTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Customer item substitution preferences in cas primary item is not available.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="500"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CommentTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>customer comments for an item.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2000"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CreateTs" type="xs:dateTime" minOccurs="0"/>
+						<xs:element name="UpdateTs" type="xs:dateTime" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CustomerDeliverySlotType">
+		<xs:annotation>
+			<xs:documentation>Available time window slot for an online customer to place an order and receive goods with in a business area.
+</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DeliveryAreaType" type="DeliveryAreaType" minOccurs="0"/>
+			<xs:element ref="SlotId" minOccurs="0"/>
+			<xs:element name="SlotWindow" type="SlotWindowType" minOccurs="0"/>
+			<xs:element name="SlotType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines the type of slot as 1 hr slot, 4 hr slot..etc</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SlotPlanType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Slot planning type,
+standard or non-standard</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MaxDeliveryCnt" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Maximum nuber of delivaries that can be served in a given time slot.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="DeliveryServiceType" minOccurs="0"/>
+			<xs:element ref="DeliveryReceiveType" minOccurs="0" maxOccurs="5"/>
+			<xs:element ref="DeliveryChargeType" minOccurs="0" maxOccurs="10"/>
+			<xs:element name="SlotBookingType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Bookings made during a particular slot.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="Customer" minOccurs="0"/>
+						<xs:element ref="CartNbr" minOccurs="0"/>
+						<xs:element name="ExpiryTs" type="xs:dateTime" minOccurs="0"/>
+						<xs:element ref="BookingNbr" minOccurs="0"/>
+						<xs:element ref="DeliveryServiceType" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DeliveryAreaType">
+		<xs:annotation>
+			<xs:documentation>Defined Business operation area for ecom delivaries, could be a store, group of stores, zip code or microfullfilment center or any other grouping.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="DivisionId" minOccurs="0"/>
+			<xs:element name="DeliveryAreaTypeCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Delivery area type. 
+values: 
+"store",  
+"store group", 
+"zip cd"</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DeliveryAreaValueTxt" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>store id, or store group id or a MFC id or a zip cd.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="SlotId" type="xs:string">
+		<xs:annotation>
+			<xs:documentation>unique identiifer for each slot window.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="SlotWindowType">
+		<xs:annotation>
+			<xs:documentation>Defines time window for a given slot in a business area.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StartTs" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="EndTs" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="ExpiryTs" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="DayOfWeek" type="xs:string" minOccurs="0"/>
+			<xs:element name="Shift" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>Identifies store shift fall with in slot window.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ShiftId" type="xs:string" minOccurs="0"/>
+						<xs:element name="StartTs" type="xs:dateTime" minOccurs="0"/>
+						<xs:element name="EndTs" type="xs:dateTime" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="TimeZone" type="CodeWithDescription" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="DeliveryServiceType" type="CodeWithDescription">
+		<xs:annotation>
+			<xs:documentation>eCommerce delivery service type. ex Door delivery, Drivr up and Go (DUG)</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="CustomerType" type="CodeWithDescription">
+		<xs:annotation>
+			<xs:documentation>defines Customer type.
+Residential or
+Business</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="DeliveryChargeType">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="CustomerType" minOccurs="0"/>
+				<xs:element name="DeliveryChargeAmt" minOccurs="0">
+					<xs:simpleType>
+						<xs:restriction base="xs:decimal">
+							<xs:totalDigits value="6"/>
+							<xs:fractionDigits value="2"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="DiscountedDeliveryChargeAmt" minOccurs="0">
+					<xs:simpleType>
+						<xs:restriction base="xs:decimal">
+							<xs:totalDigits value="6"/>
+							<xs:fractionDigits value="2"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="ItemDeliveryChargeAmt" minOccurs="0">
+					<xs:simpleType>
+						<xs:restriction base="xs:decimal">
+							<xs:totalDigits value="6"/>
+							<xs:fractionDigits value="2"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="ItemDiscountedDeliveryChargeAmt" minOccurs="0">
+					<xs:simpleType>
+						<xs:restriction base="xs:decimal">
+							<xs:totalDigits value="6"/>
+							<xs:fractionDigits value="2"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="BasketSizeCnt" minOccurs="0">
+					<xs:simpleType>
+						<xs:restriction base="xs:decimal">
+							<xs:totalDigits value="10"/>
+							<xs:fractionDigits value="4"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="AlertBasketSizeCnt" minOccurs="0">
+					<xs:simpleType>
+						<xs:restriction base="xs:decimal">
+							<xs:totalDigits value="10"/>
+							<xs:fractionDigits value="4"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CartNbr" type="xs:integer">
+		<xs:annotation>
+			<xs:documentation>Shopping cart number generated by the system when customer selects items for online ordering.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="BookingNbr" type="xs:integer">
+		<xs:annotation>
+			<xs:documentation>Online booking number generated when customer cart becomes a booking for goods delivery.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="Customer" type="CustomerRelationshipType">
+		<xs:annotation>
+			<xs:documentation>Defines the customer who receives the offer and clipping the coupons.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="DeliveryReceiveType" type="CodeWithDescription">
+		<xs:annotation>
+			<xs:documentation>Customer delivery receive type. 
+Attended - need to hand over the delivery to the customer.
+UnAttended - Deliery can be placed at the door.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="BaseProductNbr">
+		<xs:annotation>
+			<xs:documentation>Popularly known as BPN number in eCommerce world. Identifier generated in eCom for a group of similar elements. BPN can represent multiple CICs or UPCs. BPN is used to dispaly items in safeway.com online sales site.
+ Ex Seedless red grapes will have one BPN but there may be multiple varities with in red grapes like crimson red, dark red or light red with different cic/upcs.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:decimal">
+				<xs:totalDigits value="14"/>
+				<xs:fractionDigits value="0"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

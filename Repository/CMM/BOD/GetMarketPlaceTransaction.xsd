@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<xs:schema xmlns="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://www.openapplications.org/oagis/9" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.0  08202019 Sai Nuthakki   Initial Version-->
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/MarketPlace.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="GetMarketPlaceTransaction" type="GetMarketPlaceTransactionType">
+		<xs:annotation>
+			<xs:documentation>Defines the online customer Transaction in Market place to buy items listed by different market place vendors. Market Place is an online platfarm where vendors host their virtual shops and offer their products to sell.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetMarketPlaceTransactionType">
+		<xs:annotation>
+			<xs:documentation>Defines the online customer Transaction in Market place to buy items listed by different market place vendors. Market Place is an online platfarm where vendors host their virtual shops and offer their products to sell.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="MarketPlaceTransactionData" type="Abs:MarketPlaceTransactionType" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

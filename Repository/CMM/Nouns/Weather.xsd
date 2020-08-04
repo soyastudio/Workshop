@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.0  Alex Nunes 3/10/2020 Initial version -->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="Weather" type="WeatherType">
+		<xs:annotation>
+			<xs:documentation>root element.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="WeatherType">
+		<xs:annotation>
+			<xs:documentation>Weather data.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="WeatherDt" type="xs:date">
+				<xs:annotation>
+					<xs:documentation>Date of the weather information.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PostalCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Postal Code.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="HighTempAmt">
+				<xs:annotation>
+					<xs:documentation>High temperature amount.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="4"/>
+						<xs:fractionDigits value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LowTempAmt">
+				<xs:annotation>
+					<xs:documentation>Low temperature amount.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="4"/>
+						<xs:fractionDigits value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="IntervalTemperature" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Typically used to provide hour-by-hour weather data.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="BeginPeriod" type="xs:time" minOccurs="0"/>
+						<xs:element name="EndPeriod" type="xs:time" minOccurs="0"/>
+						<xs:element name="HighTempAmt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>High temperature amount.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="4"/>
+									<xs:fractionDigits value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LowTempAmt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Low temperature amount.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="4"/>
+									<xs:fractionDigits value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+					<xs:attribute ref="typeCode"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="UVIndexDsc" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Ultraviolet index description.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="WindSpeedAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Wind speed amount.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="4"/>
+						<xs:fractionDigits value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="HumidityPct" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Percentual of humidity.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="4"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DewPointAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Dew point amount.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="4"/>
+						<xs:fractionDigits value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RainFallAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Rain Fall amount.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="4"/>
+						<xs:fractionDigits value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SnowFallAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Snow fall amount.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="4"/>
+						<xs:fractionDigits value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ComfortIndexAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Comfort index amount.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="4"/>
+						<xs:fractionDigits value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PrecipitationPct" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Precipitation probability percentual.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="4"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="GeneralData" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="Sky" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="Temperature" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="Air" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="Precipitation" type="CodeWithDescription" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

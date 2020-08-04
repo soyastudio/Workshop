@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.0  Alex Nunes 5/4/2020 Initial version -->
+	<!--V1.1  Alex Nunes 6/3/2020 Business key indicator added and business value is now optional. Memo field is going to be moved to biz context. Audit date and time elements are now combined -->
+	<!--V1.2  Alex Nunes 6/2/2020 Added key-value pair to identify a record with business context - Business Key(s). -->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="AuditData" type="AuditDataType">
+		<xs:annotation>
+			<xs:documentation>root element.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="AuditDataType">
+		<xs:annotation>
+			<xs:documentation>Represents common/generic audit trail data. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="BusinessContext" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Structure to hold organizational or business info on details of the audit record. </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="AttributeNm">
+							<xs:annotation>
+								<xs:documentation>Name of the attribute or key. Example UPC, CIC, StoreId, Dept, etc...</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="128"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AttributeVal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Value corresponded with the key or attribute. Example, 818180, 140, etc...</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="500"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+					<xs:attribute ref="sequenceNbr"/>
+					<xs:attribute name="KeyInd">
+						<xs:annotation>
+							<xs:documentation>This field indicates whether or not the attribute is part of the record identification.</xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:maxLength value="1"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:attribute>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AuditDt" type="DateTimeBaseType">
+				<xs:annotation>
+					<xs:documentation>Date and time stamp of the audit log.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AuditId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Key or Audit Identification.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="System" type="CodeWithName" minOccurs="0"/>
+			<xs:element name="Entity" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Entity or table data. This is typically the name of the table on the database and code.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Attribute" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Data about the field or column. This is typically the name of the column on the database and code.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Action" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the action. Example of action:
+1-Add – (OLD VALUE will be blank). 2-Edit (will have both OLD and NEW values)
+3-Delete (NEW VALUE will be blank)
+ex: 1,2,3</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="User" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="UserId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Primary user Id.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="UserNm" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Name of the user.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element ref="AlternateId" minOccurs="0" maxOccurs="5"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Values" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="OldValueTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Previous value before the operation takes place.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1000"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="NewValueTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>New or current value.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1000"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="RecordDtTm" type="DateTimeBaseType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and Time stamp of record being update.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

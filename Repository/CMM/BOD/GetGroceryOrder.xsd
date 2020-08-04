@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--   Schema Owner: 	Safeway Inc
+   Date Created:      08/27/2019
+   Author:		Jayson Soliman
+   Description: BOD for Grocery Delivery.
+   Name: /SFWY/BOD/GetGroceryDelivery.xsd-->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.0 Jayson Leo Soliman 08/14/19 Initial Version-->
+	<!--V2.0 Alex Nunes 7/9/2020 Rename BOD from GroceryDelivery to GroceryOrder -->
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/GroceryOrder.xsd"/>
+	<xs:element name="GetGroceryOrder" type="GetGroceryOrderType">
+		<xs:annotation>
+			<xs:documentation>root</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetGroceryOrderType">
+		<xs:annotation>
+			<xs:documentation>Business Object Document for Albertsons Grocery Order. Grocery Order can either be a regular  Delivery or In-store Pickup/Drive Up and Go (DUG) order. The recepient of the delivery is usually a Retail Customer and the orders are normally placed online (either via Web Site or Mobile App) through the e-Commerce system of Albertsons.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GroceryOrderData" type="Abs:GroceryOrder"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

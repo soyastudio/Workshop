@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.0    Sai Nuthakki      06/12/2017       Initial Version-->
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/Invoice.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--V2.0  Alex Nunes 6/4/2019 Modified to work with financial invoices.-->
+	<!--V2.1 Patrick Oliver 6/2/2020 - For Invoice AP files added to header: TaxPointDt,  PymtInd, LostDiscountInd, VendorInd, RecordInd, InvoiceUserPymtNbr, PymtEnclosure, InvoiceUser, DebitMemoInd. For Detail added: AccountingUnitId, AccountId, SubAccountId, DistributionCompanyId, TaxSequenceNbr, ServicetDt, AssetDescription, TotalUnitLineAmt, SupplementaryQty, VendorParty, SuffixNbr, DistribLineAmt, TaxLineAmt, BaseLineAmt, ProgramSequenceNbr, CategoryCd, DistributionUser, GLLineCd-->
+	<!--V2.2 Patrick Oliver 6/10/2020 - For KPMG review added following attributes: Invoice Header:  PurchaseOrderAttachCd , TransactionType, MCLBRNbr,  WarehouseSection, InvoiceInd. Invoice Detail: DistribActivity, DiscountLineAmt-->
+	<!--V2.3 Patrick Oliver 6/26/2020 - Per request from CABS added InvoiceProcessedInd to model. This will be set after Financial system (KPMG) processes invoices. -->
+	<xs:element name="GetInvoice" type="GetInvoice">
+		<xs:annotation>
+			<xs:documentation>root</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetInvoice">
+		<xs:annotation>
+			<xs:documentation>Business object that provides Invoice Information for both inbound and outbound to Albertsons facilities.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="InvoiceData" type="Abs:InvoiceType"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--!=============================================================================================-->
+	<!--!-->
+	<!--!-->
+	<!--!      Billing Gross: -->
+	<!--!                                     Noun that represents the generated billing gross percentage at store/department count area level.             -->
+	<!--!-->
+	<!--!=============================================================================================-->
+	<!--V1.0 Alex Nunes - 6/25/2020 - Initial version.-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="BillingGross" type="BillingGrossType">
+		<xs:annotation>
+			<xs:documentation>root element.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="BillingGrossType">
+		<xs:annotation>
+			<xs:documentation>This structure represents the generated billing gross percentage at store/department count area level.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporationId"/>
+			<xs:element ref="DivisionId"/>
+			<xs:element name="CalculationTs">
+				<xs:annotation>
+					<xs:documentation>Date and time of the calculated percentage.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BillingGrossData" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="RetailStoreId"/>
+						<xs:element ref="DepartmentId"/>
+						<xs:element name="CountAreaCorporateItemCd">
+							<xs:annotation>
+								<xs:documentation>Count Area Code. Internally is a Corporate Item Code (CIC).</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="BillingGrossPercentageAmt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Billing Gross Percentage also known as Cost Conversion Factor - The billing gross percentage for the four-week ending inventory process (SSF812) to calculate cost as follows:
+Cost = Retail * (1 - (BG% / 100))                       </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="15"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="GrandTotalOperationInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Grand Total Operation indicator  0 if the CCF is to be a positive number or 1 if CCF is to be a negative number.
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

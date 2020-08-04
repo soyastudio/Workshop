@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<xs:schema xmlns="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://www.openapplications.org/oagis/9" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.0  05142020 Sai Nuthakki   Initial Version-->
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/FinanceMaster.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="GetDeferral" type="GetDeferralType">
+		<xs:annotation>
+			<xs:documentation>A deferral occurs when a company has:
+paid out money that should be reported as an expense in a later accounting period, and/or
+received money that should be reported as revenue in a later accounting period.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetDeferralType">
+		<xs:annotation>
+			<xs:documentation>A deferral occurs when a company has:
+paid out money that should be reported as an expense in a later accounting period, and/or
+received money that should be reported as revenue in a later accounting period.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="DeferralData" type="Abs:DeferralType"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

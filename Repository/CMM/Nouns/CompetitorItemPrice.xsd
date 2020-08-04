@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2012 (http://www.altova.com) by Jayson Leo P. Soliman (Safeway, Inc.) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--V1.0 Jayson Leo Soliman  9/19/18 Initial version-->
+	<xs:complexType name="ItemType">
+		<xs:annotation>
+			<xs:documentation>Contains basic information about Albertsons items</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="Abs:CorporateItemCd" minOccurs="0"/>
+			<xs:element name="RetailScanCd" type="Abs:UPC"/>
+			<xs:element name="ProductHierarchy" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ProductGroup" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="ProductGroupCd" type="xs:integer" minOccurs="0"/>
+									<xs:element name="ProductGroupNm" type="xs:string" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="ProductCategoryCd" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="ProductCategoryCd" type="xs:integer" minOccurs="0"/>
+									<xs:element name="ProductCategoryNm" type="xs:string" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="ProductClassCd" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="ProductClassCd" type="xs:integer" minOccurs="0"/>
+									<xs:element name="ProductClassNm" type="xs:string" minOccurs="0"/>
+									<xs:element name="RetailSectionCd" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ItemDsc" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="POSItemDsc" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Abreviated Dsc of the item that will appear on scanner store receipts.</xs:documentation>
+								<xs:documentation>Dsc of the item in retail POS.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="RetailItemDsc" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Description of item in Retail systems.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="InternetItemDsc" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Dsc used in internet for various promotions.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="WarehouseItemDsc" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is the Dsc of a warehoused item. It contains the brand and Dsc of the item. The brand occurs first. The space after the brand is located using the column brand end position. The space before the flavor/type in the Dsc is located using the column SUFFIXPOS.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="40"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="VendorItemDsc" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Item Dsc provided by the vendor</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PCCSMICNbr" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>US - 4 Digit SMIC with 0 at end, CAN - 5 digit PCC. Initially used by Adplan for sorting.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RetailPackNbr" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="ItemBillingCostAmt" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="VendorCostAmt" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="SensitiveTierCd" type="xs:string" minOccurs="0"/>
+			<xs:element name="SensitiveRoleCd" type="xs:string" minOccurs="0"/>
+			<xs:element name="SensitiveClassCd" type="xs:string" minOccurs="0"/>
+			<xs:element name="SensitiveChannelCd" type="xs:string" minOccurs="0"/>
+			<xs:element name="ManufacturerTypeInd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This column is used to indicate if an item is either: C = Coupon G = Generic item H = House brand item L = Local N = National Brand Item</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ItemPrice" type="CurrentPriceType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>SSIMS Definition: This contains the current Billing Retail Price of the item including Long Term specials but not including AD pricing. A matching record must exist in the SSITMPOS table. Values in this table are changed according to records in the Pending Price Change table and Pending AD Item Tables. When a value is changed the old value is recorded in the History Price Change Table.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PriceType">
+		<xs:annotation>
+			<xs:documentation>Contains retail price information for Albertsons items</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PriceMethodCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identifies the method of item pricing.
+G = Group Price Method – if customer is purchasing in groups (Limit Quantity), Alternate Price is used.  Items not purchased in these groups are charged at        Regular Price.
+M = Minimum Price Method – if customer purchases a minimum amount (Limit Quantity), Alternate Price is used.  If customer purchases below a minimum        amount, Regular Price is used.
+R = Regular Price Method – Regular Price is always used.
+L = Limit Quantity Pricing – if customer purchases an amount under the limit (Limit Quantity), Alternate Price is used.  If customer purchases an amount over the limit, Regular Price is used. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ItemLimtQty" type="xs:integer" minOccurs="0"/>
+			<xs:element name="ItemPriceAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the retail price charged to the customer for each shelf unit, or if the price factor is > 1, for price factor number of units. EG. It is the '.99 cents' in '2/.99 cents'. It is also used as the over the limit price.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="12"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ItemPriceFactor" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the number of shelf items received for the price e.g. it is the '2' in '2/99 cents'.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AlternatePriceAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is an alternate price charged if Price Method is not R and the Limit Quantity purchased.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="12"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AlternatePriceFactor" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The number of items that are associated with the Alternate Price, ie: the 2 in “2 for $1.80.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AdPriceAmt" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="AdPriceFactor" type="xs:int" minOccurs="0"/>
+			<xs:element name="AdItemLimtQty" type="xs:integer" minOccurs="0"/>
+			<xs:element name="AdPriceMethodCd" type="xs:string" minOccurs="0"/>
+			<xs:element name="LTSPriceAmt" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="LTSPriceFactor" type="xs:int" minOccurs="0"/>
+			<xs:element name="ShelfPriceAmt" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="ShelfPriceFactor" type="xs:int" minOccurs="0"/>
+			<xs:element name="ShelfPriceMethodCd" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CurrentPriceType">
+		<xs:annotation>
+			<xs:documentation>Contains information specific to current pricing.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Price" type="PriceType" minOccurs="0"/>
+			<xs:element name="SensitiveItemCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Sensitive item code identifies the pricing strategy assigned to the item's category and the targeted competitor type as defined at SCOP sessions (if the category has been through SCOP); it can change by Price Area.  If multiple sensitivity values apply and Pre-priced is one of those values, a '9' must be entered in the Sensitive Item field. Pre-priced overrides everything at the ROG level.  Item sensitivity automatically copies to all items that share a Common Retail Code; there is no turn-off option.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CompetitorItemType">
+		<xs:annotation>
+			<xs:documentation>Contains information about competitor item. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Comptetitor" type="Abs:CompetitorType" minOccurs="0"/>
+			<xs:element name="CompetitorFacility">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="CompetitorFacilityCd" type="xs:string">
+							<xs:annotation>
+								<xs:documentation>This is the unique identifier of a specific competitor s store in a       
+specified location. See SMCMPFAC.                                         
+</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PriceAreaRetailSection" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="PriceAreaCd" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This represents a group of stores who charge the same price for the     
+item.                                                                   
+</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="RetailSectionCd" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>That part of the store the item is sold in. Sections are subordinate    
+to departments - EG. Milk and Bulk food sections are in the Grocery     
+Department.  The section is defined for the product class, and does     
+not vary by ROG or division.                                            
+</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Item" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="RetailScanCd" type="Abs:UPC"/>
+						<xs:element name="ItemDescription" type="xs:string" minOccurs="0"/>
+						<xs:element name="ManufactureTypeCd" type="xs:string" minOccurs="0"/>
+						<xs:element name="ItemPrice" type="CompetitorPriceType" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CompetitorPriceType">
+		<xs:annotation>
+			<xs:documentation>Contains information about the pricing of a competitor item</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PriceMethodCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identifies the method of item pricing.
+G = Group Price Method – if customer is purchasing in groups (Limit Quantity), Alternate Price is used.  Items not purchased in these groups are charged at        Regular Price.
+M = Minimum Price Method – if customer purchases a minimum amount (Limit Quantity), Alternate Price is used.  If customer purchases below a minimum        amount, Regular Price is used.
+R = Regular Price Method – Regular Price is always used.
+L = Limit Quantity Pricing – if customer purchases an amount under the limit (Limit Quantity), Alternate Price is used.  If customer purchases an amount over the limit, Regular Price is used. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ItemLimtQty" type="xs:integer" minOccurs="0"/>
+			<xs:element name="ItemPriceAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the competitor price amount</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="12"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ItemPriceFactor" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the number of shelf items received for the price e.g. it is the '2' in '2/99 cents'.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AlternatePriceAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is an alternate price charged if Price Method is not R and the Limit Quantity purchased.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="12"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AlternatePriceFactor" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The number of items that are associated with the Alternate Price, ie: the 2 in “2 for $1.80.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PriceCheckDtTm" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="AdPriceAmt" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="AdPriceFactor" type="xs:int" minOccurs="0"/>
+			<xs:element name="AdItemLimQty" type="xs:int" minOccurs="0"/>
+			<xs:element name="AdPriceMethodCd" type="xs:string" minOccurs="0"/>
+			<xs:element name="ShelfPriceFactor" type="xs:int" minOccurs="0"/>
+			<xs:element name="ShelfPriceMethodCd" type="xs:string" minOccurs="0"/>
+			<xs:element name="ShelfPriceAmt" type="xs:decimal" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CompetitorPrice">
+		<xs:annotation>
+			<xs:documentation>Contaains information comparing Albertsons Items vs Competitor Items.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Organization" type="OrganizationType" minOccurs="0"/>
+			<xs:element name="Item" type="ItemType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains basic item information related to pricing such as UPC, Price area, etc</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CompetitorItem" type="CompetitorItemType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ShelfPriceDifferenceAmt" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="RegularPriceDifferenceAmt" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="AverageWeeklyMovementCnt" type="xs:decimal" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>UNIT ITEM MOVEMENT FROM THE STORE SCANNERS FOR THE LAST
+WEEK, WITH LTS WEEKS INCLUDED WITH THE WEEKS SOLD AT   
+normal retail price.      </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AverageWeeklyUnitNbr" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="AverageMovementWeek" type="xs:int" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OrganizationType">
+		<xs:annotation>
+			<xs:documentation>Contains item's organizational information</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporationId"/>
+			<xs:element ref="DivisionId"/>
+			<xs:element ref="ROGCd"/>
+			<xs:element name="DepartmentCd" type="xs:string" minOccurs="0"/>
+			<xs:element name="PriceAreaCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Price areas are groups of stores within a ROG that have the same Pricing structure. This is the individual price area within the Price Area group. Price areas are found on the Price Area Facility Table (SSPAFACL_TABLE).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

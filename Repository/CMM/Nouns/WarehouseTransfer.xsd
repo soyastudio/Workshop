@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2012 (http://www.altova.com) by Jayson Leo P. Soliman (Safeway, Inc.) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:complexType name="WarehouseTransfer">
+		<xs:annotation>
+			<xs:documentation>Contains Data related to  all Warehouse Transfers within Albertsons</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="WarehouseTransferHeader" type="WarehouseTransferHeader"/>
+			<xs:element name="WarehouseTransferDetail" type="WarehouseTransferDetail" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WarehouseFacilityType">
+		<xs:annotation>
+			<xs:documentation>Holds warehouse and distribution center information</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="Abs:CorporationId" minOccurs="0"/>
+			<xs:element ref="Abs:DivisionId" minOccurs="0"/>
+			<xs:element ref="Abs:DistributionCenterId" minOccurs="0"/>
+			<xs:element ref="Abs:WarehouseId" minOccurs="0"/>
+			<xs:element ref="Abs:ManufacturingPlantId" minOccurs="0"/>
+			<xs:element name="DistrictId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FacilityNm" type="xs:string" minOccurs="0"/>
+			<xs:element name="FacilityAddress" type="Abs:AddressType" minOccurs="0"/>
+			<xs:element name="WarehouseAltId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Alternate identifier for a warehouse like old warehouse id.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DistributionCenterAltId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Alternate identifier for a DC like old DC id.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WarehouseTransferHeader">
+		<xs:sequence>
+			<xs:element name="ShippingFacility" type="WarehouseFacilityType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines the Warehouse that transfers products.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReceivingFacility" type="WarehouseFacilityType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines the Warehouse that receives the products.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WarehouseShippingOrderNbr" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This number uniquely identifies a warehouse order. It is used by the supplier (warehouse or plant). It is unique within a Shipping Division and Order Group. The number is sequentially assigned. Alias: Customer Order Number (Tandem)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WarehouseTransferTypeNm" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines what kind of Warehouse Transfer is being done. Some examples of Transfer Types: 
+
+1) Satellite Warehouse Transfers 
+2) Division to Division Transfers 
+3) Warehouse Expense 
+4) DC to DC Transfer</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TransferReferenceNbr" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Contains any reference number  related to this transfer. This can be invoice number, document number, segment number, etc. Reference numbers are classified by the TransferReferenceNm attribute.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="TransferReferenceNm" type="xs:string">
+								<xs:annotation>
+									<xs:documentation>Can be Invoice Number, Document Number, OMS Segment Number, WMS Segment Nbr, etc.</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="InvoiceCreateDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the date and time the order was first processed by the shipping facility (warehouse), where an order or invoice was created. For corrective invoices, it is the date and time the corrective invoice was created. Alias: Invoice Date (Tandem)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InvoiceTypeCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The code identifies what type of invoice is represented by the invoice. Alias: Invoice Type Code (Tandem)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ScheduledArrivalDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the date the order will arrive at the Safeway store or Independents customer when it is delivered from the whse, as per the DPATS schedule. Stores are billed for the items they've ordered based on this date.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InventoryAdjustReasonCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>WMS (Warehouse Management System) inventory adjustment reason code. This identifies the reason code that a warehouse uses in order to adjust its inventory.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ProcessStatusCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates whether or not the row has been processed. in the source system</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LastFMDttm" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="OrgMasterNameType" type="OrgMasterNameType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WarehouseTransferDetail">
+		<xs:sequence>
+			<xs:element name="LineItemReferenceNbr" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Contains reference numbers related to this line item. These can either be Line numbers coming from OMS, WMS, or it can also be sequence number as a result of substitution. The value is described by LineItemReferenceNm attribute.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:int">
+							<xs:attribute name="LineItemReferenceNm" type="xs:string">
+								<xs:annotation>
+									<xs:documentation>Can be OMS_LINE_NBR, WMS_DTL_LINE_NBR, SUB_SEQ_NBR, etc</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element ref="CorporateItemCd" minOccurs="0"/>
+			<xs:element name="ItemDsc" type="xs:string" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the Dsc of a warehoused item.  It contains the brand and Dsc of the item.
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BranchItemCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the old five digit item code used with the MCL branch to     
+identify an item.  This is Used to interface to detail files, systems
+not converted to corporate item code and divisional users.           
+It is sometimes referred to as Division Item Code.                   
+</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AltBranchItemCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Represents BR_ITEM_CD_ORIG from SSIMS</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrderedQty" type="xs:decimal" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field shows the ordered quantities.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ShippedItemQty" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the quantity actually shipped to the destination facility by the wholesale facility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrderWtAmt" default="0" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Total weight of the item that was shipped to the store. This is used for billing of random weight items such as fresh meat.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="9"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CubeQty" type="xs:decimal" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Total cubic feet feet for a line item within the order.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ItemSubstitutedInd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This indicates if an item was substituted. Alias: COI Sub Code (Tandem)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CreateDttm" type="xs:dateTime" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

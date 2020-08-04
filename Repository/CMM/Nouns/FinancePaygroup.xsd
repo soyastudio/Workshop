@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.0  Alex Nunes 6/4/2019 Initial version -->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:include schemaLocation="FinanceMaster.xsd"/>
+	<xs:element name="FinancePayroup">
+		<xs:annotation>
+			<xs:documentation>root element.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="FinancePaygroupType">
+		<xs:annotation>
+			<xs:documentation>This type represents logical grouping for payments for a vendor to pay invoices received by multiple Accounts Payable companies and process levels.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="Paygrp"/>
+			<xs:element name="PaygroupDsc">
+				<xs:annotation>
+					<xs:documentation>The name or description of the pay group. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="30"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="CompanyId"/>
+			<xs:element ref="VendorGrp"/>
+			<xs:element name="BaseCurrencyCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The base currency assigned to the posting company. The posting company and all accounts payable companies associated with the pay group must have the same base currency.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BaseCurrencyDecimalNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The number of decimals defined for the posting company base currency. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CashCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The cash code assigned to the pay group. A cash code represents a specific bank account. Must be defined in the Cash Code file. A valid relationship must be defined between the cash code and all companies associated with the pay group, including the posting company. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BankPaymentCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The payment code associated with the pay group. Represents a type of cash payment, such as a check or payment tape, or bill of exchange payment. Must be defined as a cash or bill of exchange payment transaction code in the Transaction Code file. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LastDraftNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If the pay group processes bill of exchange payments, this field contains the last bill of exchange number printed for the pay group. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BOEAcceptAcctInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If the pay group processes bill of exchange payments, this field indicates whether the bill of exchange amount should post to the BOE Acceptance Account upon acceptance. Valid values are: N = No. Default value. Y = Yes. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DraftCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If the pay group has Yes selected in the Acceptance Accounting field, this field contains the bill of exchange accrual code assigned to the pay group. A bill of exchange accrual code represents a default acceptance account. Must be defined in the Bill of Exchange Accrual Code file. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="StatusCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The pay group status. Valid values are: A = Active. Default value. I = Inactive. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="UsedInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates whether any invoices have been entered for the pay group. The posting company assigned to the pay group cannot be changed once the pay group has been used. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="UserClassNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The user class assigned to the pay group. Represents a group of Accounts Payable system users. If assigned, only users assigned to the user group can access or update pay group information in programs that update pay group information. Must be a valid record in the Pay Group User Class file. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="12"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SerialNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field is a system-generated number used to group tape payment transactions together. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="8"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DrafNbrInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A = Auto BOE Numbering
+M = Manual BOE Numbering.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BOEStmtNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Bill of exchange statement statement numbcer.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="8"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="UseDefaultStmtInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Default statement usage indicator.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,1560 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xsd:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.9.8">
+	<xsd:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--4/2/2020 Alex Nunes - Change on 1.Eligibility Notification moving out of Rewards group and 2. Join Type Cd moving to Offer Product Condition group.-->
+	<xsd:element name="Offer" type="OfferType">
+		<xsd:annotation>
+			<xsd:documentation>Root element.</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:complexType name="OfferType">
+		<xsd:annotation>
+			<xsd:documentation>An offer is a type of promotion used to track targeted and non-targeted discounts (not always) or points accumulation. Offers are company generated promotions or manufacturer coupons. However, there are offers that are not part of promotions. They are just used to deliver communication to customers, like for example, an offer is sent to a customer for purchasing rotten egg. Delivery of some reward type based on customer meeting some conditions. This will be true for all offer-related systems. </xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="General">
+				<xsd:annotation>
+					<xsd:documentation>General information about the offer such as, dates, idenification, indicators and summaries.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Identification">
+							<xsd:annotation>
+								<xsd:documentation>General information on the offer.</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="OfferID" type="xsd:long">
+										<xsd:annotation>
+											<xsd:documentation>Internal Offer Id.  </xsd:documentation>
+										</xsd:annotation>
+										<!-- Description: Primary key for offer -->
+									</xsd:element>
+									<xsd:element name="ExternalOfferID" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>External Offer Id. Ex: Offers from TOGM, OMS and EMOM.</xsd:documentation>
+										</xsd:annotation>
+										<!-- Description: PKID for offer in external system (eg OMS) -->
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:string">
+												<xsd:maxLength value="20"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:element>
+									<xsd:element name="RewardOptionID" type="xsd:long" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Unique identifier for offer in-store (server-primary key).</xsd:documentation>
+										</xsd:annotation>
+										<!-- Description: PKID for offer used in CPE -->
+									</xsd:element>
+									<xsd:element name="EngineID" type="xsd:integer" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Where the offer was originated from. Not really useful in Safeway, just NCR way of telling what kind of offer this is for, they have different engine in NCR, but Safeway only use CPE.</xsd:documentation>
+										</xsd:annotation>
+										<!-- Description: 'Not really useful in Safeway, just NCR way of telling what kind of offer this is for, they have different engine in NCR, but Safeway only use CPE'
+Linked to: PromoEngines -->
+									</xsd:element>
+									<xsd:element name="EngineNm" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Name of the engine that the offer was originated from.</xsd:documentation>
+										</xsd:annotation>
+										<!-- Field link: CPE_ST_Incentives.EnginePhraseID=PhraseText.PhraseID -->
+									</xsd:element>
+									<xsd:element name="OfferStatus" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Status of the offer. Defines the different stages of an offer and its effective date.
+Ex: Eligibility, Production, Testing. Defines the different stages that an offer goes through. These stages are :
+Eligibility - start and end date for when a notification will be sent for an offer. Production - start and end date for when the offer is active in a store. Testing - start and end date for when the offer is active in testing location - test lab.
+</xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="OfferStatusCd" type="xsd:integer" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Status code of the offer. Always will be "commited" as "dirt" offers will not be exported. </xsd:documentation>
+													</xsd:annotation>
+													<!-- Description: 'Indicator for status of offer (modified vs deployed), for our application, we only care about deployed' -->
+												</xsd:element>
+												<xsd:element name="OfferStatusDsc" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Status description of the offer. Static value "Deployed"</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="OfferNm" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Name of the offer.</xsd:documentation>
+										</xsd:annotation>
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:string">
+												<xsd:maxLength value="100"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:element>
+									<xsd:element name="OfferDsc" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Long description of the offer.</xsd:documentation>
+										</xsd:annotation>
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:string">
+												<xsd:maxLength value="1000"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:element>
+									<xsd:element name="OfferCategory" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Category of the offer. Defines the higher categorization of an offer. For example, an offer can be : Targeted single offer, Targeted continuity offer, Non-targeted continuity offer. A targeted offer is an offer which has a specific set of households which are eligible to redeem the offer at POS.  The offer is not available to all households. The analysis of the households that are eligible are performed prior to the creation of the offer.</xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="OfferCategoryID" type="xsd:integer" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Identification of the offer Category. </xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="OfferCategoryNm" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Name of the offer category. Ex: Club card savings, J4U savings, </xsd:documentation>
+													</xsd:annotation>
+													<!-- Field link: CPE_ST_Incentives.PromoClassID=OfferCategories.OfferCategoryID -->
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:maxLength value="255"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="VendorCouponCd" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Vendor Coupon code. Text from UI - not used.</xsd:documentation>
+										</xsd:annotation>
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:string">
+												<xsd:maxLength value="20"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="OfferRelatedDate">
+							<xsd:annotation>
+								<xsd:documentation>Key dates related to the offer.</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="ProductionStartDt" type="xsd:date">
+										<xsd:annotation>
+											<xsd:documentation>The effective starting date for this offer. Note that only a date is sent and offers start at midnight (00:00:00) on the start date.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="ProductionEndDt" type="xsd:date">
+										<xsd:annotation>
+											<xsd:documentation>The expiration date for this offer. Note that only a date is sent and offers end at 11:59:59 PM on the End Date.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="EligibilityStartDt" type="xsd:date" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>The starting date when eligibility deliverables are available.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="EligibilityEndDt" type="xsd:date" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>The ending date when eligibility deliverables will end.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="TestingStartDt" type="xsd:date" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>The starting date for this offer for testing locations only.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="TestingEndDt" type="xsd:date" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>The ending date for this offer for testing locations only.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="OfferPriority" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Priority of the offer. Used for receipt message ordering.</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="OfferPriorityId" type="xsd:integer" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Id</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="OfferPriorityNm" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Numeric value used to order item (ex. 01, 98, etc)))</xsd:documentation>
+										</xsd:annotation>
+										<!-- Description: 'High, Medium, Low'
+Linked to: CPE_IncentivePriorities
+Field link: CPE_ST_Incentives.PriorityID -->
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:string">
+												<xsd:maxLength value="50"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="EligibilityFrequency">
+							<xsd:annotation>
+								<xsd:documentation>How often the eligibility message is printed (on the receipt).</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="EligibilityFrequencyNm" type="xsd:string">
+										<xsd:annotation>
+											<xsd:documentation>Ex: Once per offer, once per transaction or Custom meaning X per hour or X per day:             if (limit == 0 AND period == 0 AND distTimeType == 2) return "No limit";
+if (limit == 1 AND period == 1 AND distTimeType == 2) return "Once per transaction";
+if (limit == 1 AND period == 1 AND distTimeType == 1) return "Once per day";
+if (limit == 1 AND period == 7 AND distTimeType == 1) return "Once per week";
+if (period == 3650 AND distTimeType == 1) return "Once per offer";</xsd:documentation>
+										</xsd:annotation>
+										<!-- Description: 'term.nolimit, onceperday, etc.: 1-5: no limit, once per transaction, once per day, once per week, once per offer'
+Field link: CPE_DistributionTimeTypes.TimeTypeID=CPE_ST_Incentives.P1DistTimeType and PhraseText.PhraseID=CPE_DistributionTimeTypes.PhraseID -->
+									</xsd:element>
+									<xsd:element name="Limit" type="xsd:integer">
+										<xsd:annotation>
+											<xsd:documentation>Quantity limit.</xsd:documentation>
+										</xsd:annotation>
+										<!-- Description: limit 1 fields -->
+									</xsd:element>
+									<xsd:element name="Period" type="xsd:integer">
+										<xsd:annotation>
+											<xsd:documentation>Period in number of days.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="DistributionTyp">
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="DistributionTypCd" type="xsd:integer"/>
+												<xsd:element name="DistributionTypNm" type="xsd:string"/>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="RewardFrequency">
+							<xsd:annotation>
+								<xsd:documentation>How often we get the reward message printed (on the receipt).</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="RewardFrequencyNm" type="xsd:string">
+										<xsd:annotation>
+											<xsd:documentation>Ex: Once per offer, once per transaction or Custom meaning X per hour or X per day:             if (limit == 0 AND period == 0 AND distTimeType == 2) return "No limit";
+if (limit == 1 AND period == 1 AND distTimeType == 2) return "Once per transaction";
+if (limit == 1 AND period == 1 AND distTimeType == 1) return "Once per day";
+if (limit == 1 AND period == 7 AND distTimeType == 1) return "Once per week";
+if (period == 3650 AND distTimeType == 1) return "Once per offer";</xsd:documentation>
+										</xsd:annotation>
+										<!-- Description: limit 3 fields
+Field link: CPE_DistributionTimeTypes.TimeTypeID=CPE_ST_Incentives.P3DistTimeType and PhraseText.PhraseID=CPE_DistributionTimeTypes.PhraseID -->
+									</xsd:element>
+									<xsd:element name="Limit" type="xsd:integer">
+										<xsd:annotation>
+											<xsd:documentation>Quantity limit.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="Period" type="xsd:integer">
+										<xsd:annotation>
+											<xsd:documentation>Period in number of days.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="DistributionTyp">
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="DistributionTypCd" type="xsd:integer"/>
+												<xsd:element name="DistributionTypNm" type="xsd:string">
+													<!-- Field link: CPE_DistributionTimeTypes.TimeTypeID=CPE_ST_Incentives.TimeTypeID and PhraseText.PhraseID=CPE_DistributionTimeTypes.PhraseID -->
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="InboundOutbound" minOccurs="0">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="Source" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>External system that we are importing the offer from. Ex. TOGM, Coupons Inc,, etc...</xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence minOccurs="0">
+												<xsd:element name="SourceCd" type="xsd:integer" minOccurs="0"/>
+												<xsd:element name="SourceDsc" type="xsd:string" minOccurs="0">
+													<!-- Field link: ExtCRMInterfaces.ExtInterfaceId=CPE_ST_Incentives.InboundCRMEngineID -->
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="OutboundDataInterface" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Identifies external interfaces for outboud messages.</xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence minOccurs="0">
+												<xsd:element name="OutboundDataInterfaceCd" type="xsd:integer" minOccurs="0"/>
+												<xsd:element name="OutboundDataInterfaceNm" type="xsd:string" minOccurs="0">
+													<!-- Field link: Phrase for ExtInterfaceId=CPE_ST_Incentives.CRMEngineID -->
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="ChargebackVendor" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Assigns the vendor to whom this offer’s redemption should be charged.</xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence minOccurs="0">
+												<xsd:element name="ChargebackVendorCd" type="xsd:integer" minOccurs="0"/>
+												<xsd:element name="ChargebackVendorNm" minOccurs="0">
+													<!-- Field link: CPE_ST_Incentives.ChargebackVendorID=Vendors.ExtVendorID -->
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:maxLength value="100"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="EmployeeIndicator" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Identifies wheter or not customer is an employee but it's not being used.</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="AvailableToEmployeesOnlyInd" type="xsd:boolean" minOccurs="0">
+										<!-- Description: Employee enabled when EmployeesOnly Or EmployeesExcluded -->
+									</xsd:element>
+									<xsd:element name="NotAvailableToEmployeesInd" type="xsd:boolean" minOccurs="0"/>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="AdvancedOption" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Offer general indicadors regarding reporting.</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:sequence minOccurs="0">
+									<xsd:element name="AutoTransferableInd" type="xsd:boolean" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Placeholder. It's currently not being used.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="EnableImpressionReportingInd" type="xsd:boolean" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Performance of the offer similar to a counter of how many redeptions per period (hr or dy).</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="EnableRedemptionReportingInd" type="xsd:boolean" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Flag to indicate the actual numbers of the redemption.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="TreatAsManufacturerCouponInd" type="xsd:integer" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Flag to indicate as paper manufacturer coupon.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="EnableIssueanceInd" type="xsd:integer" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Indicator to identify anything issued by company's offer distribution system. Defines whether issuance data is sent to the central server from
+the stores for this offer.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="OfferAdditionalInfo" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Additional information on the offer.</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:sequence minOccurs="0">
+									<xsd:element name="FolderPathDsc" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>How the offers are grouped/saved.</xsd:documentation>
+										</xsd:annotation>
+										<!-- Linked to: FolderItems
+Field link: FoldereItems.LinkID=CPE_ST_Incentives.OfferID and FoldereItems.LinkTypeID=1 -->
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:string">
+												<xsd:maxLength value="50"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:element>
+									<xsd:element name="TierNbr" type="xsd:integer" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Offer can have multiple tiers. This indicates what is the tier number for the offer.</xsd:documentation>
+										</xsd:annotation>
+										<!-- Field link: TouchResponse=0 and IncentiveID=OfferID -->
+									</xsd:element>
+									<xsd:element name="CreatedByUserId" type="xsd:integer" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>User Id that authored/created the offer.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="CreatedByUserNm" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Name of the User who authored/created the offer.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="LastUpdatedByUserId" type="xsd:integer" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>User Id that klast updated the offer.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="LastUpdatedByUserNm" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Name of the user who last updated the offer.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="ConditionInfo" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Defines what is required in order to qualify for the offer.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:sequence minOccurs="0">
+						<xsd:element name="OfferCustomer" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Information on condition of the offer as far as customer grouping inclusion and/or exclusion.</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="SelectedCustomerGroup" minOccurs="0" maxOccurs="unbounded">
+										<xsd:annotation>
+											<xsd:documentation>Customer Groups entitled to receive the offer. Defines the group of customers eligible for different offers.  It is used to define groups of customers that can be reused and associated with offers. Customer group is required for targeted offers.</xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence minOccurs="0">
+												<xsd:element name="ConsumerGroupId" type="xsd:integer" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Consumer Group Id.</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="ConsumerGroupNm" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Name of Consumer Group.</xsd:documentation>
+													</xsd:annotation>
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:maxLength value="255"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="ExcludedCustomerGroup" minOccurs="0" maxOccurs="unbounded">
+										<xsd:annotation>
+											<xsd:documentation>Customer Groups excluded from reveiving the offer.</xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence minOccurs="0">
+												<xsd:element name="ConsumerGroupId" type="xsd:integer" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Consumer Group Id.</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="ConsumerGroupNm" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Name of Consumer Group.</xsd:documentation>
+													</xsd:annotation>
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:maxLength value="255"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="EnableHouseholdingInd" type="xsd:integer" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Enable house holding indicator. A customer group can be applied to different households.  A household can be part of one or more customer groups.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="OfferProduct" minOccurs="0" maxOccurs="unbounded">
+							<xsd:annotation>
+								<xsd:documentation>Product conditions for the offer.</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="SelectedProductGroup">
+										<xsd:annotation>
+											<xsd:documentation>Products selected for this offer.</xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="ProductGroupId" type="xsd:integer">
+													<xsd:annotation>
+														<xsd:documentation>Product Group unique identification.</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="ProductGroupNm">
+													<xsd:annotation>
+														<xsd:documentation>Name of the Product Group.</xsd:documentation>
+													</xsd:annotation>
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:maxLength value="200"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+												<xsd:element name="Items" maxOccurs="unbounded">
+													<xsd:complexType>
+														<xsd:sequence>
+															<xsd:element name="ProductTypCd" type="xsd:string">
+																<xsd:annotation>
+																	<xsd:documentation>Product type value that refers to a UPC, Dept or 8-digit UPC family code (Ex: Manufacturer Code for exaple Pepsi family, all Pepsi items qualify).</xsd:documentation>
+																</xsd:annotation>
+															</xsd:element>
+															<xsd:element name="GenericId" type="xsd:string">
+																<xsd:annotation>
+																	<xsd:documentation>This represents, depending on "Product Type Code", either an UPC number, a department id or an UPC family code. EX: UPC, Department IDs (301, 303, etc.) and Family Code (UPC Manuf + 3 digit family code = 8 digits)
+</xsd:documentation>
+																</xsd:annotation>
+															</xsd:element>
+															<xsd:element name="ProductDsc" type="xsd:string" minOccurs="0">
+																<xsd:annotation>
+																	<xsd:documentation>Description of the item. It can be an UPC, CIC, Department or UPC family. It is linked to the Product Type Code.</xsd:documentation>
+																</xsd:annotation>
+															</xsd:element>
+															<xsd:element ref="CorporateItemCd" minOccurs="0"/>
+														</xsd:sequence>
+													</xsd:complexType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="ExcludedProductGroup" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Products excluded from this offer.</xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence minOccurs="0">
+												<xsd:element name="ProductGroupId" type="xsd:integer" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Product Group unique identification.</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="ProductGroupNm" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Name of the Product Group.</xsd:documentation>
+													</xsd:annotation>
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:maxLength value="200"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+												<xsd:element name="Items" minOccurs="0" maxOccurs="unbounded">
+													<xsd:complexType>
+														<xsd:sequence>
+															<xsd:element name="ProductTypCd" type="xsd:string">
+																<xsd:annotation>
+																	<xsd:documentation>Product type value that refers to a UPC, Dept or 8-digit UPC family code (Ex: Manufacturer Code for exaple Pepsi family, all Pepsi items qualify).</xsd:documentation>
+																</xsd:annotation>
+															</xsd:element>
+															<xsd:element name="GenericId" type="xsd:string">
+																<xsd:annotation>
+																	<xsd:documentation>This represents, depending on "Product Type Code", either an UPC number, a department id or an UPC family code. EX: UPC, Department IDs (301, 303, etc.) and Family Code (UPC Manuf + 3 digit family code = 8 digits)
+</xsd:documentation>
+																</xsd:annotation>
+															</xsd:element>
+															<xsd:element name="ProductDsc" type="xsd:string" minOccurs="0">
+																<xsd:annotation>
+																	<xsd:documentation>Description of the item. It can be an UPC, CIC, Department or UPC family. It is linked to the Product Type Code.</xsd:documentation>
+																</xsd:annotation>
+															</xsd:element>
+															<xsd:element ref="CorporateItemCd" minOccurs="0"/>
+														</xsd:sequence>
+													</xsd:complexType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="Qty" type="xsd:decimal">
+										<xsd:annotation>
+											<xsd:documentation>How many groups of item to be able to receive discount.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="MinimumPurchaseQty" type="xsd:decimal">
+										<xsd:annotation>
+											<xsd:documentation>Minimum purchase in order to satisfy elegibility.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="Unit" type="Abs:UOMType">
+										<xsd:annotation>
+											<xsd:documentation>Unit can be Item, Wiwight/Volume, Dollars and Qty 1 at Price.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="UniqueProductInd" type="xsd:boolean">
+										<xsd:annotation>
+											<xsd:documentation>Indicates that a unique product needs to be bought. Mix and match doesn't qualify.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="EnableAccumulationInd" type="xsd:boolean">
+										<xsd:annotation>
+											<xsd:documentation>Indicator to enable accumulation over a period of time. By 5 sandwishes and get 1 free iwithin a week.</xsd:documentation>
+										</xsd:annotation>
+										<!-- Description: AccumMin > 0 -->
+									</xsd:element>
+									<xsd:element name="LimitQty" type="xsd:decimal">
+										<xsd:annotation>
+											<xsd:documentation>Related to accumulation. Ex: Limit would be quantity of 5.</xsd:documentation>
+										</xsd:annotation>
+										<!-- Description: per -->
+									</xsd:element>
+									<xsd:element name="PeriodNbr" type="xsd:integer">
+										<xsd:annotation>
+											<xsd:documentation>Related to accumulation. Period in which the promotion allows for accumulation. One week,</xsd:documentation>
+										</xsd:annotation>
+										<!-- Description: days -->
+									</xsd:element>
+									<xsd:element name="DisqualifierInd" type="xsd:boolean">
+										<xsd:annotation>
+											<xsd:documentation>Indicator of whether or not a product disqualify the offer.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="JoinTypCd" type="xsd:string" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>1 is "AND", 2 is "OR" and 0 no join.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="PointConditions" minOccurs="0">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="SelectedPointProgram" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Loyalty programs whiich can be internal or external. Ex; Gas points.</xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="PointProgramId" type="xsd:integer" minOccurs="0">
+													<!-- Description: Doesn't actually have a label -->
+												</xsd:element>
+												<xsd:element name="PointProgramNm" minOccurs="0">
+													<!-- Description: Doesn't actually have a label
+Field link: 'Select IPG.ProgramID,ProgramName from CPE_ST_IncentivePointsGroups as IPG with (NoLock) left join PointsPrograms as PP with (NoLock) on PP.ProgramID=IPG.ProgramID where IPG.deleted=0 and IPG.ProgramID is not null and RewardOptionID=@RewardOptionID' -->
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:maxLength value="255"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="ValueNeededToSatisfyCondInd" type="xsd:integer" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Value needed to satify as a condition for thie offer. </xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="DayConditions" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Defines the day restrictions of an offer.</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="SelectedDay" minOccurs="0" maxOccurs="7">
+										<xsd:annotation>
+											<xsd:documentation>Week day in which the offer is not valid. Ex: Fri</xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="DayCd" type="xsd:integer" minOccurs="0">
+													<!-- Description: '1=Sunday, 2=Monday, etc' -->
+												</xsd:element>
+												<xsd:element name="DayDsc" minOccurs="0">
+													<!-- Field link: 'select DOWID, DayName, PhraseID from CPE_DaysOfWeek DW with (NoLock)' -->
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:maxLength value="10"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="TimeConditions" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Defines the time restrictions of an offer.</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="TimeRange" minOccurs="0" maxOccurs="unbounded">
+										<xsd:annotation>
+											<xsd:documentation>Time condition. Ex: 10pm-11pm</xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="StartTm" type="xsd:time" minOccurs="0">
+													<!-- Description: Can be added multiple times
+Field link: select * from CPE_ST_IncentiveTOD with (NoLock) where IncentiveId=@IncentiveId -->
+												</xsd:element>
+												<xsd:element name="EndTm" type="xsd:time" minOccurs="0">
+													<!-- Description: Can be added multiple times -->
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="TriggerCodeConditions" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Diigital or paper coupon. 5-digit PLU code.</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="Code" minOccurs="0">
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:string">
+												<xsd:maxLength value="50"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:element>
+									<xsd:element name="DisplayCashierMessageIfTriggerCodeIsNotUsedInd" type="xsd:boolean" minOccurs="0"/>
+									<xsd:element name="ReqOncePerTransactionInd" type="xsd:boolean" minOccurs="0"/>
+									<xsd:element name="ReqOncePerRedemptionInd" type="xsd:boolean" minOccurs="0"/>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="CardTypeConditions" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Payment type related condition. Ex: Pay with FF card only.</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="SelectedCardTypes" minOccurs="0" maxOccurs="unbounded">
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="CardTypCd" type="xsd:integer" minOccurs="0">
+													<!-- Description: Can be added multiple times
+Field link: select CardTypeID from CPE_ST_IncentiveCardTypes with (NoLock) where RewardOptionID=@RewardOptionID and Deleted=0 and CardTypeID is not null -->
+												</xsd:element>
+												<xsd:element name="CardTypNm" minOccurs="0">
+													<!-- Description: Can be added multiple times
+Field link: select Description from CardTypes with (NoLock) where CardTypeID=@CardTypeID -->
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:maxLength value="100"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="RewardsInfo" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Defines what the customer/household will receive when they qualify for the offer.  It may or may not include a monetary reward.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:sequence minOccurs="0">
+						<xsd:element name="DiscountRewards" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Monetary rewards of the offer.</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="RewardType" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Indicates what type of discount of the offer. Can be monetary or receipt msg or cashier msg. Defines the different types of reward in offer management. The types of rewards are : 1.   Discount - is a monetary reward.  A discount can be item level ($1.oo off Tide), department level (20% off the meat department), or basket level (10% off everything in your basket). Fixed amount off - $1 off Tide. Price Point - Tide for $10.99 net price. Free - Get Tide free. % off - 10% off Tide. Fixed amount off weight/volume - $0.50 off per lb. on turkey. Price point weight/volume - Turkey at $1.00 per lb. 2.   2x20 Notification. This is a cashier notification at POS.  It allows fpr 2 lines of 20 characters each.  Use of this functionality is limited as it slows down the cashier productivity since they must clear through the 2x20 to move on the transaction.  The 2x20 reward can be issued at Total Time (after the club card has been entered) or at the End of Sale (EOS).  If the 2x20 is set up to be sent at EOS, then the 2x20 displays after tender time. 3. Receipt Messaging: This can be used to inform a customer that they received something in that transaction or to notify them of their accumulation balance of an offer.  The receipt message text is determined by the user and entered into UI.  There is no actual system limitation on the number of lines that can be printed using Copient; however, the business implements a limit on the number of lines they will enter. This is to prevent an extra long receipt tape - too many messages and the customer is less likely to read it at all.  The receipt prints after tender time. 4. Group Membership: This is a reward which places the household into a customer group.  This reward maybe used in order to create an offer that is based on redemption of another offer.  For example, the business wants to give a discount of $2.00 off Sara Lee cakes to a household.  If a household redeems this offer, they will get a secondary offer of $1.00 off every Sara Lee cake.  To do this, offer 1 says, "Buy a Sara Lee cake, get a reward of $2.00 off and get put into the Sara Lee Customer Group.  Offer 2 has a condition which requires that the household is in the Sara Lee Customer Group and they have purchased a Sara Lee cake, then the household receives $1.00 off. 5. Franking Message: A franking message is rewarded when a coupon needs to be franked in order to prevent fraud.  The franking message can contain POS information (date/time, transaction number, store number) and a freeform message entered by the user.  The Sub Club offer has a franking reward.  This offer is, "Accumulate 7 sandwiches, get a franking reward for a free sandwich.".  When the customer purchases their 7th sandwich, the franking reward is sent to the POS along with a 2x20 message that says, "Issue sandwich coupon".  The cashier will remove the sandwich coupon from the drawer and put it into the franking printer.  The POS information will be printed on the back of the coupon.  When the customer redeems this coupon, the cashier in the deli lane will check to make sure that the coupon is franked in order to make sure it is valid. 6. Point: Points can be delivered as reward.  They may be used to store discounts - i.e. a customer who has 10 Power Pump points worth 10 cents/gallon each - or they may be used as a deliverable in and of itself for a program such as Canadian Air Miles (CAM).  In CAMS, a customer receives 1 point (a.k.a. air mile) for every $20.00 they spend.
+</xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="RewardTypCd" type="xsd:integer" minOccurs="0"/>
+												<xsd:element name="RewardTypDsc" minOccurs="0">
+													<!-- Field link: select * from CPE_ST_Discounts with (NoLock) where Deleted=0 and DiscountID=@DiscountID -->
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:maxLength value="255"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="SelectedProductGroup" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Products to receive discount. It can be different then the product condition of the offer</xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence minOccurs="0">
+												<xsd:element name="ProductGroupId" type="xsd:integer" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Product Group unique identification.</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+												<xsd:element name="ProductGroupNm" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Name of the Product Group.</xsd:documentation>
+													</xsd:annotation>
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:maxLength value="200"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+												<xsd:element name="Items" minOccurs="0" maxOccurs="unbounded">
+													<xsd:complexType>
+														<xsd:sequence>
+															<xsd:element name="ProductTypCd" type="xsd:string">
+																<xsd:annotation>
+																	<xsd:documentation>Product type value that refers to a UPC, Dept or 8-digit UPC family code (Ex: Manufacturer Code for exaple Pepsi family, all Pepsi items qualify).</xsd:documentation>
+																</xsd:annotation>
+															</xsd:element>
+															<xsd:element name="GenericId" type="xsd:string">
+																<xsd:annotation>
+																	<xsd:documentation>This represents, depending on "Product Type Code", either an UPC number, a department id or an UPC family code. EX: UPC, Department IDs (301, 303, etc.) and Family Code (UPC Manuf + 3 digit family code = 8 digits)
+</xsd:documentation>
+																</xsd:annotation>
+															</xsd:element>
+															<xsd:element name="ProductDsc" type="xsd:string" minOccurs="0">
+																<xsd:annotation>
+																	<xsd:documentation>Description of the item. It can be an UPC, CIC, Department or UPC family. It is linked to the Product Type Code.</xsd:documentation>
+																</xsd:annotation>
+															</xsd:element>
+															<xsd:element ref="CorporateItemCd" minOccurs="0"/>
+														</xsd:sequence>
+													</xsd:complexType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="ChargebackDepartment" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Identifies the department that the discount is alotted to. It's for chargeback purpose in accounting. </xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="ChargebackDeptCd" type="xsd:integer" minOccurs="0"/>
+												<xsd:element name="ChargebackDeptDsc" minOccurs="0">
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:maxLength value="200"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="DistributionType" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Type of monetary discount. Ex: Percent off, Fixed amount og, Pricepoint, Free, etc...</xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="DistributionTypCd" type="xsd:integer" minOccurs="0"/>
+												<xsd:element name="DistributionTypDsc" type="xsd:string" minOccurs="0"/>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="DistributionAmt" type="xsd:decimal" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Amount of for anything that is not price point.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="DistributionSalePriceAmt" type="xsd:decimal" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Amount for price point (sale price) item.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="DistributionUpToLimitQty" type="xsd:decimal" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Item limit quantity for percent off.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="DistributionItemLimitQty" type="xsd:integer" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Item limit quantity.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="DistributionDollarLimitAmt" type="xsd:decimal" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Maximum discount you can get. $ amount.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="DistributionReceiptTxt" minOccurs="0">
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:string">
+												<xsd:maxLength value="100"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:element>
+									<xsd:element name="DistWeightVolumeLimitAmt" type="xsd:decimal" minOccurs="0"/>
+									<xsd:element name="DistributionIsWeightTotalInd" type="xsd:boolean" minOccurs="0"/>
+									<xsd:element name="DistributionProgram">
+										<xsd:annotation>
+											<xsd:documentation>?? DC to follow-up</xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="DistributionProgramId" type="xsd:integer"/>
+												<xsd:element name="DistributionProgramNm">
+													<!-- Field link: CPE_ST_Discounts.SVProgramID=StoredValuePrograms.Name -->
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:maxLength value="200"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="Scorecard" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Message on the bottom of the receipt pertaining to the reward discount.</xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="ScorecardCd" type="xsd:integer" minOccurs="0"/>
+												<xsd:element name="ScorecardDsc" minOccurs="0">
+													<!-- Field link: CPE_ST_Discounts.ScorecardID=Scorecards.ScorecardID -->
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:maxLength value="100"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+												<xsd:element name="ScorecardTxt" minOccurs="0">
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:maxLength value="100"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="ComputeDiscountInd" type="xsd:boolean" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Indicator to compute discount while pumping gas.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="BestDealOnItemInd" type="xsd:boolean" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Indicates whether or not two or more offer can stack on the same item.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="AllowItemToGoNegativeInd" type="xsd:boolean" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Allow order to go negative which translate into cash back.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="FlexNegativeInd" type="xsd:boolean" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Flexing the discount to avoid the order to go negative.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="PrintedRewardsMessage" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Message set by the business regarding the reward on the offer.</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="MessageType" minOccurs="0">
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="MessageTypCd" type="xsd:integer" minOccurs="0">
+													<!-- Field link: CPE_ST_Deliverables.OutputID=CPE_ST_Discounts.DiscountID -->
+												</xsd:element>
+												<xsd:element name="MessageTypDsc" type="xsd:string" minOccurs="0"/>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="MessageTxt" minOccurs="0">
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:string">
+												<xsd:maxLength value="4000"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="CashierRewardsMessage" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Message set by the business to be displayed on 2x20 characters at the cashier.</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="BeepType" minOccurs="0">
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="BeepTypCd" type="xsd:integer" minOccurs="0"/>
+												<xsd:element name="BeepTypDsc" type="xsd:string" minOccurs="0"/>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="BeepDurationSec" type="xsd:integer" minOccurs="0"/>
+									<xsd:element name="MessageLn1Txt" minOccurs="0">
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:string">
+												<xsd:maxLength value="30"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:element>
+									<xsd:element name="MessageLn2Txt" minOccurs="0">
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:string">
+												<xsd:maxLength value="30"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:element>
+									<xsd:element name="DisplayAtEOSInd" type="xsd:boolean" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Flag to display message on End of sale</xsd:documentation>
+										</xsd:annotation>
+										<!-- Description: 'DisplayImmediate=0 is Display at EOS, DisplayImmediate=1 is Display Immediately' -->
+									</xsd:element>
+									<xsd:element name="TagsSvbal" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Message to be displayed in the POS display.</xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence minOccurs="0">
+												<xsd:element name="IsvbalId" type="xsd:integer" minOccurs="0"/>
+												<xsd:element name="IsvbalDsc" minOccurs="0">
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:maxLength value="200"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="TagsPtval" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Message to be displayed in the POS display.</xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence minOccurs="0">
+												<xsd:element name="PtvalId" type="xsd:integer" minOccurs="0"/>
+												<xsd:element name="PtvalDsc" minOccurs="0">
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:maxLength value="255"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="FrankingRewardMessage" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Messages printed on the back of vouchers.</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="BeepType">
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="BeepTypCd" type="xsd:integer"/>
+												<xsd:element name="BeepTypNm" type="xsd:string"/>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="FrankingMessageTxt" minOccurs="0">
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:string">
+												<xsd:maxLength value="38"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:element>
+									<xsd:element name="FrankingApplyOption">
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="FrankingOptionCd" type="xsd:integer"/>
+												<xsd:element name="FrankingOptionDsc" type="xsd:string"/>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="BeepDurationSec" type="xsd:integer" minOccurs="0"/>
+									<xsd:element name="CashierMessageLn1Txt" minOccurs="0">
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:string">
+												<xsd:maxLength value="30"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:element>
+									<xsd:element name="CashierMessageLn2Txt" minOccurs="0">
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:string">
+												<xsd:maxLength value="30"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:element>
+									<xsd:element name="OpenCashDrawerInd" type="xsd:boolean" minOccurs="0"/>
+									<xsd:element name="RequireManagerOverrideInd" type="xsd:boolean" minOccurs="0"/>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="PointRewards" minOccurs="0">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="SelectedPointsProgram">
+										<xsd:annotation>
+											<xsd:documentation>Points program of the offer. Ex: Gas rewards.</xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="PointsProgramCd" type="xsd:integer"/>
+												<xsd:element name="PointsProgramDsc">
+													<!-- Field link: PointPrograms.ProgramID=CPE_ST_DeliverablePoints.ProgramID -->
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:maxLength value="255"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="PointAwardQty" type="xsd:integer" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Number of point(s) that is going to be awarded.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="MaximumAdjustmentNbr" type="xsd:integer" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Set maximum number of points per transaction/order.</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+									<xsd:element name="ChargebackDepartment">
+										<xsd:annotation>
+											<xsd:documentation>Same annotation</xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="ChargebackDeptId" type="xsd:integer"/>
+												<xsd:element name="ChargebackDeptDsc">
+													<!-- Field link: CPE_ST_DeliverablePoints.ChargeBackDeptID=ChargebackDepts.ChargeBackDeptID -->
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:maxLength value="200"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="IncludeOnScorecard" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Scorecard type which will be used to print the points rewards on the bottom of the receipt.</xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="ScorecardTypCd" type="xsd:integer">
+													<!-- Description: Onscreen scorecard built in ScorecardFeeds.aspx
+Field link: CPE_ST_DeliverablePoints.ScorecardID=Scorecards.ScorecardID -->
+												</xsd:element>
+												<xsd:element name="ScorecardTypDsc">
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:maxLength value="100"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="ScorecardMessageTxt" minOccurs="0">
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:string">
+												<xsd:maxLength value="100"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="GroupMembershipRewards" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Enable a customer to be eligible to another offer.</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="SelectedCustromerGroup">
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="ConsumerGroupTypCd" type="xsd:integer"/>
+												<xsd:element name="ConsumerGroupTypDsc">
+													<!-- Field link: CPE_ST_DeliverableCustomerGroupTiers.CustomerGroupID=CustomerGroup.CustomerGroupID -->
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:maxLength value="255"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="AccumulationNotification" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Buy X of Y to get a reward. Accumulation notification of the offer.</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="PrintedMessage">
+										<xsd:annotation>
+											<xsd:documentation>Printed message at the bottom of the receipt about offer's accumulation.</xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="MessageType" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Accumulation message type.</xsd:documentation>
+													</xsd:annotation>
+													<xsd:complexType>
+														<xsd:sequence>
+															<xsd:element name="MessageTypCd" type="xsd:integer" minOccurs="0">
+																<xsd:annotation>
+																	<xsd:documentation>Message Type code.</xsd:documentation>
+																</xsd:annotation>
+																<!-- Description: DeliverableTypeID=4
+Field link: CPE_ST_Deliverables.OutputID=PrintedMessages.OutputID -->
+															</xsd:element>
+															<xsd:element name="MessageTypNm" type="xsd:string" minOccurs="0">
+																<xsd:annotation>
+																	<xsd:documentation>Message Type name.</xsd:documentation>
+																</xsd:annotation>
+															</xsd:element>
+														</xsd:sequence>
+													</xsd:complexType>
+												</xsd:element>
+												<xsd:element name="MessageTxt" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Accumulation of the offer description / text.</xsd:documentation>
+													</xsd:annotation>
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:maxLength value="4000"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="EligibilityNotification" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Mechanism to printe eligibility on the receipt.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:sequence minOccurs="0">
+						<xsd:element name="PrintedMessage" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Printed message on the receipt about offer's eligibility.</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="MessageType" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Accumulation message type.</xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="MessageTypCd" type="xsd:integer" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Message Type code.</xsd:documentation>
+													</xsd:annotation>
+													<!-- Description: DeliverableTypeID=4
+Field link: CPE_ST_Deliverables.OutputID=PrintedMessages.OutputID -->
+												</xsd:element>
+												<xsd:element name="MessageTypNm" type="xsd:string" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Message Type name.</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="MessageTxt" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Accumulation of the offer description / text.</xsd:documentation>
+										</xsd:annotation>
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:string">
+												<xsd:maxLength value="4000"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="CashierMessage" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Cashier message on the offer eligibility.</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="BeepDurationSec" type="xsd:integer" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Beep duration in seconds.</xsd:documentation>
+										</xsd:annotation>
+										<!-- Field link: CPE_ST_Deliverables.OutputID=PrintedMessages.OutputID -->
+									</xsd:element>
+									<xsd:element name="MessageLn1Txt" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Eligibility message text on line 1.</xsd:documentation>
+										</xsd:annotation>
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:string">
+												<xsd:maxLength value="30"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:element>
+									<xsd:element name="MessageLn2Txt" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Eligibility message text on line 2.</xsd:documentation>
+										</xsd:annotation>
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:string">
+												<xsd:maxLength value="30"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:element>
+									<xsd:element name="DisplayImmediatelyInd" type="xsd:integer" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Display message immediately indication.</xsd:documentation>
+										</xsd:annotation>
+										<!-- Description: 'DisplayImmediate=0 is Display at EOS, DisplayImmediate=1 is Display Immediately' -->
+									</xsd:element>
+									<xsd:element name="TagsSvbal" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Message to be displayed in the POS display.</xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence minOccurs="0">
+												<xsd:element name="IsvbalId" type="xsd:integer" minOccurs="0"/>
+												<xsd:element name="IsvbalDsc" minOccurs="0">
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:maxLength value="200"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="TagsPtval" minOccurs="0">
+										<xsd:annotation>
+											<xsd:documentation>Message to be displayed in the POS display.</xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence minOccurs="0">
+												<xsd:element name="PtvalId" type="xsd:integer" minOccurs="0"/>
+												<xsd:element name="PtvalDsc" minOccurs="0">
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:maxLength value="255"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="OfferLocation" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Location/target of the offers.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:sequence minOccurs="0">
+						<xsd:element name="StoreGroup" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Targeted stores.</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:sequence minOccurs="0">
+									<xsd:element name="SelectedStore" minOccurs="0" maxOccurs="unbounded">
+										<xsd:annotation>
+											<xsd:documentation>Store(s) selected to deploy the offer.</xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence minOccurs="0">
+												<xsd:element ref="Abs:CorporationId" minOccurs="0"/>
+												<xsd:element ref="Abs:ROGCd" minOccurs="0"/>
+												<xsd:element ref="Abs:DivisionId" minOccurs="0"/>
+												<xsd:element ref="Abs:RetailStoreId" minOccurs="0"/>
+												<xsd:element name="StoreNm" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Name of the store.</xsd:documentation>
+													</xsd:annotation>
+													<!-- Description: Excluded=0
+Field link: LocationGroups.LocationGroupID = OfferLocations.LocationGroupID -->
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:maxLength value="200"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="ExcludedStore" minOccurs="0" maxOccurs="unbounded">
+										<xsd:annotation>
+											<xsd:documentation>Store(s) excluded from offer deployment.</xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence minOccurs="0">
+												<xsd:element ref="Abs:CorporationId" minOccurs="0"/>
+												<xsd:element ref="Abs:ROGCd" minOccurs="0"/>
+												<xsd:element ref="Abs:DivisionId" minOccurs="0"/>
+												<xsd:element ref="Abs:RetailStoreId" minOccurs="0"/>
+												<xsd:element name="StoreNm" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Name of the store.</xsd:documentation>
+													</xsd:annotation>
+													<!-- Description: Excluded=0
+Field link: LocationGroups.LocationGroupID = OfferLocations.LocationGroupID -->
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:maxLength value="200"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="Terminal" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Targeted terminals for the offer ie. Pharmacy, Deli, Front-end, fuel pump etc...</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="SelectedTerminal" minOccurs="0" maxOccurs="unbounded">
+										<xsd:annotation>
+											<xsd:documentation>Terminal(s) in which the offer is deployed to. An offer must be sent to one or more terminals in a store.  There is a terminal set up for every different lane type.  There are some offers that are not sent on specific lanes becuase they cannot be delivered in that lane.  For example, a user would not send an offer with a franking reward to a fuel pump - the fuel pump doesn't have a franking printer.</xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="TerminalId" type="xsd:integer">
+													<xsd:annotation>
+														<xsd:documentation>Unique identification of the terminal.</xsd:documentation>
+													</xsd:annotation>
+													<!-- Description: Excluded=0
+Field link: OfferTerminals.TerminalTypeID=TerminalTypes.TerminalTypeID and OfferTerminals.OfferID=CPE_ST_Incentives.IncentiveID -->
+												</xsd:element>
+												<xsd:element name="TerminalNm">
+													<xsd:annotation>
+														<xsd:documentation>Name of the terminal.</xsd:documentation>
+													</xsd:annotation>
+													<!-- Description: Excluded=0
+Field link: OfferTerminals.TerminalTypeID=TerminalTypes.TerminalTypeID and OfferTerminals.OfferID=CPE_ST_Incentives.IncentiveID -->
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:maxLength value="100"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+									<xsd:element name="ExcludedTerminal" minOccurs="0" maxOccurs="unbounded">
+										<xsd:annotation>
+											<xsd:documentation>Terminal(s) in which the offer wis excluded from. </xsd:documentation>
+										</xsd:annotation>
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="TerminalId" type="xsd:integer">
+													<xsd:annotation>
+														<xsd:documentation>Unique identification for the terminal.</xsd:documentation>
+													</xsd:annotation>
+													<!-- Description: Excluded=1
+Field link: OfferTerminals.TerminalTypeID=TerminalTypes.TerminalTypeID and OfferTerminals.OfferID=CPE_ST_Incentives.IncentiveID -->
+												</xsd:element>
+												<xsd:element name="TerminalNm">
+													<xsd:annotation>
+														<xsd:documentation>Name of the terminal.</xsd:documentation>
+													</xsd:annotation>
+													<!-- Description: Excluded=1
+Field link: OfferTerminals.TerminalTypeID=TerminalTypes.TerminalTypeID and OfferTerminals.OfferID=CPE_ST_Incentives.IncentiveID -->
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:maxLength value="100"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

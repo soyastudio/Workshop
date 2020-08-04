@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--   Schema Owner: 	Safeway Inc
+   Date Created:      09 Mar 2018
+   Author:		Saikat Mazumdar
+   Description: BOD for Inventory balance.
+   Name: /SFWY/BOD/GetInventoryBalance.xsd-->
+<!-- edited with XMLSpy v2014 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Safeway, Inc.) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="../Nouns/RetailStoreInventory.xsd"/>
+	<xs:element name="GetRetailStoreInventory" type="GetRetailStoreInventoryType">
+		<xs:annotation>
+			<xs:documentation>root</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetRetailStoreInventoryType">
+		<xs:annotation>
+			<xs:documentation>Business Object that provides information on Retail store Inventory Balance. The inventory can be either periodic or perpetual inventoy. Store systems generally provides this information at regular intervals within a day.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="DocumentType"/>
+						<xs:element name="DocumentAction" type="DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="RetailStoreInventoryData" type="RetailStoreInventoryType"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

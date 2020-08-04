@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2012 (http://www.altova.com) by Jayson Leo P. Soliman (Safeway, Inc.) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:include schemaLocation="ItemMaster.xsd"/>
+	<xs:element name="PriceList" type="PriceListType">
+		<xs:annotation>
+			<xs:documentation>EDI 879 Price Information</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="PriceListType">
+		<xs:sequence>
+			<xs:element name="PriceListHeader" type="PriceListHeaderType"/>
+			<xs:element name="PriceListDetail" type="PriceListDetailType" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PriceListHeaderType">
+		<xs:sequence>
+			<xs:element name="Vendor" type="PartyType"/>
+			<xs:element name="Broker" type="PartyType"/>
+			<xs:element name="Buyer" type="PartyType" minOccurs="0"/>
+			<xs:element name="PriceChangeStatusCode" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Code indicating change type
+'B' - Original Price Change Transaction
+‘W’ – New Price Information</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PriceListReference" type="PriceListReferenceType" minOccurs="0"/>
+			<xs:element name="ProcessDt" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:date">
+							<xs:attribute name="Qualifier" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ItemPriceOrderShipDate" type="ItemPriceOrderShipDateType" minOccurs="0"/>
+			<xs:element name="PriceIdentifierCode" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PriceListDetailType">
+		<xs:sequence>
+			<xs:element name="ItemId" type="ItemId"/>
+			<xs:element name="ItemPriceOrderShipDate" type="ItemPriceOrderShipDateType" minOccurs="0"/>
+			<xs:element name="ItemBracketPrice">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="PriceBracketId" type="xs:string">
+							<xs:annotation>
+								<xs:documentation>Identifier assigned by the vendor for a specific
+price bracket</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="NewItemListCost" type="xs:string">
+							<xs:annotation>
+								<xs:documentation>Unit price within the appropriate price bracket for
+a line item on or after an effective price date</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="OldItemListCost" type="xs:string">
+							<xs:annotation>
+								<xs:documentation>Unit price within the appropriate price bracket for
+a line item before an effective date</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ProductID" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="Qualifier" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="BrokerType">
+		<xs:sequence>
+			<xs:element name="BrokerDuns">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="Qualifier" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="BrokerNm" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ItemPriceOrderShipDateType">
+		<xs:sequence>
+			<xs:element name="FirstOrderDt" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:date">
+							<xs:attribute name="Qualifier" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="FirstShipDt" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:date">
+							<xs:attribute name="Qualifier" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="OldPriceChangeDt" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:date">
+							<xs:attribute name="Qualifier" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ProcessDt" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:date">
+							<xs:attribute name="Qualifier" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="EffectiveDt" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:date">
+							<xs:attribute name="Qualifier" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PriceListReferenceType">
+		<xs:sequence>
+			<xs:element name="PriceListNbr" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Identification number assigned by a vendor to a
+price list</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PriceListIssueNbr" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Number assigned to revised or new issues of a
+price list</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PriceListDt" type="xs:date"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

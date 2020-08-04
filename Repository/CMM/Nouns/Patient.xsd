@@ -1,0 +1,721 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2014 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Safeway, Inc.) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:complexType name="PatientType">
+		<xs:annotation>
+			<xs:documentation>Person who receives pahramcy services and medications from Albertsons Pharmacy stores.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PatientPerson" type="Abs:PatientPersonType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Personal details of the pharmacy patient.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="Abs:Address" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Campaign" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Patient opt-in/opt-out information for various types of Pharmacy campaigns like Refill reminder, Order ready, Drug recalls ..etc</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="Abs:NotificationType">
+							<xs:sequence>
+								<xs:element ref="Abs:Contact" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Patient campaign broadcast contact info.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ResponsibleParty" minOccurs="0" maxOccurs="3">
+				<xs:annotation>
+					<xs:documentation>Party responsible financially for the patient.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="Abs:PersonNameType">
+							<xs:sequence>
+								<xs:element name="Relationship" type="Abs:CodeWithDescription" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Relationship of the responsible party to a patient.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="ResponsiblePartyAddress" type="Abs:AddressType" minOccurs="0"/>
+								<xs:element name="CustomerRelationship" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Customer relationship info of the responsible party.</xs:documentation>
+									</xs:annotation>
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="HouseholdId" type="xs:integer" minOccurs="0"/>
+											<xs:element name="CustomerAccountNbr" type="xs:string" minOccurs="0"/>
+											<xs:element name="ClubCardNbr" type="xs:integer" nillable="true" minOccurs="0"/>
+											<xs:element name="CustomerAlternateId" type="xs:string" minOccurs="0"/>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PatientPharmacyProfile" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Pharmacy related info of a patient.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Pharmacy" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="PharmacyId" minOccurs="0"/>
+									<xs:element ref="Abs:AlternateId" minOccurs="0" maxOccurs="unbounded"/>
+									<xs:element name="PharmacyAddress" type="Abs:AddressType" minOccurs="0"/>
+									<xs:element name="CorporationId" type="Abs:CorporationType" minOccurs="0"/>
+									<xs:element name="Division" type="Abs:DivisionType" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="SafetyCapsInd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Specifies the patients preference for safety caps for the medication bottle..;N = Do not use safety caps;Y or blank = Use safety caps</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SafetyCapEffectiveDt" type="xs:date" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Represents the date and time that the no safety caps flag was updated.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="TaxExemptInd" nillable="true" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="18"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="TobacoUserInd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates if the patient is a tobaco user.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="18"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="TransferInd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicating if auto-transfer of the patient’s prescriptions is allowed.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="18"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="RefillNotifyTypeId" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Refill notify type contains instructions indicating the actions to take when a prescription that is being auto-filled has no refills remaining or is expired;D = Call Doctor for authorization to refill ;P = Notify patient (will not refill) ;N = Do not refill;Blank = Use store defaults;Nullable.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AnimalTypeCd" type="Abs:CodeWithDescription" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Animal Type is used to specify a more detailed description of the animal if patient record type is set to 2 which is Animal</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="AutofillInd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates the autofill status for patient prescriptions.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="HouseholdId" type="xs:integer" minOccurs="0"/>
+						<xs:element name="CustomerAccountNbr" type="xs:string" minOccurs="0"/>
+						<xs:element name="ClubCardNbr" type="xs:integer" nillable="true" minOccurs="0"/>
+						<xs:element name="ComplianceInd" nillable="true" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="18"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DAWInd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>DAW Indicator is a flag indicating if the Dispense As Written code should be defaulted to ‘Substitution Allowed – Patient Requested Product Dispensed’ when filling prescriptions for the given patient.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="18"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DiscountCd" type="Abs:CodeWithDescription" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>the discount code to be applied to all of the patient’s prescriptions. (senior discount, student discount, etc.)</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="DUROmitInd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates that DUR - Drug utilization review is omited for a patient.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="18"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="MultiBirthInd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates the multiple birth status like twins, triplets.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="18"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="MedicalRecordNbr" nillable="true" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CustomerRelationship" type="Abs:CustomerRelationshipType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>customer relationship data like club card nbr.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Notes" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>notes for pharmacy patient.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Allergy" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Patient Allergies</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="AllergyCd" type="Abs:CodeWithDescription" minOccurs="0"/>
+						<xs:element name="CodingSystem" type="Abs:CodeWithDescription" minOccurs="0"/>
+						<xs:element name="ReportedDt" type="xs:date" minOccurs="0"/>
+						<xs:element name="StartDt" type="xs:date" minOccurs="0"/>
+						<xs:element name="EndDt" type="xs:date" minOccurs="0"/>
+						<xs:element name="Duration" type="xs:string" minOccurs="0"/>
+						<xs:element name="SeverityCd" type="xs:string" minOccurs="0"/>
+						<xs:element name="Notes" type="xs:string" minOccurs="0"/>
+						<xs:element name="AnemiaInd" nillable="true" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="RashInd" type="xs:string" minOccurs="0"/>
+						<xs:element name="NauseaInd" type="xs:string" minOccurs="0"/>
+						<xs:element name="ShockInd" type="xs:string" minOccurs="0"/>
+						<xs:element name="UnspecifiedAllergyInd" type="xs:string" minOccurs="0"/>
+						<xs:element name="ReportedByNm" type="xs:string" minOccurs="0"/>
+						<xs:element name="Comment" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PatientDisease" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Diseases (Disease Code, ICD9, Notes, etc) associated with a patient</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="DiseaseCd" type="Abs:CodeWithDescription" minOccurs="0"/>
+						<xs:element name="CodingSystem" type="Abs:CodeWithDescription" minOccurs="0"/>
+						<xs:element name="ICD9" type="Abs:CodeWithDescription" minOccurs="0"/>
+						<xs:element name="ICD10" type="Abs:CodeWithDescription" minOccurs="0"/>
+						<xs:element name="StartDt" type="xs:date" minOccurs="0"/>
+						<xs:element name="EndDt" type="xs:date" minOccurs="0"/>
+						<xs:element name="Duration" type="xs:string" minOccurs="0"/>
+						<xs:element name="SeverityCd" type="xs:string" minOccurs="0"/>
+						<xs:element name="Notes" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="HealthInsurance" minOccurs="0" maxOccurs="3">
+				<xs:annotation>
+					<xs:documentation> to associate patient with employer, insurance card.  This information is used for Third Party (TP) billing.;For each patient who uses insurance to pay for prescriptions, there should be a insurance cardholder record and link the patient to that record and to the insurance plan record for the patient’s carrier and plan. </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="InsuranceCarrier" type="Abs:CodeWithDescription" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Unique code used to identify a third party carrier</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="InsuranceCarrierContact" type="Abs:AddressType" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Health Insurance carrier contact details.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CoverageBeginDt" type="xs:date" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Date plan becomes effective</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CoverageEndDt" type="xs:date" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Date plan expires</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="InsuranceCardId" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Cardholder ID</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CardQualifierCd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Code indicating the card type</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="GroupCd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Insurance group code.</xs:documentation>
+								<xs:documentation/>
+								<xs:documentation/>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="InsurancePlanCd" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Unique code used to identify a plan within a Carrier.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="InsurancePlanNm" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Name of the plan as described on a typical insurance card. This name will also sometimes include reference to an employer.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PlanEligibilityInd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Flag indicating if a plan record is eligible for use when filling prescriptions10;N (Hard Halt)10;W (Warning)10;C (Converted)10;Y or blank = (Eligible)</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PlanTypeCd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Defines the type of plan associated with this record, where type of plan relates to a Line of Business10;0= Not Specified10;1= Private10;2= Medicaid10;3= Medicare Part B (DME/Supplies)10;4= Medicare Par D (Drug Benefit)10;5= Worker&apos;s Compensation10;6= Other Federal Plan10;7= Other State Plan10;8= Cash10;9= Other Benefit10;10=HMO10;11=MFA10;12=HDHP10;13=ADAP10;14=SF10;15=CSI</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DayslimitQty" type="xs:integer" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Number of days before a prescription may be refilled again</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="DispensingLimitTypeCd" type="xs:integer" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Flag determining if dispensing limits are based on units or doses10;0 = Units10;1 = Doses</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="MaximumDaysSupplyQty" type="xs:integer" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Maximum days supply allowed for one fill of a non-maintenance prescription</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="MinimumDaysSupplyQty" type="xs:integer" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Minimum days supply allowed on one fill of a non-maintenance prescription</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="MaximumDispensedQty" type="xs:integer" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Maximum quantity that can be dispensed for one fill of a non-maintenance prescription</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="MaximumRefillQty" type="xs:integer" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Maximum number of refills allowed by a plan on all drugs except schedule 3, 4 and 5</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="MaximumReimbursedAmt" type="xs:integer" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Maximum amount reimbursed by carrier</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PatientMaximumAmt" type="xs:integer" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Maximum dollar amount allowed per patient during a set time period</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PrescriptionMaximumAmt" type="xs:integer" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Maximum dollar amount allowed on a single fill of a prescription</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PriceOverrideInd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Flag indicating if price and copay overrides can be performed10;P = Allow copay to be overridden but not price 10;C = Allow price to be overridden but not copay 10;B = Do not allow price or copay to be overridden10;Blank = Allow price and copay to be overridden</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="RefillLimitDaysQty" type="xs:integer" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Maximum number of days a prescription can be refilled</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CopayInd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Flag indicating if the copay amount should be included in the dollar limit amount;Y = Include copay in dollar limit;N or blank = Do not include copay in dollar limit</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="EligibilityChangeDt" type="xs:date" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Date that the eligibility status of a card record last changed</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="EligibleInd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Flag indicating if a card record is eligible for filling prescriptions;Y or blank = Card is eligible;N = Card is not eligible, display hard halt and do not allow prescription to be filled</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="FirstNm" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Cardholder&apos;s first name</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="MiddleNm" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Cardholder&apos;s middle name</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LastNm" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Cardholder&apos;s last name</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="MaxCopayLimitAmt" type="xs:decimal" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Maximum copay amount a cardholder is required to pay</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="MaxLimitAmt" type="xs:decimal" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Maximum dollar amount a carrier will reimburse</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PrescriptionsLimitQty" type="xs:integer" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Maximum number of prescriptions allowed to be filled for a card record</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="BenifitInd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Insurance benefits code</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CalculateCostInd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Flag indicating how the copay should be calculated;Y = Calculate copay as a percentage of cost;N or blank = Calculate copay using the third party price</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ADCBenfitInd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Flag indicating if patient is eligible for ADC benefits under this third party link record;Y = Patient is eligible for ADC benefits;N or blank = Patient is not eligible for ADC benefits</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CardholderAlternateId" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Alternate Cardholder ID</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AlternateQualifierCd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Code identifying the alternate cardholder ID.Social Security Number Facility ID NumberDriver License Number U.S. Military ID</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="BenifitsNotAssignedInd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates whether the patient has chosen not to assign benefits to the provider;Blank or N = Patient assigns benefits to the provider.;Y = Patient does not assign benefits to the provider.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CarrierHomePlanId" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Ex: Blue Cross home plan identification code</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DependentRelationshipCd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Dependent Relationship code;United States Options:;0 or blank = Not Specified;1 = Cardholder/Self ;2 = Spouse;3 = Child;4 = Other;Canadian Options:;0 = Cardholder;1 = Spouse;2 = Child Underage;3 = Child Overage;4 = Disabled Dependent;5 = Dependent Student;9 = Not Known</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="EligibilityOverrideInd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Eligibility override or clarification code;NCPDP Code:;0 = Not Specified;1 = No Override;2 = Override;3 = Full time student;4 = Disabled dependent;5 = Dependent parent;6 = Significant other;NULL=blank;Non-NCPDP Codes:;E = Employed;P = Part time student</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="InsurancePriorityNbr" type="xs:integer" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Third party billing sequence for a patient third party link record;01 = Primary;02 = Secondary;03 = Tertiary;&gt; 03 = any Additional third party setup information</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="MedicaidId" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>A unique member identification number assigned by the Medicaid Agency.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="MedicaidInd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Two character State Postal Code indicating the state where Medicaid coverage exists.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="NursingHomePatientInd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Flag indicating if patient is considered a nursing home patient under this third party link record;Y = Patient is considered a nursing home patient;N or blank = Patient is not considered a nursing home patient</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="OtherPricingInd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Flag that is used by pricing logic that takes other insurance pricing &amp; fees into account.;Y = Yes;N = No ;BLANK</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PartDFacilityInd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates that the patient resides in a facility that qualifies for the CMS Part D benefit.;Blank or N = Patient does not reside in a facility that qualifies for the CMS Part D benefit.;Y = Patient resides in a facility that qualifies for the CMS Part D benefit.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PatientLocationCd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Code identifying the location type where the patient receives the product or service. Nursing home, senior care center..etc</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PatientSignatureCd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Patient signature code</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PersonalHealthNbr" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Canada Personal health Number.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SeniorCitizenInd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Flag indicating if patient is considered a senior citizen under this third party link record;Y = Patient is considered a senior citizen;N or blank = Patient is not considered a senior citizen</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ChildInd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Dependent number or child code</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SeriesCd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Series code;NULL/BLANK=Not Specified;S = Single;F = Family;X = Retired</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SpecialBenifitsCd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Special benefits code (specific to each individual third party plan)</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="StudentInd" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Flag indicating if this third party link record is for a dependent who is a student;Y = This dependent is a student;N or blank = This dependent is not a student</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

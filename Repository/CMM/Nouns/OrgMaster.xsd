@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://collab.safeway.com/it/architecture/AbsOmMaster" xmlns:ns2="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:complexType name="OrgMaster">
+		<xs:annotation>
+			<xs:documentation>Contains data related to Albertsons Organization Master like corp, Div, OA, Districts..etc</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Corporation" nillable="false">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="ns2:CorporationType">
+							<xs:sequence>
+								<xs:element name="Division" nillable="false" maxOccurs="unbounded">
+									<xs:annotation>
+										<xs:documentation>Information related to the operating division. Ex Norcal with Div Id 25 </xs:documentation>
+									</xs:annotation>
+									<xs:complexType>
+										<xs:complexContent>
+											<xs:extension base="ns2:DivisionType">
+												<xs:sequence>
+													<xs:element name="Facility" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:complexContent>
+																<xs:extension base="Facility">
+																	<xs:sequence>
+																		<xs:element name="Region" type="ns2:RegionType" minOccurs="0"/>
+																		<xs:element name="District" minOccurs="0" maxOccurs="unbounded">
+																			<xs:complexType>
+																				<xs:complexContent>
+																					<xs:extension base="ns2:DistrictType">
+																						<xs:sequence/>
+																					</xs:extension>
+																				</xs:complexContent>
+																			</xs:complexType>
+																		</xs:element>
+																		<xs:element name="RetailOrderGroup" type="ns2:RetailOrderGroupType" minOccurs="0" maxOccurs="unbounded"/>
+																		<xs:element name="OperatingArea" type="ns2:OperatingAreaType" minOccurs="0" maxOccurs="unbounded">
+																			<xs:annotation>
+																				<xs:documentation>Organization layer within the operating division. Generally it contains one or more operating districts.</xs:documentation>
+																			</xs:annotation>
+																		</xs:element>
+																	</xs:sequence>
+																</xs:extension>
+															</xs:complexContent>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:extension>
+										</xs:complexContent>
+									</xs:complexType>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Company" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Company information for accounting.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="CompanyId" type="xs:long" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Company Identification for accounting purposes.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CompanyNm" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Name of the company for accounting purposes.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="AccountingDivision" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Accounting Division.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="DivisionAccountUnitCd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Division ID in the accounting system.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:length value="20"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="DivisionAccountUnitDsc" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Description of the account unit code.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="AccountingFacility" type="Facility" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Accounting Facility.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Facility">
+		<xs:annotation>
+			<xs:documentation>Facilities with in a division/district. Like retail stores, warehouses, admin offices..etc</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="FacilityId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Unique identifier for a facility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityTypeCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines the facility type as Retail store, warehouse, manufacturing plant, admin office..etc</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityTypeDsc" type="xs:string" minOccurs="0"/>
+			<xs:element name="FacilityNm" type="xs:string" minOccurs="0"/>
+			<xs:element ref="ns2:BannerCd" minOccurs="0"/>
+			<xs:element name="BannerNm" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identiifes the banner name of the retail facility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ParentBannerNm" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identiifes parent banner name like SWY or ABS. When SWY and ABS merged, each company has their own banners and parent banner will help in idenifying it as SWY banner or ABS banner.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CompanyNbr" type="xs:string" minOccurs="0"/>
+			<xs:element name="FacilityAddress" type="ns2:AddressType" minOccurs="0"/>
+			<xs:element name="ManagerNm" type="xs:string" minOccurs="0"/>
+			<xs:element name="FacilityStatusCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Status of the facility as open, close, temp close..etc</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OpenDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="CloseDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="TempCloseDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="ReOpenDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="FacilityDUNSNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>
