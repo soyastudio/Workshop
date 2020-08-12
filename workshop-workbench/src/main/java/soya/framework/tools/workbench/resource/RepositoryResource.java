@@ -2,16 +2,20 @@ package soya.framework.tools.workbench.resource;
 
 import com.google.gson.*;
 import io.swagger.annotations.Api;
-import org.apache.avro.Schema;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.xmlbeans.SchemaType;
+import org.apache.xmlbeans.SchemaTypeSystem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import soya.framework.tools.workbench.configuration.BusinessObjectSchemaCache;
-import soya.framework.tools.workbench.configuration.WorkbenchRepository;
 import soya.framework.tools.iib.*;
 import soya.framework.tools.poi.XlsxUtils;
 import soya.framework.tools.util.StringBuilderUtils;
+import soya.framework.tools.workbench.configuration.BusinessObjectSchemaCache;
+import soya.framework.tools.workbench.configuration.WorkbenchRepository;
+import soya.framework.tools.xmlbeans.EsqlRenderer;
+import soya.framework.tools.xmlbeans.JsonMappingRenderer;
+import soya.framework.tools.xmlbeans.XmlGenerator;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -28,7 +32,6 @@ import java.util.Properties;
 public class RepositoryResource {
     @Autowired
     WorkbenchRepository repository;
-
     BusinessObjectSchemaCache schemaCache = BusinessObjectSchemaCache.getInstance();
 
     @GET
@@ -38,21 +41,73 @@ public class RepositoryResource {
         return Response.ok(schemaCache.definedBusinessObjects()).build();
     }
 
-
     @GET
     @Path("/cmm/xml/{bod}")
     @Produces(MediaType.APPLICATION_XML)
     public Response cmmSampleXml(@PathParam("bod") String bod) {
-        return Response.ok(schemaCache.generateXml(bod)).build();
+        if (!schemaCache.contains(bod)) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+
+        } else {
+            return Response.ok(schemaCache.generateXml(bod)).build();
+
+        }
     }
 
+    @GET
+    @Path("/cmm/mappings/{bod}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response cmmMappings(@PathParam("bod") String bod) {
+        if (!schemaCache.contains(bod)) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+
+        } else {
+            SchemaTypeSystem sts = schemaCache.getXmlSchemaTypeSystem(bod);
+            SchemaType[] globalElems = sts.documentTypes();
+            SchemaType elem = globalElems[0];
+            XmlGenerator.Builder builder = XmlGenerator.builder().schemaType(elem);
+
+            return Response.ok(builder.render(new JsonMappingRenderer())).build();
+
+        }
+    }
+
+    @POST
+    @Path("/cmm/esql")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response projectESQL(@HeaderParam("bod") String bod,
+                                @HeaderParam("brokerSchema") String brokerSchema,
+                                @HeaderParam("moduleName") String moduleName) {
+        if (!schemaCache.contains(bod)) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+
+        } else {
+            SchemaTypeSystem sts = schemaCache.getXmlSchemaTypeSystem(bod);
+            SchemaType[] globalElems = sts.documentTypes();
+            SchemaType elem = globalElems[0];
+            XmlGenerator.Builder builder = XmlGenerator.builder().schemaType(elem);
+
+            EsqlRenderer renderer = new EsqlRenderer();
+            renderer.setBrokerSchema(brokerSchema);
+            renderer.setModuleName(moduleName);
+
+            return Response.ok(builder.render(renderer)).build();
+
+        }
+    }
 
     @GET
     @Path("/cmm/avro/{bod}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response cmmAvro(@PathParam("bod") String bod) {
-        return Response.ok(schemaCache.getAvroSchema(bod).toString(true)).build();
+        if (!schemaCache.contains(bod)) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+
+        } else {
+            return Response.ok(schemaCache.getAvroSchema(bod).toString(true)).build();
+        }
     }
+
 
     @GET
     @Path("/projects")
@@ -92,26 +147,6 @@ public class RepositoryResource {
         }
 
         return Response.ok(schemaCache.getAvroSchema(bod).toString(true)).build();
-    }
-
-    @GET
-    @Path("/{project}/cmm/esql")
-    @Produces(MediaType.TEXT_PLAIN)
-    public Response projectESQL(@PathParam("project") String project) {
-        String bod = project;
-        if (!schemaCache.contains(bod)) {
-            if (!bod.startsWith("Get")) {
-                bod = "Get" + project;
-            }
-        }
-
-        if (!schemaCache.contains(bod) && !bod.endsWith("Type")) {
-            bod = bod + "Type";
-        }
-
-        Schema schema = schemaCache.getAvroSchema(bod);
-
-        return Response.ok(AvroToCmmESQL.fromAvroSchema(schema)).build();
     }
 
     @GET

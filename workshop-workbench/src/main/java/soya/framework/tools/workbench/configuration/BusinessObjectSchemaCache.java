@@ -62,6 +62,7 @@ public class BusinessObjectSchemaCache {
         if(!contains(bod)) {
             return null;
         }
+
         return schemas.get(nameMappings.get(bod)).avroSchema;
     }
 

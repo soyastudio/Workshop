@@ -73,7 +73,6 @@ public class XmlBeansUtils {
     public static String xsdToXml(File file) {
         try {
             SchemaTypeSystem sts = getSchemaTypeSystem(file);
-
             SchemaType[] globalElems = sts.documentTypes();
             SchemaType elem = globalElems[0];
 

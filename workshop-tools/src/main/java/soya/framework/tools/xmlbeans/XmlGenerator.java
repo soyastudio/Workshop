@@ -1,5 +1,6 @@
 package soya.framework.tools.xmlbeans;
 
+import com.google.common.collect.ImmutableMap;
 import org.apache.xmlbeans.*;
 import org.apache.xmlbeans.impl.util.Base64;
 import org.apache.xmlbeans.impl.util.HexBin;
@@ -17,18 +18,37 @@ public class XmlGenerator {
     private static final int MAX_ELEMENTS = 1000;
     private int _nElements;
 
+    private MappingNode root;
+    private Map<String, MappingNode> mappings = new LinkedHashMap<>();
+    private Set<String> variables = new LinkedHashSet<>();
+
     private XmlGenerator(boolean soapEnc) {
         _soapEnc = soapEnc;
+    }
+
+    public MappingNode getRoot() {
+        return root;
+    }
+
+    public Map<String, MappingNode> getMappings() {
+        return ImmutableMap.copyOf(mappings);
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     public static String createSampleForType(SchemaType sType) {
         XmlObject object = XmlObject.Factory.newInstance();
         XmlCursor cursor = object.newCursor();
+
+
         // Skip the document node
         cursor.toNextToken();
         // Using the type and the cursor, call the utility method to get a
         // sample XML payload for that Schema element
-        new XmlGenerator(false).createSampleForType(sType, cursor);
+        XmlGenerator generator = new XmlGenerator(false);
+        generator.createSampleForType(sType, cursor);
         // Cursor now contains the sample payload
         // Pretty print the result.  Note that the cursor is positioned at the
         // end of the doc so we use the original xml object that the cursor was
@@ -37,6 +57,7 @@ public class XmlGenerator {
         options.put(XmlOptions.SAVE_PRETTY_PRINT);
         options.put(XmlOptions.SAVE_PRETTY_PRINT_INDENT, 2);
         options.put(XmlOptions.SAVE_AGGRESSIVE_NAMESPACES);
+
         String result = object.xmlText(options);
         return result;
     }
@@ -51,6 +72,35 @@ public class XmlGenerator {
      * <theElement><lots of stuff/>^</theElement>
      */
     private void createSampleForType(SchemaType stype, XmlCursor xmlc) {
+        MappingNode node = new MappingNode(xmlc);
+        if (node.getPath() != null) {
+            mappings.put(node.getPath(), node);
+        }
+
+        if (node.getLevel() == 1) {
+            node.alias = "xmlDocRoot";
+            this.root = node;
+
+        } else if (node.getLevel() > 1) {
+            String alias = node.getName() + "_";
+
+            int count = 1;
+            while (variables.contains(alias)) {
+                alias = node.getName() + "_" + count;
+                count++;
+            }
+
+            node.alias = alias;
+            variables.add(alias);
+
+            int lastSlash = node.getPath().lastIndexOf('/');
+            if (lastSlash > 0) {
+                String parentPath = node.getPath().substring(0, lastSlash);
+                MappingNode parent = mappings.get(parentPath);
+                parent.children.add(node);
+                node.parent = parent;
+            }
+        }
 
         if (_typeStack.contains(stype))
             return;
@@ -59,6 +109,9 @@ public class XmlGenerator {
 
         try {
             if (stype.isSimpleType() || stype.isURType()) {
+                node.nodeType = NodeType.Field;
+                node.defaultValue = sampleDataForSimpleType(stype);
+
                 processSimpleType(stype, xmlc);
                 return;
             }
@@ -96,21 +149,28 @@ public class XmlGenerator {
     }
 
     private void processSimpleType(SchemaType stype, XmlCursor xmlc) {
-        System.out.println("------------- " + path(xmlc));
-
         String sample = sampleDataForSimpleType(stype);
-
         sample = xmlc.getDomNode().getLocalName().toLowerCase();
 
         xmlc.insertChars(sample);
     }
 
-    private String path(XmlCursor xmlc) {
+    private static String path(XmlCursor xmlc) {
         Node node = xmlc.getDomNode();
         String path = node.getLocalName();
-        while (node.getParentNode() != null && node.getParentNode().getLocalName() != null) {
-            node = node.getParentNode();
-            path = node.getLocalName() + "/" + path;
+
+        if (node.getParentNode() == null) {
+            // FIXME:
+
+
+        } else {
+            while (node.getParentNode() != null) {
+                node = node.getParentNode();
+                if (node.getLocalName() != null) {
+                    path = node.getLocalName() + "/" + path;
+                }
+            }
+
         }
 
         return path;
@@ -940,6 +1000,13 @@ public class XmlGenerator {
         SchemaProperty[] attrProps = stype.getAttributeProperties();
         for (int i = 0; i < attrProps.length; i++) {
             SchemaProperty attr = attrProps[i];
+            MappingNode node = new MappingNode(xmlc, attr);
+            String parentPath = path(xmlc);
+            MappingNode parent = mappings.get(parentPath);
+            parent.children.add(node);
+            node.parent = parent;
+            mappings.put(node.getPath(), node);
+
             if (_soapEnc) {
                 if (SKIPPED_SOAP_ATTRS.contains(attr.getName()))
                     continue;
@@ -1030,4 +1097,153 @@ public class XmlGenerator {
     }
 
     private ArrayList _typeStack = new ArrayList();
+
+    public static class MappingNode {
+
+        private transient SchemaProperty attribute;
+        private transient MappingNode parent;
+        private transient List<MappingNode> children = new ArrayList<>();
+
+        private String path;
+        private String name;
+        private String namespaceURI;
+        private int level;
+        private NodeType nodeType = NodeType.Folder;
+        private String alias;
+        private String defaultValue;
+
+        private Map<String, Object> annotations = new LinkedHashMap<>();
+
+        public MappingNode(XmlCursor xmlc) {
+            this.path = path(xmlc);
+
+            this.name = xmlc.getDomNode().getLocalName();
+            this.namespaceURI = xmlc.getDomNode().getNamespaceURI();
+            if (path == null) {
+                level = 0;
+            } else {
+                level = path.split("/").length;
+            }
+
+        }
+
+        public MappingNode(XmlCursor xmlc, SchemaProperty attribute) {
+            this.attribute = attribute;
+
+            this.path = path(xmlc) + "/@" + attribute.getName().getLocalPart();
+            this.name = attribute.getName().getLocalPart();
+            this.namespaceURI = attribute.getName().getNamespaceURI();
+
+            this.level = path.split("/").length;
+
+            this.nodeType = NodeType.Attribute;
+            this.defaultValue = attribute.getName().getLocalPart();
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getLevel() {
+            return level;
+        }
+
+        public NodeType getNodeType() {
+            return nodeType;
+        }
+
+        public String getNamespaceURI() {
+            return namespaceURI;
+        }
+
+        public String getAlias() {
+            return alias;
+        }
+
+        public String getDefaultValue() {
+            return defaultValue;
+        }
+
+        public MappingNode getParent() {
+            return parent;
+        }
+
+        public List<MappingNode> getChildren() {
+            return children;
+        }
+
+        public void annotate(String name, Object annotation) {
+            annotations.put(name, annotation);
+        }
+
+        public Object getAnnotation(String key) {
+            return annotations.get(key);
+        }
+    }
+
+    public static enum NodeType {
+        Folder, Field, Attribute;
+    }
+
+    public static class Builder {
+
+        private SchemaType sType;
+        private XmlObject object;
+        private XmlOptions options = new XmlOptions();
+        private XmlGenerator generator;
+        private Renderer renderer;
+
+        private Builder() {
+        }
+
+        public Builder schemaType(SchemaType sType) {
+            this.sType = sType;
+            this.object = XmlObject.Factory.newInstance();
+            XmlCursor cursor = object.newCursor();
+
+            // Skip the document node
+            cursor.toNextToken();
+            // Using the type and the cursor, call the utility method to get a
+            // sample XML payload for that Schema element
+            this.generator = new XmlGenerator(false);
+            generator.createSampleForType(sType, cursor);
+            // Cursor now contains the sample payload
+            // Pretty print the result.  Note that the cursor is positioned at the
+            // end of the doc so we use the original xml object that the cursor was
+            // created upon to do the xmlText() against.
+            this.options = new XmlOptions();
+            options.put(XmlOptions.SAVE_PRETTY_PRINT);
+            options.put(XmlOptions.SAVE_PRETTY_PRINT_INDENT, 2);
+            options.put(XmlOptions.SAVE_AGGRESSIVE_NAMESPACES);
+
+            return this;
+        }
+
+        public Builder annotate(Annotator annotator) {
+            annotator.annotate(generator);
+            return this;
+        }
+
+        public String render(Renderer renderer) {
+            return renderer.render(generator);
+        }
+
+        public String sampleXmlText() {
+            return object.xmlText();
+        }
+    }
+
+    public static interface Annotator {
+        void annotate(XmlGenerator base);
+    }
+
+    public static interface Renderer {
+        String render(XmlGenerator base);
+
+    }
+
 }

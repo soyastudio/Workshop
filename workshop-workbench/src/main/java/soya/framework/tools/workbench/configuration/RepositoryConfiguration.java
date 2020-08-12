@@ -27,11 +27,11 @@ public class RepositoryConfiguration {
     void init() {
         home = new File("D:/github/workshop/install/repository");
         if (!home.exists()) {
-            home = new File("C:/Workshop/install/Repository");
+            home = new File("C:/Workshop/Repository");
         }
 
-        cmmHome = new File(home, "documents/CMM");
-        requirements = new File(home, "documents/requirements");
+        cmmHome = new File(home, "CMM");
+        requirements = new File(home, "BusinessObjects");
 
         File cmmBod = new File(cmmHome, "BOD");
         File[] files = cmmBod.listFiles();
@@ -39,9 +39,8 @@ public class RepositoryConfiguration {
             if ("xsd".equalsIgnoreCase(FilenameUtils.getExtension(f.getName()))) {
                 try {
                     BusinessObjectSchemaCache.getInstance().load(f);
-
                 } catch (XmlException e) {
-                    System.out.println("====================: " + f);
+                    System.out.println("==================== failure: " + f);
                     e.printStackTrace();
 
                 } catch (IOException e) {

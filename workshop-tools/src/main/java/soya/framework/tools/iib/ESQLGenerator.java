@@ -83,6 +83,7 @@ public class ESQLGenerator {
         if(brokerSchema != null && brokerSchema.trim().length() > 0) {
             builder.append("BROKER SCHEMA ").append(brokerSchema.trim()).append(";").append("\n\n");
         }
+
         builder.append("CREATE COMPUTE MODULE ").append(moduleName);
         StringBuilderUtils.println(builder, 2);
 
