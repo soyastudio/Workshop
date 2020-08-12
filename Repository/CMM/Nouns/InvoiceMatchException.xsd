@@ -6,8 +6,9 @@
    Dsc: contains commonly used Albertson's Purchase order schema.
    Name: /ABS_CMM_Platform/Nouns/PurchaseOrder.xsd
 -->
-<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.1 Patrick Oliver 7/22/20 - Updated VendorId & VendorSubAccountId to string(20)-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:element name="InvoiceMatchException" type="InvoiceMatchExceptionType">
 		<xs:annotation>
@@ -166,9 +167,7 @@ facilities. There are two categories for facilities:
 									</xs:element>
 									<xs:element name="WarehouseVendorId" minOccurs="0">
 										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:maxLength value="20"/>
-											</xs:restriction>
+											<xs:restriction base="xs:string"/>
 										</xs:simpleType>
 									</xs:element>
 									<xs:element name="APVendorNbr" minOccurs="0">

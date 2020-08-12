@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.1 Patrick Oliver 7/22/20 - Updated VendorId to string(20)-->
 	<!--V1.0  Alex Nunes 8/16/2019 Initial version -->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
-	<xs:include schemaLocation="FinanceMaster.xsd"/>
+	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
 	<xs:element name="LeaseEquipment" type="LeaseEquipmentType">
 		<xs:annotation>
 			<xs:documentation>root element.</xs:documentation>
@@ -665,7 +666,7 @@ blank for type A, P or Q resources.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="9"/>
+						<xs:maxLength value="20"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>

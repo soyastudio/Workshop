@@ -6,9 +6,10 @@
    Description: Contains commonly used Safeway Inventory schema.
    Name: /SFWY/Nouns/Inventory.xsd
 -->
-<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--7/30/2020 - Alex Nunes - Renamed CountArea to CountAreaCorporateItemCd, added ScanTS and ExportTs-->
 	<xs:element name="RetailStoreInventory" type="RetailStoreInventoryType">
 		<xs:annotation>
 			<xs:documentation>Standard Albertsons companies schema for Inventory balance that represents the quantity of each item (balance) by location.
@@ -57,10 +58,15 @@ This is expected to provide a quantity snapshot i.e. all quantity is updated as 
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
-						<xs:element name="CountArea" type="CodeWithDescription" minOccurs="0">
+						<xs:element name="CountAreaCorporateItemCd" minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>Count area.</xs:documentation>
+								<xs:documentation>Count Area Code. Internally is a Corporate Item Code (CIC).</xs:documentation>
 							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+								</xs:restriction>
+							</xs:simpleType>
 						</xs:element>
 						<xs:element ref="CorporateItemCd" minOccurs="0"/>
 						<xs:element name="ItemId" minOccurs="0">
@@ -196,6 +202,16 @@ On the sellable count log the extended calculations are simple. (Retail) * (quan
 									<xs:fractionDigits value="2"/>
 								</xs:restriction>
 							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ScanTs" type="DateTimeType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Timestamp of when the item was scanned.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ExportTs" type="DateTimeType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Timestamp of when the item information was exported.</xs:documentation>
+							</xs:annotation>
 						</xs:element>
 						<xs:element ref="Status" minOccurs="0"/>
 						<xs:element name="ItemSourcingType" minOccurs="0">

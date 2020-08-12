@@ -1739,7 +1739,13 @@ It must be greater then the cash discount days.
 PersonABIEType is logically derived from UN/CEFACT TBG17 ABIE PersonType as defined in the Reusable Aggregate Business Information Entity (RUABIE) XML Schema file.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element ref="Id" minOccurs="0"/>
+			<xs:element name="Id" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element name="AlternateId" type="AlternateId" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element ref="PersonNm" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
@@ -2281,7 +2287,13 @@ Examples are - Preferred Name, Short Name etc.</xs:documentation>
 			<xs:documentation>Common type for specifying Supervisor details including their ID, and Job code.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element ref="Id" minOccurs="0"/>
+			<xs:element name="Id" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element name="AlternateId" type="AlternateId" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element ref="PersonNm" minOccurs="0"/>
 			<xs:element ref="JobTitle" minOccurs="0"/>
@@ -2332,6 +2344,17 @@ Examples are - Preferred Name, Short Name etc.</xs:documentation>
 			<xs:element name="ExemptionAmt" type="xs:decimal" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Exempted tax amount</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TaxPointDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Tax point date is used to update the Lawson Tax system for released (open)
+and historical status invoices with a tax code.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TaxSequenceNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Tax Seq Nbr</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 		</xs:sequence>

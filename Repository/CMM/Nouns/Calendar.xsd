@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<!--V1.0  Alex Nunes 10/23/2019 Initial version -->
+	<!--V1.1  Alex Nunes 7/21/2020 Removal of period from Gregorian calendar, Holiday cardinality. -->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
-	<xs:include schemaLocation="FinanceMaster.xsd"/>
+	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
 	<xs:element name="Calendar" type="CalendarType">
 		<xs:annotation>
 			<xs:documentation>root element.</xs:documentation>
@@ -102,11 +103,10 @@
 			</xs:element>
 			<xs:element name="Year" type="YearType" minOccurs="0"/>
 			<xs:element name="Quarter" type="QuarterType" minOccurs="0"/>
-			<xs:element name="Period" type="PeriodType" minOccurs="0"/>
 			<xs:element name="Month" type="MonthType" minOccurs="0"/>
 			<xs:element name="Week" type="WeekType" minOccurs="0"/>
 			<xs:element name="Day" type="DayType" minOccurs="0"/>
-			<xs:element name="Holiday" type="HolidayType" minOccurs="0"/>
+			<xs:element name="Holiday" type="HolidayType" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 		<xs:attribute ref="typeCode"/>
 	</xs:complexType>
@@ -116,46 +116,10 @@
 		</xs:annotation>
 		<xs:sequence minOccurs="0">
 			<xs:element name="HolidayId" type="CodeWithDescription" minOccurs="0"/>
-			<xs:element name="CityNm" nillable="true" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Name of the city or town.</xs:documentation>
-				</xs:annotation>
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="50"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
-			<xs:element name="CountyNm" nillable="true" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Name of the county.</xs:documentation>
-				</xs:annotation>
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="50"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
-			<xs:element name="StateCd" nillable="true" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>State code.</xs:documentation>
-				</xs:annotation>
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="10"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
-			<xs:element name="CountryCd" nillable="true" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Country code.</xs:documentation>
-				</xs:annotation>
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="10"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
+			<xs:element name="City" type="CodeWithDescription" nillable="true" minOccurs="0"/>
+			<xs:element name="County" type="CodeWithDescription" nillable="true" minOccurs="0"/>
+			<xs:element name="State" type="CodeWithDescription" nillable="true" minOccurs="0"/>
+			<xs:element name="Country" type="CodeWithDescription" nillable="true" minOccurs="0"/>
 		</xs:sequence>
 		<xs:attribute ref="typeCode"/>
 	</xs:complexType>

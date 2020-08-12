@@ -8,8 +8,10 @@
 -->
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.1 Patrick Oliver 7/22/20 - Updated VendorId to string(20)-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
-	<!--7/10/2020 - Alex Nunes - Add data elements to support EXE adjustments in inventory counts.-->
+	<!--V1.2 7/10/2020 - Alex Nunes - Add data elements to support EXE adjustments in inventory counts.-->
+		<!--V1.3 8/10/2020 - Alex Nunes - Appended annotation for PalletTrackingNbr which can also be known as License Plate Number. -->
 	<xs:element name="InventoryAdjustment" type="InventoryAdjustmentType">
 		<xs:annotation>
 			<xs:documentation>Publishes Adjusted Inventory qty in a facility by item. Quantity adjutments can happen due to various reasons like damage, receive short, theft ..etc</xs:documentation>
@@ -230,13 +232,13 @@ facilities. There are two categories for facilities:
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="PalletNbr" nillable="false" minOccurs="0">
+			<xs:element name="PalletTrackingNbr" nillable="false" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Pallet indentifier number..</xs:documentation>
+					<xs:documentation>Pallet indentifier number also known as License Plate Number (LPN).</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="15"/>
+						<xs:maxLength value="30"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>

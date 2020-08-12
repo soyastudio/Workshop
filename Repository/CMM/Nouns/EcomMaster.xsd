@@ -3,6 +3,7 @@
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<!--V1.0  02142020  Sai Nuthakki   Initial Version-->
 	<!--V1.1  06092020  Sai Nuthakki   Added ShoppingCartType-->
+	<!--V1.2  08032020 Sai Nuthakki Added Business EventType-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:complexType name="ShoppingCartType">
 		<xs:annotation>
@@ -76,6 +77,165 @@
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="BusinessEventType">
+		<xs:annotation>
+			<xs:documentation>Defines the eCom business event and the status of the event at various stages.
+Ex: Abs Door delivery, 3Pl delivery, store picking..etc</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="EventBusinessAreaType" type="DeliveryAreaType">
+				<xs:annotation>
+					<xs:documentation>Geographic area that covers eCom business event.
+Ex: a store, group of stores or a zip cd.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EventTransactionType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Business transion Id attached to an event.
+Ex: Customer grocery order nbr</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="TransactionId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Business transaction Id.
+Ex Customer Order Nbr</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="TransactionType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="ReferenceNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>cross reference nbr from external systems for internal transaction id.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="EventType" type="CodeWithDescription">
+				<xs:annotation>
+					<xs:documentation>Defines the type of event.
+Ex: Grocery Delivery, fullfillment</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EventSourceType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Source of the event data. ex 3pl or internal trucking system</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EventPartnerType" minOccurs="0">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="CodeWithDescription">
+							<xs:sequence>
+								<xs:element name="EventPartnerId" minOccurs="0">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="50"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="EventPartnerNm" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Name of the business partner performing th event.
+Could be internal or external.
+Ex: Instacart, Doordash..etc</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="100"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="EventPersonId" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Id of the person performaing the event.
+Ex  driver's Id in case of delivery event.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="50"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="EventPersonNm" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Name of the person performaing the event.
+Ex  driver's Name in case of delivery event.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="100"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="EventPersonIdType" type="CodeWithDescription" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Type of the person Id, ex Emp id, Drivers license</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="VehicleId" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Vehicle used in the event.
+ex: delivery truck nbr</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="VehicleType" type="CodeWithDescription" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Type of the vehicle used in the business event.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="EventPhaseType" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="EventStatusType" minOccurs="0">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="StatusType">
+							<xs:sequence>
+								<xs:element name="EventStartTs" type="xs:dateTime" minOccurs="0"/>
+								<xs:element name="EventEndTs" type="xs:dateTime" minOccurs="0"/>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="EventLocationType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Location of a particular event status.
+ex: pickup location, delivery location, in-transit location</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="LocationAddress" type="AddressBaseType" minOccurs="0"/>
+						<xs:element name="LatitudeDegree" type="xs:decimal" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Defines the angular distance north or south from the equator of a point on the earth&apos;s surface, measured on the meridian of the point. Half of a pair of coordinates (the other being longitude).&#10;&#10;A latitude can have negative values.&#10;</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="LongitudeDegree" type="xs:decimal" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Defines the angular distance east or west on the earth&apos;s surface, measured by the angle contained between the meridian of a given point and a prime meridian.  Half of a pair of coordinates (the other being latitude) assigned via a point geocoding procedure.  &#10;&#10;Unlike latitude, which has the equator as a natural starting position, there is no natural starting position for longitude&#10;&#10;Longitude can have negative values.&#10;&#10;</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="CustomerDeliverySlotType">

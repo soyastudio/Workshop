@@ -1187,12 +1187,27 @@
 									"minLength": 1,
 									"maxLength": 255
 								},
-								"ChargebackDepartmentCd": {
-									"type": "string",
-									"description": "The department to chargeback the earned points to. The department must already exist in logix.",
-									"minLength": 1,
-									"maxLength": 200
+							"chargebackdepartment": {
+								"type": "object",
+								"properties": {
+									"DepartmentNm": {
+										"type": "string",
+										"description": "name of the chargeback department (i.e. General Merchandise) chargeback department must already exist in Logix.",
+										"minLength": 1,
+										"maxLength": 200
+									},
+									"DepartmentId": {
+										"type": "string",
+										"description": "Defines a code that uniquely identifies the departments based on its function. Chargeback department (i.e. 301) chargeback department must already exist in Logix.",
+										"minLength": 1,
+										"maxLength": 40
+									}
 								},
+								"required": [
+									"DepartmentNm",
+									"DepartmentId"
+								]
+							},
 								"Maximumadjustment": {
 									"type": "object",
 									"properties": {

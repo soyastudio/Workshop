@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<xs:schema xmlns="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://www.openapplications.org/oagis/9" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.0    Sai Nuthakki     08/06/2020      Initial Version-->
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/FacilityWorkSchedule.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="GetFacilityWorkSchedule">
+		<xs:annotation>
+			<xs:documentation>Represents data related to the planned work hours for all employees in a location. A work schedule typically includes relatively static employee information, such as employee ID and name.  It will also include schedule-specific information such as dates and amount of time to be worked.
+Labour work schedules are created in each facility in advance based on various factors like sales forecast, weath</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="GetFacilityWorkScheduleType">
+					<xs:attribute name="VersionId" type="xs:string" use="optional">
+						<xs:annotation>
+							<xs:documentation>Version Id for the BOD instance</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="ReleaseId" type="xs:string" use="optional">
+						<xs:annotation>
+							<xs:documentation>ReleaseId for the BOD instance</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="SystemEnvironmentCd" type="xs:string" use="optional" default="Production">
+						<xs:annotation>
+							<xs:documentation>Prod, Test, QA</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="GetFacilityWorkScheduleType">
+		<xs:annotation>
+			<xs:documentation>Represents data related to the planned work shifts for all employees in a facility location by work date</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="WorkScheduleData" type="Abs:FacilityWorkScheduleType" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

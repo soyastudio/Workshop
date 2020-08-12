@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2019 sp2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.2 Patrick Oliver 7/22/20 - Updated VendorId & VendorSubAccountNbr to string(20)-->
+	<!--V 1.1  Alex Nunes  12/14/2018 Change BOD Structure based on consuming application needs (OMS). Some warehouse data regarding the item is also required.-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:include schemaLocation="ItemMaster.xsd"/>
-	<!--V 1.1  Alex Nunes  12/14/2018 Change BOD Structure based on consuming application needs (OMS). Some warehouse data regarding the item is also required.-->
 	<xs:element name="VendorItem">
 		<xs:annotation>
 			<xs:documentation>All the items supplied by a vendor at division level.</xs:documentation>
@@ -22,20 +23,33 @@
 						<xs:element name="Vendor" minOccurs="0">
 							<xs:complexType>
 								<xs:sequence>
-									<xs:element name="VendorId" type="xs:string" minOccurs="0">
+									<xs:element name="VendorId" minOccurs="0">
 										<xs:annotation>
 											<xs:documentation>6 digit corporate Nbr that uniquely identifies a vendor within a corporation. A vendor is a Company we purchase from. VEND-NUM is generally used with Vendor Sub-Account Nbr (VEND-SUB-ACNT) or WIMS Sub-Vendor Nbr (WIMS-SUB-VEND).</xs:documentation>
 										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="20"/>
+											</xs:restriction>
+										</xs:simpleType>
 									</xs:element>
-									<xs:element name="VendorSubAccountNbr" type="xs:string" minOccurs="0">
+									<xs:element name="VendorSubAccountNbr" minOccurs="0">
 										<xs:annotation>
 											<xs:documentation>Identifies a particular outlet of a company we purchase from. EG. The Vancouver outlet of Nabob. This is used by the Accounts Payable System</xs:documentation>
 										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="20"/>
+											</xs:restriction>
+										</xs:simpleType>
 									</xs:element>
-									<xs:element name="WarehouseVendorId" type="xs:string" minOccurs="0">
+									<xs:element name="WarehouseVendorId" minOccurs="0">
 										<xs:annotation>
 											<xs:documentation>Identifies the WIMS Vendor Nbr set up by the Buyer. The first character of the Nbr indicates the location e.g. V - Vancouver, E - Edmonton.  Buyer/Merchandisers may break a Vendor outlet into different WIMS Vendors to suit their own purposes. Some of the reasons a Vendor may have several WIMS Vendor records are: 1. Several Buyers buying from the same Vendor. 2. A buyer buying different commodity groups from the same Vendor. 3. A Vendor offering different purchasing terms on different product lines. 4. A Buyer buying some products through a Broker and some directly from the Vendor.</xs:documentation>
 										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string"/>
+										</xs:simpleType>
 									</xs:element>
 									<xs:element name="BDRVendorId" minOccurs="0">
 										<xs:annotation>

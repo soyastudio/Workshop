@@ -17,7 +17,8 @@
 	<!--!=============================================================================================-->
 	<!--V1.0 Alex Nunes - 6/16/2020 - Initial version.-->
 	<!--V1.0 Alex Nunes - 6/19/2020 - Changes reflecting meeting with Tech Lead. -->
-	<xs:include schemaLocation="FinanceMaster.xsd"/>
+	<!--V1.0 Alex Nunes - 7/28/2020 - Changes adding and deleting of indicators -->
+	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:complexType name="AllowanceBillingParameterType">
 		<xs:annotation>
@@ -108,11 +109,6 @@
 											</xs:restriction>
 										</xs:simpleType>
 									</xs:element>
-									<xs:element name="SoftDeleteTs" type="xs:dateTime" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Time stamp of when record was marked as deleted.</xs:documentation>
-										</xs:annotation>
-									</xs:element>
 								</xs:sequence>
 							</xs:complexType>
 						</xs:element>
@@ -153,11 +149,6 @@
 												<xs:maxLength value="100"/>
 											</xs:restriction>
 										</xs:simpleType>
-									</xs:element>
-									<xs:element name="SoftDeleteTs" type="xs:dateTime" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Time stamp of when record was marked as deleted.</xs:documentation>
-										</xs:annotation>
 									</xs:element>
 								</xs:sequence>
 							</xs:complexType>
@@ -208,11 +199,6 @@
 									<xs:maxLength value="100"/>
 								</xs:restriction>
 							</xs:simpleType>
-						</xs:element>
-						<xs:element name="SoftDeleteTs" type="xs:dateTime" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Time stamp of when record was marked as deleted.</xs:documentation>
-							</xs:annotation>
 						</xs:element>
 					</xs:sequence>
 				</xs:complexType>
@@ -491,6 +477,13 @@
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
+						<xs:element name="LocationListKeyChangeInd" minOccurs="1">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
 						<xs:element name="StateListChangeInd" minOccurs="1">
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
@@ -499,6 +492,13 @@
 							</xs:simpleType>
 						</xs:element>
 						<xs:element name="ReviewStatusChangeInd" minOccurs="1">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="FlatCancellationActionInd" minOccurs="1">
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
 									<xs:maxLength value="1"/>
@@ -515,16 +515,6 @@
 				<xs:complexType>
 					<xs:sequence minOccurs="0">
 						<xs:element name="DealDescriptionChangeInd" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation> </xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="1"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="ProductDealDescriptionChangeInd" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation> </xs:documentation>
 							</xs:annotation>
@@ -804,6 +794,16 @@
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
+						<xs:element name="ProductCategoryChangeInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation> </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
@@ -874,6 +874,27 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
+			<xs:element name="PackSizeQty" nillable="true">
+				<xs:annotation>
+					<xs:documentation>Pack size quantity.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="15"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PackSizeDsc" nillable="true" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Description of the pack size.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="30"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element name="ItemIndicators">
 				<xs:complexType>
 					<xs:sequence>
@@ -899,6 +920,27 @@
 							</xs:simpleType>
 						</xs:element>
 						<xs:element name="DisplayItemInd" minOccurs="1">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SOSItemChangeInd" minOccurs="1">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="MeasureItemChangeInd" minOccurs="1">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DisplayItemChangeInd" minOccurs="1">
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
 									<xs:maxLength value="1"/>
@@ -975,7 +1017,21 @@
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
+						<xs:element name="PackSizeQtyChangeInd" minOccurs="1">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
 						<xs:element name="SizeQtyChangeInd" minOccurs="1">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="UOMTypeChangeInd" minOccurs="1">
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
 									<xs:maxLength value="1"/>
@@ -1003,7 +1059,14 @@
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
-						<xs:element name="SoftDeleteInd" minOccurs="1">
+						<xs:element name="ItemDeleteChangeInd" minOccurs="1">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ItemAddChangeInd" minOccurs="1">
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
 									<xs:maxLength value="1"/>

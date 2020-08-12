@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2014 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Safeway, Inc.) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://collab.safeway.com/it/architecture/AbsOmMaster" xmlns:ns2="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.1 Patrick Oliver 7/22/20 - Updated VendorId & VendorSubAccountNbr to string(20)-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:complexType name="ManufacturingPlant">
 		<xs:annotation>
@@ -56,12 +57,27 @@
 				</xs:annotation>
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="VendorId" type="xs:string" minOccurs="0"/>
-						<xs:element name="VendorSubAccntId" type="xs:string" minOccurs="0"/>
-						<xs:element name="WarehouseVendorId" type="xs:string" minOccurs="0">
+						<xs:element name="VendorId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="VendorSubAccntId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="WarehouseVendorId" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>Identifies the WIMS Vendor number set up by the Buyer. The first character of the number indicates the location e.g. V - Vancouver, E - Edmonton.  Buyer/Merchandisers may break a Vendor outlet into different WIMS Vendors to suit their own purposes. Some of the reasons a Vendor may have several WIMS Vendor records are: 1. Several Buyers buying from the same Vendor. 2. A buyer buying different commodity </xs:documentation>
 							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string"/>
+							</xs:simpleType>
 						</xs:element>
 						<xs:element name="PACSVendorNbr" type="xs:string" minOccurs="0"/>
 					</xs:sequence>

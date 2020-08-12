@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--Patrick Oliver 7/22/20 - Updated VendorId to string(20)-->
 	<!--7/30/19 - Patrick  - Changed ARCode to CodeWithDescription in Receivable Type -->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:element name="AccountCategory" type="Abs:CodeWithDescription">
@@ -2874,7 +2875,7 @@ It is used to indicate an accounting unit's position within the company hierarch
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="9"/>
+				<xs:maxLength value="20"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -3052,6 +3053,11 @@ It is used to indicate an accounting unit's position within the company hierarch
 					<xs:documentation>A routing transit number is a nine-digit number used to identify a bank or financial institution when clearing funds for electronic transfers or processing checks in the United States.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="BankEFTNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Branch electronic fund transfer user number.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="BankFormCd" type="CodeWithDescription" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Code used to drive the invoice number generation for transactions.</xs:documentation>
@@ -3194,6 +3200,16 @@ users. If left blank, no access
 restrictions apply.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="IBANId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>International bank account number.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<!--==============BankStatementAccounts=========================-->
@@ -3231,7 +3247,7 @@ restrictions apply.</xs:documentation>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="PayeeAddress" type="AddressType" minOccurs="0"/>
+			<xs:element name="PayeeAddress" type="AddressType" minOccurs="0" maxOccurs="5"/>
 			<xs:element name="SerialNbr" type="xs:integer" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Check serial number</xs:documentation>

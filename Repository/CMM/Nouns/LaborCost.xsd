@@ -64,12 +64,38 @@ facilities. There are two categories for facilities:
 						<xs:element name="JobHours" type="JobHoursType" minOccurs="0"/>
 						<xs:element name="Cost" type="CostType" minOccurs="0"/>
 						<xs:element name="Sales" type="SalesType" minOccurs="0"/>
-						<xs:element name="ExcludeRxSales" type="SalesType" minOccurs="0">
+						<xs:element name="Wages" type="WagesType" minOccurs="0"/>
+						<xs:element name="WagesPercentOfSales" type="WagesPercentOfSalesType" minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>Facility sales data excluding Pharmacy.</xs:documentation>
+								<xs:documentation>Percentage of wages by sales.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="ExcludeFuelSales" type="SalesType" minOccurs="0"/>
+						<xs:element name="CostExclusionType" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Various types of exclusions applied to labor cost like
+Exclude Rx  
+Exclude Fuel
+Exclude eCom..etc</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="ExclusionType" type="CodeWithDescription" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>defines type of exclusion
+ex : Rx, Fuel, eCom</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="ExcludeCost" type="CostType" minOccurs="0"/>
+									<xs:element name="ExcludeSales" type="SalesType" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Facility sales data excluding Pharmacy.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="ExcludeWages" type="WagesType" minOccurs="0"/>
+									<xs:element name="ExcludeWagesPercentOfSales" type="WagesPercentOfSalesType" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
@@ -126,6 +152,24 @@ facilities. There are two categories for facilities:
 								</xs:sequence>
 							</xs:complexType>
 						</xs:element>
+						<xs:element name="RxPresctiption" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="ActualCnt" type="xs:integer" minOccurs="0"/>
+									<xs:element name="PlannedCnt" type="xs:integer" minOccurs="0"/>
+									<xs:element name="ForecastCnt" type="xs:integer" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Tags" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="ActualCnt" type="xs:integer" minOccurs="0"/>
+									<xs:element name="PlannedCnt" type="xs:integer" minOccurs="0"/>
+									<xs:element name="ForecastCnt" type="xs:integer" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
@@ -176,32 +220,32 @@ ex: Scheduled hrs, Actual hrs, Estimated amt, actual amt..etc</xs:documentation>
 			<xs:element name="ForecastSalesAmt" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
-						<xs:totalDigits value="14"/>
-						<xs:fractionDigits value="6"/>
+						<xs:totalDigits value="16"/>
+						<xs:fractionDigits value="7"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="PlannedSalesAmt" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
-						<xs:totalDigits value="14"/>
-						<xs:fractionDigits value="6"/>
+						<xs:totalDigits value="16"/>
+						<xs:fractionDigits value="7"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="AdjustedPlannedSalesAmt" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
-						<xs:totalDigits value="14"/>
-						<xs:fractionDigits value="6"/>
+						<xs:totalDigits value="16"/>
+						<xs:fractionDigits value="7"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="ActualSalesAmt" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
-						<xs:totalDigits value="14"/>
-						<xs:fractionDigits value="6"/>
+						<xs:totalDigits value="16"/>
+						<xs:fractionDigits value="7"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -211,8 +255,8 @@ ex: Scheduled hrs, Actual hrs, Estimated amt, actual amt..etc</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
-						<xs:totalDigits value="14"/>
-						<xs:fractionDigits value="6"/>
+						<xs:totalDigits value="16"/>
+						<xs:fractionDigits value="7"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -262,32 +306,40 @@ ex: Scheduled hrs, Actual hrs, Estimated amt, actual amt..etc</xs:documentation>
 			<xs:element name="ForecastPct" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
-						<xs:totalDigits value="6"/>
-						<xs:fractionDigits value="3"/>
+						<xs:totalDigits value="10"/>
+						<xs:fractionDigits value="7"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="PlannedPct" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
-						<xs:totalDigits value="6"/>
-						<xs:fractionDigits value="3"/>
+						<xs:totalDigits value="10"/>
+						<xs:fractionDigits value="7"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="AdjustedPlannedPct" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
-						<xs:totalDigits value="6"/>
-						<xs:fractionDigits value="3"/>
+						<xs:totalDigits value="10"/>
+						<xs:fractionDigits value="7"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="ActualPct" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
-						<xs:totalDigits value="6"/>
-						<xs:fractionDigits value="3"/>
+						<xs:totalDigits value="10"/>
+						<xs:fractionDigits value="7"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TargetPct" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="10"/>
+						<xs:fractionDigits value="7"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -299,7 +351,7 @@ ex: Scheduled hrs, Actual hrs, Estimated amt, actual amt..etc</xs:documentation>
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
 						<xs:totalDigits value="14"/>
-						<xs:fractionDigits value="6"/>
+						<xs:fractionDigits value="7"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -307,12 +359,26 @@ ex: Scheduled hrs, Actual hrs, Estimated amt, actual amt..etc</xs:documentation>
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
 						<xs:totalDigits value="14"/>
-						<xs:fractionDigits value="6"/>
+						<xs:fractionDigits value="7"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="AdjustedPlannedWageAmt" minOccurs="0"/>
-			<xs:element name="ActualWageAmt" minOccurs="0"/>
+			<xs:element name="AdjustedPlannedWageAmt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="7"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ActualWageAmt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="7"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element name="TargetWageAmt" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Store manager target labor wages.</xs:documentation>
@@ -320,7 +386,7 @@ ex: Scheduled hrs, Actual hrs, Estimated amt, actual amt..etc</xs:documentation>
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
 						<xs:totalDigits value="14"/>
-						<xs:fractionDigits value="6"/>
+						<xs:fractionDigits value="7"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -328,7 +394,7 @@ ex: Scheduled hrs, Actual hrs, Estimated amt, actual amt..etc</xs:documentation>
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
 						<xs:totalDigits value="14"/>
-						<xs:fractionDigits value="6"/>
+						<xs:fractionDigits value="7"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -338,8 +404,8 @@ ex: Scheduled hrs, Actual hrs, Estimated amt, actual amt..etc</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
-						<xs:totalDigits value="6"/>
-						<xs:fractionDigits value="3"/>
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="7"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -347,7 +413,7 @@ ex: Scheduled hrs, Actual hrs, Estimated amt, actual amt..etc</xs:documentation>
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
 						<xs:totalDigits value="14"/>
-						<xs:fractionDigits value="6"/>
+						<xs:fractionDigits value="7"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -355,7 +421,7 @@ ex: Scheduled hrs, Actual hrs, Estimated amt, actual amt..etc</xs:documentation>
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
 						<xs:totalDigits value="14"/>
-						<xs:fractionDigits value="6"/>
+						<xs:fractionDigits value="7"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -453,7 +519,7 @@ ex: Scheduled hrs, Actual hrs, Estimated amt, actual amt..etc</xs:documentation>
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
 						<xs:totalDigits value="14"/>
-						<xs:fractionDigits value="6"/>
+						<xs:fractionDigits value="7"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -464,7 +530,7 @@ ex: Scheduled hrs, Actual hrs, Estimated amt, actual amt..etc</xs:documentation>
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
 						<xs:totalDigits value="14"/>
-						<xs:fractionDigits value="6"/>
+						<xs:fractionDigits value="7"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -475,7 +541,7 @@ ex: Scheduled hrs, Actual hrs, Estimated amt, actual amt..etc</xs:documentation>
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
 						<xs:totalDigits value="14"/>
-						<xs:fractionDigits value="6"/>
+						<xs:fractionDigits value="7"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -486,7 +552,7 @@ ex: Scheduled hrs, Actual hrs, Estimated amt, actual amt..etc</xs:documentation>
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
 						<xs:totalDigits value="14"/>
-						<xs:fractionDigits value="6"/>
+						<xs:fractionDigits value="7"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -497,7 +563,7 @@ ex: Scheduled hrs, Actual hrs, Estimated amt, actual amt..etc</xs:documentation>
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
 						<xs:totalDigits value="14"/>
-						<xs:fractionDigits value="6"/>
+						<xs:fractionDigits value="7"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -508,7 +574,7 @@ ex: Scheduled hrs, Actual hrs, Estimated amt, actual amt..etc</xs:documentation>
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
 						<xs:totalDigits value="14"/>
-						<xs:fractionDigits value="6"/>
+						<xs:fractionDigits value="7"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>

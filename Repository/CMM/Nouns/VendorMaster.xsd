@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
    Schema Owner: 	Safeway Inc
    Date Created:      11 Jan 2017
@@ -8,11 +8,13 @@
 -->
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V2.5 Alex Nunes 8/5/20 - AccountingTaxId from string 10 to string 20 (Outlet level) -->
+		<!--V2.4 Alex Nunes 7/23/20 - Added contact structure in Vendor Outlet -->
 	<!--V2.3 Patrick Oliver 6/22/20 - Updated lengths of VendorId, VendorSubAccntId,  ApVendorNbr, PayVendorId, CustomerId, BackdoorVendorSubAccountId, BrokerVendorNbr, and BrokerSubAccnt to allow processing of AP Vendor maintenance files -->
 	<!--V2.2 Patrick Oliver 6/11/20 - Udpated length of BankNbr & BankAccnt  -->
 	<!--V2.1 Patrick Oliver 7/08/19 - Added new sequence for VendorAlternateLeadTime attributes -->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
-	<xs:include schemaLocation="FinanceMaster.xsd"/>
+	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
 	<!--V1.x Patrick Oliver Added new fields from WMFRSVND MinOptCd,  SearchFlagCd,  ExcessQtyCd-->
 	<!--V 1.1 Alex Nunes 1/10/2019 Add Location Split flag in Verdor Outlet as business process changed. As per CHG0194223.-->
 	<!--V 2.0 Alex Nunes 5/24/2019 Added Finance Accounts Payable Vendor Type-->
@@ -934,7 +936,7 @@
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="10"/>
+						<xs:maxLength value="20"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -2164,6 +2166,11 @@ Y = Yes</xs:documentation>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
+			<xs:element name="VendorContact" type="VendorContactType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Vendor Contact at outlet level (APVMAS).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="VendorWarehouseType">
@@ -2356,11 +2363,11 @@ Y = Yes</xs:documentation>
 			</xs:element>
 			<xs:element name="DeliveryDys" nillable="true" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>This field indicates the day of the week on which the Vendor will be reviewed for Allocation. The user name for this field is Review Days. Each position indicates a day on which the Vendor can be reviewed for Allocation.</xs:documentation>
+					<xs:documentation>Used to identify which days of the week the vendor can deliver orders. INFOREM does not use this field in any calculations. It is not used to determine due dates for orders at all. There are seven characters that make up this variable. It is read from left to right with each of the characters representing a specific day of the week (Sunday through Saturday). Allowable values are N for no delivery and Y for yes the vendor delivers on that day. Settings: The default setting is NYYYYYN. A setting such as this tells the User that the vendor delivers any day Monday through Friday. There will be times though where a vendor has a "fixed" delivery day or days and only deliver once or so a week. In these cases Delivery Days must be set to reflect the correct day(s) of the week that the vendor delivers the orders. An example is when a vendor says that they only deliver orders Tuesday. The Delivery Days settings should be NNYNNNN.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="5"/>
+						<xs:maxLength value="7"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -3062,7 +3069,7 @@ Y = Yes</xs:documentation>
 			</xs:element>
 			<xs:element name="ReviewSchedule" type="xs:string" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>tells the procurement system what day(s) of the week to place an order. Example: NYYYYYN would mean that the vendor is open to order Mon thru Fri and not Sat or Sun.</xs:documentation>
+					<xs:documentation>Vendor Review Days of the week, in Calendar Days; seven-character field indicating (with Y = Yes and N = No) the days of the week designated as "normal" review days for this vendor. Each character represents a day of the week; the system defaults to NYYYYYN. Regardless of the settings, the system reviews all product lines for recommended allocations on a daily basis; days falling outside the "normal" review days may be flagged for special Purchase Orders (in the E and S PO Ind field). For example, if the field contains NYNYNYN, the system automatically generates suggested POs from this vendor on Monday, Wednesday and Friday, but it also suggests POs on Tuesday and/or Thursday as service-level considerations warrant (provided the E and S PO Ind switch is set). Note: Leave the default (to review Monday through Friday) unless you can order only on specified days; if you don’t want the vendor to review at all, set the WIMS Cd to blank instead of using Review Days.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="AutoBuyOrderQuantityInd" type="xs:string" minOccurs="0"/>

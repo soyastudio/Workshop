@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by jsoli17 (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--07/21/2020 - Jayson S  - Initial Version-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:include schemaLocation="FinanceMaster.xsd"/>
+	<xs:complexType name="CurrencyExchangeType">
+		<xs:annotation>
+			<xs:documentation>An exchange rate is the value of one nation's currency versus the currency of another nation or economic zone. For example, how many U.S. dollars does it take to buy one euro? As of Dec. 13, 2019, the exchange rate is 1.10, meaning it takes $1.10 to buy €1</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ExchangeRateEffectiveDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Effective date of the FX Rate</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SourceCurrency" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The source Currency Code for the monetary amount to be converted.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TargetCurrency" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The target Currency Code for the monetary amount to be converted.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CurrencyExchangeRate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Is the multiplier to convert the source units to the target units. (e.g.) The conversion of one currency to another currency monitary amount in the from currency is multiplied by the CalculationRateNumeric to calcultate the monitary amount in the to currency. Another example maybe the conversion between units of measure.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:fractionDigits value="7"/>
+						<xs:totalDigits value="16"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PublicationType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The identification code of the rate type (such as “Monthly End Rate” defined within Configuration workbook within Rate Types)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

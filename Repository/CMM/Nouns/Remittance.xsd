@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.2 Patrick Oliver - Added CheckData complex type to BOD which will be used for the 'Bank lockbox interface'-->
+	<!--V1.1 Patrick Oliver - Updated VendorId to string(20)-->
 	<!--V1.0  Alex Nunes 05/25/2019 Initial version -->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
-	<xs:include schemaLocation="FinanceMaster.xsd"/>
+	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
 	<xs:element name="Remittance" type="RemittanceType">
 		<xs:annotation>
 			<xs:documentation>root element.</xs:documentation>
@@ -511,6 +513,7 @@ combination. Valid values are: 01 = Standard Check.
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
+			<xs:element name="CheckData" type="CheckType" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:element name="InvoiceNbr">

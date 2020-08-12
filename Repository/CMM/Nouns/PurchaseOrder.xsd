@@ -6,8 +6,9 @@
    Dsc: contains commonly used Albertson's Purchase order schema.
    Name: /ABS_CMM_Platform/Nouns/PurchaseOrder.xsd
 -->
-<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.1 Patrick Oliver 7/22/20 - Updated VendorId & VendorSubAccountNbr to string(20)-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:element name="PurchaseOrder" type="AbsPurchaseOrderType">
 		<xs:annotation>
@@ -1022,9 +1023,7 @@ is a discount the Vendor offers for all items attached to the Warehouse Vendor S
 					<xs:documentation>VendorId used in warehouse</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="20"/>
-					</xs:restriction>
+					<xs:restriction base="xs:string"/>
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="WarehouseSubVendorId" minOccurs="0">
@@ -1039,7 +1038,7 @@ Buyer/Merchandisers may break a Vendor outlet into different WIMS Vendors to sui
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="20"/>
+						<xs:maxLength value="4"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>

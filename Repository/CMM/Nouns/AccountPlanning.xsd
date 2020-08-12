@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--08/06/2020 - Patrick Oliver  - Initial Draft-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:include schemaLocation="FinanceMaster.xsd"/>
+	<xs:complexType name="AccountPlanningType">
+		<xs:annotation>
+			<xs:documentation>Account Planning object will be used to capture annual plans (Corporate, Retail, Manufacturing, Supply Chain, Ecommerce) which cover all lines of financial data used to measure financial performance. In addition, the Account Planning object will capture projections that contain the sales, costs, and expense lines found on a profit and loss statements for retail stores and departments.
+</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="AccountPlanningCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Used to differentiate the type of plans (Corporate, Retail, Supply Chain, Manuf, Ecom, etc.) or type of projections (Division, Retail, etc.)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Company" type="CompanyType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>An accounting Organization which consists of an entire company within some legal framework. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Division" type="DivisionType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Information related to the operating division. Ex Norcal with Div Id 25 </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OperatingArea" type="OperatingAreaType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Organization layer within the operating division. Generally it contains one or more operating districts.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ParentOperatingArea" type="OperatingAreaType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Sometimes retail facilities may have a different reporting structure, generally a division.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="District" type="DistrictType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A district is a group of facilities. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Banner" type="BannerType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines Banner and related information. Banner is the marketing identifer in a particular georgraphic area of the division or region.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityData" type="FacilityType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>General information about the store/facility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Region" type="RegionType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Region is a group of Divisions within a Corporation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ROG" type="RetailOrderGroupType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Retail Ordering Group.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityDepartmentData" type="FacilityDepartmentType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Defines store departments based on its function.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityDepartmentSectionType" type="FacilityDepartmentSectionType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Defines various sections within a department of  a retail store facility.A store facility is physically divided into different departments and sections.Ex:Grocery department can have sections like Grocery main meal,Snacks,Family care grocery,Home care grocery,Soft Drinks,Candy,Meals ingredients.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AccountingUnit" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="AccountingUnitId" minOccurs="0"/>
+						<xs:element name="Account" minOccurs="0" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element ref="AccountId" minOccurs="0"/>
+									<xs:element ref="SubAccountId" minOccurs="0"/>
+									<xs:element ref="ChartOfAccountNm" minOccurs="0"/>
+									<xs:element ref="AccountNm" minOccurs="0"/>
+									<xs:element ref="AccountDsc" minOccurs="0"/>
+									<xs:element ref="VariableLevelNbr" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="FinancialAmounts" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="FiscalYear" type="xs:integer"/>
+						<xs:element name="PlanAmt" type="PlanningAmountType" minOccurs="0"/>
+						<xs:element name="ProjectionAmt" type="PlanningAmountType" minOccurs="0"/>
+						<xs:element name="TotalAmt" type="PlanningAmountType" minOccurs="0"/>
+						<xs:element name="Description" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Description of the financial amount. Ex: Sales To Public, Supplies, Retail Allowances  etc.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="250"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+					<xs:attribute name="typeCode">
+						<xs:annotation>
+							<xs:documentation>Attribute used to describe the timeframe associated with the plan or projection amounts. Examples are fiscal week, fiscal period, fiscal quarter, etc</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute ref="sequenceNbr"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="RecordAuditData" type="RecordAuditData" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PlanningAmountType">
+		<xs:annotation>
+			<xs:documentation> Child of AmountType but allows up to 10 decimal places </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="TransactionAmt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="18"/>
+						<xs:fractionDigits value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DecimalNbr" type="xs:int" minOccurs="0"/>
+			<xs:element ref="CurrencyCd" minOccurs="0"/>
+			<xs:element name="CurrencyExchangeRt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="18"/>
+						<xs:fractionDigits value="7"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>
