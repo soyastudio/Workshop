@@ -37,6 +37,13 @@
         </replace>
 
         <copy todir="${install.dest.dir}" file="README.md"/>
+
+        <copy todir="../" file="kafka-zookeeper-start.md"/>
+        <replace file="../kafka-zookeeper-start.md">
+            <replacefilter token="{{zookeeper.install.dir}}" value="${zookeeper.install.dir}"/>
+            <replacefilter token="{{kafka.install.dir}}" value="${kafka.install.dir}"/>
+            <replacefilter token="\" value="/"/>
+        </replace>
     </target>
 
     <target name="package">
