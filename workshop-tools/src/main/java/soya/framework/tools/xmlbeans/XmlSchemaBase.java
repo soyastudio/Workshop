@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 
-public class XmlSchemaBase {
+public class XmlSchemaBase extends AnnotatableSupport{
 
 
     private boolean _soapEnc;
@@ -22,7 +22,6 @@ public class XmlSchemaBase {
     private int _nElements;
 
     private SchemaTypeSystem schemaTypeSystem;
-    private Map<String, Object> annotations = new LinkedHashMap<>();
 
     private MappingNode root;
     private Map<String, MappingNode> mappings = new LinkedHashMap<>();
@@ -35,18 +34,6 @@ public class XmlSchemaBase {
 
     private XmlSchemaBase(boolean soapEnc) {
         _soapEnc = soapEnc;
-    }
-
-    public void annotate(String key, Object value) {
-        annotations.put(key, value);
-    }
-
-    public Object annotation(String key) {
-        return annotations.get(key);
-    }
-
-    public Map<String, Object> getAnnotations() {
-        return annotations;
     }
 
     public SchemaTypeSystem getSchemaTypeSystem() {

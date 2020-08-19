@@ -1,123 +1,40 @@
 package soya.framework.tools.xmlbeans;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
-public abstract class Annotatable {
+public interface Annotatable {
 
-    private static Gson gson = new Gson();
-    private Map<String, JsonElement> annotations = new LinkedHashMap<>();
+    Map<String, Object> getAnnotations();
 
-    public void annotate(String key, Object value) {
-        if (value == null) {
-            annotations.remove(key);
-        } else {
-            annotations.put(key, gson.toJsonTree(value));
-        }
-    }
+    void annotate(String key, Object value);
 
-    public void annotateAsArrayElement(String key, Object value) {
-        JsonElement jsonElement = annotations.get(key);
-        if(jsonElement == null) {
-            jsonElement = new JsonArray();
-            annotations.put(key, jsonElement);
-        }
+    void annotateAsArrayElement(String key, Object value);
 
-        jsonElement.getAsJsonArray().add(gson.toJsonTree(value));
-    }
+    void annotateAsMappedElement(String key, String propName, Object value);
 
-    public <T> T getAnnotation(String key, Class<T> type) {
-        if (annotations.containsKey(key)) {
-            return gson.fromJson(annotations.get(key), type);
-        } else {
-            return null;
-        }
-    }
+    Object getAnnotation(String key);
 
-    public Boolean getAsBoolean(String key) {
-        if (annotations.containsKey(key)) {
-            return annotations.get(key).getAsBoolean();
-        } else {
-            return null;
-        }
-    }
+    <T> T getAnnotation(String key, Class<T> type);
 
-    public Number getAsNumber(String key) {
-        if (annotations.containsKey(key)) {
-            return annotations.get(key).getAsNumber();
-        } else {
-            return null;
-        }
-    }
+    Boolean getAsBoolean(String key);
 
-    public String getAsString(String key) {
-        if (annotations.containsKey(key)) {
-            return annotations.get(key).getAsString();
+    Number getAsNumber(String key);
 
-        } else {
-            return null;
-        }
-    }
+    String getAsString(String key);
 
-    public Double getAsDouble(String key) {
-        if (annotations.containsKey(key)) {
-            return annotations.get(key).getAsDouble();
-        } else {
-            return null;
-        }
-    }
+    Double getAsDouble(String key);
 
-    public Float getAsFloat(String key) {
-        if (annotations.containsKey(key)) {
-            return annotations.get(key).getAsFloat();
-        } else {
-            return null;
-        }
-    }
+    Float getAsFloat(String key);
 
-    public Long getAsLong(String key) {
-        if (annotations.containsKey(key)) {
-            return annotations.get(key).getAsLong();
-        } else {
-            return null;
-        }
-    }
+    Long getAsLong(String key);
 
-    public Integer getAsInteger(String key) {
-        if (annotations.containsKey(key)) {
-            return annotations.get(key).getAsInt();
-        } else {
-            return null;
-        }
-    }
+    Integer getAsInteger(String key);
 
-    public Short getAsShort(String key) {
-        if (annotations.containsKey(key)) {
-            return annotations.get(key).getAsShort();
-        } else {
-            return null;
-        }
-    }
+    Short getAsShort(String key);
 
-    public BigDecimal getAsBigDecimal(String key) {
-        if (annotations.containsKey(key)) {
-            return annotations.get(key).getAsBigDecimal();
-        } else {
-            return null;
-        }
-    }
+    BigDecimal getAsBigDecimal(String key);
 
-    public BigInteger getAsBigInteger(String key) {
-        if (annotations.containsKey(key)) {
-            return annotations.get(key).getAsBigInteger();
-        } else {
-            return null;
-        }
-    }
+    BigInteger getAsBigInteger(String key);
 }
