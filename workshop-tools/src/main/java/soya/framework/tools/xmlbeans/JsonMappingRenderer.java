@@ -2,9 +2,16 @@ package soya.framework.tools.xmlbeans;
 
 import com.google.gson.GsonBuilder;
 
-public class JsonMappingRenderer implements XmlGenerator.Renderer {
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+public class JsonMappingRenderer implements Buffalo.Renderer<XmlSchemaBase> {
     @Override
-    public String render(XmlGenerator base) {
-        return new GsonBuilder().setPrettyPrinting().create().toJson(base.getMappings());
+    public String render(XmlSchemaBase base) {
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("annotations", base.getAnnotations());
+        map.put("mappings", base.getMappings());
+
+        return new GsonBuilder().setPrettyPrinting().create().toJson(map);
     }
 }

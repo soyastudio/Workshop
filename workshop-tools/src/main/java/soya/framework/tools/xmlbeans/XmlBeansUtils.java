@@ -45,7 +45,7 @@ public class XmlBeansUtils {
             }
 
             // Now generate it
-            String result = XmlGenerator.createSampleForType(elem);
+            String result = XmlSchemaBase.createSampleForType(elem);
 
             return result;
         } catch (XmlException | IOException e) {
@@ -77,7 +77,7 @@ public class XmlBeansUtils {
             SchemaType elem = globalElems[0];
 
             // Now generate it
-            String result = XmlGenerator.createSampleForType(elem);
+            String result = XmlSchemaBase.createSampleForType(elem);
 
             return result;
         } catch (XmlException | IOException e) {

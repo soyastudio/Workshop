@@ -2,7 +2,7 @@ package soya.framework.tools.xmlbeans;
 
 import soya.framework.tools.util.StringBuilderUtils;
 
-public class EsqlRenderer implements XmlGenerator.Renderer {
+public class EsqlRenderer implements Buffalo.Renderer<XmlSchemaBase> {
     public static final String DOCUMENT_ROOT = "xmlDocRoot";
 
     private String brokerSchema;
@@ -17,7 +17,7 @@ public class EsqlRenderer implements XmlGenerator.Renderer {
     }
 
     @Override
-    public String render(XmlGenerator base) {
+    public String render(XmlSchemaBase base) {
         StringBuilder builder = new StringBuilder();
         if(brokerSchema != null && brokerSchema.trim().length() > 0) {
             builder.append("BROKER SCHEMA ").append(brokerSchema.trim()).append(";").append("\n\n");
@@ -70,12 +70,13 @@ public class EsqlRenderer implements XmlGenerator.Renderer {
         StringBuilderUtils.println(builder);
     }
 
-    private void printNode(XmlGenerator.MappingNode e, StringBuilder builder) {
+    private void printNode(XmlSchemaBase.MappingNode e, StringBuilder builder) {
         if(e.getLevel() > 1) {
             StringBuilderUtils.println("--  " + e.getPath(), builder, e.getLevel());
         }
 
-        if (XmlGenerator.NodeType.Folder.equals(e.getNodeType())) {
+        if (XmlSchemaBase.NodeType.Folder.equals(e.getNodeType())) {
+
             if (e.getParent() != null) {
                 StringBuilderUtils.println("DECLARE " + e.getAlias() + " REFERENCE TO " + e.getParent().getAlias() + ";", builder, e.getLevel());
                 StringBuilderUtils.println("CREATE LASTCHILD OF " + e.getParent().getAlias() + " AS " + e.getAlias() + " TYPE XMLNSC.Folder NAME 'Abs:" + e.getName() + "';"
@@ -88,10 +89,10 @@ public class EsqlRenderer implements XmlGenerator.Renderer {
                 printNode(n, builder);
             });
 
-        } else if (XmlGenerator.NodeType.Field.equals(e.getNodeType())) {
+        } else if (XmlSchemaBase.NodeType.Field.equals(e.getNodeType())) {
             StringBuilderUtils.println("SET " + e.getParent().getAlias() + ".(XMLNSC.Field)Abs:" + e.getName() + " = '" + "?" + "';", builder, e.getLevel());
 
-        } else if (XmlGenerator.NodeType.Attribute.equals(e.getNodeType())) {
+        } else if (XmlSchemaBase.NodeType.Attribute.equals(e.getNodeType())) {
             StringBuilderUtils.println("SET " + e.getParent().getAlias() + ".(XMLNSC.Attribute)Abs:" + e.getName() + " = '" + "?" + "';", builder, e.getLevel());
 
         }

@@ -1,29 +1,56 @@
 package soya.framework.tools.xmlbeans;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.gson.Gson;
 import org.apache.xmlbeans.*;
 import org.apache.xmlbeans.impl.util.Base64;
 import org.apache.xmlbeans.impl.util.HexBin;
 import org.apache.xmlbeans.soap.SOAPArrayType;
 import org.apache.xmlbeans.soap.SchemaWSDLArrayType;
 import org.w3c.dom.Node;
+import org.yaml.snakeyaml.Yaml;
 
 import javax.xml.namespace.QName;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 
-public class XmlGenerator {
+public class XmlSchemaBase {
+
+
     private boolean _soapEnc;
     private static final int MAX_ELEMENTS = 1000;
     private int _nElements;
+
+    private SchemaTypeSystem schemaTypeSystem;
+    private Map<String, Object> annotations = new LinkedHashMap<>();
 
     private MappingNode root;
     private Map<String, MappingNode> mappings = new LinkedHashMap<>();
     private Set<String> variables = new LinkedHashSet<>();
 
-    private XmlGenerator(boolean soapEnc) {
+    private XmlSchemaBase(SchemaTypeSystem schemaTypeSystem) {
+        this.schemaTypeSystem = schemaTypeSystem;
+        _soapEnc = false;
+    }
+
+    private XmlSchemaBase(boolean soapEnc) {
         _soapEnc = soapEnc;
+    }
+
+    public void annotate(String key, Object value) {
+        annotations.put(key, value);
+    }
+
+    public Object annotation(String key) {
+        return annotations.get(key);
+    }
+
+    public Map<String, Object> getAnnotations() {
+        return annotations;
+    }
+
+    public SchemaTypeSystem getSchemaTypeSystem() {
+        return schemaTypeSystem;
     }
 
     public MappingNode getRoot() {
@@ -31,7 +58,7 @@ public class XmlGenerator {
     }
 
     public Map<String, MappingNode> getMappings() {
-        return ImmutableMap.copyOf(mappings);
+        return mappings;
     }
 
     public static Builder builder() {
@@ -42,13 +69,12 @@ public class XmlGenerator {
         XmlObject object = XmlObject.Factory.newInstance();
         XmlCursor cursor = object.newCursor();
 
-
         // Skip the document node
         cursor.toNextToken();
         // Using the type and the cursor, call the utility method to get a
         // sample XML payload for that Schema element
-        XmlGenerator generator = new XmlGenerator(false);
-        generator.createSampleForType(sType, cursor);
+        XmlSchemaBase generator = new XmlSchemaBase(false);
+        generator.introspect(sType, cursor);
         // Cursor now contains the sample payload
         // Pretty print the result.  Note that the cursor is positioned at the
         // end of the doc so we use the original xml object that the cursor was
@@ -71,7 +97,7 @@ public class XmlGenerator {
      * After:
      * <theElement><lots of stuff/>^</theElement>
      */
-    private void createSampleForType(SchemaType stype, XmlCursor xmlc) {
+    private void introspect(SchemaType stype, XmlCursor xmlc) {
         MappingNode node = new MappingNode(xmlc);
         if (node.getPath() != null) {
             mappings.put(node.getPath(), node);
@@ -952,7 +978,7 @@ public class XmlGenerator {
         xmlc.toPrevToken();
         // -> <elem>stuff^</elem>
 
-        createSampleForType(element.getType(), xmlc);
+        introspect(element.getType(), xmlc);
         // -> <elem>stuff</elem>^
         xmlc.toNextToken();
 
@@ -1116,8 +1142,8 @@ public class XmlGenerator {
 
         public MappingNode(XmlCursor xmlc) {
             this.path = path(xmlc);
-
             this.name = xmlc.getDomNode().getLocalName();
+
             this.namespaceURI = xmlc.getDomNode().getNamespaceURI();
             if (path == null) {
                 level = 0;
@@ -1194,14 +1220,55 @@ public class XmlGenerator {
         private SchemaType sType;
         private XmlObject object;
         private XmlOptions options = new XmlOptions();
-        private XmlGenerator generator;
-        private Renderer renderer;
+        private XmlSchemaBase generator;
+        private Buffalo.Renderer renderer;
 
         private Builder() {
         }
 
-        public Builder schemaType(SchemaType sType) {
-            this.sType = sType;
+        public Builder fromYaml(String yml) {
+            Yaml yaml = new Yaml();
+            Map<String, Object> configuration = yaml.load(yml);
+
+            configuration.entrySet().forEach(e -> {
+                String key = e.getKey();
+                Object value = e.getValue();
+
+                Object component = createObject(key, value);
+                if (component instanceof Buffalo.Annotator) {
+                    annotate((Buffalo.Annotator) component);
+                }
+
+            });
+
+            return this;
+        }
+
+        private Object createObject(String className, Object settings) {
+            Object o = null;
+            try {
+                Class cls = Class.forName(className);
+                Gson gson = new Gson();
+                if (settings != null && settings instanceof Map) {
+                    o = gson.fromJson(gson.toJson(settings), cls);
+                } else {
+                    o = cls.newInstance();
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+            return o;
+        }
+
+        public XmlSchemaBase create() {
+            return generator;
+        }
+
+        public Builder schemaTypeSystem(SchemaTypeSystem schemaTypeSystem) {
+            this.generator = new XmlSchemaBase(schemaTypeSystem);
+            SchemaType sType = schemaTypeSystem.documentTypes()[0];
+
             this.object = XmlObject.Factory.newInstance();
             XmlCursor cursor = object.newCursor();
 
@@ -1209,8 +1276,7 @@ public class XmlGenerator {
             cursor.toNextToken();
             // Using the type and the cursor, call the utility method to get a
             // sample XML payload for that Schema element
-            this.generator = new XmlGenerator(false);
-            generator.createSampleForType(sType, cursor);
+            generator.introspect(sType, cursor);
             // Cursor now contains the sample payload
             // Pretty print the result.  Note that the cursor is positioned at the
             // end of the doc so we use the original xml object that the cursor was
@@ -1223,27 +1289,18 @@ public class XmlGenerator {
             return this;
         }
 
-        public Builder annotate(Annotator annotator) {
+        public Builder annotate(Buffalo.Annotator annotator) {
             annotator.annotate(generator);
             return this;
         }
 
-        public String render(Renderer renderer) {
+        public String render(Buffalo.Renderer renderer) {
             return renderer.render(generator);
         }
 
         public String sampleXmlText() {
             return object.xmlText();
         }
-    }
-
-    public static interface Annotator {
-        void annotate(XmlGenerator base);
-    }
-
-    public static interface Renderer {
-        String render(XmlGenerator base);
-
     }
 
 }
