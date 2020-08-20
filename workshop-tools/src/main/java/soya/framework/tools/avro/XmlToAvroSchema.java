@@ -25,6 +25,16 @@ public class XmlToAvroSchema {
         return (Schema) assembler.endRecord();
     }
 
+    public static Schema fromXmlSchema(SchemaType schemaType) {
+        SchemaBuilder.FieldAssembler assembler = SchemaBuilder
+                .record(schemaType.getName().getLocalPart()).namespace(DEFAULT_NAMESPACE)
+                .fields();
+
+        assemble(schemaType, assembler);
+
+        return (Schema) assembler.endRecord();
+    }
+
     private static SchemaBuilder.FieldAssembler assemble(SchemaType schemaType, SchemaBuilder.FieldAssembler assembler) {
         for (SchemaProperty sp : schemaType.getElementProperties()) {
             SchemaType st = sp.getType();

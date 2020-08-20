@@ -13,9 +13,7 @@ import soya.framework.tools.poi.XlsxUtils;
 import soya.framework.tools.util.StringBuilderUtils;
 import soya.framework.tools.workbench.configuration.BusinessObjectSchemaCache;
 import soya.framework.tools.workbench.configuration.WorkbenchRepository;
-import soya.framework.tools.xmlbeans.EsqlRenderer;
-import soya.framework.tools.xmlbeans.JsonMappingRenderer;
-import soya.framework.tools.xmlbeans.XmlGenerator;
+import soya.framework.tools.xmlbeans.*;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -41,6 +39,19 @@ public class RepositoryResource {
         return Response.ok(schemaCache.definedBusinessObjects()).build();
     }
 
+    @POST
+    @Path("/cmm/buffalo")
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces({MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    public Response buffalo(@HeaderParam("renderer") String renderer, String yaml) {
+        if (renderer == null) {
+            return Response.ok(Buffalo.fromYaml(yaml, XmlSchemaBase.class).render()).build();
+        } else {
+            return Response.ok(Buffalo.fromYaml(yaml, XmlSchemaBase.class).render(renderer)).build();
+
+        }
+    }
+
     @GET
     @Path("/cmm/xml/{bod}")
     @Produces(MediaType.APPLICATION_XML)
@@ -57,15 +68,15 @@ public class RepositoryResource {
     @GET
     @Path("/cmm/mappings/{bod}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response cmmMappings(@PathParam("bod") String bod) {
+    public Response cmmMappings(@PathParam("bod") String bod, String yaml) {
         if (!schemaCache.contains(bod)) {
             return Response.status(Response.Status.NOT_FOUND).build();
 
         } else {
             SchemaTypeSystem sts = schemaCache.getXmlSchemaTypeSystem(bod);
-            SchemaType[] globalElems = sts.documentTypes();
-            SchemaType elem = globalElems[0];
-            XmlGenerator.Builder builder = XmlGenerator.builder().schemaType(elem);
+            XmlSchemaBase.Builder builder = XmlSchemaBase.builder().schemaTypeSystem(sts);
+
+            builder.fromYaml(yaml);
 
             return Response.ok(builder.render(new JsonMappingRenderer())).build();
 
@@ -74,18 +85,25 @@ public class RepositoryResource {
 
     @POST
     @Path("/cmm/esql")
+    @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.TEXT_PLAIN)
     public Response projectESQL(@HeaderParam("bod") String bod,
                                 @HeaderParam("brokerSchema") String brokerSchema,
-                                @HeaderParam("moduleName") String moduleName) {
+                                @HeaderParam("moduleName") String moduleName,
+                                String flow) {
         if (!schemaCache.contains(bod)) {
             return Response.status(Response.Status.NOT_FOUND).build();
 
         } else {
             SchemaTypeSystem sts = schemaCache.getXmlSchemaTypeSystem(bod);
-            SchemaType[] globalElems = sts.documentTypes();
-            SchemaType elem = globalElems[0];
-            XmlGenerator.Builder builder = XmlGenerator.builder().schemaType(elem);
+            XmlSchemaBase.Builder builder = XmlSchemaBase.builder().schemaTypeSystem(sts);
+
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("source", "C:/Workshop/Repository/BusinessObjects/GroceryOrder/requirement/GroceryOrder_ERUMS_to_Canonical_Mapping_v1.2.1.xlsx");
+            jsonObject.addProperty("sheet", "Mapping Source to Canonical");
+
+            XlsxMappingAnnotator mappingAnnotator = new Gson().fromJson(jsonObject, XlsxMappingAnnotator.class);
+            builder.annotate(mappingAnnotator);
 
             EsqlRenderer renderer = new EsqlRenderer();
             renderer.setBrokerSchema(brokerSchema);

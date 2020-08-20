@@ -32,7 +32,6 @@ public class XlsxUtils {
             Iterator<Row> sheetIterator = sheet.iterator();
 
             while (sheetIterator.hasNext()) {
-
                 Row currentRow = sheetIterator.next();
                 JsonObject jsonObject = new JsonObject();
 

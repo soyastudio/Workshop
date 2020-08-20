@@ -11,19 +11,20 @@ import java.util.LinkedHashSet;
 
 public class XlsxMappingAnnotator implements Buffalo.Annotator<XmlSchemaBase> {
 
-    private String source;
+    private String url;
     private String sheet;
+    private String extraction;
 
     @Override
     public void annotate(XmlSchemaBase base) {
-        File excelFile = new File(source);
+        File excelFile = new File(url);
         Workbook workbook = null;
         LinkedHashSet<Mapper> mappers = new LinkedHashSet<>();
 
         try {
             workbook = new XSSFWorkbook(excelFile);
             boolean start = false;
-            int[] labelIndex = new int[]{-1, -1,  -1, -1, -1};
+            int[] labelIndex = new int[]{-1, -1, -1, -1, -1};
 
             Sheet mappingSheet = workbook.getSheet(sheet);
             Iterator<Row> sheetIterator = mappingSheet.iterator();
@@ -75,20 +76,24 @@ public class XlsxMappingAnnotator implements Buffalo.Annotator<XmlSchemaBase> {
                             String targetPath = target.getStringCellValue().trim();
                             if (base.getMappings().containsKey(targetPath)) {
                                 XmlSchemaBase.MappingNode mappingNode = base.getMappings().get(targetPath);
-                                if(cardinality != null && !cardinality.getStringCellValue().trim().endsWith("-1")) {
-                                    mappingNode.annotate("array", true);
-                                    System.out.println("============== loop: " + targetPath);
+
+                                if (cardinality != null && !cardinality.getStringCellValue().trim().endsWith("-1")) {
+                                    mappingNode.annotateAsMappedElement("mapping", "cardinality", cardinality.getStringCellValue().trim());
                                 }
 
-                                if (mapping != null) {
-                                    String mappingDef = mapping.getStringCellValue();
-                                    if (mappingDef != null && mappingDef.trim().length() > 0) {
-                                        Function func = createFunction(mappingDef, source);
-                                        mappingNode.annotate("extract", func.toString());
-                                        if (func.getName().equals("jsonpath")) {
-                                            Mapper mapper = new Mapper(func.getArgument(), targetPath);
-                                            mappers.add(mapper);
-                                        }
+                                if (mapping != null && mapping.getStringCellValue().trim().length() > 0) {
+
+                                    String mappingDef = mapping.getStringCellValue().trim();
+                                    mappingNode.annotateAsMappedElement("mapping", "description", mappingDef);
+                                    if(source != null && source.getStringCellValue().trim().length() > 0) {
+                                        mappingNode.annotateAsMappedElement("mapping", "sourcePath", source.getStringCellValue().trim());
+                                    }
+
+                                    Function func = createFunction(mappingDef, extraction, source);
+                                    mappingNode.annotateAsMappedElement("mapping", "function", func.toString());
+                                    if (func.getName().equals("jsonpath")) {
+                                        Mapper mapper = new Mapper(func.getArgument(), targetPath);
+                                        mappers.add(mapper);
                                     }
                                 }
                             } else {
@@ -112,7 +117,7 @@ public class XlsxMappingAnnotator implements Buffalo.Annotator<XmlSchemaBase> {
         });
     }
 
-    private Function createFunction(String def, Cell cell) {
+    private Function createFunction(String def, String extraction, Cell cell) {
         Function func = Function.TODO;
         if (def.toLowerCase().startsWith("default to ")) {
             String value = def.substring("default to ".length()).trim();
@@ -135,8 +140,10 @@ public class XlsxMappingAnnotator implements Buffalo.Annotator<XmlSchemaBase> {
             func = new Function("direct", builder.toString());
 
         } else if (def.toLowerCase().equals("direct mapping") || def.toLowerCase().equals("directmapping")) {
-            String inputPath = toXPath(cell.getStringCellValue());
-            func = new Function("jsonpath", inputPath);
+            if ("jsonpath".equals(extraction)) {
+                String inputPath = toXPath(cell.getStringCellValue());
+                func = new Function("jsonpath", inputPath);
+            }
         }
 
         return func;

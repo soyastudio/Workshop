@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 
-public class XmlSchemaBase extends AnnotatableSupport{
+public class XmlSchemaBase extends AnnotatableSupport {
 
 
     private boolean _soapEnc;
@@ -1111,7 +1111,7 @@ public class XmlSchemaBase extends AnnotatableSupport{
 
     private ArrayList _typeStack = new ArrayList();
 
-    public static class MappingNode {
+    public static class MappingNode extends AnnotatableSupport {
 
         private transient SchemaProperty attribute;
         private transient MappingNode parent;
@@ -1124,8 +1124,6 @@ public class XmlSchemaBase extends AnnotatableSupport{
         private NodeType nodeType = NodeType.Folder;
         private String alias;
         private String defaultValue;
-
-        private Map<String, Object> annotations = new LinkedHashMap<>();
 
         public MappingNode(XmlCursor xmlc) {
             this.path = path(xmlc);
@@ -1187,14 +1185,6 @@ public class XmlSchemaBase extends AnnotatableSupport{
 
         public List<MappingNode> getChildren() {
             return children;
-        }
-
-        public void annotate(String name, Object annotation) {
-            annotations.put(name, annotation);
-        }
-
-        public Object getAnnotation(String key) {
-            return annotations.get(key);
         }
     }
 

@@ -39,6 +39,7 @@ public class RepositoryConfiguration {
             if ("xsd".equalsIgnoreCase(FilenameUtils.getExtension(f.getName()))) {
                 try {
                     BusinessObjectSchemaCache.getInstance().load(f);
+
                 } catch (XmlException e) {
                     System.out.println("==================== failure: " + f);
                     e.printStackTrace();

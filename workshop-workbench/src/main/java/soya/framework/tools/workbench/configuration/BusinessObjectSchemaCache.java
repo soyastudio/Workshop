@@ -6,7 +6,7 @@ import org.apache.xmlbeans.SchemaTypeSystem;
 import org.apache.xmlbeans.XmlException;
 import soya.framework.tools.avro.XmlToAvroSchema;
 import soya.framework.tools.xmlbeans.XmlBeansUtils;
-import soya.framework.tools.xmlbeans.XmlGenerator;
+import soya.framework.tools.xmlbeans.XmlSchemaBase;
 
 import javax.xml.namespace.QName;
 import java.io.File;
@@ -55,7 +55,7 @@ public class BusinessObjectSchemaCache {
         SchemaType[] globalElems = sts.documentTypes();
         SchemaType elem = globalElems[0];
 
-        return XmlGenerator.createSampleForType(elem);
+        return XmlSchemaBase.createSampleForType(elem);
     }
 
     public Schema getAvroSchema(String bod) {

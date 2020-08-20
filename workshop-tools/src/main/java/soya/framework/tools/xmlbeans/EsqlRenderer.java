@@ -1,9 +1,14 @@
 package soya.framework.tools.xmlbeans;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import soya.framework.tools.util.StringBuilderUtils;
 
 public class EsqlRenderer implements Buffalo.Renderer<XmlSchemaBase> {
     public static final String DOCUMENT_ROOT = "xmlDocRoot";
+
+    private static Gson GSON = new Gson();
 
     private String brokerSchema;
     private String moduleName = "MODULE_NAME";
@@ -75,28 +80,71 @@ public class EsqlRenderer implements Buffalo.Renderer<XmlSchemaBase> {
             StringBuilderUtils.println("--  " + e.getPath(), builder, e.getLevel());
         }
 
-        if (XmlSchemaBase.NodeType.Folder.equals(e.getNodeType())) {
 
-            if (e.getParent() != null) {
-                StringBuilderUtils.println("DECLARE " + e.getAlias() + " REFERENCE TO " + e.getParent().getAlias() + ";", builder, e.getLevel());
-                StringBuilderUtils.println("CREATE LASTCHILD OF " + e.getParent().getAlias() + " AS " + e.getAlias() + " TYPE XMLNSC.Folder NAME 'Abs:" + e.getName() + "';"
-                        , builder, e.getLevel());
+        if(e.getAnnotation("loop") != null) {
+            JsonArray loops = e.getAnnotation("loop", JsonArray.class);
+            loops.forEach(l -> {
+                WhileLoop wl = GSON.fromJson(l, WhileLoop.class);
+                StringBuilderUtils.println("WHILE LASTMOVE(" + wl.variable + ") DO", builder, e.getLevel());
                 StringBuilderUtils.println(builder);
 
-            }
+                if (XmlSchemaBase.NodeType.Folder.equals(e.getNodeType())) {
+                    if (e.getParent() != null) {
+                        StringBuilderUtils.println("DECLARE " + e.getAlias() + " REFERENCE TO " + e.getParent().getAlias() + ";", builder, e.getLevel());
+                        StringBuilderUtils.println("CREATE LASTCHILD OF " + e.getParent().getAlias() + " AS " + e.getAlias() + " TYPE XMLNSC.Folder NAME 'Abs:" + e.getName() + "';"
+                                , builder, e.getLevel());
+                        StringBuilderUtils.println(builder);
 
-            e.getChildren().forEach(n -> {
-                printNode(n, builder);
+                    }
+
+                    e.getChildren().forEach(n -> {
+                        printNode(n, builder);
+                    });
+
+                } else if (XmlSchemaBase.NodeType.Field.equals(e.getNodeType())) {
+                    StringBuilderUtils.println("SET " + e.getParent().getAlias() + ".(XMLNSC.Field)Abs:" + e.getName() + " = '" + "?" + "';", builder, e.getLevel());
+
+                } else if (XmlSchemaBase.NodeType.Attribute.equals(e.getNodeType())) {
+                    StringBuilderUtils.println("SET " + e.getParent().getAlias() + ".(XMLNSC.Attribute)Abs:" + e.getName() + " = '" + "?" + "';", builder, e.getLevel());
+
+                }
+
+                StringBuilderUtils.println("MOVE " + wl.variable + " NEXTSIBLING;", builder, e.getLevel());
+                StringBuilderUtils.println("END WHILE;", builder, e.getLevel());
+                StringBuilderUtils.println(builder);
+
             });
 
-        } else if (XmlSchemaBase.NodeType.Field.equals(e.getNodeType())) {
-            StringBuilderUtils.println("SET " + e.getParent().getAlias() + ".(XMLNSC.Field)Abs:" + e.getName() + " = '" + "?" + "';", builder, e.getLevel());
+        } else {
+            if (XmlSchemaBase.NodeType.Folder.equals(e.getNodeType())) {
+                if (e.getParent() != null) {
+                    StringBuilderUtils.println("DECLARE " + e.getAlias() + " REFERENCE TO " + e.getParent().getAlias() + ";", builder, e.getLevel());
+                    StringBuilderUtils.println("CREATE LASTCHILD OF " + e.getParent().getAlias() + " AS " + e.getAlias() + " TYPE XMLNSC.Folder NAME 'Abs:" + e.getName() + "';"
+                            , builder, e.getLevel());
+                    StringBuilderUtils.println(builder);
 
-        } else if (XmlSchemaBase.NodeType.Attribute.equals(e.getNodeType())) {
-            StringBuilderUtils.println("SET " + e.getParent().getAlias() + ".(XMLNSC.Attribute)Abs:" + e.getName() + " = '" + "?" + "';", builder, e.getLevel());
+                }
+
+                e.getChildren().forEach(n -> {
+                    printNode(n, builder);
+                });
+
+            } else if (XmlSchemaBase.NodeType.Field.equals(e.getNodeType())) {
+                StringBuilderUtils.println("SET " + e.getParent().getAlias() + ".(XMLNSC.Field)Abs:" + e.getName() + " = '" + "?" + "';", builder, e.getLevel());
+
+            } else if (XmlSchemaBase.NodeType.Attribute.equals(e.getNodeType())) {
+                StringBuilderUtils.println("SET " + e.getParent().getAlias() + ".(XMLNSC.Attribute)Abs:" + e.getName() + " = '" + "?" + "';", builder, e.getLevel());
+
+            }
 
         }
 
         StringBuilderUtils.println(builder);
+    }
+
+    static class WhileLoop {
+        private String name;
+        private String sourcePath;
+        private String variable;
     }
 }
