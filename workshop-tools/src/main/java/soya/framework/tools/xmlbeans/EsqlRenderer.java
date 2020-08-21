@@ -2,8 +2,10 @@ package soya.framework.tools.xmlbeans;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import soya.framework.tools.util.StringBuilderUtils;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class EsqlRenderer implements Buffalo.Renderer<XmlSchemaBase> {
     public static final String DOCUMENT_ROOT = "xmlDocRoot";
@@ -12,6 +14,8 @@ public class EsqlRenderer implements Buffalo.Renderer<XmlSchemaBase> {
 
     private String brokerSchema;
     private String moduleName = "MODULE_NAME";
+
+    private Map<String, WhileLoop> loopMap = new LinkedHashMap<>();
 
     public void setBrokerSchema(String brokerSchema) {
         this.brokerSchema = brokerSchema;
@@ -24,7 +28,7 @@ public class EsqlRenderer implements Buffalo.Renderer<XmlSchemaBase> {
     @Override
     public String render(XmlSchemaBase base) {
         StringBuilder builder = new StringBuilder();
-        if(brokerSchema != null && brokerSchema.trim().length() > 0) {
+        if (brokerSchema != null && brokerSchema.trim().length() > 0) {
             builder.append("BROKER SCHEMA ").append(brokerSchema.trim()).append(";").append("\n\n");
         }
 
@@ -47,7 +51,6 @@ public class EsqlRenderer implements Buffalo.Renderer<XmlSchemaBase> {
         StringBuilderUtils.println(builder);
 
         printNode(base.getRoot(), builder);
-
 
 
         StringBuilderUtils.println("RETURN TRUE;", builder, 2);
@@ -76,15 +79,20 @@ public class EsqlRenderer implements Buffalo.Renderer<XmlSchemaBase> {
     }
 
     private void printNode(XmlSchemaBase.MappingNode e, StringBuilder builder) {
-        if(e.getLevel() > 1) {
+        if (e.getLevel() > 1) {
             StringBuilderUtils.println("--  " + e.getPath(), builder, e.getLevel());
         }
 
-
-        if(e.getAnnotation("loop") != null) {
+        if (e.getAnnotation("loop") != null) {
             JsonArray loops = e.getAnnotation("loop", JsonArray.class);
             loops.forEach(l -> {
                 WhileLoop wl = GSON.fromJson(l, WhileLoop.class);
+                wl.parent = findParent(wl.sourcePath);
+                loopMap.put(wl.sourcePath, wl);
+
+                if (wl.parent == null) {
+                    StringBuilderUtils.println("DECLARE " + wl.variable + " REFERENCE TO _inputRoot." + ";", builder, e.getLevel());
+                }
                 StringBuilderUtils.println("WHILE LASTMOVE(" + wl.variable + ") DO", builder, e.getLevel());
                 StringBuilderUtils.println(builder);
 
@@ -142,9 +150,30 @@ public class EsqlRenderer implements Buffalo.Renderer<XmlSchemaBase> {
         StringBuilderUtils.println(builder);
     }
 
+    private WhileLoop findParent(String path) {
+        String token = path;
+        int index = token.lastIndexOf('/');
+        while (index > 0) {
+            token = token.substring(0, index);
+            if (loopMap.containsKey(token)) {
+                return loopMap.get(token);
+            }
+            index = token.lastIndexOf('/');
+        }
+
+        return null;
+    }
+
+    private String getAssignment(WhileLoop wl, String inputRoot) {
+        return inputRoot;
+
+    }
+
     static class WhileLoop {
         private String name;
         private String sourcePath;
         private String variable;
+
+        private WhileLoop parent;
     }
 }
