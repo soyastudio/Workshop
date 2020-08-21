@@ -1,0 +1,36 @@
+- soya.framework.tools.xmlbeans.XmlSchemaBaseLoader:
+    source: "C:/Workshop/Repository/CMM/BOD/GetGroceryOrder.xsd"
+
+- soya.framework.tools.xmlbeans.XlsxMappingAnnotator:
+    source: "C:/Workshop/Repository/BusinessObjects/GroceryOrder/requirement/GroceryOrder_ERUMS_to_Canonical_Mapping_v1.2.1.xlsx"
+    sheet: "Mapping Source to Canonical"
+
+- soya.framework.tools.xmlbeans.LoopAnnotator:
+    name: loop_1
+    targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact
+    sourcePath: customer/contact[*]
+    variable: _contact
+
+- soya.framework.tools.xmlbeans.LoopAnnotator:
+    name: loop_2
+    targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact
+    sourcePath: customer/email[*]
+    variable: _email
+
+- soya.framework.tools.xmlbeans.LoopAnnotator:
+    name: loop_3
+    targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact
+    sourcePath: customer/address[*]
+    variable: _address
+
+- soya.framework.tools.xmlbeans.LoopAnnotator:
+    name: loop_4
+    targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment
+    sourcePath: paymentDetails[*]
+    variable: _paymentDetails
+
+- soya.framework.tools.xmlbeans.JsonMappingRenderer:
+- soya.framework.tools.xmlbeans.LoopAnalyzeRenderer:
+- soya.framework.tools.xmlbeans.SampleXmlRenderer:
+- soya.framework.tools.xmlbeans.AvroSchemaRenderer:
+- soya.framework.tools.xmlbeans.EsqlRenderer:
