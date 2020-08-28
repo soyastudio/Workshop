@@ -6,28 +6,18 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-public class LoopAnalyzeRenderer implements Buffalo.Renderer<XmlSchemaBase> {
+public class LoopAnalyzeRenderer implements Buffalo.Renderer<XmlSchemaBase>, MappingFeature {
     @Override
     public String render(XmlSchemaBase base) {
-        LinkedHashSet<Mapping> list = new LinkedHashSet<>();
-
+        LinkedHashSet<Mapper> list = new LinkedHashSet<>();
         base.getMappings().entrySet().forEach(e -> {
-            String extraction = (String) e.getValue().getAnnotation("extract");
-            if (extraction != null) {
-                Function function = Function.parse(extraction);
-                if (function.getName().equals("jsonpath")) {
-                    String token = function.getArgument();
-                    int index = token.lastIndexOf("/Item[*]");
-                    if (index > 0) {
-                        token = token.substring(0, index) + "/Item[*]";
-
-                        XmlSchemaBase.MappingNode node = e.getValue();
-                        while(node != null && node.getAnnotation("array") == null) {
-                            node = node.getParent();
-                        }
-
-                        list.add(new Mapping(token, node.getPath()));
-                    }
+            Mapper mapping = e.getValue().getAnnotation(ANNOTATION, Mapper.class);
+            if(mapping != null && mapping.sourcePath != null && mapping.sourcePath.contains("[*]/")) {
+                XmlSchemaBase.MappingNode node = findParent(e.getValue());
+                if(node != null) {
+                    String sourcePath = mapping.sourcePath;
+                    sourcePath = sourcePath.substring(0, sourcePath.lastIndexOf("[*]/") + 3);
+                    list.add(new Mapper(sourcePath, node.getPath()));
                 }
             }
         });
@@ -35,11 +25,27 @@ public class LoopAnalyzeRenderer implements Buffalo.Renderer<XmlSchemaBase> {
         return new GsonBuilder().setPrettyPrinting().create().toJson(list);
     }
 
-    public static class Mapping implements Comparable<Mapping>{
+    private XmlSchemaBase.MappingNode findParent(XmlSchemaBase.MappingNode mappingNode) {
+        XmlSchemaBase.MappingNode node = mappingNode.getParent();
+        System.out.println(mappingNode.getPath() + ": " + node);
+
+        while(node != null) {
+            Mapping mapping = node.getAnnotation(ANNOTATION, Mapping.class);
+            if(mapping != null && mapping.cardinality != null && !mapping.cardinality.endsWith("-1")) {
+                break;
+            }
+
+            node = node.getParent();
+        }
+
+        return node;
+    }
+
+    public static class Mapper implements Comparable<Mapper>{
         private String sourcePath;
         private String targetPath;
 
-        public Mapping(String sourcePath, String targetPath) {
+        public Mapper(String sourcePath, String targetPath) {
             this.sourcePath = sourcePath;
             this.targetPath = targetPath;
         }
@@ -53,7 +59,7 @@ public class LoopAnalyzeRenderer implements Buffalo.Renderer<XmlSchemaBase> {
         }
 
         @Override
-        public int compareTo(Mapping o) {
+        public int compareTo(Mapper o) {
             return this.sourcePath.compareTo(o.sourcePath);
         }
 
@@ -62,7 +68,7 @@ public class LoopAnalyzeRenderer implements Buffalo.Renderer<XmlSchemaBase> {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
-            Mapping mapping = (Mapping) o;
+            Mapper mapping = (Mapper) o;
 
             return sourcePath != null ? sourcePath.equals(mapping.sourcePath) : mapping.sourcePath == null;
         }
