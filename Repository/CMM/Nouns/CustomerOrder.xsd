@@ -6,10 +6,11 @@
    Dsc: contains commonly used Albertson's Purchase order schema.
    Name: /ABS_CMM_Platform/Nouns/StoreOrder.xsd
 -->
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
-	<!-- 7/10/2020 - Alex Nunes - Add elements to support UWARE DSD Order. Change to optional total count elements.-->
+	<!-- V1.2 7/10/2020 - Alex Nunes - Add elements to support UWARE DSD Order. Change to optional total count elements.-->
+	<!-- V1.3 8/11/2020 - Alex Nunes - Add annotation for CustomerPurchaseOrderNbr wholesale related change. -->
 	<xs:element name="CustomerOrder" type="CustomerOrderType">
 		<xs:annotation>
 			<xs:documentation>root</xs:documentation>
@@ -580,6 +581,9 @@ Tax.
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="CustomerPurchaseOrderNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>In case of wholesale, this is the store order number given by Wholesale stores.</xs:documentation>
+				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
 						<xs:maxLength value="30"/>

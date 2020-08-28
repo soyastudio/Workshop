@@ -6,8 +6,9 @@
    Description: Albertsons Shipment Business Object
    Name: /SFWY/Nouns/SwyShipment.xsd
 -->
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns:oa="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.2 Alex Nunes 8/18/20 - Added wholesale busines data for roll-up stores (Corp/Div/Fac).-->
 	<!--V1.1 Patrick Oliver 7/22/20 - Updated VendorId & VendorSubAccountNbr to string(20)-->
 	<!--04/07/20   Added DataBatchCd to OrderType-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
@@ -720,6 +721,55 @@ ex FOB, CIS</xs:documentation>
  received,
  closed.</xs:documentation>
 				</xs:annotation>
+			</xs:element>
+			<xs:element name="WholesaleBusinessData" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Wholesale business sales office.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="WholesaleCorporationId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Corporation identifier for the wholesale sales office.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="WholesaleDivisionId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Division identifier for the wholesale sales office.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="WholesaleROGCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>ROG code for the wholesale sales office.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="WholesaleFacilityId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Facility ID for the wholesale sales office.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
 			</xs:element>
 			<xs:element name="OrgMasterNameType" type="OrgMasterNameType" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>

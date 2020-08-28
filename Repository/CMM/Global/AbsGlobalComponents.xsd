@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <!--
    Schema agency: 	Safeway Inc
    Date:                11 Jan 2016
@@ -2463,7 +2463,13 @@ CIF - Cost, Insurance and Freight ... (named port of destination)</xs:documentat
 					<xs:documentation>Location where ownership of goods change from one party to another party. Ex FOB point</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="Description" type="xs:long" minOccurs="0"/>
+			<xs:element name="Description" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="UOMType">

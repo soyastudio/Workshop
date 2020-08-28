@@ -6,10 +6,12 @@
    Dsc: contains commonly used Albertson's Purchase order schema.
    Name: /ABS_CMM_Platform/Nouns/PurchaseOrder.xsd
 -->
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.2 Patrick Oliver 8/26/20: Added PurchaseOrderHeader: Company, PurchaseOrderCd, TotalLineNbr, LastLineNbr, TotalTaxableAmt, RecordAuditData, PurchaseOrderRevision; PurchaseOrderDetail: ItemTypeCd,  PurchaseOrderCloseDt, LocationCd, VendorProductID, LineTax, MatchClsCd,  ExtendedTaxableAmt, ProcessLevelId, ItemEarliestShipDt, , AccountingUnitId, AccountId, SubAccountId, DistributionCompanyId,  AccountCategory,  ActivityNbr -->
 	<!--V1.1 Patrick Oliver 7/22/20 - Updated VendorId & VendorSubAccountNbr to string(20)-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:include schemaLocation="FinanceMaster.xsd"/>
 	<xs:element name="PurchaseOrder" type="AbsPurchaseOrderType">
 		<xs:annotation>
 			<xs:documentation>root</xs:documentation>
@@ -37,6 +39,11 @@ The PurchaseOrder carries information to and from the buyer and supplier. The Pu
 			<xs:element ref="PurchaseOrderNbr"/>
 			<xs:element name="LineNbr" type="xs:integer" default="0"/>
 			<xs:element ref="Abs:CorporateItemCd" minOccurs="0"/>
+			<xs:element name="ItemTypeCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identifies the line item type. I = Inventoried , S = Service, X = Special,  N = Non-stock</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="ItemDsc" default="" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>This is the Dsc of a warehoused item.  It contains the brand and Dsc of the item.
@@ -47,6 +54,11 @@ The PurchaseOrder carries information to and from the buyer and supplier. The Pu
 						<xs:maxLength value="200"/>
 					</xs:restriction>
 				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ItemEarliestShipDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Earliest possible date for the item in shipment</xs:documentation>
+				</xs:annotation>
 			</xs:element>
 			<xs:element name="ManufacturerItemID" default="" minOccurs="0">
 				<xs:annotation>
@@ -79,6 +91,17 @@ The PurchaseOrder carries information to and from the buyer and supplier. The Pu
 						<xs:maxLength value="14"/>
 					</xs:restriction>
 				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorProductID" type="xs:string" minOccurs="0"/>
+			<xs:element name="LocationCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains a valid stocking location within the company inventory. Note this is not an item level attribute but is stored at the PO header level   </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MatchClsCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Item Categorization of SWMAN, ASSET, PDC</xs:documentation>
+				</xs:annotation>
 			</xs:element>
 			<xs:element name="POLineStatus" type="StatusType" minOccurs="0">
 				<xs:annotation>
@@ -297,6 +320,12 @@ failure, etc).                                              </xs:documentation>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
+			<xs:element name="ExtendedTaxableAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The taxable amount of the invoice in the base currency of the invoice.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LineTax" type="TaxType" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="InvestmentOrderQty" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Investment order qty is generally a sub set of order qty for an item with in a PO.</xs:documentation>
@@ -309,6 +338,44 @@ failure, etc).                                              </xs:documentation>
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="InvestmentQtyUOM" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="PurchaseOrderCloseDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Purchase order line close date </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="ProcessLevelId" minOccurs="0"/>
+			<xs:element ref="AccountingUnitId" minOccurs="0"/>
+			<xs:element ref="AccountId" minOccurs="0"/>
+			<xs:element ref="SubAccountId" minOccurs="0"/>
+			<xs:element name="DistributionCompanyId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>CompanThe company the expense will be posted to. Must be a valid record in the        General Ledger Company file.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AccountCategory" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Account categories are groupings of costs, revenues, or a combination of                       both used for reporting and inquiries
+for activities in the Activity
+Management system. All transactions are posted to an account category within an activity. 
+Valid account category types are:
+Cost, revenue, accrual,  pass thru</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ActivityNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Activities are the processes or procedures that produce work. Cost objects (products, services, customers, and so on) are the reasons for performing the activity.              </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:element name="PurchaseOrderDt" type="xs:date">
@@ -321,7 +388,7 @@ failure, etc).                                              </xs:documentation>
 			<xs:documentation>Facility where purchase order has been created or issued. ex store, warehouse or a plant or external customer.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element ref="Abs:CorporationId" minOccurs="0"/>
+			<xs:element ref="CorporationId" minOccurs="0"/>
 			<xs:element ref="Abs:DivisionId" minOccurs="0"/>
 			<xs:element ref="Abs:DistributionCenterId" minOccurs="0"/>
 			<xs:element ref="Abs:WarehouseId" minOccurs="0"/>
@@ -454,6 +521,11 @@ failure, etc).                                              </xs:documentation>
 			<xs:documentation>Contains all header level information of a Purchase Order.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
+			<xs:element name="Company" type="CompanyType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>An accounting Organization which consists of an entire company within some legal framework. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="PurchaseOrderCreateFacility" type="PurchaseOrderCreateFacility">
 				<xs:annotation>
 					<xs:documentation>Albertsons internal facility or external customer facility where a purchase order has been created.</xs:documentation>
@@ -470,8 +542,13 @@ failure, etc).                                              </xs:documentation>
 					<xs:documentation>An Id created by the authoring system that uniquely represents a purchase order document.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="PurchaseOrderCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the purchase order code as defined in accounting</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element ref="PurchaseOrderDt"/>
-			<xs:element name="Status" type="Abs:StatusType" minOccurs="0">
+			<xs:element name="Status" type="Abs:StatusType" minOccurs="0" maxOccurs="4">
 				<xs:annotation>
 					<xs:documentation>Describes purchase order status.
 Ex Original, Revised</xs:documentation>
@@ -979,6 +1056,37 @@ is a discount the Vendor offers for all items attached to the Warehouse Vendor S
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
+			<xs:element name="TotalTaxableAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The taxable amount of the invoice in the base currency of the invoice.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TotalLineNbr" type="xs:integer" default="0" minOccurs="0"/>
+			<xs:element name="LastLineNbr" type="xs:integer" default="0" minOccurs="0"/>
+			<xs:element name="PurchaseOrderRevision" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="RevisionNbr" type="xs:integer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The purchase order revision number. Assigned sequentially by the system when the purchase order is revised.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="RevisionMethodCd" type="xs:dateTime" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Specifies the method that will be used to issue the purchase order to the vendor.
+P = Paper, F = Fax, E = EDI
+I = Internet Mail, D = Do Not Print</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="RevisionDtTm" type="xs:dateTime" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The date the purchase order revision was issued to the vendor.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="RecordAuditData" type="RecordAuditData" minOccurs="0"/>
 			<xs:element name="OrgMasterNameType" type="OrgMasterNameType" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 	</xs:complexType>

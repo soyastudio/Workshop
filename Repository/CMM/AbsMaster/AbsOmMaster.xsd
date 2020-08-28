@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" xmlns:ns1="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:include schemaLocation="../Global/AbsGlobalComponents.xsd"/>
 	<!--V 1.1  Alex Nunes  11/20/2018 Change DivisionType AccountingUnitNm MaxLength to 15 and LevelDsc to 50-->
 	<!--V 1.2  Alex Nunes  5/24/2011 Change CompanyType PayGrp from Length 4 to Maxlength 4. Added Paygrp as global element.-->
 	<!--V 1.2 Alex Nunes 10/16/2019 Change FicilitySubTypeCd to String maxlength 1.-->
+	<!--V 1.3 Alex Nunes 8/20/2020 Change AccountingUnitTxt and LevelDsc for Facility and Dept data from fixed length to maxlength  .-->
+	<!--V 1.4 Alex Nunes 8/25/2020 Change LevelDsc and DepartmentNm for Facility and Section data from fixed length to maxlength  .-->
 	<xs:group name="AccountingOrganization">
 		<xs:annotation>
 			<xs:documentation>Component to represent the accounting or financial view of organization entities - Company, GLEntity etc. - grouped together.</xs:documentation>
@@ -126,7 +128,7 @@ Synonyms are Business Unit, Fund, G/L Company, Joint Venture, Non-Profit Associa
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:length value="20"/>
+						<xs:maxLength value="20"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -190,6 +192,17 @@ Synonyms are Business Unit, Fund, G/L Company, Joint Venture, Non-Profit Associa
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
+			<xs:element name="CurrencyExchangeRt" minOccurs="0" maxOccurs="2">
+				<xs:annotation>
+					<xs:documentation> Currency conversion rate</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="18"/>
+						<xs:fractionDigits value="7"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element name="CompanyDecimalPositionNbr" type="xs:integer" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Number of decimal positions in the company currency code amount fields.</xs:documentation>
@@ -216,7 +229,7 @@ Synonyms are Business Unit, Fund, G/L Company, Joint Venture, Non-Profit Associa
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:length value="12"/>
+						<xs:maxLength value="12"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -560,7 +573,7 @@ Examples are - Parent, Lawson.</xs:documentation>
 			<xs:element name="DepartmentNm" nillable="true" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="18"/>
+						<xs:maxLength value="50"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -581,7 +594,7 @@ Examples are - Parent, Lawson.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:length value="12"/>
+						<xs:maxLength value="12"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -1037,7 +1050,7 @@ facilities. There are two categories for facilities:
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:length value="12"/>
+						<xs:maxLength value="12"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -1722,7 +1735,7 @@ on-going legal entities.                                  </xs:documentation>
 			<xs:element name="DepartmentNm" nillable="true" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="18"/>
+						<xs:maxLength value="50"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -3755,7 +3768,7 @@ on-going legal entities.                                  </xs:documentation>
 			</xs:element>
 			<xs:element name="DataExtractInd" nillable="true" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>This is a switch which indicates whether or not the associated record is being extracted for the U.S. Warehousing.</xs:documentation>
+					<xs:documentation>Indicates warehouse readiness to receive extracted orders for fullfilment.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">

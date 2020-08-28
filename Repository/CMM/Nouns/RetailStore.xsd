@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://collab.safeway.com/it/architecture/AbsOmMaster" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:complexType name="RetailStoreControlType">
@@ -98,6 +98,7 @@
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
+	<!-- 08/14/2020  Sai Nuthakki  Added Faciity online profile type-->
 	<xs:complexType name="RetailStore">
 		<xs:sequence>
 			<xs:element name="Corporation" type="Abs:CorporationType" minOccurs="0"/>
@@ -153,10 +154,184 @@
 			<xs:element name="StoreHolidayHours" type="HolidayWorkHoursType" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="StoreCheckStandData" type="Abs:StoreCheckStandType" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="StoreControlData" type="RetailStoreControlType" minOccurs="0"/>
+			<xs:element name="FacilityOnlineProfileType" type="StoreOnlineProfileTypeType" minOccurs="0"/>
 			<xs:element name="OrgEntityType" type="Abs:OrgMasterNameType" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:documentation>Generic type to capture different org structures.</xs:documentation>
 				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="StoreOnlineProfileTypeType">
+		<xs:sequence>
+			<xs:element name="EcommerceEnabledInd" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if the facility is enabled for eCom business operations.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EcommerceEnabledDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date on which the retail store started serving eComerce customers.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EcommerceStatus" type="StatusType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>defines the status of facility Online business </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MFCInd" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if the facility is a MFC - micro fullfilment center.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DUGInd" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if the facility has DUG option available. DUG- Drive up and Go. Customer can drive up to the point and pick up items ordered in online.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityProfileType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Defines different types of store profiles to serve online business.
+Ex: 3PL enabled store, Premium store, ERUM store..etc</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="CodeWithDescription">
+							<xs:sequence>
+								<xs:element name="EnabledInd" type="xs:boolean" minOccurs="0"/>
+								<xs:element name="ProfileValueTxt" minOccurs="0">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="200"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PickUpSchedule" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Customer pick up schedules at the facility.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence maxOccurs="unbounded">
+						<xs:element name="DayOfWk" type="xs:string" minOccurs="0"/>
+						<xs:element name="FirstPickUpTm" type="xs:string" minOccurs="0"/>
+						<xs:element name="LastPickUpTm" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PickUpLocation" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Location details for customer order pickup.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="AddressLineTxt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="200"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LatitudeDegree" type="xs:decimal" minOccurs="0"/>
+						<xs:element name="LongitudeDegree" type="xs:decimal" minOccurs="0"/>
+						<xs:element name="LocationCommentTxt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2000"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="InstructionsTxt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2000"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="DeliveryAreaType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Customer delivery areas covered in online business from the store. ex zip codes or cities</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence maxOccurs="unbounded">
+						<xs:element name="AreaTypeCd" type="xs:string" minOccurs="0"/>
+						<xs:element name="AreaTypeValueTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Delivery areas covered like zip codes covered from the store.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ServiceFeeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Various types of service fee for online business at a store level. Like door delivery fee for business or residential..etc</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence maxOccurs="unbounded">
+						<xs:element name="ServiceFeeTypeCd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ServiceFeeAmt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="6"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="BusinessContactType" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence maxOccurs="unbounded">
+						<xs:element name="ContactTypeCd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ContactNm" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ContactPhoneNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="EmailAddressTxt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="200"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>

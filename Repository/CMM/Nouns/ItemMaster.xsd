@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<!--V1,7 Alex Nunes 8/10/2002 - Modified SizeRangeDsc from 200 to 300 string in CIG type.-->
 	<!--V1.6 Patrick Oliver 7/22/20 - Updated VendorId & VendorSubAccountNbr to string(20)-->
@@ -2443,6 +2443,16 @@ a normal item.
 					<xs:documentation>Alternate identifier for a DC like old DC id.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="DataExtractInd" nillable="true" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates warehouse readiness to receive extracted orders for fullfilment.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element name="OrgMasterNameType" type="OrgMasterNameType" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="DefaultWarehouseItemInd" type="xs:string" minOccurs="0">
 				<xs:annotation>
@@ -2855,6 +2865,16 @@ These common Cds are used for different purposes like Promotions, Pricing or Cos
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
+			<xs:element name="ItemSourcingFacilityDivisionId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Division to which the sourcing facility belongs to. Generally a supply division id.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element name="ItemSourcingFacilityId" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Preferred internal sourcing facility id like warehouse id or plant id for the retail item at the rog level.</xs:documentation>
@@ -2868,7 +2888,7 @@ These common Cds are used for different purposes like Promotions, Pricing or Cos
 			<xs:element name="RetailSection" type="CodeWithDescription" minOccurs="0"/>
 			<xs:element name="RetailStoreLevelAttributes" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
-					<xs:documentation>Defines store specific attributes if avaialble at individual store level for a ROG level item.</xs:documentation>
+					<xs:documentation>Defines optiional item attributes manitained at a store level for a ROG level item.</xs:documentation>
 				</xs:annotation>
 				<xs:complexType>
 					<xs:sequence>
@@ -4510,7 +4530,7 @@ but in most cases, people don't want to know the actual service level % of the i
 		<xs:sequence>
 			<xs:element name="ItemTypeCd" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Indicates if it s DSD or Warehouse item pending costs. Values 'D' or 'W'.</xs:documentation>
+					<xs:documentation>Indicates if it s DSD or Warehouse item  costs. Values 'D' or 'W'.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
@@ -4668,6 +4688,16 @@ but in most cases, people don't want to know the actual service level % of the i
 					<xs:restriction base="xs:decimal">
 						<xs:totalDigits value="7"/>
 						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ItemTypeCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if it s DSD or Warehouse item costs. Values 'D' or 'W'.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -4938,27 +4968,27 @@ a line item before an effective date</xs:documentation>
 				</xs:annotation>
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="DSDInd" type="xs:short" minOccurs="0">
+						<xs:element name="DSDInd" type="xs:string" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>Item sourcing by vendor direct Store delivery.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="WarehouseInd" type="xs:short" minOccurs="0">
+						<xs:element name="WarehouseInd" type="xs:string" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>Item sourcing from internal warehouses.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="ManufacturingPlantInd" type="xs:short" minOccurs="0">
+						<xs:element name="ManufacturingPlantInd" type="xs:string" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>sourced from manufacturing plants like milk plant, bread plant.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="WholesaleInd" type="xs:short" minOccurs="0">
+						<xs:element name="WholesaleInd" type="xs:string" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>sourced from a wholesaler, delivered as DSD or cross dock at internal warehouse.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="StoreCreatedItemInd" type="xs:short" minOccurs="0">
+						<xs:element name="StoreCreatedItemInd" type="xs:string" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>Items created within the store depts like Bakery, deli..etc</xs:documentation>
 							</xs:annotation>

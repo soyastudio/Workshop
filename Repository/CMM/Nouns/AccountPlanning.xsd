@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
-	<!--08/06/2020 - Patrick Oliver  - Initial Draft-->
+	<!--08/26/20 - Patrick Oliver V1.1 - Added ReportLine and updated TransactionAmt to (18,4)-->
+	<!--08/06/2020 - Patrick Oliver  - V1.0 Initial Draft-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:include schemaLocation="FinanceMaster.xsd"/>
 	<xs:complexType name="AccountPlanningType">
@@ -12,7 +13,7 @@
 		<xs:sequence>
 			<xs:element name="AccountPlanningCd" type="CodeWithDescription" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Used to differentiate the type of plans (Corporate, Retail, Supply Chain, Manuf, Ecom, etc.) or type of projections (Division, Retail, etc.)</xs:documentation>
+					<xs:documentation>Used to differentiate the type of processed files for plans (Corporate, Retail, Supply Chain, Manuf, Ecom, etc.) or projections (Division, Retail, etc.)</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="Company" type="CompanyType" minOccurs="0">
@@ -20,6 +21,19 @@
 					<xs:documentation>An accounting Organization which consists of an entire company within some legal framework. </xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="CostCenterID" type="IDType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The Cost Center is an accumulator of cost information that may be an organizational unit or area of responsibility.  It is an organization code that allows a grouping of expenses and costs.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GLEntityID" type="IDType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A G/L entity is the smallest organizational unit for which individual financial statements must be drawn up according to relevant commercial law.
+It is normally the primary balancing segment of the GL Account structure.  Typically, this is the owning entity for the transaction. 
+Synonyms are Business Unit, Fund, G/L Company, Joint Venture, Non-Profit Association Name.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GLPayType" type="CodeWithDescription" minOccurs="0"/>
 			<xs:element name="Division" type="DivisionType" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Information related to the operating division. Ex Norcal with Div Id 25 </xs:documentation>
@@ -70,42 +84,105 @@
 					<xs:documentation>Defines various sections within a department of  a retail store facility.A store facility is physically divided into different departments and sections.Ex:Grocery department can have sections like Grocery main meal,Snacks,Family care grocery,Home care grocery,Soft Drinks,Candy,Meals ingredients.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="AccountingUnit" minOccurs="0">
+			<xs:element name="GLAccount" maxOccurs="unbounded">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element ref="AccountingUnitId" minOccurs="0"/>
-						<xs:element name="Account" minOccurs="0" maxOccurs="unbounded">
-							<xs:complexType>
-								<xs:sequence>
-									<xs:element ref="AccountId" minOccurs="0"/>
-									<xs:element ref="SubAccountId" minOccurs="0"/>
-									<xs:element ref="ChartOfAccountNm" minOccurs="0"/>
-									<xs:element ref="AccountNm" minOccurs="0"/>
-									<xs:element ref="AccountDsc" minOccurs="0"/>
-									<xs:element ref="VariableLevelNbr" minOccurs="0"/>
-								</xs:sequence>
-							</xs:complexType>
+						<xs:element ref="AccountId" minOccurs="0"/>
+						<xs:element ref="SubAccountId" minOccurs="0"/>
+						<xs:element ref="SubSystemRecordId" minOccurs="0"/>
+						<xs:element ref="ChartOfAccountNm" minOccurs="0"/>
+						<xs:element ref="AccountNm" minOccurs="0"/>
+						<xs:element ref="AccountDsc" minOccurs="0"/>
+						<xs:element ref="AccountCategory" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Account categories are groupings of costs, revenues, or a combination of both used for reporting and inquiries
+for activities in the Activity
+Management system. All transactions are posted to an account category within an activity. Valid account category types are: Cost, revenue, accrual,  pass thru</xs:documentation>
+							</xs:annotation>
 						</xs:element>
 					</xs:sequence>
 				</xs:complexType>
+			</xs:element>
+			<xs:element name="AccountingUnit" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="AccountingUnitId" minOccurs="0"/>
+						<xs:element name="AccountingUnitNm" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="VariableLevelNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The variable level number is tied directly to the accounting unit. It is used to indicate an accounting unit's position within the company hierarchy, establishing its consolidation relationship with other units.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LevelDetailNbr" type="xs:integer" minOccurs="0" maxOccurs="5">
+							<xs:annotation>
+								<xs:documentation>Identifies the accounting unit location in the company structure. The value of each variable level determines how the general ledger combines the accounting units.    </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Status" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>indicate if an accounting unit is active or inactive
+If an accounting unit isinactive, all associated accounts are
+also inactive and no posting can occur.
+A = Active
+I = Inactive</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="AccountGenerateInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates if an account is
+ automatically generated against a group
+ of accounting units.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="5"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PostingInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field is used to indicate posting accounting units and summary level accounting units. Posting levels may
+ have a chart of accounts and transaction activity. Summary levels are used to  consolidate information from lower level
+ accounting units. Summary levels do not  have a chart of accounts, nor do they
+allow transaction activity. They are created to meet reporting needs.
+P = Posting
+S = Summary</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="5"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ReportLine" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Used to categorize expense lines </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
 			</xs:element>
 			<xs:element name="FinancialAmounts" maxOccurs="unbounded">
 				<xs:complexType>
 					<xs:sequence>
 						<xs:element name="FiscalYear" type="xs:integer"/>
-						<xs:element name="PlanAmt" type="PlanningAmountType" minOccurs="0"/>
-						<xs:element name="ProjectionAmt" type="PlanningAmountType" minOccurs="0"/>
-						<xs:element name="TotalAmt" type="PlanningAmountType" minOccurs="0"/>
-						<xs:element name="Description" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Description of the financial amount. Ex: Sales To Public, Supplies, Retail Allowances  etc.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="250"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
+						<xs:element name="FinancialAmt" type="PlanningAmountType" minOccurs="0"/>
 					</xs:sequence>
 					<xs:attribute name="typeCode">
 						<xs:annotation>
@@ -127,7 +204,7 @@
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
 						<xs:totalDigits value="18"/>
-						<xs:fractionDigits value="10"/>
+						<xs:fractionDigits value="4"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -142,5 +219,15 @@
 				</xs:simpleType>
 			</xs:element>
 		</xs:sequence>
+		<xs:attribute name="amtType">
+			<xs:annotation>
+				<xs:documentation>Attribute used to describe the Amount being referenced. Examples are Plan Amount, Projection Amount, Forecast Amount, etc. </xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:maxLength value="50"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
 	</xs:complexType>
 </xs:schema>

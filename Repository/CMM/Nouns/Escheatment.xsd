@@ -108,6 +108,36 @@ The concept of escheat maintains that property always has a recognized owner, wh
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
+			<xs:element name="EscheatmentStatus" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Populated for Adjustment file only. This pertains to the status of the transaction in the Lawson Cash Ledger system.  (Open, Reconciled, Voided, Stop Payment, Stale Date, Escheatment)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BankTransactionDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Represents the date the transaction cleared the bank or was voided.       </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RemarkTxt" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>this is "CHECK" as these are checks for tracker . Check for abandoned properties, unclaimed check payroll of employee or unclaimed check payment to vendor.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EscheatmentAltTransactionId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Any Alternate identification associated to the escheated property.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EscheatmentDocLastModifiedDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains the last modified date of the escheated property document</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EscheatmentPropertyHolder" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Also known as Holder ID Number or State ID. A state ID number distributed by some states to identify holders that have previously reported unclaimed property in their state. This ID is usually included in subsequent filings and can be used by states to ensure timely filing of reports.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="PropertyOwnerType">
@@ -128,6 +158,12 @@ The concept of escheat maintains that property always has a recognized owner, wh
 			<xs:element name="OrganizationNm" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Name of the organization or company if the owner is not a person.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PropertyOwnerAddress" type="AddressBaseType" minOccurs="0"/>
+			<xs:element name="BusinessOwnerInd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if the property owner is a businessowner</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 		</xs:sequence>

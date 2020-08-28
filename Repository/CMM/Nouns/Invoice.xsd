@@ -6,13 +6,15 @@
    Description: contains commonly used Safeway Purchase order schema.
    Name: /SFWY/Nouns/SwyPurchaseOrder.xsd
 -->
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
-	<!--V2.5 Patrick Oliver 8/10/20 - Updated data type for DistributionUser -->
-	<!--V2.4 Patrick Oliver 7/22/20 - Updated VendorId, VendorSubAccountId & PayVendorId to string(20)-->
-	<!--V2.3 Patrick Oliver 6/26/2020 - Per request from CABS added InvoiceProcessedInd to model. This will be set after Financial system (KPMG) processes invoices. -->
-	<!--V2.2 Patrick Oliver 6/10/2020 - For KPMG review added following attributes: Invoice Header:  PurchaseOrderAttachCd , TransactionType, MCLBRNbr,  WarehouseSection, InvoiceInd. Invoice Detail: DistribActivity, DiscountLineAmt-->
-	<!--V2.1 Patrick Oliver 6/2/2020 - For Invoice AP files added to header: TaxPointDt,  PymtInd, LostDiscountInd, VendorInd, RecordInd, InvoiceUserPymtNbr, PymtEnclosure, InvoiceUser, DebitMemoInd. For Detail added: AccountingUnitId, AccountId, SubAccountId, DistributionCompanyId, TaxSequenceNbr, ServicetDt, AssetDescription, TotalUnitLineAmt, SupplementaryQty, VendorParty, SuffixNbr, DistribLineAmt, TaxLineAmt, BaseLineAmt, ProgramSequenceNbr, CategoryCd, DistributionUser, GLLineCd-->
+	<!--V2.7 Patrick Oliver 08/19/20 - Added CustomerSiteNbr, CrossReferenceTransaction; Updated ContactNm -->
+	<!--V2.6 Patrick Oliver 08/17/20 - Updated CustomerAccountNbr to reference global CustomerAccountNbr defined in Finance Master-->
+	<!--V2.5 Patrick Oliver 08/10/20 - Updated data type for DistributionUser -->
+	<!--V2.4 Patrick Oliver 07/22/20 - Updated VendorId, VendorSubAccountId & PayVendorId to string(20)-->
+	<!--V2.3 Patrick Oliver 06/26/2020 - Per request from CABS added InvoiceProcessedInd to model. This will be set after Financial system (KPMG) processes invoices. -->
+	<!--V2.2 Patrick Oliver 06/10/2020 - For KPMG review added following attributes: Invoice Header:  PurchaseOrderAttachCd , TransactionType, MCLBRNbr,  WarehouseSection, InvoiceInd. Invoice Detail: DistribActivity, DiscountLineAmt-->
+	<!--V2.1 Patrick Oliver 06/2/2020 - For Invoice AP files added to header: TaxPointDt,  PymtInd, LostDiscountInd, VendorInd, RecordInd, InvoiceUserPymtNbr, PymtEnclosure, InvoiceUser, DebitMemoInd. For Detail added: AccountingUnitId, AccountId, SubAccountId, DistributionCompanyId, TaxSequenceNbr, ServicetDt, AssetDescription, TotalUnitLineAmt, SupplementaryQty, VendorParty, SuffixNbr, DistribLineAmt, TaxLineAmt, BaseLineAmt, ProgramSequenceNbr, CategoryCd, DistributionUser, GLLineCd-->
 	<!--V2.0  Alex Nunes 6/4/2019 Modified to work with financial invoices.-->
 	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
@@ -417,13 +419,19 @@ The summary amounts in the Header include the Line level amounts and Header leve
 			<xs:element name="SupplierParty" minOccurs="0">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="SupplierId" type="xs:string" minOccurs="0"/>
+						<xs:element name="SupplierId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
 						<xs:element name="SupplierDUNSNbr" type="xs:string" minOccurs="0"/>
 						<xs:element name="SupplierNm" type="xs:string" minOccurs="0"/>
 						<xs:element name="SupplierContact" minOccurs="0" maxOccurs="2">
 							<xs:complexType>
 								<xs:sequence>
-									<xs:element name="ContactNm" type="xs:string" minOccurs="0"/>
+									<xs:element name="ContactNm" type="PersonNameType" minOccurs="0"/>
 									<xs:element name="PhoneNbr" type="xs:string" minOccurs="0"/>
 									<xs:element name="EmailAddresstxt" type="xs:string" minOccurs="0"/>
 								</xs:sequence>
@@ -435,18 +443,25 @@ The summary amounts in the Header include the Line level amounts and Header leve
 			</xs:element>
 			<xs:element name="CustomerParty" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Customer Party that received goods and services from Albertson companies manufacturing plants.</xs:documentation>
+					<xs:documentation>Customer Party that received goods and services from Albertson companies </xs:documentation>
 				</xs:annotation>
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="CustomerAccountNbr" type="xs:string" minOccurs="0"/>
+						<xs:element ref="CustomerAccountNbr" minOccurs="0"/>
+						<xs:element name="CustomerSiteNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
 						<xs:element name="CustomerFacilityId" type="xs:string" minOccurs="0"/>
 						<xs:element name="CustomerFacilityNm" type="xs:string" minOccurs="0"/>
 						<xs:element name="CustomerDUNSNbr" type="xs:string" minOccurs="0"/>
 						<xs:element name="CustomerContact" minOccurs="0" maxOccurs="2">
 							<xs:complexType>
 								<xs:sequence>
-									<xs:element name="ContactNm" type="xs:string" minOccurs="0"/>
+									<xs:element name="ContactNm" type="PersonNameType" minOccurs="0"/>
 									<xs:element name="PhoneNbr" type="xs:string" minOccurs="0"/>
 									<xs:element name="EmailAddresstxt" type="xs:string" minOccurs="0"/>
 								</xs:sequence>
@@ -764,6 +779,7 @@ The summary amounts in the Header include the Line level amounts and Header leve
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
+			<xs:element ref="CrossReferenceTransaction" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="InvoiceCreateFacilityType">
