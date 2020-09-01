@@ -32,11 +32,22 @@ public class EsqlRenderer implements Buffalo.Renderer<XmlSchemaBase>, MappingFea
     public String render(XmlSchemaBase base) {
         StringBuilder builder = new StringBuilder();
         if (brokerSchema != null && brokerSchema.trim().length() > 0) {
-            builder.append("BROKER SCHEMA ").append(brokerSchema.trim()).append(";").append("\n\n");
+            builder.append("BROKER SCHEMA ").append(brokerSchema.trim()).append("\n\n");
         }
 
         builder.append("CREATE COMPUTE MODULE ").append(moduleName);
         StringBuilderUtils.println(builder, 2);
+
+        // UDP:
+        Variable[] variables = base.getAnnotation(GLOBAL_VARIABLE, Variable[].class);
+        if (variables != null && variables.length > 0) {
+            StringBuilderUtils.println("-- Declare UDPs", builder, 1);
+            for (Variable v : variables) {
+                StringBuilderUtils.println("DECLARE " + v.name + " EXTERNAL " + v.type + " " + v.defaultValue + ";", builder, 1);
+            }
+
+            StringBuilderUtils.println(builder);
+        }
 
         StringBuilderUtils.println("CREATE FUNCTION Main() RETURNS BOOLEAN", builder, 1);
         begin(builder, 1);
@@ -53,10 +64,11 @@ public class EsqlRenderer implements Buffalo.Renderer<XmlSchemaBase>, MappingFea
         builder.append("DECLARE xmlDocRoot REFERENCE TO OutputRoot.XMLNSC.").append(base.getRoot().getName()).append(";\n");
         StringBuilderUtils.indent(builder, 2);
         builder.append("CREATE LASTCHILD OF OutputRoot.").append("XMLNSC AS ").append(DOCUMENT_ROOT).append(" TYPE XMLNSC.Folder NAME '").append(base.getRoot().getName()).append("'").append(";\n");
+        StringBuilderUtils.println("SET OutputRoot.XMLNSC." + base.getRoot().getName() + ".(XMLNSC.NamespaceDecl)xmlns:Abs=Abs;",
+                builder, 2);
         StringBuilderUtils.println(builder);
 
         printNode(base.getRoot(), builder);
-
 
         StringBuilderUtils.println("RETURN TRUE;", builder, 2);
         StringBuilderUtils.println("END;", builder, 1);
@@ -87,10 +99,13 @@ public class EsqlRenderer implements Buffalo.Renderer<XmlSchemaBase>, MappingFea
     }
 
     private void printNode(XmlSchemaBase.MappingNode e, StringBuilder builder) {
-        Mapping mapping = e.getAnnotation(ANNOTATION, Mapping.class);
+        if (!mapped(e)) {
+            return;
+        }
 
+        Mapping mapping = e.getAnnotation(MAPPING, Mapping.class);
         // if marked as ignore or no mapping for field or attribute
-        if (mapping != null && "ignore()".equals(mapping.function) || (!XmlSchemaBase.NodeType.Folder.equals(e.getNodeType()) && mapping == null)) {
+        if (mapping != null && "ignore()".equals(mapping.assignment) || (!XmlSchemaBase.NodeType.Folder.equals(e.getNodeType()) && mapping == null)) {
             return;
         }
 
@@ -168,12 +183,12 @@ public class EsqlRenderer implements Buffalo.Renderer<XmlSchemaBase>, MappingFea
     }
 
     private void printNode(XmlSchemaBase.MappingNode e, WhileLoop parentLoop, StringBuilder builder) {
-        if (!underWhileLoop(e, parentLoop)) {
+        if (!mapped(e) || !underWhileLoop(e, parentLoop)) {
             return;
         }
 
         int depth = parentLoop.getDepth();
-        Mapping mapping = e.getAnnotation(ANNOTATION, Mapping.class);
+        Mapping mapping = e.getAnnotation(MAPPING, Mapping.class);
         if (e.getAnnotation("loop") != null) {
             JsonArray loops = e.getAnnotation("loop", JsonArray.class);
             loops.forEach(l -> {
@@ -255,8 +270,8 @@ public class EsqlRenderer implements Buffalo.Renderer<XmlSchemaBase>, MappingFea
             }
 
         } else {
-            Mapping mapping = node.getAnnotation(ANNOTATION, Mapping.class);
-            if (mapping != null && mapping.sourcePath != null && mapping.sourcePath.startsWith(loop.sourcePath + "/")) {
+            Mapping mapping = node.getAnnotation(MAPPING, Mapping.class);
+            if (mapping != null && loop.name.equals(mapping.loop)) {
                 return true;
             }
         }
@@ -281,6 +296,9 @@ public class EsqlRenderer implements Buffalo.Renderer<XmlSchemaBase>, MappingFea
         String assignment = "'???'";
         if (mapping.assignment != null) {
             assignment = mapping.assignment;
+            if (assignment.contains(INPUT_ROOT)) {
+                assignment = assignment.replace(INPUT_ROOT, inputRootVariable + ".");
+            }
 
         } else if (mapping.sourcePath != null) {
             String path = mapping.sourcePath;
@@ -331,16 +349,18 @@ public class EsqlRenderer implements Buffalo.Renderer<XmlSchemaBase>, MappingFea
 
     }
 
-    static class WhileLoop {
-        private WhileLoop parent;
+    private boolean mapped(XmlSchemaBase.MappingNode node) {
+        if (node.getNodeType().equals(XmlSchemaBase.NodeType.Folder)) {
+            for (XmlSchemaBase.MappingNode e : node.getChildren()) {
+                if (mapped(e)) {
+                    return true;
+                }
+            }
 
-        private String name;
-        private String sourcePath;
-        private String variable;
-        private int depth = 1;
-
-        private int getDepth() {
-            return parent == null? depth : parent.getDepth() + depth;
+        } else {
+            return node.getAnnotation(MAPPING) != null;
         }
+
+        return false;
     }
 }

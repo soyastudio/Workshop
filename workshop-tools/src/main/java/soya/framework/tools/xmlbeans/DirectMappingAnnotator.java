@@ -1,6 +1,6 @@
 package soya.framework.tools.xmlbeans;
 
-public class DirectMappingAnnotator implements Buffalo.Annotator<XmlSchemaBase> {
+public class DirectMappingAnnotator implements Buffalo.Annotator<XmlSchemaBase>, MappingFeature {
     private String targetPath;
     private String sourcePath;
     private String function;
@@ -8,9 +8,9 @@ public class DirectMappingAnnotator implements Buffalo.Annotator<XmlSchemaBase> 
     @Override
     public void annotate(XmlSchemaBase base) {
         XmlSchemaBase.MappingNode node = base.getMappings().get(targetPath);
-        node.annotateAsMappedElement("mapping", "sourcePath", sourcePath);
+        node.annotateAsMappedElement(MAPPING, "sourcePath", sourcePath);
         if (function != null) {
-            node.annotateAsMappedElement("mapping", "function", function);
+            node.annotateAsMappedElement(MAPPING, "function", function);
         }
     }
 }

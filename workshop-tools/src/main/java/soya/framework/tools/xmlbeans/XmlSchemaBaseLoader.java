@@ -1,6 +1,5 @@
 package soya.framework.tools.xmlbeans;
 
-import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.SchemaTypeSystem;
 
 import java.io.File;

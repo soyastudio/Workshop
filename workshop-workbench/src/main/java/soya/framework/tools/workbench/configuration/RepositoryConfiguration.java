@@ -21,17 +21,17 @@ public class RepositoryConfiguration {
 
     private File cmmHome;
 
-    private File requirements;
+    private File projectHome;
 
     @PostConstruct
     void init() {
-        home = new File("D:/github/workshop/install/repository");
+        home = new File("D:/Workshop/Repository");
         if (!home.exists()) {
             home = new File("C:/Workshop/Repository");
         }
 
         cmmHome = new File(home, "CMM");
-        requirements = new File(home, "BusinessObjects");
+        projectHome = new File(home, "BusinessObjects");
 
         File cmmBod = new File(cmmHome, "BOD");
         File[] files = cmmBod.listFiles();
@@ -42,7 +42,6 @@ public class RepositoryConfiguration {
 
                 } catch (XmlException e) {
                     System.out.println("==================== failure: " + f);
-                    e.printStackTrace();
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -68,7 +67,7 @@ public class RepositoryConfiguration {
         return cmmHome;
     }
 
-    public File getRequirements() {
-        return requirements;
+    public File getProjectHome() {
+        return projectHome;
     }
 }

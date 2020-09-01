@@ -13,13 +13,11 @@ public class XlsxMappingAnnotator implements Buffalo.Annotator<XmlSchemaBase>, M
 
     private String url;
     private String sheet;
-    private String extraction;
 
     @Override
     public void annotate(XmlSchemaBase base) {
         File excelFile = new File(url);
         Workbook workbook = null;
-        LinkedHashSet<Mapper> mappers = new LinkedHashSet<>();
 
         try {
             workbook = new XSSFWorkbook(excelFile);
@@ -78,31 +76,18 @@ public class XlsxMappingAnnotator implements Buffalo.Annotator<XmlSchemaBase>, M
                                 XmlSchemaBase.MappingNode mappingNode = base.getMappings().get(targetPath);
 
                                 if (cardinality != null && !cardinality.getStringCellValue().trim().endsWith("-1")) {
-                                    mappingNode.annotateAsMappedElement(ANNOTATION, Label.Cardinality.name(), cardinality.getStringCellValue().trim());
+                                    mappingNode.annotateAsMappedElement(MAPPING, "cardinality", cardinality.getStringCellValue().trim());
                                 }
 
                                 if (mapping != null && mapping.getStringCellValue().trim().length() > 0) {
-                                    String mappingDef = mapping.getStringCellValue().trim();
-                                    mappingNode.annotateAsMappedElement(ANNOTATION, Label.Mapping.name(), mappingDef);
-
-                                    String assignment = getAssignment(mappingDef, mapping);
-                                    if(assignment != null) {
-                                        mappingNode.annotateAsMappedElement(ANNOTATION, "assignment", assignment);
-
-                                    } else {
-
-                                        if(source != null && source.getStringCellValue().trim().length() > 0) {
-                                            mappingNode.annotateAsMappedElement(ANNOTATION, Label.Source.name(), source.getStringCellValue().trim());
-                                        }
-
-                                        Function func = createFunction(mappingDef, extraction, source);
-                                        mappingNode.annotateAsMappedElement(ANNOTATION, "function", func.toString());
-                                        if (func.getName().equals("jsonpath")) {
-                                            Mapper mapper = new Mapper(func.getArgument(), targetPath);
-                                            mappers.add(mapper);
-                                        }
-                                    }
+                                    String mappingRule = mapping.getStringCellValue().trim();
+                                    mappingNode.annotateAsMappedElement(MAPPING, "mappingRule", mappingRule);
                                 }
+
+                                if (source != null && source.getStringCellValue().trim().length() > 0) {
+                                    mappingNode.annotateAsMappedElement(MAPPING, "sourcePath", source.getStringCellValue().trim());
+                                }
+
                             } else {
                                 if (targetPath != null && targetPath.trim().length() > 0) {
                                     base.annotateAsArrayElement("UNFOUND_TARGET_PATH", targetPath);
@@ -117,19 +102,6 @@ public class XlsxMappingAnnotator implements Buffalo.Annotator<XmlSchemaBase>, M
         } catch (InvalidFormatException | IOException e) {
             throw new RuntimeException(e);
         }
-
-        mappers.forEach(e -> {
-            System.out.println(e.getSourcePath() + " --> " + e.getTargetPath());
-        });
-    }
-
-    private String getAssignment(String def, Cell cell) {
-        String value = null;
-        if (def.toLowerCase().startsWith("default to ")) {
-            value = def.substring("default to ".length()).trim();
-        }
-
-        return value;
     }
 
     private Function createFunction(String def, String extraction, Cell cell) {
@@ -172,29 +144,7 @@ public class XlsxMappingAnnotator implements Buffalo.Annotator<XmlSchemaBase>, M
 
     }
 
-    static class MappingObject {
-
-    }
-
     static enum Label {
         Target, Cardinality, Mapping, Source
-    }
-
-    static class Mapper {
-        private String sourcePath;
-        private String targetPath;
-
-        public Mapper(String sourcePath, String targetPath) {
-            this.sourcePath = sourcePath;
-            this.targetPath = targetPath;
-        }
-
-        public String getSourcePath() {
-            return sourcePath;
-        }
-
-        public String getTargetPath() {
-            return targetPath;
-        }
     }
 }

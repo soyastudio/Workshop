@@ -7,11 +7,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 public class LoopAnalyzeRenderer implements Buffalo.Renderer<XmlSchemaBase>, MappingFeature {
+
     @Override
     public String render(XmlSchemaBase base) {
         LinkedHashSet<Mapper> list = new LinkedHashSet<>();
         base.getMappings().entrySet().forEach(e -> {
-            Mapper mapping = e.getValue().getAnnotation(ANNOTATION, Mapper.class);
+            Mapper mapping = e.getValue().getAnnotation(MAPPING, Mapper.class);
             if(mapping != null && mapping.sourcePath != null && mapping.sourcePath.contains("[*]/")) {
                 XmlSchemaBase.MappingNode node = findParent(e.getValue());
                 if(node != null) {
@@ -30,7 +31,7 @@ public class LoopAnalyzeRenderer implements Buffalo.Renderer<XmlSchemaBase>, Map
         System.out.println(mappingNode.getPath() + ": " + node);
 
         while(node != null) {
-            Mapping mapping = node.getAnnotation(ANNOTATION, Mapping.class);
+            Mapping mapping = node.getAnnotation(MAPPING, Mapping.class);
             if(mapping != null && mapping.cardinality != null && !mapping.cardinality.endsWith("-1")) {
                 break;
             }
