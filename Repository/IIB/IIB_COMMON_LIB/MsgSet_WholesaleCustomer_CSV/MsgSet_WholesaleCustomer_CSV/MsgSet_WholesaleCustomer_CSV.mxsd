@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+
+
+
+    <xsd:complexType name="DetailType">
+        <xsd:annotation>
+      <xsd:appinfo source="WMQI_APPINFO">
+        <tdsStructRep dataElementSeparation="TaggedDelimited" groupTerminator="&lt;CR&gt;&lt;LF&gt;" messageSetDefaultRep="Text_CSV" tagDataSeparator=","/>
+      </xsd:appinfo>
+    </xsd:annotation>
+        <xsd:sequence>
+      <xsd:element name="TRANSACTION_TYPE">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="CUSTOMER_ID">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="LAWSON_AR_CUSTOMER_ID" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="CUSTOMER_NAME" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="RETAIL_DIVISION" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="ACTIVE_STATUS" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="FIRST_EFFECTIVE_DATE" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="LAST_EFFECTIVE_DATE" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="CONTACT_NAME" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="ADDRESS_1" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="ADDRESS_2" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="CITY" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="STATE" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="ZIP_CODE" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="EXTENDED_ZIP_CODE" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="EMAIL_ADDRESS" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="TELEPHONE" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="FAX_NUMBER" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="LAWSON_AR_SALES_REP_ID" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="SALES_REP_NAME" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="SHIPPING_INSTR" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="SHIPPING_METHOD" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="SHIPPING_COMMENTS" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="FREIGHT_ZONE" type="xsd:string"/>
+	  <xsd:element minOccurs="0" name="PRODUCT_ZONE" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="TERMS_CODE" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="ORDER_DISCOUNT_CODE" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="CURRENT_BALANCE" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="ORDER_LIMIT" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="CREDIT_LIMIT" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="TERRITORY" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="CU_SUB_LEVEL" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="CU_RESERVE_GROUP" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="CU_PARCEL_POST_INDICATOR" type="xsd:string"/>
+            <xsd:element minOccurs="0" name="CORP_STORE_INDICATOR" type="xsd:string"/>
+        </xsd:sequence>
+  </xsd:complexType>
+    <xsd:complexType name="HeaderType">
+    <xsd:annotation>
+      <xsd:appinfo source="WMQI_APPINFO">
+        <tdsStructRep dataElementSeparation="TaggedDelimited" groupTerminator="&lt;CR&gt;&lt;LF&gt;" messageSetDefaultRep="Text_CSV" tagDataSeparator=","/>
+      </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:sequence minOccurs="1">
+      <xsd:element minOccurs="1" name="PUBLISHER_ID">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="UWARE"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element minOccurs="1" name="SUBSCRIBER_ID">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="SIMS"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element minOccurs="1" name="RECORD_COUNT">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element minOccurs="1" name="CREATION_DATE">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element minOccurs="1" name="CREATION_TIME">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element minOccurs="1" name="BATCH_NUMBER">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+    <xsd:complexType name="WholesaleCustomer_CSV_Type">
+        <xsd:annotation>
+      <xsd:appinfo source="WMQI_APPINFO">
+        <MRComplexType content="open"/>
+        <tdsStructRep dataElementSeparation="TaggedDelimited" delimiter="&lt;CR&gt;&lt;LF&gt;" messageSetDefaultRep="Text_CSV" tagDataSeparator=","/>
+      </xsd:appinfo>
+    </xsd:annotation>
+        <xsd:sequence maxOccurs="1" minOccurs="1">
+            <xsd:sequence>
+        <xsd:annotation>
+          <xsd:appinfo source="WMQI_APPINFO">
+            <MRLocalGroup composition="unorderedSet" content="open"/>
+            <tdsStructRep dataElementSeparation="TaggedDelimited" delimiter="&lt;CR&gt;&lt;LF&gt;" messageSetDefaultRep="Text_CSV" tagDataSeparator=","/>
+          </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:element minOccurs="1" name="Header" nillable="false" type="HeaderType">
+        <xsd:annotation>
+          <xsd:appinfo source="WMQI_APPINFO">
+              <tdsElemRep messageSetDefaultRep="Text_CSV" precision="-1" tag="&quot;H&quot;"/>
+              <tdsInclRep messageSetDefaultRep="Text_CSV" repeatingElementDelimiter="&lt;CR&gt;&lt;LF&gt;"/>
+            </xsd:appinfo>
+        </xsd:annotation>
+      </xsd:element>
+        <xsd:element maxOccurs="unbounded" name="Detail" type="DetailType">
+        <xsd:annotation>
+          <xsd:appinfo source="WMQI_APPINFO">
+              <tdsElemRep messageSetDefaultRep="Text_CSV" precision="-1" tag="&quot;D&quot;"/>
+              <tdsInclRep messageSetDefaultRep="Text_CSV" repeatingElementDelimiter=""/>
+            </xsd:appinfo>
+        </xsd:annotation>
+      </xsd:element>
+      </xsd:sequence>
+        </xsd:sequence>
+  </xsd:complexType>
+    <xsd:element name="WholesaleCustomer_CSV" type="WholesaleCustomer_CSV_Type">
+    <xsd:annotation>
+      <xsd:appinfo source="WMQI_APPINFO">
+        <MRMessage messageDefinition="/0/WholesaleCustomer_CSV;XSDElementDeclaration$MRObject"/>
+      </xsd:appinfo>
+    </xsd:annotation>
+  </xsd:element>
+</xsd:schema>

@@ -1,0 +1,94 @@
+
+
+
+
+BROKER SCHEMA com.abs.cmnflows
+
+CREATE COMPUTE MODULE Store_Kafka_Output_Compute
+	DECLARE STORE_KAFKA_MSG EXTERNAL CHARACTER '';
+	DECLARE KAFKA_TOPIC_NAME EXTERNAL CHARACTER '';
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- CALL CopyMessageHeaders();
+		CALL CopyEntireMessage();
+		PROPAGATE TO TERMINAL 'out' DELETE NONE;
+	     DELETE FIELD OutputRoot;
+		--Reference to environment component table details
+		DECLARE cmpRef REFERENCE TO Environment.Variables.CMPNT;
+		CREATE FIELD Environment.Variables.msgLogInfo;
+		DECLARE msgLogTemp REFERENCE TO Environment.Variables.msgLogInfo;
+
+		SET msgLogTemp.STORE_KAFKA_MSG=STORE_KAFKA_MSG;
+
+		IF (LENGTH(CAST(KAFKA_TOPIC_NAME AS CHARACTER))>0) THEN
+			SET msgLogTemp.KAFKA_TOPIC_NAME=KAFKA_TOPIC_NAME;
+		ELSE
+			SET msgLogTemp.KAFKA_TOPIC_NAME='ESED'||'_'||cmpRef.BO_NAME;
+		END IF;
+		IF UPPER(msgLogTemp.STORE_KAFKA_MSG) = 'Y' THEN
+		-- 	DELETE FIELD OutputRoot.XMLNSC;
+			--output root tag creation
+		 	CREATE FIELD OutputRoot.XMLNSC;
+			CREATE FIELD OutputRoot.XMLNSC.KafkaMsgLogData;
+			DECLARE msgLogRef REFERENCE TO OutputRoot.XMLNSC.KafkaMsgLogData;
+			DECLARE CmnLogSk CHARACTER;
+			SET CmnLogSk = CAST(CAST(CURRENT_TIMESTAMP AS TIMESTAMP) AS CHARACTER Format 'HHmmssSSSSS');
+			--mappings to store all the component Data
+			CREATE FIELD msgLogRef.ComponentData;
+			DECLARE cmpDataLog REFERENCE TO msgLogRef.ComponentData;
+			SET cmpDataLog.ApplicationId = cmpRef.APPLICATION_NAME;
+			SET cmpDataLog.QueueManagerName = QueueManagerName;
+			SET cmpDataLog.KafkaTopicName = msgLogTemp.KAFKA_TOPIC_NAME;
+			SET cmpDataLog.StatusCd='P';
+			SET cmpDataLog.SourceSystemName = cmpRef.SOURCE_SYSTEM_NAME;
+			SET cmpDataLog.AuditSystemName = 'Broker:'||BrokerName||'-EG:'||ExecutionGroupLabel;
+			SET cmpDataLog.QueueManagerName = QueueManagerName;
+			SET cmpDataLog.BrokerOS = Family;
+			SET cmpDataLog.CommonLogSK = CmnLogSk;
+			--mappings to store message messagedata
+			DECLARE tempTS CHARACTER;
+			CREATE FIELD msgLogRef.MessageData;
+			DECLARE msgDataLog REFERENCE TO msgLogRef.MessageData;
+			IF EXISTS(InputRoot.XMLNSC[]) THEN
+				IF (LENGTH(CAST(Environment.Variables.Transaction_Id AS CHARACTER))>0) THEN
+					SET msgLogTemp.TransactionId = Environment.Variables.Transaction_Id;
+				ELSE
+					SET tempTS = CAST(CAST(CURRENT_TIMESTAMP AS TIMESTAMP) AS CHARACTER Format 'yyyyMMddHHmmssSSSSSS');
+					SET msgLogTemp.TransactionId = COALESCE(Environment.Variables.Transaction_Id,tempTS);
+				END IF;
+			END IF;
+			SET msgDataLog.TransactionId = msgLogTemp.TransactionId;
+			--to store the actual message
+
+			IF EXISTS(InputRoot.XMLNSC[]) THEN
+				SET msgDataLog.ActualMessage = InputRoot.XMLNSC ;
+				CREATE FIELD msgDataLog.FlowProcessedTimestamp VALUE CURRENT_TIMESTAMP;
+                         DECLARE timeInter CHARACTER;
+				SET timeInter = CAST(CAST(OutputRoot.XMLNSC.KafkaMsgLogData.MessageData.FlowProcessedTimestamp AS GMTTIMESTAMP FORMAT 'IU') 
+				AS CHARACTER FORMAT 'dd-MMM-yy hh:mm:ss.SSS aaa');
+				SET OutputRoot.XMLNSC.KafkaMsgLogData.MessageData.FlowProcessedTimestamp = CAST(timeInter AS TIMESTAMP FORMAT 'dd-MMM-yy hh:mm:ss.SSS aaa');
+				
+				PROPAGATE TO TERMINAL 'out1' DELETE NONE;
+				  DELETE FIELD OutputRoot;
+				  DELETE FIELD Environment.Variables.msgLogInfo; 
+			END IF;
+		END IF;
+		RETURN FALSE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;
+
+

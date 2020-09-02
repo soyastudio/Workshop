@@ -1,0 +1,266 @@
+CREATE COMPUTE MODULE ExceptionSubFlow_ConstructExceptionMsg
+	
+	DECLARE HostName EXTERNAL CHARACTER '';
+	
+	CREATE FUNCTION main() RETURNS BOOLEAN 
+	BEGIN
+		
+		/************************************************************************************************************
+		   This esql code is used for parsing the exceptionlist tree and capture the error message and other details
+		   relevant to the cause of the exception. For user defined exceptions, error description is retrieved from
+		   the database based on the error code from the input message.
+		   
+		   Exception Tree Structure - 
+		   ------------------------------
+		   ExceptionList
+		   	RecoverableException		[Always the parent exception. Can have multiple occurances. 
+		   						But will mostly be one instance]
+		   						
+		   		Number			[WMB Exception Number]
+		   		Severity		[WMB Exception Severity]
+		   		Label			[Message Flow Node which threw the exception]
+		   		Text			[WMB Exception Text]
+		   		
+		   		{Child}Exception	[Child can be of any time like Recoverable, Parser, Conversion,
+		   						Database, User, Cast, Message, Sql, Socket, SocketTimeout]
+		   						
+		   			Number		[Child Exception Number]
+		   			Severity	[Child Exception Severity]
+		   			Text		[Child Exception Text]
+		   			Insert		[Dynamic Values such as message set ID. Can repeat]
+		   				Text	[Dynamic Value]
+		   			Insert
+		   				Text
+		   			{Child}Exception [The tree structure will repeat to provide complete details 
+		   						about the exception which occured]
+		   --------------------------------
+		   
+		   Only tree values which are captured in the code are shown above. The tree has a lot of additional fields
+		   which need not be captured in the error message.	   						
+		   	
+		************************************************************************************************************/
+		
+		--Start of variable declaration section
+		DECLARE iExtendedElementCount INTEGER;
+		DECLARE iChildLevel INTEGER;
+		DECLARE iInsertCount INTEGER;
+		DECLARE iInsertCard INTEGER;
+		DECLARE iOverlayPosition INTEGER;
+		DECLARE iSearchStringLength INTEGER;
+		DECLARE cUserErrorCode CHAR;
+		DECLARE cLocation CHAR;
+		DECLARE cDiagnostics CHAR;
+		DECLARE cDescription CHAR;
+		DECLARE cErrorNumber CHAR;
+		DECLARE cExceptionType CHAR;
+	    DECLARE cSeverityLevel CHAR;
+	    DECLARE cSearchString CHAR;
+	
+		--Declared for handling parametised error description
+		DECLARE cParameter CHAR;
+		DECLARE cPosn INTEGER;
+		DECLARE cStart_Posn INTEGER;
+		DECLARE cSearchString_String CHAR;
+		DECLARE iCount INTEGER;
+		DECLARE cFlowName CHAR;
+		--End of variable declaration section
+	
+		-- Start constructing the output error XML which will be put into the common error queue 
+
+		SET OutputRoot.MQMD.CorrelId = Environment.Variables.MsgId;
+		SET OutputRoot.MQMD.Format = 'MQSTR';
+		
+		/* If ReqlyToQMgr, SourceQueue, or MsgId is NULL in environment variables,
+		   get the corresponding values from the MQMD header of the input message */
+		   		
+		IF (Environment.Variables.ReplyToQMgr IS NULL) THEN
+			SET Environment.Variables.ReplyToQMgr = TRIM(InputRoot.MQMD.ReplyToQMgr);
+		END IF;
+		
+		IF (Environment.Variables.SourceQueue IS NULL) THEN
+			SET Environment.Variables.SourceQueue = TRIM(InputRoot.MQMD.SourceQueue);
+		END IF;
+		
+		IF (Environment.Variables.MsgId IS NULL) THEN
+			SET Environment.Variables.MsgId = TRIM(InputRoot.MQMD.MsgId);
+		END IF;
+		
+		/* If MessageFlowName is NULL in enviornment variable, get it from the 
+		   Flow Property 'MessageFlowLabel' */
+		
+		IF (Environment.Variables.MessageFlowName IS NULL) THEN
+			SET Environment.Variables.MessageFlowName = MessageFlowLabel;
+		END IF;		
+		
+		SET OutputRoot.XMLNSC.CommonBaseEvent.(XMLNSC.Attribute)globalInstanceId = 
+			TRIM(Environment.Variables.MsgId);
+		SET OutputRoot.XMLNSC.CommonBaseEvent.(XMLNSC.Attribute)creationTime = 
+			SUBSTRING(CAST(CURRENT_TIMESTAMP AS CHAR) FROM 12 FOR 23);
+		SET OutputRoot.XMLNSC.CommonBaseEvent.(XMLNSC.Attribute)msg = 
+			Environment.Variables.MessageFlowName || ' has encountered an error. See extendedDataElements for more information';
+		
+		SET OutputRoot.XMLNSC.CommonBaseEvent.sourceComponentId.(XMLNSC.Attribute)component = BrokerName;
+		SET OutputRoot.XMLNSC.CommonBaseEvent.sourceComponentId.(XMLNSC.Attribute)subComponent = 
+			Environment.Variables.MessageFlowName;		
+		SET OutputRoot.XMLNSC.CommonBaseEvent.sourceComponentId.(XMLNSC.Attribute)componentIdType = 'BrokerName';
+		SET OutputRoot.XMLNSC.CommonBaseEvent.sourceComponentId.(XMLNSC.Attribute)location = HostName;
+		SET OutputRoot.XMLNSC.CommonBaseEvent.sourceComponentId.(XMLNSC.Attribute)locationType = 'HostName';
+		SET OutputRoot.XMLNSC.CommonBaseEvent.sourceComponentId.(XMLNSC.Attribute)componentType =		
+			'IBM WebSphere Message Broker ' || BrokerVersion;
+		SET OutputRoot.XMLNSC.CommonBaseEvent.sourceComponentId.(XMLNSC.Attribute)application = 'WMB';
+		SET OutputRoot.XMLNSC.CommonBaseEvent.sourceComponentId.(XMLNSC.Attribute)instanceId = ExecutionGroupLabel;
+		SET OutputRoot.XMLNSC.CommonBaseEvent.sourceComponentId.(XMLNSC.Attribute)processId = ProcessId;
+		SET OutputRoot.XMLNSC.CommonBaseEvent.sourceComponentId.(XMLNSC.Attribute)executionEnvironment = Family;
+
+		SET OutputRoot.XMLNSC.CommonBaseEvent.extendedDataElements[1].(XMLNSC.Attribute)name = 'SourceDetails';
+		SET OutputRoot.XMLNSC.CommonBaseEvent.extendedDataElements[1].SourceQueue = TRIM(Environment.Variables.SourceQueue);
+		SET OutputRoot.XMLNSC.CommonBaseEvent.extendedDataElements[1].SourceQmgr = TRIM(Environment.Variables.ReplyToQMgr);
+		SET OutputRoot.XMLNSC.CommonBaseEvent.extendedDataElements[1].SourceDirectory = Environment.Variables.SourceDirectory;
+		SET OutputRoot.XMLNSC.CommonBaseEvent.extendedDataElements[1].SourceFileName = Environment.Variables.SourceFileName;
+
+		/*
+		   Fetching the key-fields one-by-one. These are populated in the Initialization node in the main
+		   message flow
+		*/
+		IF (Environment.Variables.XMLKeyFields IS NOT NULL) THEN
+			SET OutputRoot.XMLNSC.CommonBaseEvent.extendedDataElements[2].(XMLNSC.Attribute)name = 'KeyFields';
+			SET OutputRoot.XMLNSC.CommonBaseEvent.extendedDataElements[2] = Environment.Variables.XMLKeyFields;		
+			SET iExtendedElementCount = 3;			
+		ELSE
+			SET iExtendedElementCount = 2;
+		END IF;
+		
+		-- Point to the first child in the exceptionlist. This will always be RecoverableException
+		SET iChildLevel = 1;
+		DECLARE rPath REFERENCE TO InputExceptionList.*[iChildLevel];
+	
+		-- Continue collecting details till all Exception nodes are parsed
+		WHILE LASTMOVE(rPath) DO
+	
+			SET iCount = 1;
+			SET cExceptionType = FIELDNAME(rPath);
+	
+			WHILE (POSITION('Exception' IN cExceptionType) <> 0) DO
+				
+				/*
+				   Capture details of the location where the exception has occured - 
+				   Label will indicate the node in the message flow where the exception occured.
+				   This value will the same in the parent and child exception nodes. So it need to 
+				   be captured only from the parent - ReceoverableException
+				*/
+				IF (iCount = 1) THEN
+	
+					IF (Length(rPath.Label) > 0) THEN
+	
+						SET cLocation = rPath.Label;
+						SET cErrorNumber = CAST(rPath.Number AS CHAR);
+						
+						/*
+						   Label will have the value {MessageFlowName}.{NodeName}
+						   We need to capture only the NodeName, which is after the '.'
+						*/					
+						SET cDiagnostics = SUBSTRING(cLocation FROM 
+							(POSITION('.' IN cLocation) + 1)) || ' Node threw an Exception ';
+					END IF;
+				ELSE
+					/*
+					   Capture the diagnostic information from the error message
+					   Concatenate the Text in each exception node. This will be populated as
+					   ErrorDiagnistics in the error message which is put into the error queue
+					*/
+	
+					IF (Length(rPath.Text) > 0)THEN
+	
+						IF (cDiagnostics <> '') THEN
+	
+							SET cDiagnostics = cDiagnostics || '. ' || 
+										CAST(rPath.Text AS CHAR) || ' ';
+						ELSE
+							SET cDiagnostics = CAST(rPath.Text AS CHAR) || ' ';
+						END IF;
+					END IF;
+					
+					SET cErrorNumber = cErrorNumber || ', ' || 
+							CAST(rPath.Number AS CHAR);
+					SET cSeverityLevel = rPath.Severity;			
+	
+					SET iInsertCount = 1;
+					SET iInsertCard = CARDINALITY(rPath.Insert[]);
+					
+					/*
+					   Collect details of any dynamic values for the exception. For example, for
+					   a ParserException, the node will have for Insert fields, which will have
+					   the dynamic values MessageSetID, MessageType, MessageFormat and Level
+					   
+					   These values are appended within paranthesis to the already captured Text.
+					   Example -
+					   "ImbRecoverableException caught from worker when attempting to write out 
+					   the bitstream. (TDS_TestSet, 1, TDS, TDSFixedWidth)"
+					*/
+					
+					IF (iInsertCard <> 0) THEN					
+						SET cDiagnostics = cDiagnostics || '(';
+
+						WHILE (iInsertCount <= iInsertCard) DO
+
+							IF (iInsertCount = 1) THEN
+								SET cDiagnostics = cDiagnostics || rPath.Insert.Text;
+							ELSE
+								SET cDiagnostics = cDiagnostics || ', ' || rPath.Insert[iInsertCount].Text;
+							END IF;
+
+							SET iInsertCount = iInsertCount + 1;
+						END WHILE;
+
+						SET cDiagnostics = cDiagnostics || ')';
+					END IF;
+				END IF;
+	
+				SET iCount = iCount + 1;
+				
+				/*
+				   After capturing the Number, Severity, Text and Insert values in an Exception node,
+				   move to the last child, which will take you to the next exception node
+				*/
+	
+				MOVE rPath LASTCHILD;
+				SET cExceptionType = FIELDNAME(rPath);
+	
+			END WHILE;	
+			
+			/*
+			   For the last exception node, there will not be any child exceptions. So the last child
+			   name will be Insert when the while loop is exited.
+			   
+			   In the error message, the exception type is set as the name of last child exception node
+			*/
+			
+			MOVE rPath PARENT;
+		
+			-- Populate the error XML with the evaluated values
+			SET OutputRoot.XMLNSC.CommonBaseEvent.extendedDataElements[iExtendedElementCount].(XMLNSC.Attribute)name = 'ErrorDetails';
+			SET OutputRoot.XMLNSC.CommonBaseEvent.extendedDataElements[iExtendedElementCount].ExceptionType = FIELDNAME(rPath);
+			
+			/*
+			   In the output XML, the field ErrorCode will have the error number of last exception
+			   node in the ExceptionList tree. The field ErrorCodeExtn will have the concatenated list
+			   of all error numbers in the tree
+			*/
+			
+			SET OutputRoot.XMLNSC.CommonBaseEvent.extendedDataElements[iExtendedElementCount].ErrorCode = CAST(rPath.Number AS CHAR);
+			SET OutputRoot.XMLNSC.CommonBaseEvent.extendedDataElements[iExtendedElementCount].ErrorCodeExtn = cErrorNumber;
+			SET OutputRoot.XMLNSC.CommonBaseEvent.extendedDataElements[iExtendedElementCount].SeverityLevel = cSeverityLevel;
+			SET OutputRoot.XMLNSC.CommonBaseEvent.extendedDataElements[iExtendedElementCount].ErrorSource = cLocation;
+	
+			SET OutputRoot.XMLNSC.CommonBaseEvent.extendedDataElements[iExtendedElementCount].ErrorDiagnostics = 
+				cDiagnostics;	
+	
+			SET iChildLevel = iChildLevel + 1;
+			SET iExtendedElementCount = iExtendedElementCount + 1;
+			MOVE rPath TO InputExceptionList.*[iChildLevel];
+			
+		END WHILE;
+		
+		RETURN TRUE;
+	END;
+END MODULE;

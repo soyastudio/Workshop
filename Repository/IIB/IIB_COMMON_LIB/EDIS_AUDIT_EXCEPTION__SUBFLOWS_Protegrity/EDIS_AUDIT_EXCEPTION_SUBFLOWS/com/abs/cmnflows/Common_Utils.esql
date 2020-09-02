@@ -1,0 +1,90 @@
+BROKER SCHEMA com.abs.cmnflows
+/*----------------------------------------------------------------------------
+SUBFLOW NAME: 
+DESCRIPTION	: This is common esql file to place the reusable functions
+AUTHOR		: TCS
+CREATED DT	: 12/06/2017
+--------------------------------------------------------------------------------
+Program History
+Project	Release	Version	ChangeOwner	Date		Description
+------- ------- -------	----------  ---------  	-----------
+EDIS    Drop2	0.1		Spandana    12/06/2017	Initial Draft for createMsgLog 
+												used in both In and Out audit.
+EDIS	Drop3	0.2		Spandana	20/10/2017	Updated to remove mapping for componentID
+EDIS	Drop3	0.3		Spandana	12/12/2017	Updated to captureinput msg for MRM parser.
+--------------------------------------------------------------------------------
+FUNCTION NAME: createMsgLog
+DESCRIPTION: Function to create msg log canonical for both input and output audit.			 
+INPUT: 	InputRoot,OutputRoot,Environment
+OUTPUT: msglog XML 
+EXCEPTION: None
+---------------------------------------------------------------------------------------*/
+
+CREATE PROCEDURE createMsgLog(IN InputRoot REFERENCE,
+								IN OutputRoot REFERENCE,
+								IN Environment REFERENCE) BEGIN
+		
+	--Declarations for Environment	
+	DECLARE cmpRef REFERENCE TO Environment.Variables.CMPNT;
+	DECLARE msgLogTemp REFERENCE TO Environment.Variables.msgLogInfo;
+	--output root tag creation
+	CREATE FIELD OutputRoot.XMLNSC.MsgLogData;
+	DECLARE msgLogRef REFERENCE TO OutputRoot.XMLNSC.MsgLogData;
+	
+	--mappings to store all the component Data
+	CREATE LASTCHILD OF msgLogRef NAME 'ComponentData';
+	DECLARE cmpDataLog REFERENCE TO msgLogRef.ComponentData;
+	SET cmpDataLog.ApplicationId = cmpRef.APPLICATION_NAME;
+	/*Spandana #comment: Removed mapping for ComponentId after 
+	moving the component details and control flags to UDP from database.*/
+	--SET cmpDataLog.ComponentId   = cmpRef.COMPONENT_ID; 
+	SET cmpDataLog.ComponentName = cmpRef.COMPONENT_NAME;
+	SET cmpDataLog.ComponentType = cmpRef.COMPONENT_TYPE;
+	SET cmpDataLog.ComponentInputType = cmpRef.COMPONENT_INPUT_TYPE;
+	SET cmpDataLog.ComponentInputName = cmpRef.COMPONENT_INPUT_NAME;
+	SET cmpDataLog.BoName       = cmpRef.BO_NAME;
+	SET cmpDataLog.MsgDirection  = msgLogTemp.DIRECTION;
+	SET cmpDataLog.SourceSystemName = cmpRef.SOURCE_SYSTEM_NAME;
+	SET cmpDataLog.AuditSystemName = 'Broker:'||BrokerName||'-EG:'||ExecutionGroupLabel;
+	SET cmpDataLog.QueueManagerName = QueueManagerName;
+	SET cmpDataLog.BrokerOS = Family;
+	
+	--mappings to store message messagedata
+	CREATE FIELD msgLogRef.MessageData;
+	DECLARE msgDataLog REFERENCE TO msgLogRef.MessageData;
+	SET msgDataLog.TransactionId = msgLogTemp.TransactionId;
+	SET msgDataLog.MsgUnqId = msgLogTemp.MsgUnqId;
+	SET msgDataLog.MiscData = msgLogTemp.MISC_DATA;
+	--to store the actual message
+	IF (msgLogTemp.storeMsg = 'Y') THEN 
+		IF EXISTS(InputRoot.XMLNSC[]) THEN
+			SET msgDataLog.ActualMessage = InputRoot.XMLNSC ;
+		ELSEIF EXISTS(InputRoot.SOAP[]) THEN
+			SET msgDataLog.ActualMessage = InputRoot.SOAP.Body ;
+		ELSEIF EXISTS(InputRoot.DFDL[]) THEN
+			DECLARE msgDfdl BLOB;
+			SET msgDfdl = BITSTREAM(InputRoot.DFDL);
+			DECLARE msgBitStream CHAR CAST(msgDfdl AS CHAR CCSID 1208);
+			SET msgDataLog.ActualMessage.(XML.CDataSection) = msgBitStream;
+		ELSEIF EXISTS(InputRoot.JSON.Data[]) THEN
+			DECLARE msgBitStream BLOB;
+			SET msgBitStream = ASBITSTREAM(InputRoot.JSON.Data);
+			DECLARE msgJson CHAR CAST(msgBitStream AS CHAR CCSID 1208);
+			SET msgDataLog.ActualMessage.(XML.CDataSection) = msgJson;
+		--Spandana #V0.3: added below condition to capture input for MRM
+		ELSEIF EXISTS(InputRoot.MRM[]) THEN
+			DECLARE msgMrm BLOB;
+			SET msgMrm = BITSTREAM(InputRoot.MRM);
+			DECLARE msgBitStream CHAR CAST(msgMrm AS CHAR CCSID 1208);
+			SET msgDataLog.ActualMessage.(XML.CDataSection) = msgBitStream;
+		ELSE
+			DECLARE msgBlob char
+			CAST(InputRoot.BLOB.BLOB AS 
+			CHARACTER CCSID 1208 ENCODING 546);
+			SET msgDataLog.ActualMessage.(XML.CDataSection) = msgBlob;
+		END IF;  	 
+	END IF;
+	-- CREATE FIELD msgDataLog.FlowProcessedTimestamp VALUE CURRENT_TIMESTAMP;
+	-- wli0000: Forced creation of current_timestamp to DB format
+	CREATE FIELD msgDataLog.FlowProcessedTimestamp VALUE CAST(CAST(CURRENT_TIMESTAMP AS TIMESTAMP) AS CHARACTER Format 'yyyy-MM-dd HH:mm:ss.SSSSSS');
+END;
