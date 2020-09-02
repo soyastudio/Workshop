@@ -48,6 +48,10 @@ public class XmlSchemaBase extends AnnotatableSupport {
         return mappings;
     }
 
+    public MappingNode get(String path) {
+        return mappings.get(path);
+    }
+
     public static Builder builder() {
         return new Builder();
     }

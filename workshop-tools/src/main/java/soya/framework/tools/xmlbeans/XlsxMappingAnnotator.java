@@ -9,17 +9,15 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 
-public class XlsxMappingAnnotator implements Buffalo.Annotator<XmlSchemaBase> {
+public class XlsxMappingAnnotator implements Buffalo.Annotator<XmlSchemaBase>, MappingFeature {
 
     private String url;
     private String sheet;
-    private String extraction;
 
     @Override
     public void annotate(XmlSchemaBase base) {
         File excelFile = new File(url);
         Workbook workbook = null;
-        LinkedHashSet<Mapper> mappers = new LinkedHashSet<>();
 
         try {
             workbook = new XSSFWorkbook(excelFile);
@@ -78,27 +76,21 @@ public class XlsxMappingAnnotator implements Buffalo.Annotator<XmlSchemaBase> {
                                 XmlSchemaBase.MappingNode mappingNode = base.getMappings().get(targetPath);
 
                                 if (cardinality != null && !cardinality.getStringCellValue().trim().endsWith("-1")) {
-                                    mappingNode.annotateAsMappedElement("mapping", "cardinality", cardinality.getStringCellValue().trim());
+                                    mappingNode.annotateAsMappedElement(MAPPING, "cardinality", cardinality.getStringCellValue().trim());
                                 }
 
                                 if (mapping != null && mapping.getStringCellValue().trim().length() > 0) {
-
-                                    String mappingDef = mapping.getStringCellValue().trim();
-                                    mappingNode.annotateAsMappedElement("mapping", "description", mappingDef);
-                                    if(source != null && source.getStringCellValue().trim().length() > 0) {
-                                        mappingNode.annotateAsMappedElement("mapping", "sourcePath", source.getStringCellValue().trim());
-                                    }
-
-                                    Function func = createFunction(mappingDef, extraction, source);
-                                    mappingNode.annotateAsMappedElement("mapping", "function", func.toString());
-                                    if (func.getName().equals("jsonpath")) {
-                                        Mapper mapper = new Mapper(func.getArgument(), targetPath);
-                                        mappers.add(mapper);
-                                    }
+                                    String mappingRule = mapping.getStringCellValue().trim();
+                                    mappingNode.annotateAsMappedElement(MAPPING, "mappingRule", mappingRule);
                                 }
+
+                                if (source != null && source.getStringCellValue().trim().length() > 0) {
+                                    mappingNode.annotateAsMappedElement(MAPPING, "sourcePath", source.getStringCellValue().trim());
+                                }
+
                             } else {
                                 if (targetPath != null && targetPath.trim().length() > 0) {
-                                    //System.out.println("============== Not found: " + target);
+                                    base.annotateAsArrayElement("UNFOUND_TARGET_PATH", targetPath);
                                 }
                             }
 
@@ -110,15 +102,11 @@ public class XlsxMappingAnnotator implements Buffalo.Annotator<XmlSchemaBase> {
         } catch (InvalidFormatException | IOException e) {
             throw new RuntimeException(e);
         }
-
-
-        mappers.forEach(e -> {
-            System.out.println(e.getSourcePath() + " --> " + e.getTargetPath());
-        });
     }
 
     private Function createFunction(String def, String extraction, Cell cell) {
         Function func = Function.TODO;
+
         if (def.toLowerCase().startsWith("default to ")) {
             String value = def.substring("default to ".length()).trim();
             char[] arr = value.toCharArray();
@@ -158,23 +146,5 @@ public class XlsxMappingAnnotator implements Buffalo.Annotator<XmlSchemaBase> {
 
     static enum Label {
         Target, Cardinality, Mapping, Source
-    }
-
-    static class Mapper {
-        private String sourcePath;
-        private String targetPath;
-
-        public Mapper(String sourcePath, String targetPath) {
-            this.sourcePath = sourcePath;
-            this.targetPath = targetPath;
-        }
-
-        public String getSourcePath() {
-            return sourcePath;
-        }
-
-        public String getTargetPath() {
-            return targetPath;
-        }
     }
 }

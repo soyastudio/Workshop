@@ -2,6 +2,7 @@ package soya.framework.tools.xmlbeans;
 
 public class Function {
     public static final Function TODO = new Function("todo", "");
+    public static final Function IGNORE = new Function("ignore", "");
 
     private String name;
     private String argument;

@@ -1,20 +1,24 @@
 package soya.framework.tools.workbench.resource;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import io.swagger.annotations.Api;
+import org.apache.commons.io.IOUtils;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import soya.framework.tools.workbench.configuration.BusinessObjectSchemaCache;
 import soya.framework.tools.workbench.configuration.RepositoryConfiguration;
-import soya.framework.tools.iib.Node;
-import soya.framework.tools.iib.NodeUtils;
-import soya.framework.tools.xmlbeans.XmlBeansUtils;
+import soya.framework.tools.xmlbeans.Buffalo;
+import soya.framework.tools.xmlbeans.XmlSchemaBase;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.io.FileReader;
 
 @Component
 @Path("/workshop")
@@ -22,79 +26,78 @@ import java.util.List;
 public class WorkshopResource {
     @Autowired
     RepositoryConfiguration configuration;
+    BusinessObjectSchemaCache schemaCache = BusinessObjectSchemaCache.getInstance();
 
     @GET
-    @Path("/schema")
+    @Path("/index")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response schema() {
+    public Response index() {
+        Gson gson = new Gson();
+
+        JsonObject root = new JsonObject();
+
+        root.add("CMM", gson.toJsonTree(schemaCache.definedBusinessObjects()));
+        JsonArray projects = new JsonArray();
+
+        root.add("Projects", projects);
+        File projectHome = configuration.getProjectHome();
+        File[] files = projectHome.listFiles();
+        for (File f : files) {
+            if (f.isDirectory()) {
+                projects.add(f.getName());
+            }
+        }
+
+        return Response.ok(root).build();
+    }
+
+    @GET
+    @Path("/project")
+    @Produces(MediaType.TEXT_HTML)
+    public Response project(@QueryParam("bo") String bo) {
         try {
-            List<String> list = new ArrayList<>();
-            File dir = new File(configuration.getHome(), "CMM/BOD");
-            for (File file : dir.listFiles()) {
-                if (file.getName().endsWith(".xsd")) {
-                    list.add(file.getName());
-                }
+            File file = new File(configuration.getProjectHome(), bo + "/index.md");
+            Parser parser = Parser.builder().build();
+            org.commonmark.node.Node document = parser.parseReader(new FileReader(file));
+            HtmlRenderer renderer = HtmlRenderer.builder().build();
+            return Response.ok(renderer.render(document)).build();
+
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GET
+    @Path("/workflow")
+    @Produces({MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    public Response projectWorkflow(@QueryParam("bo") String bo, @QueryParam("renderer") String renderer) {
+        try {
+            File file = new File(configuration.getProjectHome(), bo + "/workflow.yaml");
+            String yaml = IOUtils.toString(new FileReader(file));
+
+            if (renderer == null) {
+                return Response.ok(Buffalo.fromYaml(yaml, XmlSchemaBase.class).render()).build();
+            } else {
+                return Response.ok(Buffalo.fromYaml(yaml, XmlSchemaBase.class).render(renderer)).build();
+
             }
 
-            Collections.sort(list);
-            return Response.status(200).entity(list).build();
         } catch (Exception e) {
-            return Response.status(500).build();
-        }
-    }
-
-
-    @POST
-    @Path("/schema/{bod}")
-    @Produces(MediaType.APPLICATION_XML)
-    public Response schema(@PathParam("bod") String bod) {
-        try {
-            File dir = new File(configuration.getHome(), "CMM/BOD");
-            File file = new File(dir, bod + ".xsd");
-
-            return Response.status(200).entity(XmlBeansUtils.xsdToXml(file)).build();
-        } catch (Exception e) {
-            return Response.status(500).build();
-        }
-    }
-
-
-    @POST
-    @Path("/excel/json")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response excelToTree(@HeaderParam("url") String url, @HeaderParam("worksheet") String worksheet, @HeaderParam("pathColumn") String pathColumn) {
-        try {
-            File file = new File(url);
-            Node result = NodeUtils.fromExcelToProcessTree(file, worksheet, pathColumn);
-            return Response.status(200).entity(result).build();
-        } catch (Exception e) {
-            return Response.status(500).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @POST
-    @Path("/excel/yaml")
-    @Produces(MediaType.TEXT_PLAIN)
-    public Response excelToYaml(@HeaderParam("url") String url, @HeaderParam("worksheet") String worksheet, @HeaderParam("pathColumn") String pathColumn) {
-        try {
-            File file = new File(url);
-            Node result = NodeUtils.fromExcelToProcessTree(file, worksheet, pathColumn);
-            return Response.status(200).entity(NodeUtils.toYaml(result)).build();
-        } catch (Exception e) {
-            return Response.status(500).build();
-        }
-    }
+    @Path("/workflow")
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces({MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    public Response workflow(@HeaderParam("renderer") String renderer, String yaml) {
+        if (renderer == null) {
+            return Response.ok(Buffalo.fromYaml(yaml, XmlSchemaBase.class).render()).build();
 
-    @POST
-    @Path("/excel/input-schema")
-    @Produces(MediaType.APPLICATION_XML)
-    public Response reverseInputSchemaFromProperties(@HeaderParam("url") String url, @HeaderParam("worksheet") String worksheet) {
-        try {
-            File file = new File(url);
-            String result = NodeUtils.reverseInputSchema(file, worksheet);
-            return Response.status(200).entity(result).build();
-        } catch (Exception e) {
-            return Response.status(500).build();
+        } else {
+            return Response.ok(Buffalo.fromYaml(yaml, XmlSchemaBase.class).render(renderer)).build();
+
         }
     }
 }
