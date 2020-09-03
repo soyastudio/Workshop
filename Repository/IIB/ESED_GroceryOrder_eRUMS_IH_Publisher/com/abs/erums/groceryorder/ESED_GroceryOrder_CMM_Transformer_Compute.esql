@@ -1,0 +1,732 @@
+BROKER SCHEMA com.abs.erums.groceryorder
+
+CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- Declare Namespace
+		DECLARE Abs NAMESPACE 'https://collab.safeway.com/it/architecture/info/default.aspx';
+
+		-- Declare Output Message Root
+		CREATE LASTCHILD OF OutputRoot DOMAIN 'XMLNSC';
+
+		DECLARE xmlDocRoot REFERENCE TO OutputRoot.XMLNSC.GetGroceryOrder;
+		CREATE LASTCHILD OF OutputRoot.XMLNSC AS xmlDocRoot TYPE XMLNSC.Folder NAME 'GetGroceryOrder';
+		SET OutputRoot.XMLNSC.GetGroceryOrder.(XMLNSC.NamespaceDecl)xmlns:Abs=Abs;
+
+		-- Declare Variables for DocumentData
+		DECLARE documentData REFERENCE TO xmlDocRoot;
+		DECLARE document REFERENCE TO documentData;
+		DECLARE dataClassification REFERENCE TO document;
+		DECLARE dataClassificationLevel REFERENCE TO dataClassification;
+		DECLARE businessSensitivityLevel REFERENCE TO dataClassification;
+		DECLARE documentAction REFERENCE TO documentData;
+
+		-- Declare Variables for GroceryOrderData
+		DECLARE groceryOrderData REFERENCE TO xmlDocRoot;
+		DECLARE groceryOrderHeader REFERENCE TO groceryOrderData;
+		DECLARE orderStatus REFERENCE TO groceryOrderHeader;
+		DECLARE orderActionStatus REFERENCE TO groceryOrderHeader;
+		DECLARE fulfillingFacility REFERENCE TO groceryOrderHeader;
+		
+		DECLARE retailCustomer REFERENCE TO groceryOrderHeader;
+			DECLARE customerNm REFERENCE TO retailCustomer;
+			DECLARE contact REFERENCE TO retailCustomer;
+				DECLARE phoneFaxContact REFERENCE TO contact;
+				DECLARE digitalContact REFERENCE TO contact;
+					DECLARE emailStatuses REFERENCE TO digitalContact;
+				DECLARE address REFERENCE TO contact;
+		
+		DECLARE customerPreference REFERENCE TO retailCustomer;
+			DECLARE preferenceType REFERENCE TO customerPreference;
+		
+		DECLARE customerPayment REFERENCE TO groceryOrderHeader;
+			DECLARE tender REFERENCE TO customerPayment;
+				DECLARE billingAddress REFERENCE TO tender;
+				DECLARE token REFERENCE TO tender;
+				DECLARE status REFERENCE TO tender;
+					DECLARE statusCode REFERENCE TO status;
+				DECLARE refund REFERENCE TO tender;
+					
+				DECLARE cancellation REFERENCE TO tender;
+		
+		
+		DECLARE orderRecordDateInfo REFERENCE TO groceryOrderHeader;
+		DECLARE device REFERENCE TO groceryOrderHeader;
+		DECLARE affiliatePartnerType REFERENCE TO groceryOrderHeader;
+		DECLARE orderSourceSystemType REFERENCE TO groceryOrderHeader;
+		DECLARE grocerySubOrder REFERENCE TO groceryOrderData;
+		DECLARE subOrderStatus REFERENCE TO grocerySubOrder;
+		DECLARE statusTypeCd REFERENCE TO grocerySubOrder;
+		DECLARE subOrderActionStatus REFERENCE TO grocerySubOrder;
+		DECLARE fullFillmentType REFERENCE TO grocerySubOrder;
+		DECLARE deliveryInfo REFERENCE TO grocerySubOrder;
+		DECLARE deliverySubType REFERENCE TO deliveryInfo;
+		DECLARE deliverySlot REFERENCE TO deliveryInfo;
+		DECLARE deliverySlotType REFERENCE TO deliveryInfo;
+		DECLARE deliveryServiceType REFERENCE TO deliveryInfo;
+		DECLARE slotPlan REFERENCE TO deliveryInfo;
+		DECLARE chargeInfo REFERENCE TO grocerySubOrder;
+		DECLARE charge REFERENCE TO chargeInfo;
+		DECLARE chargeCategory REFERENCE TO chargeInfo;
+		DECLARE deliveryPromotion REFERENCE TO grocerySubOrder;
+		DECLARE customerService REFERENCE TO grocerySubOrder;
+		DECLARE phonePurposes REFERENCE TO phoneFaxContact;
+		-- DECLARE phoneStatuses REFERENCE TO phoneFaxContact;
+		
+		DECLARE groceryOrderDetail REFERENCE TO grocerySubOrder;
+		DECLARE promotionType REFERENCE TO groceryOrderDetail;
+		DECLARE itemId REFERENCE TO groceryOrderDetail;
+		DECLARE substitutionType REFERENCE TO groceryOrderDetail;
+		DECLARE uOM REFERENCE TO groceryOrderDetail;
+		DECLARE deliveredItem REFERENCE TO groceryOrderDetail;
+			DECLARE deliveredItemUOM REFERENCE TO deliveredItem;
+		
+		DECLARE returnedItem REFERENCE TO grocerySubOrder;
+			DECLARE returnedItemItem REFERENCE TO returnedItem;
+			DECLARE returnedItemUom REFERENCE TO returnedItem;
+
+		-- Declare Variables for Input Message
+		DECLARE _inputRootNode REFERENCE TO InputRoot.JSON.Data;
+
+		-- Settings
+		DECLARE _customer REFERENCE TO _inputRootNode.customer;
+		DECLARE _contact REFERENCE TO _customer.contact.Item;
+		DECLARE _address REFERENCE TO _customer.address.Item;
+		DECLARE _email REFERENCE TO _customer.email.Item;
+		DECLARE _paymentDetails REFERENCE TO _inputRootNode.paymentDetails.Item;
+		DECLARE _tender REFERENCE TO _inputRootNode.tender.Item;
+		DECLARE _subOrders REFERENCE TO _inputRootNode.subOrders.Item;
+		DECLARE _storeInfo REFERENCE TO _inputRootNode.storeInfo.Item;
+
+		-- Construct DocumentData
+		CREATE LASTCHILD OF xmlDocRoot AS documentData TYPE XMLNSC.Folder NAME 'DocumentData';
+			-- Generate Node Document
+			CREATE LASTCHILD OF documentData AS document TYPE XMLNSC.Folder NAME 'Abs:Document';
+			-- Set Field SystemEnvironmentCd
+			-- TODO: SET document.(XMLNSC.Attribute)SystemEnvironmentCd = ?;
+
+			-- Set Field DocumentID
+			SET document.(XMLNSC.Field)Abs:DocumentID = 'GROCERY_ORDER';
+			
+			-- Set Field CreationDt
+			SET document.(XMLNSC.Field)Abs:CreationDt = CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT 'yyyy-MM-dd HH:mm:ss');
+			
+			-- Set Field AlternateDocumentID
+			SET document.(XMLNSC.Field)Abs:AlternateDocumentID = 'OSMS-EMOM_C02_ORDER-' || CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT 'yyyyMMdd_HHmmssSSS');
+
+			-- Set Field DocumentNm
+			SET document.(XMLNSC.Field)Abs:DocumentNm = 'GroceryOrder';
+
+			-- Set Field SourceApplicationCd
+			SET document.(XMLNSC.Field)Abs:SourceApplicationCd = 'eRUMS';
+
+			-- Set Field TargetApplicationCd
+			SET document.(XMLNSC.Field)Abs:TargetApplicationCd = 'EDIS';
+
+			-- Set Field SenderId
+			SET document.(XMLNSC.Field)Abs:SenderId = _inputRootNode.id;
+
+			-- Set Field InternalFileTransferInd
+			SET document.(XMLNSC.Field)Abs:InternalFileTransferInd = 'Y';
+
+				-- Generate Node DataClassification
+				CREATE LASTCHILD OF document AS dataClassification TYPE XMLNSC.Folder NAME 'Abs:DataClassification';
+					-- Generate Node DataClassificationLevel
+					CREATE LASTCHILD OF dataClassification AS dataClassificationLevel TYPE XMLNSC.Folder NAME 'Abs:DataClassificationLevel';
+					-- Set Field Code
+					SET dataClassificationLevel.(XMLNSC.Field)Abs:Code = 'Internal';
+
+
+					-- Generate Node BusinessSensitivityLevel
+					CREATE LASTCHILD OF dataClassification AS businessSensitivityLevel TYPE XMLNSC.Folder NAME 'Abs:BusinessSensitivityLevel';
+					-- Set Field Code
+					SET businessSensitivityLevel.(XMLNSC.Field)Abs:Code = 'Low';
+
+
+				-- Set Field PHIdataInd
+				SET dataClassification.(XMLNSC.Field)Abs:PHIdataInd = 'N';
+
+				-- Set Field PCIdataInd
+				SET dataClassification.(XMLNSC.Field)Abs:PCIdataInd = 'Y';
+
+				-- Set Field PIIdataInd
+				SET dataClassification.(XMLNSC.Field)Abs:PIIdataInd = 'Y';
+
+
+
+			-- Generate Node DocumentAction
+			CREATE LASTCHILD OF documentData AS documentAction TYPE XMLNSC.Folder NAME 'Abs:DocumentAction';
+			-- Set Field ActionTypeCd
+			SET documentAction.(XMLNSC.Field)Abs:ActionTypeCd = 'UPDATE';
+
+			-- Set Field RecordTypeCd
+			SET documentAction.(XMLNSC.Field)Abs:RecordTypeCd = 'CHANGE';
+
+
+
+		-- Construct Business Object Data
+		CREATE LASTCHILD OF xmlDocRoot AS groceryOrderData TYPE XMLNSC.Folder NAME 'GroceryOrderData';
+
+			-- Generate Node GroceryOrderHeader
+			CREATE LASTCHILD OF groceryOrderData AS groceryOrderHeader TYPE XMLNSC.Folder NAME 'Abs:GroceryOrderHeader';
+				-- Set Field OrderId
+				SET groceryOrderHeader.(XMLNSC.Field)Abs:OrderId = _inputRootNode.orderNumber;
+
+				-- Set Field OrderCreateTS
+				SET groceryOrderHeader.(XMLNSC.Field)Abs:OrderCreateTS = _inputRootNode.orderCreatedDate;
+				
+				-- Set Field OrderModifyTS
+				-- SET groceryOrderHeader.(XMLNSC.Field)Abs:OrderModifyTS = ?;
+
+				-- Set Field CompanyId
+				SET groceryOrderHeader.(XMLNSC.Field)Abs:CompanyId = _inputRootNode.companyId;
+
+				-- Set Field VersionNbr
+				SET groceryOrderHeader.(XMLNSC.Field)Abs:VersionNbr = _inputRootNode.versionNumber;
+
+				-- Generate Node OrderStatus
+				CREATE LASTCHILD OF groceryOrderHeader AS orderStatus TYPE XMLNSC.Folder NAME 'Abs:OrderStatus';
+					-- Set Field StatusTypeCd
+					SET orderStatus.(XMLNSC.Field)Abs:StatusTypeCd = _inputRootNode.orderStatus;
+
+				-- Generate Node OrderActionStatus
+				CREATE LASTCHILD OF groceryOrderHeader AS orderActionStatus TYPE XMLNSC.Folder NAME 'Abs:OrderActionStatus';
+					-- Set Field Type
+					SET orderActionStatus.(XMLNSC.Field)Abs:StatusTypeCd = _inputRootNode.messageAction;
+
+					-- Set Field Description
+					SET orderActionStatus.(XMLNSC.Field)Abs:Description = _inputRootNode.messageActionReason;
+
+
+				-- Generate Node FulfillingFacility
+				CREATE LASTCHILD OF groceryOrderHeader AS fulfillingFacility TYPE XMLNSC.Folder NAME 'Abs:FulfillingFacility';
+					-- Set Field RetailStoreId
+					SET fulfillingFacility.(XMLNSC.Field)Abs:RetailStoreId = _inputRootNode.storeNumber;
+
+					-- Set Field BannerCd
+					SET fulfillingFacility.(XMLNSC.Field)Abs:BannerCd = _inputRootNode.banner;
+
+					WHILE LASTMOVE(_storeInfo) DO
+						IF _storeInfo.key = 'isMFC' THEN
+							-- Set Field MFCInd
+							IF _storeInfo.value = 'true' THEN
+								SET fulfillingFacility.(XMLNSC.Field)Abs:MFCInd = 'Y';
+							ELSE
+								SET fulfillingFacility.(XMLNSC.Field)Abs:MFCInd = 'N';
+							END IF;
+					
+						ELSEIF _storeInfo.key = 'isHybridStore' THEN
+							-- Set Field HybridStoreInd
+							IF _storeInfo.value = 'true' THEN
+								SET fulfillingFacility.(XMLNSC.Field)Abs:HybridStoreInd = 'Y';
+							ELSE
+								SET fulfillingFacility.(XMLNSC.Field)Abs:HybridStoreInd = 'N';
+							END IF;
+					
+						ELSEIF _storeInfo.key = 'isPremiumStore' THEN
+							-- Set Field PremiumStoreInd
+							IF _storeInfo.value = 'true' THEN
+								SET fulfillingFacility.(XMLNSC.Field)Abs:PremiumStoreInd = 'Y';
+							ELSE
+								SET fulfillingFacility.(XMLNSC.Field)Abs:PremiumStoreInd = 'N';
+							END IF;
+					
+						ELSEIF _storeInfo.key = 'is3PLStore' THEN
+							-- Set Field ThirdPartyDeliveryOnlyInd
+							IF _storeInfo.value = 'true' THEN
+								SET fulfillingFacility.(XMLNSC.Field)Abs:ThirdPartyDeliveryOnlyInd = 'Y';
+							ELSE
+								SET fulfillingFacility.(XMLNSC.Field)Abs:ThirdPartyDeliveryOnlyInd = 'N';
+							END IF;
+					
+						ELSEIF _storeInfo.key = 'isErumsEnabled' THEN
+							-- Set Field ERUMSEnabledInd
+							IF _storeInfo.value = 'true' THEN
+								SET fulfillingFacility.(XMLNSC.Field)Abs:ERUMSEnabledInd = 'Y';
+							ELSE
+								SET fulfillingFacility.(XMLNSC.Field)Abs:ERUMSEnabledInd = 'N';
+							END IF;
+				
+						END IF;
+				
+					MOVE _storeInfo NEXTSIBLING;
+					END WHILE;
+
+				-- Set Field CurrencyCd
+				SET groceryOrderHeader.(XMLNSC.Field)Abs:CurrencyCd = _inputRootNode.orderTotal.currency;
+			
+				-- Set Field TotalAmt
+				SET groceryOrderHeader.(XMLNSC.Field)Abs:TotalAmt = _inputRootNode.orderTotal.amount;
+
+				-- Generate Node RetailCustomer
+				CREATE LASTCHILD OF groceryOrderHeader AS retailCustomer TYPE XMLNSC.Folder NAME 'Abs:RetailCustomer';
+			
+					-- Set Field CustomerId
+					SET retailCustomer.(XMLNSC.Field)Abs:CustomerId = _customer.customerId;
+
+					-- Generate Node CustomerNm
+					CREATE LASTCHILD OF retailCustomer AS customerNm TYPE XMLNSC.Folder NAME 'Abs:CustomerNm';
+						-- Set Field GivenNm
+						SET customerNm.(XMLNSC.Field)Abs:GivenNm = _customer.name.firstName;
+
+						-- Set Field FamilyNm
+						SET customerNm.(XMLNSC.Field)Abs:FamilyNm = _customer.name.lastName;
+
+						-- From customer/contact to Contact/PhoneFaxContact:
+						WHILE LASTMOVE(_contact) DO
+							-- Generate Node Contact
+							CREATE LASTCHILD OF retailCustomer AS contact TYPE XMLNSC.Folder NAME 'Abs:Contact';
+								-- Generate Node PhoneFaxContact
+								CREATE LASTCHILD OF contact AS phoneFaxContact TYPE XMLNSC.Folder NAME 'Abs:PhoneFaxContact';
+									-- Set Field TypeCode
+									SET phoneFaxContact.(XMLNSC.Attribute)TypeCode = _contact.type;
+
+									-- Set Field PhoneNbr
+									SET phoneFaxContact.(XMLNSC.Field)Abs:PhoneNbr = _contact.number;
+
+						MOVE _contact NEXTSIBLING;
+						END WHILE;
+					
+						-- From customer/address to Contact/Address:
+						WHILE LASTMOVE(_address) DO
+							-- Generate Node Contact
+							CREATE LASTCHILD OF retailCustomer AS contact TYPE XMLNSC.Folder NAME 'Abs:Contact';
+
+								-- Generate Node Address
+								CREATE LASTCHILD OF contact AS address TYPE XMLNSC.Folder NAME 'Abs:Address';
+									-- Set Field AddressUsageTypeCd
+									SET address.(XMLNSC.Field)Abs:AddressUsageTypeCd = _address.addressType;
+
+									-- Set Field AddressLine1txt
+									SET address.(XMLNSC.Field)Abs:AddressLine1txt = _address.addressLine1;
+
+									-- Set Field AddressLine2txt
+									SET address.(XMLNSC.Field)Abs:AddressLine2txt = _address.addressLine2;
+
+									-- Set Field CityNm
+									SET address.(XMLNSC.Field)Abs:CityNm = _address.city;
+
+									-- Set Field PostalZoneCd
+									SET address.(XMLNSC.Field)Abs:PostalZoneCd = _address.zipCode;
+
+									-- Set Field StateCd
+									SET address.(XMLNSC.Field)Abs:StateCd = _address.state;
+
+									-- Set Field CountryCd
+									SET address.(XMLNSC.Field)Abs:CountryCd = _address.country;
+						
+						MOVE _address NEXTSIBLING;
+						END WHILE;
+					
+						-- From customer/email to Contact/DigitalContact:
+						WHILE LASTMOVE(_email) DO
+							-- Generate Node Contact
+							CREATE LASTCHILD OF retailCustomer AS contact TYPE XMLNSC.Folder NAME 'Abs:Contact';
+
+								-- Generate Node DigitalContact
+								CREATE LASTCHILD OF contact AS digitalContact TYPE XMLNSC.Folder NAME 'Abs:DigitalContact';
+									-- Set Field DigitalAddress
+									SET digitalContact.(XMLNSC.Field)Abs:DigitalAddress = _email.id;
+
+									-- Generate Node EmailStatuses
+									CREATE LASTCHILD OF digitalContact AS emailStatuses TYPE XMLNSC.Folder NAME 'Abs:EmailStatuses';
+									-- Set Field typeCode
+									SET emailStatuses.(XMLNSC.Attribute)Abs:typeCode = _email.type;
+
+						MOVE _email NEXTSIBLING;
+						END WHILE;
+
+					-- Set Field ClubCardNbr
+					SET retailCustomer.(XMLNSC.Field)Abs:ClubCardNbr = _customer.clubCardNumber;
+
+					-- CustomerPreference:
+					DECLARE _optIn REFERENCE TO _customer.preference.optIn.Item;
+					WHILE LASTMOVE(_optIn) DO
+						IF _optIn.isOptin = 'true' THEN
+							-- Generate Node CustomerPreference
+							CREATE LASTCHILD OF retailCustomer AS customerPreference TYPE XMLNSC.Folder NAME 'Abs:CustomerPreference';
+								-- Generate Node PreferenceType
+								CREATE LASTCHILD OF customerPreference AS preferenceType TYPE XMLNSC.Folder NAME 'Abs:PreferenceType';
+									-- Set Field Code
+									SET preferenceType.(XMLNSC.Field)Abs:Code = _optIn.type;
+
+								-- Set Field OptInContactNbr
+								SET customerPreference.(XMLNSC.Field)Abs:OptInContactNbr = _optIn.id;
+
+								-- Set Field OptInInd
+								SET customerPreference.(XMLNSC.Field)Abs:OptInInd = _optIn.isOptin;					
+						
+							END IF;
+
+					MOVE _optIn NEXTSIBLING;
+					END WHILE;
+					
+						
+					IF _customer.isSubscription = 'true' THEN
+						-- Generate Node CustomerPreference
+						CREATE LASTCHILD OF retailCustomer AS customerPreference TYPE XMLNSC.Folder NAME 'Abs:CustomerPreference';
+							-- Generate Node PreferenceType
+							CREATE LASTCHILD OF customerPreference AS preferenceType TYPE XMLNSC.Folder NAME 'Abs:PreferenceType';
+								SET preferenceType.(XMLNSC.Field)Abs:Code = 'Subscription';					
+						
+					END IF;
+
+
+				-- Generate Node CustomerPayment
+				CREATE LASTCHILD OF groceryOrderHeader AS customerPayment TYPE XMLNSC.Folder NAME 'Abs:CustomerPayment';
+					WHILE LASTMOVE(_paymentDetails) DO
+					-- Generate Node Tender
+					CREATE LASTCHILD OF customerPayment AS tender TYPE XMLNSC.Folder NAME 'Abs:Tender';
+					-- Set Field TenderId
+					SET tender.(XMLNSC.Field)Abs:TenderId = _paymentDetails.tokenNumber;
+
+					-- Set Field TenderTypeCd
+					SET tender.(XMLNSC.Field)Abs:TenderTypeCd = _paymentDetails.paymentType;
+
+					-- Set Field TenderSubTypeCd
+					SET tender.(XMLNSC.Field)Abs:TenderSubTypeCd = _paymentDetails.paymentSubType;
+
+					-- Set Field HolderNm
+					SET tender.(XMLNSC.Field)Abs:HolderNm = _paymentDetails.cardHolderName;
+
+					-- Set Field ExpireMonthYearTxt
+					SET tender.(XMLNSC.Field)Abs:ExpireMonthYearTxt = _paymentDetails.cardExpiryMonth;
+
+						-- Generate Node BillingAddress
+						CREATE LASTCHILD OF tender AS billingAddress TYPE XMLNSC.Folder NAME 'Abs:BillingAddress';
+						-- Set Field PostalZoneCd
+						SET billingAddress.(XMLNSC.Field)Abs:PostalZoneCd = _paymentDetails.address.zipCode;
+
+
+					-- Set Field PostalCd
+					SET tender.(XMLNSC.Field)Abs:PostalCd = _paymentDetails.zipcode;
+
+						-- Generate Node Token
+						CREATE LASTCHILD OF tender AS token TYPE XMLNSC.Folder NAME 'Abs:Token';
+						-- Set Field TokenId
+						SET token.(XMLNSC.Field)Abs:TokenId = _paymentDetails.tokenNumber;
+
+						-- Set Field TokenTypeCd
+						SET token.(XMLNSC.Field)Abs:TokenTypeCd = _paymentDetails.paymentType;
+
+						-- based on v1.1.3 (2) Remove .../Tender/Status/StatusCode
+						-- Generate Node Status
+						CREATE LASTCHILD OF tender AS status TYPE XMLNSC.Folder NAME 'Abs:Status';
+						-- Set Field StatusCd
+						SET status.(XMLNSC.Field)Abs:StatusCd = _paymentDetails.paymentStatus.status;
+
+							-- based on v1.1.3 (2) Remove .../Tender/Status/StatusCode
+							-- Generate Node StatusCode
+							-- CREATE LASTCHILD OF status AS statusCode TYPE XMLNSC.Folder NAME 'Abs:StatusCode';
+							-- Set Field StatusCd
+							-- SET statusCode.(XMLNSC.Field)Abs:StatusCd = _paymentDetails.paymentStatus.status;
+
+
+
+					-- Set Field RequiredAuthAmt
+					SET tender.(XMLNSC.Field)Abs:RequiredAuthAmt = _paymentDetails.reqAuthorizationAmount;
+
+					-- Set Field AuthCd
+					SET tender.(XMLNSC.Field)Abs:AuthCd = _paymentDetails.paymentStatus.authorizationCode;
+
+					-- Set Field AuthDt
+					SET tender.(XMLNSC.Field)Abs:AuthDt = _paymentDetails.paymentStatus.authorizationDate;
+					
+
+					MOVE _paymentDetails NEXTSIBLING;
+					END WHILE;
+					
+					WHILE LASTMOVE(_tender) DO
+					-- Generate Node Tender
+					CREATE LASTCHILD OF customerPayment AS tender TYPE XMLNSC.Folder NAME 'Abs:Tender';
+						IF _tender.tenderType = 'REFUND' THEN
+					
+							CREATE LASTCHILD OF tender AS refund TYPE XMLNSC.Folder NAME 'Abs:Refund';
+					
+								SET refund.(XMLNSC.Field)Abs:TenderTypeCd = _tender.tenderSubType;
+								SET refund.(XMLNSC.Field)Abs:TotalRefundAmt = _tender.chargeAmount.amount;
+								SET refund.(XMLNSC.Field)Abs:CurrencyCd = _tender.chargeAmount.currency;
+							
+						ELSEIF _tender.tenderType = 'CANCELLATION' THEN
+						
+							CREATE LASTCHILD OF tender AS cancellation TYPE XMLNSC.Folder NAME 'Abs:Cancellation';
+								SET cancellation.(XMLNSC.Field)Abs:TenderTypeCd = _tender.tenderSubType;
+								SET cancellation.(XMLNSC.Field)Abs:TotalAmt = _tender.chargeAmount.amount;
+								SET cancellation.(XMLNSC.Field)Abs:CurrencyCd = _tender.chargeAmount.currency;
+							
+						END IF;
+								
+					MOVE _tender NEXTSIBLING;
+					END WHILE;
+					
+					
+
+
+				-- Generate Node OrderRecordDateInfo
+				CREATE LASTCHILD OF groceryOrderHeader AS orderRecordDateInfo TYPE XMLNSC.Folder NAME 'Abs:OrderRecordDateInfo';
+				-- Set Field CreateUserId
+				SET orderRecordDateInfo.(XMLNSC.Field)Abs:CreateUserId = _inputRootNode.sourceInfo.enteredBy;
+
+
+				-- Generate Node Device
+				CREATE LASTCHILD OF groceryOrderHeader AS device TYPE XMLNSC.Folder NAME 'Abs:Device';
+					-- Set Field Code
+					SET device.(XMLNSC.Field)Abs:Code = _inputRootNode.sourceInfo.deviceType;
+
+				-- Generate Node AffiliatePartnerType
+				CREATE LASTCHILD OF groceryOrderHeader AS affiliatePartnerType TYPE XMLNSC.Folder NAME 'Abs:AffiliatePartnerType';
+					-- Set Field AffiliatePartnerNm
+					SET affiliatePartnerType.(XMLNSC.Field)Abs:AffiliatePartnerNm = _inputRootNode.sourceInfo.affiliate.affiliateName;
+
+					-- Set Field OrderReferenceTxt
+					SET affiliatePartnerType.(XMLNSC.Field)Abs:OrderReferenceTxt = _inputRootNode.sourceInfo.affiliate.affiliateOrderRef;
+
+
+				-- Generate Node OrderSourceSystemType
+				CREATE LASTCHILD OF groceryOrderHeader AS orderSourceSystemType TYPE XMLNSC.Folder NAME 'Abs:OrderSourceSystemType';
+					-- Set Field Code
+					SET orderSourceSystemType.(XMLNSC.Field)Abs:Code = _inputRootNode.sourceInfo.source;
+
+
+
+			WHILE LASTMOVE(_subOrders) DO
+				-- Generate Node GrocerySubOrder
+				CREATE LASTCHILD OF groceryOrderData AS grocerySubOrder TYPE XMLNSC.Folder NAME 'Abs:GrocerySubOrder';
+				-- Set Field SubOrderNbr
+				SET grocerySubOrder.(XMLNSC.Field)Abs:SubOrderNbr = _subOrders.subOrderNumber;
+
+
+				-- Generate Node SubOrderStatus
+				CREATE LASTCHILD OF grocerySubOrder AS subOrderStatus TYPE XMLNSC.Folder NAME 'Abs:SubOrderStatus';
+					-- Set Field Type
+					SET subOrderStatus.(XMLNSC.Field)Abs:StatusTypeCd = _subOrders.subOrderStatus;
+
+				-- Generate Node SubOrderActionStatus
+				CREATE LASTCHILD OF grocerySubOrder AS subOrderActionStatus TYPE XMLNSC.Folder NAME 'Abs:SubOrderActionStatus';
+					-- Generate Node StatusTypeCd
+					CREATE LASTCHILD OF subOrderActionStatus AS statusTypeCd TYPE XMLNSC.Folder NAME 'Abs:StatusTypeCd';
+						-- Set Field Type
+						SET statusTypeCd.(XMLNSC.Attribute)Abs:Type = _subOrders.messageAction;
+
+						-- Set Field Description
+						SET subOrderActionStatus.(XMLNSC.Field)Abs:Description = _subOrders.messageActionReason;
+
+				-- Generate Node FullFillmentType
+				CREATE LASTCHILD OF grocerySubOrder AS fullFillmentType TYPE XMLNSC.Folder NAME 'Abs:FullFillmentType';
+					-- Set Field Code
+					SET fullFillmentType.(XMLNSC.Field)Abs:Code = _subOrders.fulfillmentType;
+
+				-- Generate Node DeliveryInfo
+				CREATE LASTCHILD OF grocerySubOrder AS deliveryInfo TYPE XMLNSC.Folder NAME 'Abs:DeliveryInfo';
+					-- Generate Node DeliverySubType
+					CREATE LASTCHILD OF deliveryInfo AS deliverySubType TYPE XMLNSC.Folder NAME 'Abs:DeliverySubType';
+						-- Set Field Code
+						SET deliverySubType.(XMLNSC.Field)Abs:Code = _subOrders.deliveryInfo.deliverySubType;
+
+					-- Generate Node DeliverySlot
+					CREATE LASTCHILD OF deliveryInfo AS deliverySlot TYPE XMLNSC.Folder NAME 'Abs:DeliverySlot';
+						-- Set Field Code
+						SET deliverySlot.(XMLNSC.Field)Abs:Code = _subOrders.deliveryInfo.slotInfo.slotId;
+
+					-- Generate Node DeliverySlotType
+					CREATE LASTCHILD OF deliveryInfo AS deliverySlotType TYPE XMLNSC.Folder NAME 'Abs:DeliverySlotType';
+						-- Set Field Code
+						SET deliverySlotType.(XMLNSC.Field)Abs:Code = _subOrders.deliveryInfo.slotInfo.slotType;
+
+					-- Generate Node DeliveryServiceType
+					CREATE LASTCHILD OF deliveryInfo AS deliveryServiceType TYPE XMLNSC.Folder NAME 'Abs:DeliveryServiceType';
+						-- Set Field Code
+						SET deliveryServiceType.(XMLNSC.Field)Abs:Code = _subOrders.deliveryInfo.deliveryServiceType;
+
+					-- Generate Node SlotPlan
+					CREATE LASTCHILD OF deliveryInfo AS slotPlan TYPE XMLNSC.Folder NAME 'Abs:SlotPlan';
+						-- Set Field Code
+						SET slotPlan.(XMLNSC.Field)Abs:Code = _subOrders.deliveryInfo.slotInfo.slotPlan;
+
+					-- Set Field StartDttm
+					SET deliveryInfo.(XMLNSC.Field)Abs:StartDttm = _subOrders.deliveryInfo.slotInfo.startTime;
+
+					-- Set Field EndDttm
+					SET deliveryInfo.(XMLNSC.Field)Abs:EndDttm = _subOrders.deliveryInfo.slotInfo.endTime;
+
+					-- Set Field SlotExpiryDttm
+					SET deliveryInfo.(XMLNSC.Field)Abs:SlotExpiryDttm = _subOrders.deliveryInfo.slotInfo.endTime;
+
+					-- Set Field StageByDttm
+					SET deliveryInfo.(XMLNSC.Field)Abs:StageByDttm = _subOrders.deliveryInfo.stageByDateTime;
+
+					-- Set Field EditCutoffDttm
+					SET deliveryInfo.(XMLNSC.Field)Abs:EditCutoffDttm = _subOrders.deliveryInfo.slotInfo.editingCutoffDate;
+
+					-- Set Field CustomerInstructionTxt
+					SET deliveryInfo.(XMLNSC.Field)Abs:CustomerInstructionTxt = _subOrders.deliveryInfo.instructions;
+
+					-- Set Field DeliverytimeZoneCd
+					SET deliveryInfo.(XMLNSC.Field)Abs:DeliverytimeZoneCd = _subOrders.deliveryInfo.slotInfo.timeZone;
+
+
+				DECLARE _charges REFERENCE TO _subOrders.charges.Item;
+				WHILE LASTMOVE(_charges) DO
+					-- Generate Node ChargeInfo
+					CREATE LASTCHILD OF grocerySubOrder AS chargeInfo TYPE XMLNSC.Folder NAME 'Abs:ChargeInfo';
+						-- Generate Node Charge
+						CREATE LASTCHILD OF chargeInfo AS charge TYPE XMLNSC.Folder NAME 'Abs:Charge';
+							-- Set Field Code
+							SET charge.(XMLNSC.Field)Abs:Code = _charges.id;
+
+							-- Set Field Description
+							SET charge.(XMLNSC.Field)Abs:Description = _charges.name;
+
+
+							-- Generate Node ChargeCategory
+							CREATE LASTCHILD OF chargeInfo AS chargeCategory TYPE XMLNSC.Folder NAME 'Abs:ChargeCategory';
+								-- Set Field Code
+								SET chargeCategory.(XMLNSC.Field)Abs:Code = _charges.category;
+
+							-- Set Field ChargeAmt
+							SET chargeInfo.(XMLNSC.Field)Abs:ChargeAmt = _charges.chargeAmount.amount;
+
+							-- Set Field CurrencyCd
+							SET chargeInfo.(XMLNSC.Field)Abs:CurrencyCd = _charges.chargeAmount.currency;
+
+				MOVE _charges NEXTSIBLING;
+				END WHILE;
+
+				DECLARE _customerService REFERENCE TO _subOrders.customerService.contact.Item;
+				WHILE LASTMOVE(_customerService) DO
+					-- Generate Node CustomerService
+					CREATE LASTCHILD OF grocerySubOrder AS customerService TYPE XMLNSC.Folder NAME 'Abs:CustomerService';
+						-- Generate Node PhoneFaxContact
+						CREATE LASTCHILD OF customerService AS phoneFaxContact TYPE XMLNSC.Folder NAME 'Abs:PhoneFaxContact';
+							-- Set Field TypeCode
+							SET phoneFaxContact.(XMLNSC.Attribute)TypeCode = _customerService.type;
+
+							-- Set Field PhoneNbr
+							SET phoneFaxContact.(XMLNSC.Field)Abs:PhoneNbr = _customerService.number;						
+							-- As per v1.1.3, Removed PhoneStatuses:
+							-- Generate Node PhoneStatuses
+							-- CREATE LASTCHILD OF phoneFaxContact AS phoneStatuses TYPE XMLNSC.Folder NAME 'Abs:PhoneStatuses';
+							-- Set Field typeCode
+							-- SET phoneStatuses.(XMLNSC.Attribute)Abs:typeCode = _customerService.subType;
+
+							CREATE LASTCHILD OF phoneFaxContact AS phonePurposes TYPE XMLNSC.Folder NAME 'Abs:PhonePurposes';
+								SET phonePurposes.(XMLNSC.Field)Abs:PurposeDsc = _customerService.subType;
+					
+					
+				MOVE _customerService NEXTSIBLING;
+				END WHILE;
+				
+				-- From promoCode to GroceryOrderDetail
+				DECLARE _promoCodes REFERENCE TO _subOrders.promoCodes.Item;
+				WHILE LASTMOVE(_promoCodes) DO
+					-- Generate Node GroceryOrderDetail
+					CREATE LASTCHILD OF grocerySubOrder AS groceryOrderDetail TYPE XMLNSC.Folder NAME 'Abs:GroceryOrderDetail';
+				
+						-- Generate Node PromotionType
+						CREATE LASTCHILD OF groceryOrderDetail AS promotionType TYPE XMLNSC.Folder NAME 'Abs:PromotionType';
+
+							-- Set Field PromotionDsc
+							SET promotionType.(XMLNSC.Field)Abs:Code = _promoCodes.code;
+
+							-- Set Field PromotionDsc
+							SET promotionType.(XMLNSC.Field)Abs:Description = _promoCodes.description;
+				
+						-- Set Field PromotionCd
+						SET groceryOrderDetail.(XMLNSC.Field)Abs:PromotionTriggerCd = _promoCodes.pluCode;
+
+				MOVE _promoCodes NEXTSIBLING;
+				END WHILE;
+
+				-- From orderLine to GroceryOrderDetail
+				DECLARE _orderLines REFERENCE TO _subOrders.orderLines.Item;
+				WHILE LASTMOVE(_orderLines) DO
+					-- Generate Node GroceryOrderDetail
+					CREATE LASTCHILD OF grocerySubOrder AS groceryOrderDetail TYPE XMLNSC.Folder NAME 'Abs:GroceryOrderDetail';
+						-- Generate Node ItemId
+						CREATE LASTCHILD OF groceryOrderDetail AS itemId TYPE XMLNSC.Folder NAME 'Abs:ItemId';
+							-- Set Field SystemSpecificItemId
+							SET itemId.(XMLNSC.Field)Abs:SystemSpecificItemId = _orderLines.itemId;
+
+							-- Set Field ItemDescription
+							SET itemId.(XMLNSC.Field)Abs:ItemDescription = _orderLines.itemDescription;
+
+
+						-- Set Field UnitPriceAmt
+						SET groceryOrderDetail.(XMLNSC.Field)Abs:UnitPriceAmt = _orderLines.unitPrice.amount;
+
+						-- Set Field Quantity
+						SET groceryOrderDetail.(XMLNSC.Field)Abs:Quantity = _orderLines.orderedQuantity;
+
+						-- Generate Node SubstitutionType
+						CREATE LASTCHILD OF groceryOrderDetail AS substitutionType TYPE XMLNSC.Folder NAME 'Abs:SubstitutionType';
+							-- Set Field Code
+							SET substitutionType.(XMLNSC.Field)Abs:Code = _orderLines.substitutionCode;
+
+							-- Set Field Description
+							SET substitutionType.(XMLNSC.Field)Abs:Description = _orderLines.substitutionValue;
+
+
+						-- Generate Node UOM
+						CREATE LASTCHILD OF groceryOrderDetail AS uOM TYPE XMLNSC.Folder NAME 'Abs:UOM';
+							-- Set Field UOMCd
+							SET uOM.(XMLNSC.Field)Abs:UOMCd = _orderLines.unitOfMeasure;
+
+
+						-- Set Field CurrencyCd
+						SET groceryOrderDetail.(XMLNSC.Field)Abs:CurrencyCd = _orderLines.unitPrice.currency;
+
+						-- Set Field RegulatedItemInd
+						SET groceryOrderDetail.(XMLNSC.Field)Abs:RegulatedItemInd = _orderLines.isRegulatedItem;
+						
+						-- Generate Node DeliveredItem
+						CREATE LASTCHILD OF groceryOrderDetail AS deliveredItem TYPE XMLNSC.Folder NAME 'Abs:DeliveredItem';
+							-- Set Field Quantity
+							SET deliveredItem.(XMLNSC.Field)Abs:Quantity = _orderLines.suppliedQuantity;
+							
+							CREATE LASTCHILD OF deliveredItem AS deliveredItemUOM TYPE XMLNSC.Folder NAME 'Abs:UOM';
+								-- Set Field UOMCd
+								SET deliveredItemUOM.(XMLNSC.Field)Abs:UOMCd = _orderLines.suppliedQuantityType;
+							
+							-- Set Field UnitPriceAmt
+							SET deliveredItem.(XMLNSC.Field)Abs:UnitPriceAmt = _orderLines.suppliedUnitPrice.amount;
+							
+							-- Set Field ItemTaxAmt
+							SET deliveredItem.(XMLNSC.Field)Abs:ItemTaxAmt = _orderLines.itemTotalTax;
+							
+							-- Set Field AppliedDiscountAmt
+							SET deliveredItem.(XMLNSC.Field)Abs:AppliedDiscountAmt = _orderLines.discountsApplied;
+							
+							-- Set Field CurrencyCd
+							SET deliveredItem.(XMLNSC.Field)Abs:CurrencyCd = _orderLines.suppliedUnitPrice.currency;
+
+				MOVE _orderLines NEXTSIBLING;
+				END WHILE;
+				
+				-- From refundedOrderLine to GrocerySubOrder/ReturnedItem:
+				DECLARE _refundedOrderLines REFERENCE TO _subOrders.refundedOrderLines.Item;
+				WHILE LASTMOVE(_refundedOrderLines) DO
+					CREATE LASTCHILD OF grocerySubOrder AS returnedItem TYPE XMLNSC.Folder NAME 'Abs:ReturnedItem';
+						CREATE LASTCHILD OF returnedItem AS returnedItemItem TYPE XMLNSC.Folder NAME 'Abs:Item';
+							SET returnedItemItem.(XMLNSC.Field)Abs:ItemDescription = _refundedOrderLines.itemDescription;
+					
+						SET returnedItem.(XMLNSC.Field)Abs:Quantity = _refundedOrderLines.refundedQuantity;
+					
+						CREATE LASTCHILD OF returnedItem AS returnedItemUom TYPE XMLNSC.Folder NAME 'Abs:UOM';
+							SET returnedItemUom.(XMLNSC.Field)Abs:UOMCd = _refundedOrderLines.unitOfMeasure;
+							
+						SET returnedItem.(XMLNSC.Field)Abs:UnitPriceAmt = _refundedOrderLines.unitPrice.amount;
+					
+						SET returnedItem.(XMLNSC.Field)Abs:CurrencyCd = _refundedOrderLines.unitPrice.currency;
+					
+				MOVE _refundedOrderLines NEXTSIBLING;
+				END WHILE;
+				
+			MOVE _subOrders NEXTSIBLING;
+			END WHILE;
+
+
+		RETURN TRUE;
+	END;
+
+END MODULE;
