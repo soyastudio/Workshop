@@ -1,0 +1,43 @@
+- soya.framework.tools.xmlbeans.XmlSchemaBaseLoader:
+    source: D:/Workshop/Repository/CMM/BOD/GetDeliverySlot.xsd
+
+- soya.framework.tools.xmlbeans.XlsxMappingAnnotator:
+    url: D:/Workshop/Repository/BusinessObjects/DeliverySlot/requirement/DeliverySlot_OSMS_TO_EDIS_Canonical_Mapping_v1.1.xlsx
+    sheet: "Mapping Source to Canonical"
+    sourceFix:
+      - deliveryType: deliveryType[*]
+      - bookings/userGuid: bookings[*]/userGuid
+      - bookings/cartId: bookings[*]/cartId
+      - bookings/expiryTime: bookings[*]/expiryTime
+      - bookings/orderId: bookings[*]/orderId
+      - bookings/versionNumber: bookings[*]/versionNumber
+      - bookings/deliveryType: bookings[*]/deliveryType
+      - bookings/bookingCategory: bookings[*]/bookingCategory
+
+- soya.framework.tools.xmlbeans.AssignmentAnnotator:
+    globalVariables:
+      - name: SYSTEM_ENVIRONMENT_CODE
+        type: CHARACTER
+        defaultValue: "'PROD'"
+    autoAnnotateLoop: true
+    assignments:
+      - GetDeliverySlot/DocumentData/Document/@SystemEnvironmentCd: SYSTEM_ENVIRONMENT_CODE
+      - GetDeliverySlot/DocumentData/Document/DocumentID: "'0'"
+      - GetDeliverySlot/DocumentData/Document/AlternateDocumentID: "'DeliverySlot_' || CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT 'YYYYMMddHHmmssSSSSSS')"
+      - GetDeliverySlot/DocumentData/Document/CreationDt: CURRENT_TIMESTAMP
+      - GetDeliverySlot/DeliverySlotData/DeliveryChargeType/DeliveryChargeAmt: CAST($$ AS DECIMAL(12,2))
+      - GetDeliverySlot/DeliverySlotData/DeliveryChargeType/DiscountedDeliveryChargeAmt: CAST($$ AS DECIMAL(12,2))
+
+
+- soya.framework.tools.xmlbeans.XPathRenderer:
+- soya.framework.tools.xmlbeans.JsonMappingRenderer:
+- soya.framework.tools.xmlbeans.AssignmentRenderer:
+- soya.framework.tools.xmlbeans.LoopAnalyzeRenderer:
+- soya.framework.tools.xmlbeans.SampleXmlRenderer:
+- soya.framework.tools.xmlbeans.AvroSchemaRenderer:
+
+- soya.framework.tools.xmlbeans.EsqlRenderer:
+    brokerSchema: com.abs.edis.osms.deliveryslot
+    moduleName: DeliverySlot_OSMS_Transformer_Compute
+    inputRootVariable: _inputRootNode
+    inputRootReference: InputRoot.JSON.Data
