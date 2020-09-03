@@ -1,0 +1,1 @@
+For release 2020-08-19, only ESED_GroceryOrder_eRUMS_IH_Publisher.bar need to be deployed.
