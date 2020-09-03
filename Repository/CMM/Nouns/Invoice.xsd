@@ -8,6 +8,7 @@
 -->
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V2.8 Patrick Oliver 09/01/20: Added new 'InvoiceDetailItem' segment to model that will be used to roll up item/section totals used by CABS invoice processing systems. This could not be added ot ItemDetail as this will be used to roll up totals by Account-Store. The 'InvoiceDetailItem' will contain attributes CIC, UPC, Whse, & allowance total amounts. Added 'AccountingDivision' to header. -->
 	<!--V2.7 Patrick Oliver 08/19/20 - Added CustomerSiteNbr, CrossReferenceTransaction; Updated ContactNm -->
 	<!--V2.6 Patrick Oliver 08/17/20 - Updated CustomerAccountNbr to reference global CustomerAccountNbr defined in Finance Master-->
 	<!--V2.5 Patrick Oliver 08/10/20 - Updated data type for DistributionUser -->
@@ -30,6 +31,7 @@
 			</xs:element>
 			<xs:element name="InvoiceHeader" type="InvoiceHeaderType"/>
 			<xs:element name="InvoiceDetail" type="InvoiceDetailType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="InvoiceDetailItem" type="InvoiceDetailItemType" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="InvoiceDetailType">
@@ -286,6 +288,80 @@ construction, and so on.</xs:documentation>
 					<xs:documentation>Line Amt discounted</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InvoiceDetailItemType">
+		<xs:annotation>
+			<xs:documentation>Contains detail line item/section total for invoice needed by CABS</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporateItemCd" minOccurs="0"/>
+			<xs:element name="ManufacturerItemID" type="xs:string" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>identifier provided by the manufacturer</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ItemDescription" type="xs:string" default="" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>This is the description of a warehoused item.  It contains the brand and description of the item.
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UPCID" type="xs:string" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>upc identifier for the item, could be a case upc or retial scan upc.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UPCType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Shows which of the Consumer, Multipack, or Case UPCs is used to make up the right 5 digitis of the UPC. One of these must be chosen.Called UNIT_TYPE in legacy systems.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ItemPackDetails" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="PackQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="5"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ShippedPackQty" type="xs:decimal" default="0" minOccurs="0"/>
+						<xs:element name="PackSize" type="xs:string" minOccurs="0"/>
+						<xs:element name="SizeUOM" type="xs:string" default="" minOccurs="0"/>
+						<xs:element name="WeightQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="9"/>
+									<xs:fractionDigits value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="WeightUOM" type="xs:string" default="" minOccurs="0"/>
+						<xs:element name="VolumeQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="9"/>
+									<xs:fractionDigits value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="VolumeUOM" type="xs:string" default="" minOccurs="0"/>
+						<xs:element name="Color" type="xs:string" default="" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="InvoiceQty" type="xs:decimal" default="0" minOccurs="0"/>
+			<xs:element name="BillStartDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="BillEndDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="DetailAllowances" type="AllowancesType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Allowances or discounts recorded at invoice detail level.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="WarehouseId" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="InvoiceVendor">
@@ -789,6 +865,16 @@ The summary amounts in the Header include the Line level amounts and Header leve
 		<xs:sequence>
 			<xs:element ref="Abs:CorporationId" minOccurs="0"/>
 			<xs:element ref="Abs:DivisionId" minOccurs="0"/>
+			<xs:element name="DivisionAccountUnitCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Division ID in the accounting system.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element ref="Abs:DistributionCenterId" minOccurs="0"/>
 			<xs:element ref="Abs:WarehouseId" minOccurs="0"/>
 			<xs:element ref="Abs:RetailStoreId" minOccurs="0"/>
@@ -825,6 +911,16 @@ The summary amounts in the Header include the Line level amounts and Header leve
 		<xs:sequence>
 			<xs:element ref="Abs:CorporationId" minOccurs="0"/>
 			<xs:element ref="Abs:DivisionId" minOccurs="0"/>
+			<xs:element name="DivisionAccountUnitCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Division ID in the accounting system.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element ref="Abs:DistributionCenterId" minOccurs="0"/>
 			<xs:element ref="Abs:WarehouseId" minOccurs="0"/>
 			<xs:element ref="Abs:RetailStoreId" minOccurs="0"/>

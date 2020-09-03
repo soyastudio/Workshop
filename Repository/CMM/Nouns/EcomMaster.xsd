@@ -85,6 +85,12 @@
 Ex: Abs Door delivery, 3Pl delivery, store picking..etc</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
+			<xs:element name="EventType" type="CodeWithDescription">
+				<xs:annotation>
+					<xs:documentation>Defines the type of event.
+Ex: Grocery order Delivery, Order status.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="EventBusinessAreaType" type="DeliveryAreaType">
 				<xs:annotation>
 					<xs:documentation>Geographic area that covers eCom business event.
@@ -93,7 +99,7 @@ Ex: a store, group of stores or a zip cd.</xs:documentation>
 			</xs:element>
 			<xs:element name="EventTransactionType" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Business transion Id attached to an event.
+					<xs:documentation>Business transiaction Id attached to an event.
 Ex: Customer grocery order nbr</xs:documentation>
 				</xs:annotation>
 				<xs:complexType>
@@ -122,12 +128,6 @@ Ex Customer Order Nbr</xs:documentation>
 						</xs:element>
 					</xs:sequence>
 				</xs:complexType>
-			</xs:element>
-			<xs:element name="EventType" type="CodeWithDescription" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Defines the type of event.
-Ex: Grocery Delivery, fullfillment</xs:documentation>
-				</xs:annotation>
 			</xs:element>
 			<xs:element name="EventSourceType" type="CodeWithDescription" minOccurs="0">
 				<xs:annotation>

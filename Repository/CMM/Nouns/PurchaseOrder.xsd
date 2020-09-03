@@ -8,7 +8,7 @@
 -->
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
-	<!--V1.2 Patrick Oliver 8/26/20: Added PurchaseOrderHeader: Company, PurchaseOrderCd, TotalLineNbr, LastLineNbr, TotalTaxableAmt, RecordAuditData, PurchaseOrderRevision; PurchaseOrderDetail: ItemTypeCd,  PurchaseOrderCloseDt, LocationCd, VendorProductID, LineTax, MatchClsCd,  ExtendedTaxableAmt, ProcessLevelId, ItemEarliestShipDt, , AccountingUnitId, AccountId, SubAccountId, DistributionCompanyId,  AccountCategory,  ActivityNbr -->
+	<!--V1.2 Patrick Oliver 8/28/20: Added PurchaseOrderHeader: CompanyId, CompanyNm, PurchaseOrderCd, TotalLineNbr, LastLineNbr, TotalTaxableAmt, RecordAuditData, PurchaseOrderRevision, EntryExchangeRt, ReceiveExchangeRt, LocationCd; PurchaseOrderDetail: ItemTypeCd,  PurchaseOrderCloseDt, LocationCd, VendorProductID, LineTax, MatchClsCd,  ExtendedTaxableAmt, ProcessLevelId, ItemEarliestShipDt, , AccountingUnitId, AccountId, SubAccountId, DistributionCompanyId,  AccountCategory,  ActivityNbr, LineLocationCd,  LineLocationAddress-->
 	<!--V1.1 Patrick Oliver 7/22/20 - Updated VendorId & VendorSubAccountNbr to string(20)-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:include schemaLocation="FinanceMaster.xsd"/>
@@ -93,11 +93,12 @@ The PurchaseOrder carries information to and from the buyer and supplier. The Pu
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="VendorProductID" type="xs:string" minOccurs="0"/>
-			<xs:element name="LocationCd" type="CodeWithDescription" minOccurs="0">
+			<xs:element name="LineLocationCd" type="CodeWithDescription" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>This field contains a valid stocking location within the company inventory. Note this is not an item level attribute but is stored at the PO header level   </xs:documentation>
+					<xs:documentation>This field contains a valid stocking location within the company inventory. Defaults to PO header ship to location but can be changed per item</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="LineLocationAddress" type="AddressType" minOccurs="0" maxOccurs="4"/>
 			<xs:element name="MatchClsCd" type="CodeWithDescription" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Item Categorization of SWMAN, ASSET, PDC</xs:documentation>
@@ -521,10 +522,25 @@ Cost, revenue, accrual,  pass thru</xs:documentation>
 			<xs:documentation>Contains all header level information of a Purchase Order.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="Company" type="CompanyType" minOccurs="0">
+			<xs:element name="CompanyId" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>An accounting Organization which consists of an entire company within some legal framework. </xs:documentation>
+					<xs:documentation>The number that identifies a company. A company represents a business or legal  entity of an organization.</xs:documentation>
 				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CompanyNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the company name or description.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
 			</xs:element>
 			<xs:element name="PurchaseOrderCreateFacility" type="PurchaseOrderCreateFacility">
 				<xs:annotation>
@@ -876,6 +892,28 @@ items to a load be done before a requisition can be sent.              </xs:docu
 					<xs:documentation>Identifies the payment term for an Order or Invoice. Supports the abiility to specify an absolute due date, a Nbr of days from a start daye, a percent discount or an absolute discount. A common term like "Net30Days" is explicitly Cd as either a calculated DueDtTm or a PaymentTermsDtTm and NbrOfDays.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="PurchaseOrderExchangeRate" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="EntryExchangeRt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="18"/>
+									<xs:fractionDigits value="7"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ReceiveExchangeRt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="18"/>
+									<xs:fractionDigits value="7"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
 			<xs:element name="FreightAllowanceTypeCd" default="" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>  Indicates how the freight allowance is calculated.  An allowance is  
@@ -1085,6 +1123,11 @@ I = Internet Mail, D = Do Not Print</xs:documentation>
 						</xs:element>
 					</xs:sequence>
 				</xs:complexType>
+			</xs:element>
+			<xs:element name="LocationCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains a valid stocking location within the company inventory</xs:documentation>
+				</xs:annotation>
 			</xs:element>
 			<xs:element name="RecordAuditData" type="RecordAuditData" minOccurs="0"/>
 			<xs:element name="OrgMasterNameType" type="OrgMasterNameType" minOccurs="0" maxOccurs="unbounded"/>

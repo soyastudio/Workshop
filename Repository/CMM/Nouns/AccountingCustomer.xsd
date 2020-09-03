@@ -130,8 +130,8 @@ Y = Yes; process bills of exchange</xs:documentation>
 					<xs:documentation>The customer party can be a Person, Organization, Group or Relationship. </xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="CustomerPartySite" type="CustomerPartySitesType" maxOccurs="unbounded"/>
-			<xs:element name="CustomerSource" type="SourceSystemType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="CustomerPartySite" type="CustomerPartySitesType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="CustomerSource" type="SourceSystemType" maxOccurs="unbounded"/>
 			<xs:element name="CustomerAccounts" maxOccurs="unbounded">
 				<xs:complexType>
 					<xs:sequence>
@@ -218,6 +218,11 @@ Y = Yes; process bills of exchange</xs:documentation>
 						<xs:element name="AccountRelationship" minOccurs="0" maxOccurs="unbounded">
 							<xs:complexType>
 								<xs:sequence>
+									<xs:element name="RelationshipNbr" type="xs:integer" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Number used to identify a set of reference data shared across business units and other entities</xs:documentation>
+										</xs:annotation>
+									</xs:element>
 									<xs:element name="RelationshipTypeCd" type="CodeWithDescription" minOccurs="0">
 										<xs:annotation>
 											<xs:documentation>Indicates the type of customer account</xs:documentation>
@@ -359,72 +364,69 @@ Y = Yes; process bills of exchange</xs:documentation>
 							</xs:annotation>
 							<xs:complexType>
 								<xs:complexContent>
-									<xs:extension base="CommunicationType">
-										<xs:sequence>
-											<xs:element name="AccountRole" minOccurs="0" maxOccurs="unbounded">
-												<xs:annotation>
-													<xs:documentation>Customer contact can perform multiple roles that have different codes.</xs:documentation>
-												</xs:annotation>
-												<xs:complexType>
-													<xs:sequence>
-														<xs:element ref="DepartmentId" minOccurs="0"/>
-														<xs:element name="DepartmentCd" type="CodeWithDescription" minOccurs="0"/>
-														<xs:element name="RoleTypeCd" type="CodeWithDescription" minOccurs="0">
-															<xs:annotation>
-																<xs:documentation>Type of role a contact person performs.</xs:documentation>
-															</xs:annotation>
-														</xs:element>
-														<xs:element name="PrimaryInd" minOccurs="0">
-															<xs:annotation>
-																<xs:documentation>Indicates if this person is the primary contact for this account. Y for yes, the person is the primary contact for this account, N for non-primary.</xs:documentation>
-															</xs:annotation>
-															<xs:simpleType>
-																<xs:restriction base="xs:string">
-																	<xs:maxLength value="5"/>
-																</xs:restriction>
-															</xs:simpleType>
-														</xs:element>
-														<xs:element name="RoleLevelInd" type="CodeWithDescription" minOccurs="0">
-															<xs:annotation>
-																<xs:documentation>Role level of the contact. For example, executive, department head, or middle manager. </xs:documentation>
-															</xs:annotation>
-														</xs:element>
-														<xs:element name="PrimaryRoleInd" minOccurs="0">
-															<xs:annotation>
-																<xs:documentation>Indicates if this is the primary role for this contact. Y for primary, N for a non-primary role for the contact. The default value is N. </xs:documentation>
-															</xs:annotation>
-															<xs:simpleType>
-																<xs:restriction base="xs:string">
-																	<xs:maxLength value="5"/>
-																</xs:restriction>
-															</xs:simpleType>
-														</xs:element>
-														<xs:element name="RoleTypePrimaryInd" minOccurs="0">
-															<xs:annotation>
-																<xs:documentation>Indicates if the contact is the primary contact for this role. Y for the primary contact for this role type, N for a contact that is not the primary contact for this role type. The default value is N. </xs:documentation>
-															</xs:annotation>
-															<xs:simpleType>
-																<xs:restriction base="xs:string">
-																	<xs:maxLength value="5"/>
-																</xs:restriction>
-															</xs:simpleType>
-														</xs:element>
-														<xs:element name="RoleTitle" minOccurs="0">
-															<xs:annotation>
-																<xs:documentation>Free form text for job title.</xs:documentation>
-															</xs:annotation>
-															<xs:simpleType>
-																<xs:restriction base="xs:string">
-																	<xs:maxLength value="100"/>
-																</xs:restriction>
-															</xs:simpleType>
-														</xs:element>
-													</xs:sequence>
-												</xs:complexType>
-											</xs:element>
-										</xs:sequence>
-									</xs:extension>
+									<xs:extension base="CommunicationType"/>
 								</xs:complexContent>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="AccountRole" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Customer contact can perform multiple roles that have different codes.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element ref="DepartmentId" minOccurs="0"/>
+									<xs:element name="DepartmentCd" type="CodeWithDescription" minOccurs="0"/>
+									<xs:element name="RoleTypeCd" type="CodeWithDescription" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Type of role a contact person performs.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="PrimaryInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicates if this person is the primary contact for this account. Y for yes, the person is the primary contact for this account, N for non-primary.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="5"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="RoleLevelInd" type="CodeWithDescription" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Role level of the contact. For example, executive, department head, or middle manager. </xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="PrimaryRoleInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicates if this is the primary role for this contact. Y for primary, N for a non-primary role for the contact. The default value is N. </xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="5"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="RoleTypePrimaryInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicates if the contact is the primary contact for this role. Y for the primary contact for this role type, N for a contact that is not the primary contact for this role type. The default value is N. </xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="5"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="RoleTitle" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Free form text for job title.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="100"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
 							</xs:complexType>
 						</xs:element>
 						<xs:element name="AccountProfile" minOccurs="0">
@@ -565,6 +567,17 @@ Y = Yes; process bills of exchange</xs:documentation>
 												<xs:maxLength value="50"/>
 											</xs:restriction>
 										</xs:simpleType>
+									</xs:element>
+									<xs:element name="CurrencyCd" minOccurs="0">
+										<xs:complexType>
+											<xs:complexContent>
+												<xs:extension base="CodeWithDescription">
+													<xs:sequence minOccurs="0">
+														<xs:element ref="CurrencyExchangeRate" minOccurs="0"/>
+													</xs:sequence>
+												</xs:extension>
+											</xs:complexContent>
+										</xs:complexType>
 									</xs:element>
 									<xs:element name="Overrides" minOccurs="0">
 										<xs:annotation>
@@ -1025,7 +1038,7 @@ companies to use the same set of customers. </xs:documentation>
 			<xs:documentation>Object used to identify various paty sites</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="CustomerPartySiteNbr" minOccurs="0">
+			<xs:element name="PartySiteId" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Generic identifier field for party site. </xs:documentation>
 				</xs:annotation>
@@ -1090,6 +1103,12 @@ companies to use the same set of customers. </xs:documentation>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
+			<xs:element name="Address" type="AddressType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Contact" type="CommunicationType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Contact person or party name</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="EffectivePeriod" type="EffetiveDateTimeType" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
@@ -1098,7 +1117,7 @@ companies to use the same set of customers. </xs:documentation>
 			<xs:documentation>Common object used to identify various business parties like, customer, shipper, vendor, bilto, ship to..etc</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="CustomerPartyNbr" minOccurs="0">
+			<xs:element name="PartyId" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Generic identifier field for party. A party can have multiple types of identifiers that can be qualified by Type.</xs:documentation>
 				</xs:annotation>
@@ -1123,19 +1142,20 @@ companies to use the same set of customers. </xs:documentation>
 					<xs:documentation>The party type can only be Person, Organization, Group or Relationship. For Customer Import, only Person or Organization is applicable</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="Contact" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Contact person or party name</xs:documentation>
-				</xs:annotation>
-				<xs:complexType>
-					<xs:complexContent>
-						<xs:extension base="PersonNameType">
-							<xs:attribute name="Type" type="xs:string" default=""/>
-						</xs:extension>
-					</xs:complexContent>
-				</xs:complexType>
+			<xs:element name="TaxTypeCd" default="" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
 			</xs:element>
-			<xs:element name="Address" type="AddressType" minOccurs="0"/>
+			<xs:element name="DUNSNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element name="EffectivePeriod" type="EffetiveDateTimeType" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
@@ -1402,7 +1422,7 @@ companies to use the same set of customers. </xs:documentation>
 		<xs:attribute ref="typeCode">
 			<xs:annotation>
 				<xs:documentation>Attribute used to describe what is the type of the associated entity. This allows for extension of the model without the need for pre-defining a static ID element. For this BOD it can be used for the type of source.
-Examples are: Party,  Account, Contact, Role, etc.</xs:documentation>
+Examples are: Party, Party Site, Account, Contact, Role, etc.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
 		<xs:attribute ref="preferredInd"/>

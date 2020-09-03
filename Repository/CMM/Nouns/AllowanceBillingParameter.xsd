@@ -19,6 +19,7 @@
 	<!--V1.0 Alex Nunes - 6/19/2020 - Changes reflecting meeting with Tech Lead. -->
 	<!--V1.0 Alex Nunes - 7/28/2020 - Changes adding and deleting of indicators -->
 	<!--V1.1 Alex Nunes - 8/20/2020 - Added additional elements to support new requirement. Jira ticket: EBC-12042 -->
+		<!--V1.2 Alex Nunes - 8/28/2020 - Added Account Name Change indicator under billing record indicators. -->
 	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:complexType name="AllowanceBillingParameterType">
@@ -423,6 +424,13 @@
 				<xs:complexType>
 					<xs:sequence>
 						<xs:element name="GeneralLedgerAccountChangeInd" minOccurs="1">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AccountNameChangeInd" minOccurs="1">
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
 									<xs:maxLength value="1"/>
