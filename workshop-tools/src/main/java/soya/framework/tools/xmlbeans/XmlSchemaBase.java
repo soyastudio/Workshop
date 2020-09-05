@@ -1,5 +1,6 @@
 package soya.framework.tools.xmlbeans;
 
+import com.google.common.base.CaseFormat;
 import com.google.gson.Gson;
 import org.apache.xmlbeans.*;
 import org.apache.xmlbeans.impl.util.Base64;
@@ -10,12 +11,12 @@ import org.w3c.dom.Node;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.xml.namespace.QName;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 
 public class XmlSchemaBase extends AnnotatableSupport {
-
 
     private boolean _soapEnc;
     private static final int MAX_ELEMENTS = 1000;
@@ -89,9 +90,42 @@ public class XmlSchemaBase extends AnnotatableSupport {
      * <theElement><lots of stuff/>^</theElement>
      */
     private void introspect(SchemaType stype, XmlCursor xmlc) {
-        MappingNode node = new MappingNode(xmlc);
+
+        MappingNode node = new MappingNode(xmlc, stype);
+
         if (node.getPath() != null) {
             mappings.put(node.getPath(), node);
+
+            if (stype.isSimpleType()) {
+                if (stype.getName() != null) {
+                    node.dataType = stype.getName().getLocalPart();
+
+                } else {
+                    node.dataType = stype.getBaseType().getName().getLocalPart();
+                    Field[] fields = SchemaType.class.getDeclaredFields();
+                    for (Field field : fields) {
+                        if (field.getName().startsWith("FACET_")) {
+                            try {
+                                int facet = field.getInt(null);
+                                if (stype.getFacet(facet) != null) {
+                                    if (node.restriction == null) {
+                                        node.restriction = new LinkedHashMap<>();
+                                    }
+
+                                    String key = field.getName().substring("FACET_".length());
+                                    key = CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.LOWER_CAMEL).convert(key);
+                                    node.restriction.put(key, stype.getFacet(facet).getStringValue());
+                                }
+
+                            } catch (IllegalAccessException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            } else {
+                node.dataType = "complexType";
+            }
         }
 
         if (node.getLevel() == 1) {
@@ -116,6 +150,32 @@ public class XmlSchemaBase extends AnnotatableSupport {
                 MappingNode parent = mappings.get(parentPath);
                 parent.children.add(node);
                 node.parent = parent;
+
+                // Cardinality:
+                if (parent != null) {
+                    SchemaProperty[] properties = parent.schemaType.getElementProperties();
+                    for(SchemaProperty property: properties) {
+                        if(property.getName().getLocalPart().equals(node.name)) {
+                            BigInteger min = property.getMinOccurs();
+                            BigInteger max = property.getMaxOccurs();
+                            if(min == null) {
+                                min = BigInteger.ZERO;
+                            }
+                            StringBuilder builder = new StringBuilder(min.toString()).append("-");
+                            if(max == null) {
+                                builder.append("n");
+                            } else {
+                                builder.append(max.toString());
+                            }
+
+                            node.cardinality = builder.toString();
+                        }
+                    }
+                } else {
+                    node.cardinality = "1-1";
+                }
+
+
             }
         }
 
@@ -1117,19 +1177,26 @@ public class XmlSchemaBase extends AnnotatableSupport {
 
     public static class MappingNode extends AnnotatableSupport {
 
+        private transient SchemaType schemaType;
+
         private transient SchemaProperty attribute;
         private transient MappingNode parent;
         private transient List<MappingNode> children = new ArrayList<>();
 
         private String path;
         private String name;
+        private String dataType;
+        private Map<String, String> restriction;
+        private String cardinality;
+
         private String namespaceURI;
         private int level;
         private NodeType nodeType = NodeType.Folder;
         private String alias;
         private String defaultValue;
 
-        public MappingNode(XmlCursor xmlc) {
+        public MappingNode(XmlCursor xmlc, SchemaType schemaType) {
+            this.schemaType = schemaType;
             this.path = path(xmlc);
             this.name = xmlc.getDomNode().getLocalName();
 
@@ -1165,6 +1232,18 @@ public class XmlSchemaBase extends AnnotatableSupport {
 
         public int getLevel() {
             return level;
+        }
+
+        public String getDataType() {
+            return dataType;
+        }
+
+        public Map<String, String> getRestriction() {
+            return restriction;
+        }
+
+        public String getCardinality() {
+            return cardinality;
         }
 
         public NodeType getNodeType() {
