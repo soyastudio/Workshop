@@ -7,10 +7,11 @@ public interface MappingFeature {
     String MAPPING = "mapping";
     String LOOP = "loop";
 
-    static class WhileLoop {
+    class WhileLoop {
         protected String name;
         protected String sourcePath;
         protected String variable;
+
         protected MappingFeature.WhileLoop parent;
         protected int depth = 1;
 
@@ -22,11 +23,10 @@ public interface MappingFeature {
         }
     }
 
-    static class Mapping {
-        protected String dataType;
-        protected String cardinality;
+    class Mapping {
         protected String mappingRule;
         protected String sourcePath;
+
         protected String loop;
         protected String assignment;
 
@@ -34,7 +34,7 @@ public interface MappingFeature {
         }
     }
 
-    static class Variable {
+    class Variable {
         protected String name;
         protected String type;
         protected String defaultValue;
@@ -42,4 +42,19 @@ public interface MappingFeature {
         public Variable() {
         }
     }
+
+    class Group {
+        String sourcePath;
+        String name;
+        String variable;
+
+
+    }
+
+    class Assignment {
+        String targetPath;
+
+    }
+
+
 }

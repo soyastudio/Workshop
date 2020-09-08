@@ -9,8 +9,10 @@ import java.util.Map;
 public class AssignmentAnnotator implements Buffalo.Annotator<XmlSchemaBase>, MappingFeature {
 
     private List<?> globalVariables;
+
     private boolean autoAnnotateLoop;
-    private List<?> loops;
+    private List<Map<String, String>> loops;
+
     private List<?> assignments;
 
     private transient Map<String, WhileLoop> loopMap = new LinkedHashMap<>();
@@ -28,21 +30,35 @@ public class AssignmentAnnotator implements Buffalo.Annotator<XmlSchemaBase>, Ma
 
         } else if (loops != null) {
             loops.forEach(l -> {
-                Map<String, Map<String, String>> loop = (Map<String, Map<String, String>>) l;
-                loop.entrySet().forEach(m -> {
-                    String targetPath = m.getKey();
-                    Map<String, String> wl = m.getValue();
-                    WhileLoop whileLoop = new WhileLoop();
-                    whileLoop.sourcePath = wl.get("sourcePath");
-                    whileLoop.name = wl.get("name");
-                    whileLoop.variable = wl.get("variable");
+                String sourcePath = l.get("sourcePath");
+                String targetPath = l.get("targetPath");
 
-                    if (!loopMap.containsKey(whileLoop.sourcePath)) {
-                        XmlSchemaBase.MappingNode node = base.get(targetPath);
-                        loopMap.put(whileLoop.sourcePath, whileLoop);
-                        node.annotateAsArrayElement(LOOP, whileLoop);
-                    }
-                });
+                String baseName = sourcePath.substring(0, sourcePath.lastIndexOf("[*]"));
+                int slash = baseName.lastIndexOf("/");
+                if(slash > 0) {
+                    baseName = baseName.substring(slash + 1);
+                }
+
+                String name = l.get("name");
+                if(name == null || name.trim().length() == 0) {
+                    name = baseName + "_loop";
+                }
+
+                String variable = l.get("variable");
+                if(variable == null || variable.trim().length() == 0) {
+                    variable = "_" + baseName;
+                }
+
+                WhileLoop whileLoop = new WhileLoop();
+                whileLoop.sourcePath = sourcePath;
+                whileLoop.name = name;
+                whileLoop.variable = variable;
+
+                if (!loopMap.containsKey(whileLoop.sourcePath)) {
+                    XmlSchemaBase.MappingNode node = base.get(targetPath);
+                    loopMap.put(whileLoop.sourcePath, whileLoop);
+                    node.annotateAsArrayElement(LOOP, whileLoop);
+                }
             });
         }
 
@@ -70,7 +86,7 @@ public class AssignmentAnnotator implements Buffalo.Annotator<XmlSchemaBase>, Ma
                 }
 
                 if (mapping.assignment == null) {
-                    node.annotateAsMappedElement(MAPPING, "assignment", generateAssignment(mapping));
+                    node.annotateAsMappedElement(MAPPING, "assignment", generateAssignment(node));
                 }
             }
         });
@@ -91,13 +107,10 @@ public class AssignmentAnnotator implements Buffalo.Annotator<XmlSchemaBase>, Ma
                                 Mapping mapping = node.getAnnotation(MAPPING, Mapping.class);
                                 assignment = mapping.assignment;
                             }
-
                             assignment = convert(function, assignment);
                             node.annotateAsMappedElement(MAPPING, "assignment", assignment);
-
                         }
                     });
-
                 }
             });
         }
@@ -173,10 +186,9 @@ public class AssignmentAnnotator implements Buffalo.Annotator<XmlSchemaBase>, Ma
         XmlSchemaBase.MappingNode node = mappingNode.getParent();
         while (node != null) {
             Mapping mapping = node.getAnnotation(MAPPING, Mapping.class);
-            if (mapping != null && mapping.cardinality != null && !mapping.cardinality.endsWith("-1")) {
+            if (!node.getCardinality().endsWith("-1")) {
                 break;
             }
-
             node = node.getParent();
         }
 
@@ -201,8 +213,10 @@ public class AssignmentAnnotator implements Buffalo.Annotator<XmlSchemaBase>, Ma
         return null;
     }
 
-    private String generateAssignment(Mapping mapping) {
+    private String generateAssignment(XmlSchemaBase.MappingNode node) {
+
         String value = "'???'";
+        Mapping mapping = node.getAnnotation(MAPPING, Mapping.class);
         if (mapping.mappingRule != null && mapping.mappingRule.trim().length() > 0) {
             String rule = mapping.mappingRule.trim();
             String uppercase = rule.toUpperCase();
@@ -210,14 +224,16 @@ public class AssignmentAnnotator implements Buffalo.Annotator<XmlSchemaBase>, Ma
                 value = rule.substring("DEFAULT TO ".length()).trim();
 
             } else if (uppercase.equals("DIRECT MAPPING") || uppercase.equals("DIRECTMAPPING")) {
-                value = createMappingPath(mapping);
+                value = fromSourcePath(node);
             }
         }
 
         return value;
     }
 
-    private String createMappingPath(Mapping mapping) {
+    private String fromSourcePath(XmlSchemaBase.MappingNode node) {
+
+        Mapping mapping = node.getAnnotation(MAPPING, Mapping.class);
         String token = mapping.sourcePath;
 
         WhileLoop whileLoop = findParent(token);
