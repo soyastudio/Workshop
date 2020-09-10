@@ -1,6 +1,19 @@
 - soya.framework.tools.xmlbeans.XmlSchemaBaseLoader:
     source: D:/Workshop/Repository/CMM/BOD/GetDeliverySlot.xsd
 
+- soya.framework.tools.xmlbeans.IntegrationApplicationAnnotator:
+    application:
+      boName: DeliverySlot
+      applicationName: ESED_DELIVERYSLOT_IH_Publisher
+      brokerSchema: com.abs.osms.deliveryslot
+      flowName: ESED_DELIVERYSLOT_IH_Publisher
+
+    kafkaConsumer:
+      topicName: OSMS_Slots_C02.slots.slots
+
+    kafkaProducer:
+      topicName: ESED_C01_DeliverySlot
+
 - soya.framework.tools.xmlbeans.XlsxMappingAnnotator:
     url: D:/Workshop/Repository/BusinessObjects/DeliverySlot/requirement/DeliverySlot_OSMS_TO_EDIS_Canonical_Mapping_v1.1.xlsx
     sheet: "Mapping Source to Canonical"
@@ -25,9 +38,8 @@
       - GetDeliverySlot/DocumentData/Document/DocumentID: "'0'"
       - GetDeliverySlot/DocumentData/Document/AlternateDocumentID: "'DeliverySlot_' || CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT 'YYYYMMddHHmmssSSSSSS')"
       - GetDeliverySlot/DocumentData/Document/CreationDt: CURRENT_TIMESTAMP
-      - GetDeliverySlot/DeliverySlotData/DeliveryChargeType/DeliveryChargeAmt: CAST($$ AS DECIMAL(12,2))
-      - GetDeliverySlot/DeliverySlotData/DeliveryChargeType/DiscountedDeliveryChargeAmt: CAST($$ AS DECIMAL(12,2))
 
+- soya.framework.tools.xmlbeans.DecimalFunctionAnnotator:
 
 - soya.framework.tools.xmlbeans.XPathRenderer:
 - soya.framework.tools.xmlbeans.JsonMappingRenderer:
@@ -37,7 +49,9 @@
 - soya.framework.tools.xmlbeans.AvroSchemaRenderer:
 
 - soya.framework.tools.xmlbeans.EsqlRenderer:
-    brokerSchema: com.abs.edis.osms.deliveryslot
-    moduleName: DeliverySlot_OSMS_Transformer_Compute
+    brokerSchema: com.abs.osms.deliveryslot
+    moduleName: ESED_DELIVERYSLOT_OSMS_CMM_Compute
     inputRootVariable: _inputRootNode
     inputRootReference: InputRoot.JSON.Data
+
+- soya.framework.tools.xmlbeans.OverwritePropertiesRenderer:
