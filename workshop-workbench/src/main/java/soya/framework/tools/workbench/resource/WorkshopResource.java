@@ -83,6 +83,7 @@ public class WorkshopResource {
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }

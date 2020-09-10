@@ -10,7 +10,9 @@ import soya.framework.tools.xmlbeans.XmlSchemaBase.NodeType;
 
 public class FunctionAssignmentAnnotator implements Annotator<XmlSchemaBase>, MappingFeature {
     private String function;
+
     private List<String> includes;
+
     private String field;
     private String value;
     private List<String> excludes;
