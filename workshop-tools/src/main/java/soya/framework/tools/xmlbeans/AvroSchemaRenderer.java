@@ -3,7 +3,7 @@ package soya.framework.tools.xmlbeans;
 import org.apache.avro.Schema;
 import soya.framework.tools.avro.XmlToAvroSchema;
 
-public class AvroSchemaRenderer implements Buffalo.Renderer<XmlSchemaBase> {
+public class AvroSchemaRenderer extends XmlSchemaBaseRenderer {
 
     @Override
     public String render(XmlSchemaBase base) {

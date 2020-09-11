@@ -3,15 +3,19 @@ package soya.framework.tools.xmlbeans;
 import org.apache.commons.beanutils.ConvertUtils;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Map;
 
 public class IntegrationApplicationAnnotator implements Buffalo.Annotator<XmlSchemaBase>, IntegrationApplicationFeature {
+
     private Map<String, String> application;
     private Map<String, String> kafkaConsumer;
     private Map<String, String> kafkaProducer;
     private Map<String, String> auditValidateInput;
     private Map<String, String> auditValidateOutput;
     private Map<String, String> exceptionSubFlow;
+
+    private Map<String, ?> properties;
 
     @Override
     public void annotate(XmlSchemaBase base) {
@@ -28,6 +32,26 @@ public class IntegrationApplicationAnnotator implements Buffalo.Annotator<XmlSch
         set(app.auditValidateInput, auditValidateInput);
         set(app.auditValidateOutput, auditValidateOutput);
         set(app.exceptionSubFlow, exceptionSubFlow);
+
+        if (properties != null) {
+            properties.entrySet().forEach(e -> {
+                String key = e.getKey();
+                Object value = e.getValue();
+                if (value == null) {
+                    app.properties.add(new KeyValuePair(key, ""));
+                } else if (value instanceof List) {
+                    StringBuilder builder = new StringBuilder();
+                    List<?> list = (List<?>) value;
+                    list.forEach(l -> {
+                        builder.append(l.toString()).append(";");
+                    });
+                    app.properties.add(new KeyValuePair(key, builder.toString()));
+
+                } else {
+                    app.properties.add(new KeyValuePair(key, value.toString()));
+                }
+            });
+        }
 
         base.annotate(APPLICATION, app);
 

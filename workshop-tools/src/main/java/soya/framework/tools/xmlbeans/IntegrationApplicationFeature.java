@@ -3,6 +3,9 @@ package soya.framework.tools.xmlbeans;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public interface IntegrationApplicationFeature {
     String APPLICATION = "APPLICATION";
     Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -18,6 +21,8 @@ public interface IntegrationApplicationFeature {
         protected AuditValidateInput auditValidateInput = new AuditValidateInput();
         protected AuditValidateOutput auditValidateOutput = new AuditValidateOutput();
         protected ExceptionSubFlow exceptionSubFlow = new ExceptionSubFlow();
+
+        protected List<KeyValuePair> properties = new ArrayList<>();
         
     }
     
@@ -75,6 +80,7 @@ public interface IntegrationApplicationFeature {
         protected String AUDIT_MDL_UNQ_ID;
         protected String PATH_MDL_UNQ_ID = "InputRoot.JSON.Data.slotId";
         protected String STORE_MDL_MSG;
+
     }
     
     class AuditValidateOutput {
@@ -92,5 +98,15 @@ public interface IntegrationApplicationFeature {
         protected int MAXREPLAYCOUNT = 3;
         protected String COMPONENTNAME = "{{APPLICATION_NAME}}";
         protected String queueName = "ESEDPR.EXCEPTION.MSG";
+    }
+
+    class KeyValuePair {
+        protected String key;
+        protected String value;
+
+        public KeyValuePair(String key, String value) {
+            this.key = key;
+            this.value = value;
+        }
     }
 }

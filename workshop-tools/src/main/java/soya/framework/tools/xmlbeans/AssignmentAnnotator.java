@@ -219,7 +219,9 @@ public class AssignmentAnnotator implements Buffalo.Annotator<XmlSchemaBase>, Ma
         Mapping mapping = node.getAnnotation(MAPPING, Mapping.class);
         if (mapping.mappingRule != null && mapping.mappingRule.trim().length() > 0) {
             String rule = mapping.mappingRule.trim();
+
             String uppercase = rule.toUpperCase();
+
             if (uppercase.startsWith("DEFAULT TO ")) {
                 value = rule.substring("DEFAULT TO ".length()).trim();
 

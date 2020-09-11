@@ -4,7 +4,7 @@ import com.google.gson.GsonBuilder;
 
 import java.util.LinkedHashSet;
 
-public class LoopAnalyzeRenderer implements Buffalo.Renderer<XmlSchemaBase>, MappingFeature {
+public class LoopAnalyzeRenderer extends XmlSchemaBaseRenderer implements MappingFeature {
 
     @Override
     public String render(XmlSchemaBase base) {

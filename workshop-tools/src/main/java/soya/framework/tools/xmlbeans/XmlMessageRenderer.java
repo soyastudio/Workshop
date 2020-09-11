@@ -1,6 +1,6 @@
 package soya.framework.tools.xmlbeans;
 
-public class XmlMessageRenderer implements Buffalo.Renderer<XmlSchemaBase> {
+public class XmlMessageRenderer extends XmlSchemaBaseRenderer {
 
     private String inputMessage;
 

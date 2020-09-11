@@ -7,7 +7,7 @@ import soya.framework.tools.util.StringBuilderUtils;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class EsqlRenderer implements Buffalo.Renderer<XmlSchemaBase>, MappingFeature {
+public class EsqlRenderer extends XmlSchemaBaseRenderer implements MappingFeature {
     public static final String DOCUMENT_ROOT = "xmlDocRoot";
 
     private static Gson GSON = new Gson();

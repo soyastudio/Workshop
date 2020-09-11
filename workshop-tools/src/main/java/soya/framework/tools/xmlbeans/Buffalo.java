@@ -69,7 +69,15 @@ public class Buffalo<T> {
                 buffalo.renderer = renderer;
             }
 
-            buffalo.renderers.put(component.getClass().getSimpleName(), renderer);
+            if(renderer.getName() != null) {
+                buffalo.renderers.put(renderer.getName(), renderer);
+
+            } else {
+                buffalo.renderers.put(component.getClass().getSimpleName(), renderer);
+
+            }
+
+
         }
     }
 
@@ -137,6 +145,8 @@ public class Buffalo<T> {
     }
 
     public static interface Renderer<T> {
+        String getName();
+
         String render(T base);
 
     }

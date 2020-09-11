@@ -3,41 +3,60 @@ package soya.framework.tools.xmlbeans;
 import com.google.common.base.CaseFormat;
 
 import java.lang.reflect.Field;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-public class OverwritePropertiesRenderer implements Buffalo.Renderer<XmlSchemaBase>, IntegrationApplicationFeature {
+public class OverwritePropertiesRenderer extends XmlSchemaBaseRenderer implements IntegrationApplicationFeature {
 
     @Override
     public String render(XmlSchemaBase base) {
         Application application = base.getAnnotation(APPLICATION, Application.class);
 
-        StringBuilder builder = new StringBuilder();
+        Map<String, String> map = new LinkedHashMap();
         if (application.kafkaConsumer != null) {
-            print(application, "KafkaConsumer", application.kafkaConsumer, builder);
+            dump(application, "KafkaConsumer", application.kafkaConsumer, map);
         }
 
-        print(application, "KafkaProducer", application.kafkaProducer, builder);
-        print(application, "AuditValidateInput", application.auditValidateInput, builder);
-        print(application, "AuditValidateOutput", application.auditValidateOutput, builder);
-        print(application, "ExceptionSubFlow", application.exceptionSubFlow, builder);
+        dump(application, "KafkaProducer", application.kafkaProducer, map);
+        dump(application, "AuditValidateInput", application.auditValidateInput, map);
+        dump(application, "AuditValidateOutput", application.auditValidateOutput, map);
+        dump(application, "ExceptionSubFlow", application.exceptionSubFlow, map);
+
+        dumpProperties(application, map);
+
+        StringBuilder builder = new StringBuilder();
+        map.entrySet().forEach(e -> {
+            builder.append(e.getKey()).append("=").append(e.getValue()).append("\n");
+        });
 
         return builder.toString();
     }
 
-    private void print(Application application, String Name, Object object, StringBuilder builder) {
+    private void dump(Application application, String Name, Object object, Map<String, String> map) {
         String prefix = application.brokerSchema + "." + application.flowName + "#" + Name + ".";
         Class clazz = object.getClass();
         for (Field field : clazz.getDeclaredFields()) {
             field.setAccessible(true);
             try {
                 Object value = field.get(object);
-                if(value instanceof String) {
-                    value = evaluate((String)value, application);
+                if (value == null) {
+                    value = "";
+                } else if (value instanceof String) {
+                    value = evaluate((String) value, application);
                 }
-                builder.append(prefix).append(field.getName()).append("=").append(value).append("\n");
+                map.put(prefix + field.getName(), value.toString());
+
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void dumpProperties(Application application, Map<String, String> map) {
+        String prefix = application.brokerSchema + "." + application.flowName + "#";
+        application.properties.forEach(e -> {
+            map.put(prefix + e.key, e.value);
+        });
     }
 
     private String evaluate(String value, Application application) {

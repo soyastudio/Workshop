@@ -5,7 +5,8 @@ import com.google.gson.GsonBuilder;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class JsonMappingRenderer implements Buffalo.Renderer<XmlSchemaBase> {
+public class JsonMappingRenderer extends XmlSchemaBaseRenderer {
+
     @Override
     public String render(XmlSchemaBase base) {
         Map<String, Object> map = new LinkedHashMap<>();

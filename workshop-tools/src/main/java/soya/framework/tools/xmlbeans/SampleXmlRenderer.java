@@ -2,7 +2,7 @@ package soya.framework.tools.xmlbeans;
 
 import org.apache.xmlbeans.SchemaTypeSystem;
 
-public class SampleXmlRenderer implements Buffalo.Renderer<XmlSchemaBase> {
+public class SampleXmlRenderer extends XmlSchemaBaseRenderer {
 
     @Override
     public String render(XmlSchemaBase base) {

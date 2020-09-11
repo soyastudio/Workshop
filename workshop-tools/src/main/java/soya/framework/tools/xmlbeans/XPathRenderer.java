@@ -1,6 +1,6 @@
 package soya.framework.tools.xmlbeans;
 
-public class XPathRenderer implements Buffalo.Renderer<XmlSchemaBase> {
+public class XPathRenderer extends XmlSchemaBaseRenderer {
 
     @Override
     public String render(XmlSchemaBase base) {
