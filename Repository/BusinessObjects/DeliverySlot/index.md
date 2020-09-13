@@ -1,4 +1,38 @@
 # Design
+``` mermaid
+graph LR
+  subgraph SRC [OSMS]
+    ST
+  end
+    
+    ST --> AKS
+    AKS --> KIT
+
+  subgraph EDIS [EDIS - DeliverySlot]
+    KIT --> |<Json Data>|IIB
+    IIB --> |<CMM XML>|KOT
+  end
+
+    KOT --> AKT
+
+    AKT --> END
+
+  subgraph TGT [EDM]
+    END
+  end
+
+  ST((Slot Service))
+  AKS[(Azure Kafka SRC)]
+
+  KIT[(Kafka Consumer Topic)]
+  IIB[IIB Transformer]
+  KOT[(Kafka Producer Topic)]
+
+  AKT[(Azure Kafka TGT)]
+  END((Consumer))
+            
+
+```
 
 
 
