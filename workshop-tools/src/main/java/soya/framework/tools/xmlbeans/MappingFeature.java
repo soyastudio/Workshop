@@ -1,10 +1,15 @@
 package soya.framework.tools.xmlbeans;
 
+import com.google.gson.JsonObject;
+
 public interface MappingFeature {
     String INPUT_ROOT = "$.";
     String FUNCTION_PARAM = "$$";
     String GLOBAL_VARIABLE = "global_variable";
+
+    String MAPPED = "mapped";
     String MAPPING = "mapping";
+    String MAPPINGS = "mappings";
     String LOOP = "loop";
 
     class WhileLoop {
@@ -41,6 +46,12 @@ public interface MappingFeature {
 
         public Variable() {
         }
+    }
+
+    class Construction {
+        protected String from;
+        protected String condition;
+        protected JsonObject assignments;
     }
 
     class Group {

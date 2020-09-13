@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class OverwritePropertiesRenderer extends XmlSchemaBaseRenderer implements IntegrationApplicationFeature {
+    private Map<String, String> properties;
 
     @Override
     public String render(XmlSchemaBase base) {
@@ -23,6 +24,9 @@ public class OverwritePropertiesRenderer extends XmlSchemaBaseRenderer implement
         dump(application, "ExceptionSubFlow", application.exceptionSubFlow, map);
 
         dumpProperties(application, map);
+        if (properties != null) {
+            dumpProperties(application, properties, map);
+        }
 
         StringBuilder builder = new StringBuilder();
         map.entrySet().forEach(e -> {
@@ -56,6 +60,13 @@ public class OverwritePropertiesRenderer extends XmlSchemaBaseRenderer implement
         String prefix = application.brokerSchema + "." + application.flowName + "#";
         application.properties.forEach(e -> {
             map.put(prefix + e.key, e.value);
+        });
+    }
+
+    private void dumpProperties(Application application, Map<String, String> properties, Map<String, String> map) {
+        String prefix = application.brokerSchema + "." + application.flowName + "#";
+        properties.entrySet().forEach(e -> {
+            map.put(prefix + e.getKey(), e.getValue());
         });
     }
 

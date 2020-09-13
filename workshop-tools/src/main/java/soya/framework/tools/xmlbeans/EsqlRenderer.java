@@ -2,12 +2,15 @@ package soya.framework.tools.xmlbeans;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import soya.framework.tools.util.StringBuilderUtils;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class EsqlRenderer extends XmlSchemaBaseRenderer implements MappingFeature {
+    public static final String URI = "http://collab.safeway.com/it/architecture/info/default.aspx";
     public static final String DOCUMENT_ROOT = "xmlDocRoot";
 
     private static Gson GSON = new Gson();
@@ -18,6 +21,7 @@ public class EsqlRenderer extends XmlSchemaBaseRenderer implements MappingFeatur
     private String inputRootVariable = "_inputRoot";
     private String inputRootReference;
 
+    private XmlSchemaBase base;
     private Map<String, WhileLoop> loopMap = new LinkedHashMap<>();
 
     public void setBrokerSchema(String brokerSchema) {
@@ -30,6 +34,8 @@ public class EsqlRenderer extends XmlSchemaBaseRenderer implements MappingFeatur
 
     @Override
     public String render(XmlSchemaBase base) {
+        this.base = base;
+
         StringBuilder builder = new StringBuilder();
         if (brokerSchema != null && brokerSchema.trim().length() > 0) {
             builder.append("BROKER SCHEMA ").append(brokerSchema.trim()).append("\n\n");
@@ -98,7 +104,173 @@ public class EsqlRenderer extends XmlSchemaBaseRenderer implements MappingFeatur
         StringBuilderUtils.println(builder);
     }
 
-    private void printNode(XmlSchemaBase.MappingNode e, StringBuilder builder) {
+    private void printNode(XmlSchemaBase.MappingNode node, StringBuilder builder) {
+        if (XmlSchemaBase.NodeType.Folder.equals(node.getNodeType())) {
+            if (node.getAnnotation(MAPPED) == null) {
+                // do nothing:
+
+            } else if (node.getAnnotation(MAPPINGS) != null) {
+                printConstruction(node, builder);
+
+            } else if (node.getAnnotation(LOOP) != null) {
+                printLoop(node, builder);
+
+            } else {
+                printSimpleFolder(node, builder);
+            }
+        } else {
+            printLeaf(node, builder);
+        }
+    }
+
+    private void printConstruction(XmlSchemaBase.MappingNode node, StringBuilder builder) {
+        String path = node.getPath();
+        StringBuilderUtils.println("-- " + path, builder, node.getLevel());
+        StringBuilderUtils.println("DECLARE " + node.getAlias() + " REFERENCE TO " + node.getParent().getAlias() + ";", builder, node.getLevel());
+        StringBuilderUtils.println(builder);
+
+        Construction[] constructions = node.getAnnotation(MAPPINGS, Construction[].class);
+        for (Construction construction : constructions) {
+            StringBuilderUtils.println("-- CONSTRUCT FROM " + construction.from + " TO " + node.getPath(), builder, node.getLevel());
+            if (construction.condition != null) {
+                StringBuilderUtils.println("IF " + construction.condition + " THEN", builder, node.getLevel());
+                StringBuilderUtils.println(builder);
+            }
+
+            StringBuilderUtils.println("CREATE LASTCHILD OF " + node.getParent().getAlias() + " AS " + node.getAlias() + " TYPE XMLNSC.Folder NAME '" + getFullName(node) + "';"
+                    , builder, node.getLevel());
+            StringBuilderUtils.println(builder);
+
+            JsonObject jsonObject = construction.assignments;
+            jsonObject.entrySet().forEach(e -> {
+                String propName = e.getKey();
+                JsonElement propValue = e.getValue();
+                printJsonElement(propName, propValue, node, builder);
+
+            });
+
+            if (construction.condition != null) {
+                StringBuilderUtils.println("END IF;", builder, node.getLevel());
+            }
+
+            StringBuilderUtils.println(builder);
+        }
+
+    }
+
+    private void printJsonElement(String name, JsonElement jsonElement, XmlSchemaBase.MappingNode node, StringBuilder builder) {
+        String path = node.getPath() + "/" + name;
+        XmlSchemaBase.MappingNode child = base.get(path);
+        if (child == null) {
+            System.out.println("============= " + path);
+        }
+
+        if (jsonElement.isJsonPrimitive()) {
+            String assignment = jsonElement.getAsString().replace(INPUT_ROOT, inputRootVariable + ".");
+            StringBuilderUtils.println("-- " + path, builder, child.getLevel());
+            if (!name.startsWith("@")) {
+                // Field:
+                StringBuilderUtils.println("SET " + node.getAlias() + ".(XMLNSC.Field)" + getFullName(child) + " = " + assignment + ";", builder, child.getLevel());
+
+            } else {
+                // Attribute:
+                StringBuilderUtils.println("SET " + node.getAlias() + ".(XMLNSC.Attribute)" + getFullName(child) + " = " + assignment + ";", builder, child.getLevel());
+
+            }
+
+            StringBuilderUtils.println(builder);
+
+        } else if (jsonElement.isJsonObject()) {
+
+            JsonObject sub = jsonElement.getAsJsonObject();
+            StringBuilderUtils.println("-- " + path, builder, child.getLevel());
+            StringBuilderUtils.println("DECLARE " + child.getAlias() + " REFERENCE TO " + node.getAlias() + ";", builder, child.getLevel());
+            StringBuilderUtils.println("CREATE LASTCHILD OF " + node.getAlias() + " AS " + child.getAlias() + " TYPE XMLNSC.Folder NAME '" + getFullName(child) + "';"
+                    , builder, child.getLevel());
+            StringBuilderUtils.println(builder);
+
+            sub.entrySet().forEach(e -> {
+                printJsonElement(e.getKey(), e.getValue(), child, builder);
+            });
+        }
+
+    }
+
+    private void printLoop(XmlSchemaBase.MappingNode e, StringBuilder builder) {
+        JsonArray loops = e.getAnnotation("loop", JsonArray.class);
+        loops.forEach(l -> {
+            WhileLoop wl = GSON.fromJson(l, WhileLoop.class);
+            wl.parent = findParent(wl.sourcePath);
+            loopMap.put(wl.sourcePath, wl);
+
+            StringBuilderUtils.println("-- LOOP FROM " + wl.sourcePath + " TO " + e.getPath() + ":", builder, e.getLevel());
+            String assignment = getAssignment(wl, inputRootVariable);
+            StringBuilderUtils.println("DECLARE " + wl.variable + " REFERENCE TO " + assignment + ";", builder, e.getLevel());
+
+            StringBuilderUtils.println(wl.name + " : WHILE LASTMOVE(" + wl.variable + ") DO", builder, e.getLevel());
+            StringBuilderUtils.println(builder);
+
+            if (XmlSchemaBase.NodeType.Folder.equals(e.getNodeType())) {
+                if (e.getParent() != null) {
+                    StringBuilderUtils.println("DECLARE " + e.getAlias() + " REFERENCE TO " + e.getParent().getAlias() + ";", builder, e.getLevel() + 1);
+                    StringBuilderUtils.println("CREATE LASTCHILD OF " + e.getParent().getAlias() + " AS " + e.getAlias() + " TYPE XMLNSC.Folder NAME '" + getFullName(e) + "';"
+                            , builder, e.getLevel() + 1);
+                    StringBuilderUtils.println(builder);
+
+                }
+
+                e.getChildren().forEach(n -> {
+                    printNode(n, wl, builder);
+                });
+
+            } else if (XmlSchemaBase.NodeType.Field.equals(e.getNodeType())) {
+                StringBuilderUtils.println("SET " + e.getParent().getAlias() + ".(XMLNSC.Field)" + getFullName(e) + " = " + wl.variable + ";", builder, e.getLevel());
+            }
+
+            StringBuilderUtils.println("MOVE " + wl.variable + " NEXTSIBLING;", builder, e.getLevel());
+            StringBuilderUtils.println("END WHILE " + wl.name + ";", builder, e.getLevel());
+            StringBuilderUtils.println(builder);
+
+        });
+    }
+
+    private void printSimpleFolder(XmlSchemaBase.MappingNode e, StringBuilder builder) {
+        if (e.getParent() != null) {
+            StringBuilderUtils.println("-- " + e.getPath(), builder, e.getLevel());
+            StringBuilderUtils.println("DECLARE " + e.getAlias() + " REFERENCE TO " + e.getParent().getAlias() + ";", builder, e.getLevel());
+            StringBuilderUtils.println("CREATE LASTCHILD OF " + e.getParent().getAlias() + " AS " + e.getAlias() + " TYPE XMLNSC.Folder NAME '" + getFullName(e) + "';"
+                    , builder, e.getLevel());
+            StringBuilderUtils.println(builder);
+        }
+
+        e.getChildren().forEach(n -> {
+            printNode(n, builder);
+        });
+    }
+
+    private void printLeaf(XmlSchemaBase.MappingNode e, StringBuilder builder) {
+        Mapping mapping = e.getAnnotation(MAPPING, Mapping.class);
+        if (mapping != null) {
+            String assignment = getAssignment(mapping, inputRootVariable);
+            if (assignment != null) {
+                StringBuilderUtils.println("-- " + e.getPath(), builder, e.getLevel());
+                if (XmlSchemaBase.NodeType.Field.equals(e.getNodeType())) {
+                    // Field:
+                    StringBuilderUtils.println("SET " + e.getParent().getAlias() + ".(XMLNSC.Field)" + getFullName(e) + " = " + assignment + ";", builder, e.getLevel());
+
+                } else if (XmlSchemaBase.NodeType.Attribute.equals(e.getNodeType())) {
+                    // Attribute:
+                    StringBuilderUtils.println("SET " + e.getParent().getAlias() + ".(XMLNSC.Attribute)" + getFullName(e) + " = " + assignment + ";", builder, e.getLevel());
+
+                }
+
+                StringBuilderUtils.println(builder);
+            }
+        }
+
+    }
+
+    private void printNode2(XmlSchemaBase.MappingNode e, StringBuilder builder) {
         if (!mapped(e)) {
             return;
         }
@@ -150,7 +322,7 @@ public class EsqlRenderer extends XmlSchemaBaseRenderer implements MappingFeatur
             if (XmlSchemaBase.NodeType.Folder.equals(e.getNodeType())) {
                 // Folder:
                 if (e.getParent() != null) {
-                    StringBuilderUtils.println("--  " + e.getPath(), builder, e.getLevel());
+                    StringBuilderUtils.println("-- " + e.getPath(), builder, e.getLevel());
                     StringBuilderUtils.println("DECLARE " + e.getAlias() + " REFERENCE TO " + e.getParent().getAlias() + ";", builder, e.getLevel());
                     StringBuilderUtils.println("CREATE LASTCHILD OF " + e.getParent().getAlias() + " AS " + e.getAlias() + " TYPE XMLNSC.Folder NAME '" + getFullName(e) + "';"
                             , builder, e.getLevel());
@@ -164,7 +336,7 @@ public class EsqlRenderer extends XmlSchemaBaseRenderer implements MappingFeatur
             } else {
                 String assignment = getAssignment(mapping, inputRootVariable);
                 if (assignment != null) {
-                    StringBuilderUtils.println("--  " + e.getPath(), builder, e.getLevel());
+                    StringBuilderUtils.println("-- " + e.getPath(), builder, e.getLevel());
                     if (XmlSchemaBase.NodeType.Field.equals(e.getNodeType())) {
                         // Field:
                         StringBuilderUtils.println("SET " + e.getParent().getAlias() + ".(XMLNSC.Field)" + getFullName(e) + " = " + assignment + ";", builder, e.getLevel());
@@ -204,7 +376,7 @@ public class EsqlRenderer extends XmlSchemaBaseRenderer implements MappingFeatur
 
                 if (XmlSchemaBase.NodeType.Folder.equals(e.getNodeType())) {
                     if (e.getParent() != null) {
-                        StringBuilderUtils.println("--  " + e.getPath(), builder, e.getLevel() + 2);
+                        StringBuilderUtils.println("-- " + e.getPath(), builder, e.getLevel() + 2);
                         StringBuilderUtils.println("DECLARE " + e.getAlias() + " REFERENCE TO " + e.getParent().getAlias() + ";", builder, e.getLevel() + 2);
                         StringBuilderUtils.println("CREATE LASTCHILD OF " + e.getParent().getAlias() + " AS " + e.getAlias() + " TYPE XMLNSC.Folder NAME '" + getFullName(e) + "';"
                                 , builder, e.getLevel() + 2);
@@ -230,7 +402,7 @@ public class EsqlRenderer extends XmlSchemaBaseRenderer implements MappingFeatur
         } else {
             if (XmlSchemaBase.NodeType.Folder.equals(e.getNodeType())) {
                 if (e.getParent() != null) {
-                    StringBuilderUtils.println("--  " + e.getPath(), builder, e.getLevel() + depth);
+                    StringBuilderUtils.println("-- " + e.getPath(), builder, e.getLevel() + depth);
                     StringBuilderUtils.println("DECLARE " + e.getAlias() + " REFERENCE TO " + e.getParent().getAlias() + ";", builder, e.getLevel() + depth);
                     StringBuilderUtils.println("CREATE LASTCHILD OF " + e.getParent().getAlias() + " AS " + e.getAlias() + " TYPE XMLNSC.Folder NAME '" + getFullName(e) + "';"
                             , builder, e.getLevel() + depth);
@@ -245,7 +417,7 @@ public class EsqlRenderer extends XmlSchemaBaseRenderer implements MappingFeatur
             } else if (mapping != null) {
                 String assignment = getAssignment(mapping, parentLoop);
                 if (assignment != null) {
-                    StringBuilderUtils.println("--  " + e.getPath(), builder, e.getLevel() + depth);
+                    StringBuilderUtils.println("-- " + e.getPath(), builder, e.getLevel() + depth);
 
                     if (XmlSchemaBase.NodeType.Field.equals(e.getNodeType())) {
                         StringBuilderUtils.println("SET " + e.getParent().getAlias() + ".(XMLNSC.Field)" + getFullName(e) + " = " + assignment + ";", builder, e.getLevel() + depth);
@@ -281,7 +453,7 @@ public class EsqlRenderer extends XmlSchemaBaseRenderer implements MappingFeatur
 
     private String getFullName(XmlSchemaBase.MappingNode node) {
         String fullName = node.getName();
-        if (node.getNamespaceURI() != null && node.getNamespaceURI().trim().length() > 0) {
+        if (node.getNamespaceURI() != null && node.getNamespaceURI().equals(URI)) {
             fullName = "Abs:" + fullName;
         }
 

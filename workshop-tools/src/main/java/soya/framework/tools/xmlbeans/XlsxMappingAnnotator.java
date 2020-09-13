@@ -86,7 +86,11 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
 
                         MappingNode node = base.get(targetPath);
                         if (node != null) {
-                            node.annotate(MAPPING, mapping);
+                            if (node.getAnnotation(MAPPING) == null) {
+                                node.annotate(MAPPING, mapping);
+                                markParent(node);
+
+                            }
                         } else {
                             base.annotateAsArrayElement("UNKNOWN_TARGET_PATH", targetPath);
                         }
@@ -125,6 +129,14 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
             }
         } catch (IOException | InvalidFormatException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void markParent(MappingNode node) {
+        MappingNode parent = node.getParent();
+        while (parent != null) {
+            parent.annotate(MAPPED, true);
+            parent = parent.getParent();
         }
     }
 

@@ -13,6 +13,10 @@ public interface IntegrationApplicationFeature {
     class Application {
         protected String boName = "{{BO_NAME}}";
         protected String applicationName = "{{APPLICATION_NAME}}";
+        protected String sourceSystem = "{{SOURCE_SYSTEM}}";
+        protected String inputType = "{{INPUT_TYPE}}";
+        protected String inputEndpoint = "{{INPUT_ENDPOINT}}";
+        protected String outputEndpoint = "{{OUTPUT_ENDPOINT}}";
         protected String brokerSchema = "{{BROKER_SCHEMA}}";
         protected String flowName = "{{FLOW_NAME}}";
         
@@ -27,7 +31,7 @@ public interface IntegrationApplicationFeature {
     }
     
     class KafkaConsumer {
-        protected String topicName = "{{KAFKA_CONSUMER_TOPIC}}";
+        protected String topicName = "{{INPUT_ENDPOINT}}";
         protected String bootstrapServers 
                 = "pgv013e8b.safeway.com:9093,pgv013e8d.safeway.com:9093,pgv013e8e.safeway.com:9093,pgv013e8f.safeway.com:9093,pgv013e90.safeway.com:9093,pgv013e91.safeway.com:9093";
         protected String groupId = "delivery_slot_consumer_group";
@@ -46,7 +50,7 @@ public interface IntegrationApplicationFeature {
     }
 
     class KafkaProducer {
-        protected String topicName = "{{KAFKA_PRODUCER_TOPIC}}";
+        protected String topicName = "{{INPUT_ENDPOINT}}";
         protected String bootstrapServers 
                 = "pgv013e8b.safeway.com:9093,pgv013e8d.safeway.com:9093,pgv013e8e.safeway.com:9093,pgv013e8f.safeway.com:9093,pgv013e90.safeway.com:9093,pgv013e91.safeway.com:9093";
         protected String clientId = "delivery_slot_producer";
@@ -65,7 +69,7 @@ public interface IntegrationApplicationFeature {
         protected String COMPONENT_DESC = "{{APPLICATION_NAME}}";
         protected String COMPONENT_TYPE;
         protected String COMPONENT_INPUT_TYPE = "KAFKA";
-        protected String SOURCE_SYSTEM_NAME = "OSMS";
+        protected String SOURCE_SYSTEM_NAME = "{{SOURCE_SYSTEM}}";
         protected String AUDIT_REQD;
         protected String AUDIT_SRC_UNQ_ID;
         protected String PATH_SRC_UNQ_ID = "InputRoot.JSON.Data.slotId";
@@ -75,7 +79,7 @@ public interface IntegrationApplicationFeature {
         protected String VALIDATION_REQD_TARGET;
         protected String STORE_SRC_MSG;
         protected String STORE_TRGT_MSG;
-        protected String COMPONENT_INPUT_NAME = "{{KAFKA_CONSUMER_TOPIC}}";
+        protected String COMPONENT_INPUT_NAME = "{{INPUT_ENDPOINT}}";
         protected String queueName = "ESEDPR.AUDIT.MSG";
         protected String AUDIT_MDL_UNQ_ID;
         protected String PATH_MDL_UNQ_ID = "InputRoot.JSON.Data.slotId";
@@ -93,7 +97,7 @@ public interface IntegrationApplicationFeature {
         protected String APPLICATIONNAME = "{{APPLICATION_NAME}}";
         protected String BONAME = "{{BO_NAME}}";
         protected String INPUTTYPE = "KAFKA";
-        protected String INPUTNAME = "{{KAFKA_CONSUMER_TOPIC}}";
+        protected String INPUTNAME = "{{INPUT_ENDPOINT}}";
         protected String REPLAYRULE = "Y";
         protected int MAXREPLAYCOUNT = 3;
         protected String COMPONENTNAME = "{{APPLICATION_NAME}}";

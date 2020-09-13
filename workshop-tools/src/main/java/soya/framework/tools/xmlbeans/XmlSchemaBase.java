@@ -154,15 +154,15 @@ public class XmlSchemaBase extends AnnotatableSupport {
                 // Cardinality:
                 if (parent != null) {
                     SchemaProperty[] properties = parent.schemaType.getElementProperties();
-                    for(SchemaProperty property: properties) {
-                        if(property.getName().getLocalPart().equals(node.name)) {
+                    for (SchemaProperty property : properties) {
+                        if (property.getName().getLocalPart().equals(node.name)) {
                             BigInteger min = property.getMinOccurs();
                             BigInteger max = property.getMaxOccurs();
-                            if(min == null) {
+                            if (min == null) {
                                 min = BigInteger.ZERO;
                             }
                             StringBuilder builder = new StringBuilder(min.toString()).append("-");
-                            if(max == null) {
+                            if (max == null) {
                                 builder.append("n");
                             } else {
                                 builder.append(max.toString());
@@ -1268,6 +1268,16 @@ public class XmlSchemaBase extends AnnotatableSupport {
 
         public List<MappingNode> getChildren() {
             return children;
+        }
+
+        public MappingNode getChild(String name) {
+            for (MappingNode e : children) {
+                if (name.equals(e.name)) {
+                    return e;
+                }
+            }
+
+            return null;
         }
     }
 

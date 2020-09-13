@@ -25,7 +25,6 @@ public class DecimalFunctionAnnotator implements Buffalo.Annotator<XmlSchemaBase
                     String totalDigits = restriction.get("totalDigits");
                     String fractionDigits = restriction.get("fractionDigits");
 
-                    System.out.println("==================== " + e.getKey());
                     if (totalDigits != null && fractionDigits != null) {
                         StringBuilder builder = new StringBuilder();
 
