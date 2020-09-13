@@ -5,6 +5,9 @@
     application:
       boName: DeliverySlot
       applicationName: ESED_DELIVERYSLOT_IH_Publisher
+      sourceSystem: OSMS;
+      inputEndpoint: OSMS_Slots_C02.slots.slots
+      outputEndpoint: ESED_C01_DeliverySlot
       brokerSchema: com.abs.osms.deliveryslot
       flowName: ESED_DELIVERYSLOT_IH_Publisher
 
@@ -13,6 +16,9 @@
 
     kafkaProducer:
       topicName: ESED_C01_DeliverySlot
+
+    properties:
+      ESED_DELIVERYSLOT_OSMS_CMM.SYSTEM_ENVIRONMENT_CODE: PROD
 
 - soya.framework.tools.xmlbeans.XlsxMappingAnnotator:
     url: D:/Workshop/Repository/BusinessObjects/DeliverySlot/requirement/DeliverySlot_OSMS_TO_EDIS_Canonical_Mapping_v1.1.xlsx
@@ -41,11 +47,42 @@
 
 - soya.framework.tools.xmlbeans.DecimalFunctionAnnotator:
 
+- soya.framework.tools.xmlbeans.NodeConstructionAnnotator:
+    mappings:
+      GetDeliverySlot/DeliverySlotData/DeliveryChargeType:
+        - from: $.b2bCharge
+          condition: "_inputRootNode.b2bCharge.userType IS NOT NULL"
+          assignments:
+            CustomerType:
+              Code: $.b2bCharge.userType
+            DeliveryChargeAmt: CAST($.b2bCharge.deliveryCharge AS DECIMAL(6, 2))
+            DiscountedDeliveryChargeAmt: CAST($.b2bCharge.reducedDeliveryCharge AS DECIMAL(6, 2))
+            ItemDeliveryChargeAmt: CAST($.b2bCharge.deliveryChargeUPC AS DECIMAL(6, 2))
+            ItemDiscountedDeliveryChargeAmt: CAST($.b2bCharge.reducedDeliveryChargeUPC AS DECIMAL(6, 2))
+            BasketSizeCnt: CAST($.b2bCharge.minimumBasketSize AS DECIMAL(10, 4))
+            AlertBasketSizeCnt: CAST($.b2bCharge.alertBasketSize AS DECIMAL(10, 4))
+
+        - from: $.b2cCharge
+          condition: "_inputRootNode.b2cCharge.userType IS NOT NULL"
+          assignments:
+            CustomerType:
+              Code: $.b2cCharge.userType
+            DeliveryChargeAmt: CAST($.b2cCharge.deliveryCharge AS DECIMAL(6, 2))
+            DiscountedDeliveryChargeAmt: CAST($.b2cCharge.reducedDeliveryCharge AS DECIMAL(6, 2))
+            ItemDeliveryChargeAmt: CAST($.b2cCharge.deliveryChargeUPC AS DECIMAL(6, 2))
+            ItemDiscountedDeliveryChargeAmt: CAST($.b2cCharge.reducedDeliveryChargeUPC AS DECIMAL(6, 2))
+            BasketSizeCnt: CAST($.b2cCharge.minimumBasketSize AS DECIMAL(10, 4))
+            AlertBasketSizeCnt: CAST($.b2cCharge.alertBasketSize AS DECIMAL(10, 4))
+
+
 - soya.framework.tools.xmlbeans.XPathRenderer:
 - soya.framework.tools.xmlbeans.JsonMappingRenderer:
 - soya.framework.tools.xmlbeans.AssignmentRenderer:
 - soya.framework.tools.xmlbeans.LoopAnalyzeRenderer:
 - soya.framework.tools.xmlbeans.SampleXmlRenderer:
+- soya.framework.tools.xmlbeans.XmlMessageRenderer:
+    inputMessageFile: D:/Workshop/Repository/BusinessObjects/DeliverySlot/requirement/input.json
+
 - soya.framework.tools.xmlbeans.AvroSchemaRenderer:
 
 - soya.framework.tools.xmlbeans.EsqlRenderer:
@@ -55,3 +92,12 @@
     inputRootReference: InputRoot.JSON.Data
 
 - soya.framework.tools.xmlbeans.OverwritePropertiesRenderer:
+    name: DEVOverwriteProperties
+    properties:
+      ESED_DELIVERYSLOT_OSMS_CMM.SYSTEM_ENVIRONMENT_CODE: DEV
+
+
+- soya.framework.tools.xmlbeans.OverwritePropertiesRenderer:
+    name: QAOverwriteProperties
+    properties:
+      ESED_DELIVERYSLOT_OSMS_CMM.SYSTEM_ENVIRONMENT_CODE: QA

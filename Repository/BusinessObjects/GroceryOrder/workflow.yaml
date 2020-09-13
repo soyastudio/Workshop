@@ -1,0 +1,65 @@
+- soya.framework.tools.xmlbeans.XmlSchemaBaseLoader:
+    source: "D:/Workshop/Repository/CMM/BOD/GetGroceryOrder.xsd"
+
+- soya.framework.tools.xmlbeans.XlsxMappingAnnotator:
+    url: "D:/Workshop/Repository/BusinessObjects/GroceryOrder/requirement/GroceryOrder_ERUMS_to_Canonical_Mapping_v1.3.xlsx"
+    sheet: "Mapping Source to Canonical"
+
+- soya.framework.tools.xmlbeans.AssignmentAnnotator:
+    globalVariables:
+      - name: SYSTEM_ENVIRONMENT_CODE
+        type: CHARACTER
+        defaultValue: "'PROD'"
+    loops:
+      - sourcePath: customer/contact[*]
+        targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact
+
+      - sourcePath: customer/email[*]
+        targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact
+
+      - sourcePath: customer/address[*]
+        targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact
+
+      - sourcePath: customer/preference/optIn[*]
+        targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerPreference
+
+      - sourcePath: paymentDetails[*]
+        targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender
+
+      - sourcePath: tender[*]
+        targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Refund
+
+      - sourcePath: subOrders[*]
+        targetPath: GetGroceryOrder/GroceryOrderData/GrocerySubOrder
+
+      - sourcePath: subOrders[*]/orderLines[*]
+        targetPath: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail
+
+      - sourcePath: subOrders[*]/promoCodes[*]
+        targetPath: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail
+
+      - sourcePath: subOrders[*]/refundedOrderLines[*]
+        targetPath: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem
+
+      - sourcePath: subOrders[*]/charges[*]
+        targetPath: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ChargeInfo
+
+    assignments:
+      - GetGroceryOrder/DocumentData/Document/@SystemEnvironmentCd: SYSTEM_ENVIRONMENT_CODE
+      - GetGroceryOrder/DocumentData/Document/DocumentID: "'0'"
+      - GetGroceryOrder/DocumentData/Document/AlternateDocumentID: "'GroceryOrder_' || CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT 'YYYYMMddHHmmssSSSSSS')"
+      - GetGroceryOrder/DocumentData/Document/CreationDt: CURRENT_TIMESTAMP
+
+- soya.framework.tools.xmlbeans.DecimalFunctionAnnotator:
+
+- soya.framework.tools.xmlbeans.SampleXmlRenderer:
+- soya.framework.tools.xmlbeans.XPathRenderer:
+- soya.framework.tools.xmlbeans.JsonMappingRenderer:
+- soya.framework.tools.xmlbeans.LoopAnalyzeRenderer:
+- soya.framework.tools.xmlbeans.AvroSchemaRenderer:
+
+- soya.framework.tools.xmlbeans.EsqlRenderer:
+    brokerSchema: com.abs.erums.groceryorder
+    moduleName: ESED_GroceryOrder_CMM_Transformer_Compute
+    inputRootVariable: _inputRootNode
+    inputRootReference: InputRoot.JSON.Data
