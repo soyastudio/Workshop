@@ -1,4 +1,5 @@
 # Design
+## Flow Chart
 ``` mermaid
 graph LR
   subgraph SRC [OSMS]
@@ -33,9 +34,6 @@ graph LR
             
 
 ```
-
-
-
 
 
 # Kafka Test
