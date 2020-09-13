@@ -15,7 +15,6 @@ graph LR
   end
 
     KOT --> AKT
-
     AKT --> END
 
   subgraph TGT [EDM]
