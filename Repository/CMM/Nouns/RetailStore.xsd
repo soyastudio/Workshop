@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://collab.safeway.com/it/architecture/AbsOmMaster" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.2  08/14/2020  Sai Nuthakki  Added Faciity online profile type-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:complexType name="RetailStoreControlType">
 		<xs:annotation>
@@ -98,7 +99,6 @@
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
-	<!-- 08/14/2020  Sai Nuthakki  Added Faciity online profile type-->
 	<xs:complexType name="RetailStore">
 		<xs:sequence>
 			<xs:element name="Corporation" type="Abs:CorporationType" minOccurs="0"/>
@@ -169,11 +169,12 @@
 					<xs:documentation>Indicates if the facility is enabled for eCom business operations.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="EcommerceEnabledDt" type="xs:date" minOccurs="0">
+			<xs:element name="EcommerceStartDt" type="xs:date" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Date on which the retail store started serving eComerce customers.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="EcommerceEndDt" type="xs:date" minOccurs="0"/>
 			<xs:element name="EcommerceStatus" type="StatusType" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>defines the status of facility Online business </xs:documentation>
@@ -223,12 +224,36 @@ Ex: 3PL enabled store, Premium store, ERUM store..etc</xs:documentation>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
+			<xs:element name="PickupAreaType" type="CodeWithDescription" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>type of  pickup points available in a facility.
+ex: Inside Locker,Outside Locker, Outside Kiosk.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="PickUpLocation" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Location details for customer order pickup.</xs:documentation>
 				</xs:annotation>
 				<xs:complexType>
-					<xs:sequence>
+					<xs:sequence maxOccurs="unbounded">
+						<xs:element name="PickupAreaTypeCd" minOccurs="0"/>
+						<xs:element name="PickupAreaId" type="xs:string" minOccurs="0"/>
+						<xs:element name="LocationPriorityNbr" type="xs:int" minOccurs="0"/>
+						<xs:element name="MachineId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PickupAreaEnabledInd" type="xs:boolean" minOccurs="0"/>
+						<xs:element name="PickupAreaNm" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
 						<xs:element name="AddressLineTxt" minOccurs="0">
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
@@ -245,12 +270,25 @@ Ex: 3PL enabled store, Premium store, ERUM store..etc</xs:documentation>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
-						<xs:element name="InstructionsTxt" minOccurs="0">
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="2000"/>
-								</xs:restriction>
-							</xs:simpleType>
+						<xs:element name="InstructionsType" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence maxOccurs="unbounded">
+									<xs:element name="InstructionTypeCd" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="30"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="InstructionsTxt" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="2000"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
 						</xs:element>
 					</xs:sequence>
 				</xs:complexType>
@@ -288,11 +326,29 @@ Ex: 3PL enabled store, Premium store, ERUM store..etc</xs:documentation>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
+						<xs:element name="ServiceFeeCategoryCd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
 						<xs:element name="ServiceFeeAmt" minOccurs="0">
 							<xs:simpleType>
 								<xs:restriction base="xs:decimal">
 									<xs:totalDigits value="6"/>
 									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ServiceFeeItemId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>item id for the service fee like upc or scan cd.
+ex: scan cd for bag fee.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
@@ -333,6 +389,28 @@ Ex: 3PL enabled store, Premium store, ERUM store..etc</xs:documentation>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
+			<xs:element name="SlotConfigurationType" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence maxOccurs="unbounded">
+						<xs:element name="SlotTypeCd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SlotForecastModelStoreId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SlotForecastLaunchDt" type="xs:date" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="OnlineProfileAuditData" type="RecordAuditData" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 </xs:schema>

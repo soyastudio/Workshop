@@ -40,6 +40,27 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
+			<xs:element name="AddressLine3txt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AddressLine4txt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AddressLine5txt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element name="CityNm" nillable="true" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
@@ -194,6 +215,8 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
+			<xs:element name="EffectiveStartDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="EffectiveEndDt" type="xs:date" minOccurs="0"/>
 		</xs:sequence>
 		<xs:attribute name="TypeCd" type="xs:string" default=""/>
 	</xs:complexType>
@@ -1739,13 +1762,7 @@ It must be greater then the cash discount days.
 PersonABIEType is logically derived from UN/CEFACT TBG17 ABIE PersonType as defined in the Reusable Aggregate Business Information Entity (RUABIE) XML Schema file.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="Id" minOccurs="0">
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="50"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
+			<xs:element name="Id" type="IDType" minOccurs="0"/>
 			<xs:element name="AlternateId" type="AlternateId" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element ref="PersonNm" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
@@ -1870,6 +1887,13 @@ Examples are - Preferred Name, Short Name etc.</xs:documentation>
 			</xs:element>
 			<xs:element name="ExtensionNbr" type="xs:string" minOccurs="0"/>
 			<xs:element name="CountryCd" type="xs:integer" minOccurs="0"/>
+			<xs:element name="CountryCdTxt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element name="PhonePurposes" minOccurs="0">
 				<xs:complexType>
 					<xs:sequence minOccurs="0">
@@ -2287,13 +2311,7 @@ Examples are - Preferred Name, Short Name etc.</xs:documentation>
 			<xs:documentation>Common type for specifying Supervisor details including their ID, and Job code.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="Id" minOccurs="0">
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="50"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
+			<xs:element name="Id" type="IDType" minOccurs="0"/>
 			<xs:element name="AlternateId" type="AlternateId" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element ref="PersonNm" minOccurs="0"/>
 			<xs:element ref="JobTitle" minOccurs="0"/>

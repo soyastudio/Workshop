@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.5 Patrick Oliver 09/09/20: Added AccountClassId, AccountTypeCd;, CorporationId, DivisionAccountUnitCd, VendorSubAccountId-->
 	<!--V1.4 Patrick Oliver 08/19/20: Added CustomerParty-->
 	<!--V1.3 Patrick Oliver 07/15/20 - Added complex type CustomerParty complex type to BOD for outbound interfaces for Uware-->
 	<!--V1.2 Patrick Oliver  07/01/20- Added CheckData complex type to BOD which will be used for the 'Bank lockbox interface'-->
@@ -19,7 +20,25 @@
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element ref="CompanyId"/>
+			<xs:element ref="CorporationId" minOccurs="0"/>
+			<xs:element name="DivisionAccountUnitCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Division ID in the accounting system.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element ref="VendorId"/>
+			<xs:element name="VendorSubAccountId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element ref="InvoiceNbr"/>
 			<xs:element name="InvoiceSuffixNbr" minOccurs="0">
 				<xs:annotation>
@@ -533,6 +552,16 @@ combination. Valid values are: 01 = Standard Check.
 						<xs:element name="CustomerFacilityId" type="xs:string" minOccurs="0"/>
 						<xs:element name="CustomerFacilityNm" type="xs:string" minOccurs="0"/>
 						<xs:element name="CustomerDUNSNbr" type="xs:string" minOccurs="0"/>
+						<xs:element name="AccountClassId" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Customer class indentifier.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="AccountTypeCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates the type of customer account</xs:documentation>
+							</xs:annotation>
+						</xs:element>
 						<xs:element name="CustomerContact" minOccurs="0" maxOccurs="2">
 							<xs:complexType>
 								<xs:sequence>

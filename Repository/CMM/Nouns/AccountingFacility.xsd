@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2014 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Safeway, Inc.) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://collab.safeway.com/it/architecture/AbsOmMaster" xmlns:ns2="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.1 Patrick Oliver 09/08/2020: Added GLCombinationId, Ledger, ActiveLedgerDt, InactiveLedgerDt, Entity, LineOfBusiness, Site, CostCenter, ProductTypeGroup, CustomerGroup, CashflowMovement, InterCompanyCd, RealEstateId, AccountUnitTypeCd-->
 	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:complexType name="AccountingFacility">
 		<xs:annotation>
@@ -62,6 +63,57 @@
 					<xs:documentation>Defines various sections within a department of  a retail store facility.A store facility is physically divided into different departments and sections.Ex:Grocery department can have sections like Grocery main meal,Snacks,Family care grocery,Home care grocery,Soft Drinks,Candy,Meals ingredients.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="GLCombinationId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Concatination  of Chart of Accounts segment Fields</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Ledger" type="Abs:CodeWithDescription" minOccurs="0"/>
+			<xs:element name="ActiveLedgerDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="InactiveLedgerDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="Entity" type="Abs:CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Companies with EIN's allows for flexibility of hundreds if not thousands of legal entities and room for special purposes.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LineOfBusiness" type="Abs:CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Represents the type of business based on the organizational structure, revenue channels and manufacturing. Used for high level management view of the organization that changes frequently</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Site" type="Abs:CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Represents physical space, captures a physical space at a facility or location. Allows for Hierarchy structure to capture multiple sites that roll up to facilities</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CostCenter" type="Abs:CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A function that is responsible for the costs that it incurs related to its normal business operations</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ProductTypeGroup" type="Abs:CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Groupings of product types is based on a consolidated version of the organization's products that is needed for management reporting within distribution centers and manufacturing plants.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CustomerGroup" type="Abs:CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Groupings of customers is based on a consolidated version of the organization's customers that is needed for management reporting.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CashflowMovement" type="Abs:CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Cash flows is based on the organization's cash flow and rollforward classifications with linkages to select balance sheet account activity.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InterCompanyCd" type="Abs:CodeWithDescription" minOccurs="0"/>
+			<xs:element name="RealEstateId" type="Abs:CodeWithDescription" minOccurs="0"/>
+			<xs:element name="AccountUnitTypeCd" type="Abs:CodeWithDescription" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 </xs:schema>

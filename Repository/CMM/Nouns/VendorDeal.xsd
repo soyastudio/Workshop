@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
-	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--09/08/20: Patrick Oliver - Updated DealtypeCd to VedorDealSourceType at topmost level for source systems-->
 	<!--6/11/20 Patrick updated VendorAllowances in detail to unbounded in order to handle mulitple allowance types from WMALWCOM-->
 	<!--6/1/20: Patrick - Unbounded DealLocationTypeCd per CABS request as can have mulitple values per division -->
 	<!--4/16/20: Patrick added LoadTs and PerformanceCd to DealHeader-->
 	<!--5/28/20: Patrick (By Alex Nunes)  Unbound ROG and DC. Also VendorLeadInd requested by CABS -->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:element name="VendorDeal">
 		<xs:annotation>
 			<xs:documentation>Vendor Deals offered thru eDeals/NOPA</xs:documentation>
@@ -118,7 +119,7 @@ the same cost. </xs:documentation>
 	</xs:complexType>
 	<xs:complexType name="VendorDealType">
 		<xs:sequence>
-			<xs:element name="DealTypeCd" type="CodeWithDescription" minOccurs="0">
+			<xs:element name="VedorDealSourceType" type="CodeWithDescription" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Indicates if the deal is an Apex deal or WIMS deal</xs:documentation>
 				</xs:annotation>

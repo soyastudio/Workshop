@@ -2826,10 +2826,16 @@ on-going legal entities.                                  </xs:documentation>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="SurplusMinimumValueAmt" type="xs:short" nillable="true" minOccurs="0">
+			<xs:element name="SurplusMinimumValueAmt" nillable="true" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>A dollar value. Items with surplus value less than this Amt will not be shown.</xs:documentation>
 				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="18"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
 			</xs:element>
 			<xs:element name="SmoothingFactor" nillable="true" minOccurs="0">
 				<xs:annotation>

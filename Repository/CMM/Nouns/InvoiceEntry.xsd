@@ -8,6 +8,8 @@
 -->
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.5 Patrick Oliver 09/10/20: : InvoiceEntry Header: Changed Status to InvoiceEntryStatus; added InvoiceEntryAllowances, MinBillStartDt, MaxBillStartDt, LeadCorporateItemCd,  LeadItemDescription, RecordAuditData, OverToleranceStatusCd, OverToleranceInd. FlatCd InvoiceDetail: added CorporateItemCd, UPCID, ItemPackDetails. Added new segment InvoiceEntryDetailItem which will be used to roll up item totals for CABS invoice processing and contains attributes CIC, UPC, Whse, & total amounts.-->
+	<!--V1.4 Patrick Oliver 09/09/20: Updated Customer to include AccountClassId and AccountTypeCd-->
 	<!--V1.3 Patrick Oliver 8/13/20 - Updated RecordId to string(10)-->
 	<!--V1.2 Patrick Oliver 7/22/20 - Updated VendorId to string(20)-->
 	<!--V1.1 Patrick Oliver 5/22/20 - Added FileSequenceNbr to header-->
@@ -21,6 +23,7 @@
 		<xs:sequence>
 			<xs:element name="InvoiceEntryHeader" type="InvoiceEntryHeaderType"/>
 			<xs:element name="InvoiceEntryDetail" type="InvoiceEntryDetailType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="InvoiceEntryDetailItem" type="InvoiceEntryDetailItemType" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="InvoiceEntryDetailType">
@@ -62,6 +65,12 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
+			<xs:element ref="CorporateItemCd" minOccurs="0"/>
+			<xs:element name="UPCID" type="xs:string" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>upc identifier for the item, could be a case upc or retial scan upc.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="CustomerItemID" type="xs:string" default="" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>identifier provided by the customer. </xs:documentation>
@@ -83,6 +92,41 @@
 				<xs:annotation>
 					<xs:documentation>The quantity of units for the  distribution if units are being used for a transaction.             </xs:documentation>
 				</xs:annotation>
+			</xs:element>
+			<xs:element name="ItemPackDetails" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="PackQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="5"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PackSize" type="xs:string" minOccurs="0"/>
+						<xs:element name="SizeUOM" type="xs:string" default="" minOccurs="0"/>
+						<xs:element name="WeightQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="9"/>
+									<xs:fractionDigits value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="WeightUOM" type="xs:string" default="" minOccurs="0"/>
+						<xs:element name="VolumeQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="9"/>
+									<xs:fractionDigits value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="VolumeUOM" type="xs:string" default="" minOccurs="0"/>
+						<xs:element name="Color" type="xs:string" default="" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
 			</xs:element>
 			<xs:element name="OrderQty" type="xs:decimal" default="0" minOccurs="0">
 				<xs:annotation>
@@ -282,6 +326,16 @@ to the BR system.</xs:documentation>
 								<xs:documentation>This will be used to store customer bill to numbers</xs:documentation>
 							</xs:annotation>
 						</xs:element>
+						<xs:element name="AccountTypeCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates the type of customer account</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="AccountClassId" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Customer class indentifier.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
@@ -361,7 +415,7 @@ to the BR system.</xs:documentation>
 					<xs:documentation>It can have information about Vendor, Vendor Sub Account or Warehouse Vendor Sub account.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="InvoiceStatus" type="StatusType" minOccurs="0">
+			<xs:element name="InvoiceEntryStatus" type="StatusType" minOccurs="0" maxOccurs="5">
 				<xs:annotation>
 					<xs:documentation>Required. Status indicating where this record is in the processing flow. Valid                        values are: 1 = Open,  7 = Fully applied, 8 = Closed,  9 = Historical</xs:documentation>
 				</xs:annotation>
@@ -479,6 +533,11 @@ to the BR system.</xs:documentation>
 					<xs:documentation>All the charges applied at th eheader level.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="InvoiceEntryAllowances" type="AllowancesType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Identifies the discount or allowance that the Customer is to receive off of the TotalAmount owed as a result of the associated document or sub-portion of a document.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="RecalcCurrencyInd" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Used for non-base currency invoices to indicate whether the invoice will be revalued when it is scheduled for payment to account for currency exchange rate fluctuations. Valid values are: N = No.  Y = Yes.</xs:documentation>
@@ -558,6 +617,196 @@ invoice, debit memo or credit memo.</xs:documentation>
 					<xs:documentation>Field contains the sequence number for each file processed.  This number increments by 1 for every file processed in the interface.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="MinBillStartDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Represents the min bill_start_date of the items </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MaxBillStartDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Represents the max bill_end_date of the items </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LeadCorporateItemCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Lead Corporate Item Code</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LeadItemDescription" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Lead Corp Item Code Description</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OverToleranceStatusCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A - Approve, R - Reject, P - Pending, Null - No OT required. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OverToleranceInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>OverTolerance Indicator - True or False</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ManualIncomeInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Whether the AMT has been manually entered or not. For PAYBACKs, it should always be N.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FlatCd" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A system-generated unique identifier that is used instead of the natural key.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RecordAuditData" type="InvoiceEntryRecordAuditData" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InvoiceEntryDetailItemType">
+		<xs:annotation>
+			<xs:documentation>Contains detail line item/section total for invoice needed by CABS</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporateItemCd" minOccurs="0"/>
+			<xs:element name="ManufacturerItemID" type="xs:string" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>identifier provided by the manufacturer</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ItemDescription" type="xs:string" default="" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>This is the description of a warehoused item.  It contains the brand and description of the item.
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UPCID" type="xs:string" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>upc identifier for the item, could be a case upc or retial scan upc.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UPCType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Shows which of the Consumer, Multipack, or Case UPCs is used to make up the right 5 digitis of the UPC. One of these must be chosen.Called UNIT_TYPE in legacy systems.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ItemPackDetails" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="PackQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="5"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ShippedPackQty" type="xs:decimal" default="0" minOccurs="0"/>
+						<xs:element name="PackSize" type="xs:string" minOccurs="0"/>
+						<xs:element name="SizeUOM" type="xs:string" default="" minOccurs="0"/>
+						<xs:element name="WeightQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="9"/>
+									<xs:fractionDigits value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="WeightUOM" type="xs:string" default="" minOccurs="0"/>
+						<xs:element name="VolumeQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="9"/>
+									<xs:fractionDigits value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="VolumeUOM" type="xs:string" default="" minOccurs="0"/>
+						<xs:element name="Color" type="xs:string" default="" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="InvoiceQty" type="xs:decimal" default="0" minOccurs="0"/>
+			<xs:element name="BillStartDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="BillEndDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="DetailAllowances" type="AllowancesType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Allowances or discounts recorded at invoice detail level.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="WarehouseId" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InvoiceEntryRecordAuditData">
+		<xs:annotation>
+			<xs:documentation>Defines create time, last update time and users performed those DB actions on Source data.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="CreateDtTm" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time when the record was created in the source system.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CreateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>the record create timestamp in the source system.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ExpiryTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Delete timestamp of a record.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CreateUserId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="UpdateDtTm" type="DateTimeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time when the record was last updated in the source system.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UpdateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Last updated timestamp of the source sytem record.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UpdateUserId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ApproveUserId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute ref="typeCode"/>
 	</xs:complexType>
 </xs:schema>
