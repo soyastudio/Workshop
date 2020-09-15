@@ -11,6 +11,7 @@ public interface MappingFeature {
     String MAPPING = "mapping";
     String MAPPINGS = "mappings";
     String LOOP = "loop";
+    String BLOCK = "block";
 
     class WhileLoop {
         protected String name;
@@ -54,18 +55,8 @@ public interface MappingFeature {
         protected JsonObject assignments;
     }
 
-    class Group {
-        String sourcePath;
-        String name;
-        String variable;
-
+    class Block {
 
     }
-
-    class Assignment {
-        String targetPath;
-
-    }
-
 
 }
