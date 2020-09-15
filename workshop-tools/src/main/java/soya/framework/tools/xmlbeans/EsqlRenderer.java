@@ -109,6 +109,9 @@ public class EsqlRenderer extends XmlSchemaBaseRenderer implements MappingFeatur
             if (node.getAnnotation(MAPPED) == null) {
                 // do nothing:
 
+            } else if (node.getAnnotation(BLOCK) != null) {
+                printBlock(node, builder);
+
             } else if (node.getAnnotation(MAPPINGS) != null) {
                 printConstruction(node, builder);
 
@@ -121,6 +124,115 @@ public class EsqlRenderer extends XmlSchemaBaseRenderer implements MappingFeatur
         } else {
             printLeaf(node, builder);
         }
+    }
+
+    private void printBlock(XmlSchemaBase.MappingNode node, StringBuilder builder) {
+        String path = node.getPath();
+        StringBuilderUtils.println("-- " + path, builder, node.getLevel());
+        StringBuilderUtils.println("DECLARE " + node.getAlias() + " REFERENCE TO " + node.getParent().getAlias() + ";", builder, node.getLevel());
+        StringBuilderUtils.println("CREATE LASTCHILD OF " + node.getParent().getAlias() + " AS " + node.getAlias() + " TYPE XMLNSC.Folder NAME '" + getFullName(node) + "';"
+                , builder, node.getLevel());
+        StringBuilderUtils.println(builder);
+
+        JsonObject jsonObject = node.getAnnotation(BLOCK, JsonObject.class);
+        jsonObject.entrySet().forEach(e -> {
+            String key = e.getKey();
+            JsonElement jsonElement = e.getValue();
+            if (!key.startsWith("_")) {
+                String childPath = path + "/" + key;
+                XmlSchemaBase.MappingNode child = base.get(childPath);
+                if (jsonElement.isJsonPrimitive()) {
+                    String assignment = jsonElement.getAsJsonPrimitive().getAsString();
+
+                    if (assignment.startsWith(Function.CHAIN)) {
+
+                    } else {
+                        assignment = assignment.replace("$", inputRootVariable);
+                        StringBuilderUtils.println("-- " + child.getPath(), builder, child.getLevel());
+                        if (!key.startsWith("@")) {
+                            // Field:
+                            StringBuilderUtils.println("SET " + node.getAlias() + ".(XMLNSC.Field)" + getFullName(child) + " = " + assignment + ";", builder, child.getLevel());
+                        } else {
+                            // Attribute:
+                            StringBuilderUtils.println("SET " + node.getAlias() + ".(XMLNSC.Attribute)" + getFullName(child) + " = " + assignment + ";", builder, child.getLevel());
+                        }
+                    }
+                    StringBuilderUtils.println(builder);
+
+                } else if (jsonElement.isJsonObject()) {
+
+
+                }
+
+            } else if (key.equals("_while")) {
+                JsonObject whileLoop = jsonElement.getAsJsonObject();
+                WhileLoop wl = GSON.fromJson(jsonElement, WhileLoop.class);
+                JsonObject subBlock = whileLoop.get(BLOCK).getAsJsonObject();
+
+                StringBuilderUtils.println("-- BUILD FROM " + wl.sourcePath + " TO " + node.getPath() + ":", builder, node.getLevel() + 1);
+                String assignment = getAssignment(wl, inputRootVariable);
+                StringBuilderUtils.println("DECLARE " + wl.variable + " REFERENCE TO " + assignment + ";", builder, node.getLevel() + 1);
+
+                StringBuilderUtils.println(wl.name + " : WHILE LASTMOVE(" + wl.variable + ") DO", builder, node.getLevel() + 1);
+                StringBuilderUtils.println(builder);
+
+                printBlock(subBlock, node, builder);
+
+                /*if (XmlSchemaBase.NodeType.Folder.equals(e.getNodeType())) {
+                    if (e.getParent() != null) {
+                        StringBuilderUtils.println("DECLARE " + e.getAlias() + " REFERENCE TO " + e.getParent().getAlias() + ";", builder, e.getLevel() + 1);
+                        StringBuilderUtils.println("CREATE LASTCHILD OF " + e.getParent().getAlias() + " AS " + e.getAlias() + " TYPE XMLNSC.Folder NAME '" + getFullName(e) + "';"
+                                , builder, e.getLevel() + 1);
+                        StringBuilderUtils.println(builder);
+
+                    }
+
+                    e.getChildren().forEach(n -> {
+                        printNode(n, wl, builder);
+                    });
+
+                } else if (XmlSchemaBase.NodeType.Field.equals(e.getNodeType())) {
+                    StringBuilderUtils.println("SET " + e.getParent().getAlias() + ".(XMLNSC.Field)" + getFullName(e) + " = " + wl.variable + ";", builder, e.getLevel());
+                }*/
+
+                StringBuilderUtils.println("MOVE " + wl.variable + " NEXTSIBLING;", builder, node.getLevel() + 1);
+                StringBuilderUtils.println("END WHILE " + wl.name + ";", builder, node.getLevel() + 1);
+                StringBuilderUtils.println(builder);
+
+            }
+
+        });
+    }
+
+    private void printBlock(JsonObject block, XmlSchemaBase.MappingNode node, StringBuilder builder) {
+        block.entrySet().forEach(e -> {
+            String key = e.getKey();
+            JsonElement jsonElement = e.getValue();
+            String childPath = node.getPath() + "/" + key;
+            XmlSchemaBase.MappingNode child = base.get(childPath);
+            if (jsonElement.isJsonPrimitive()) {
+                String assignment = jsonElement.getAsJsonPrimitive().getAsString();
+
+                if (assignment.startsWith(Function.CHAIN)) {
+
+                } else {
+                    assignment = assignment.replace("$", inputRootVariable);
+                    StringBuilderUtils.println("-- " + child.getPath(), builder, child.getLevel() + 1);
+                    if (!key.startsWith("@")) {
+                        // Field:
+                        StringBuilderUtils.println("SET " + node.getAlias() + ".(XMLNSC.Field)" + getFullName(child) + " = " + assignment + ";", builder, child.getLevel() + 1);
+                    } else {
+                        // Attribute:
+                        StringBuilderUtils.println("SET " + node.getAlias() + ".(XMLNSC.Attribute)" + getFullName(child) + " = " + assignment + ";", builder, child.getLevel() + 1);
+                    }
+                }
+                StringBuilderUtils.println(builder);
+
+            } else if (jsonElement.isJsonObject()) {
+
+
+            }
+        });
     }
 
     private void printConstruction(XmlSchemaBase.MappingNode node, StringBuilder builder) {
@@ -197,6 +309,7 @@ public class EsqlRenderer extends XmlSchemaBaseRenderer implements MappingFeatur
     }
 
     private void printLoop(XmlSchemaBase.MappingNode e, StringBuilder builder) {
+
         JsonArray loops = e.getAnnotation("loop", JsonArray.class);
         loops.forEach(l -> {
             WhileLoop wl = GSON.fromJson(l, WhileLoop.class);
@@ -250,25 +363,28 @@ public class EsqlRenderer extends XmlSchemaBaseRenderer implements MappingFeatur
 
     private void printLeaf(XmlSchemaBase.MappingNode e, StringBuilder builder) {
         Mapping mapping = e.getAnnotation(MAPPING, Mapping.class);
-        if (mapping != null) {
-            String assignment = getAssignment(mapping, inputRootVariable);
-            if (assignment != null) {
-                StringBuilderUtils.println("-- " + e.getPath(), builder, e.getLevel());
-                if (XmlSchemaBase.NodeType.Field.equals(e.getNodeType())) {
-                    // Field:
-                    StringBuilderUtils.println("SET " + e.getParent().getAlias() + ".(XMLNSC.Field)" + getFullName(e) + " = " + assignment + ";", builder, e.getLevel());
+        if (mapping != null && mapping.assignment != null) {
+            String assignment = mapping.assignment;
 
-                } else if (XmlSchemaBase.NodeType.Attribute.equals(e.getNodeType())) {
-                    // Attribute:
-                    StringBuilderUtils.println("SET " + e.getParent().getAlias() + ".(XMLNSC.Attribute)" + getFullName(e) + " = " + assignment + ";", builder, e.getLevel());
+            if (assignment.startsWith(""))
 
-                }
+                assignment = getAssignment(mapping, inputRootVariable);
+            StringBuilderUtils.println("-- " + e.getPath(), builder, e.getLevel());
+            if (XmlSchemaBase.NodeType.Field.equals(e.getNodeType())) {
+                // Field:
+                StringBuilderUtils.println("SET " + e.getParent().getAlias() + ".(XMLNSC.Field)" + getFullName(e) + " = " + assignment + ";", builder, e.getLevel());
 
-                StringBuilderUtils.println(builder);
+            } else if (XmlSchemaBase.NodeType.Attribute.equals(e.getNodeType())) {
+                // Attribute:
+                StringBuilderUtils.println("SET " + e.getParent().getAlias() + ".(XMLNSC.Attribute)" + getFullName(e) + " = " + assignment + ";", builder, e.getLevel());
+
             }
+
+            StringBuilderUtils.println(builder);
         }
 
     }
+/*
 
     private void printNode2(XmlSchemaBase.MappingNode e, StringBuilder builder) {
         if (!mapped(e)) {
@@ -353,9 +469,10 @@ public class EsqlRenderer extends XmlSchemaBaseRenderer implements MappingFeatur
         }
 
     }
+*/
 
     private void printNode(XmlSchemaBase.MappingNode e, WhileLoop parentLoop, StringBuilder builder) {
-        if (!mapped(e) || !underWhileLoop(e, parentLoop)) {
+        if (!underWhileLoop(e, parentLoop)) {
             return;
         }
 
@@ -390,7 +507,6 @@ public class EsqlRenderer extends XmlSchemaBaseRenderer implements MappingFeatur
 
                 } else if (XmlSchemaBase.NodeType.Field.equals(e.getNodeType())) {
                     StringBuilderUtils.println("SET " + e.getParent().getAlias() + ".(XMLNSC.Field)" + getFullName(e) + " = " + wl.variable + ";", builder, e.getLevel() + 1);
-
                 }
 
                 StringBuilderUtils.println("MOVE " + wl.variable + " NEXTSIBLING;", builder, e.getLevel() + 1);
@@ -434,18 +550,18 @@ public class EsqlRenderer extends XmlSchemaBaseRenderer implements MappingFeatur
     }
 
     private boolean underWhileLoop(XmlSchemaBase.MappingNode node, WhileLoop loop) {
-        if (XmlSchemaBase.NodeType.Folder.equals(node.getNodeType())) {
-            for (XmlSchemaBase.MappingNode child : node.getChildren()) {
-                if (underWhileLoop(child, loop)) {
+        String sourcePath = loop.sourcePath + "/";
+
+        if(XmlSchemaBase.NodeType.Folder.equals(node.getNodeType())) {
+            for(XmlSchemaBase.MappingNode child: node.getChildren()) {
+                if(underWhileLoop(child, loop)) {
                     return true;
                 }
             }
 
-        } else {
-            Mapping mapping = node.getAnnotation(MAPPING, Mapping.class);
-            if (mapping != null && loop.name.equals(mapping.loop)) {
-                return true;
-            }
+        } else if(node.getAnnotation(MAPPING) != null) {
+            String mappingSource = node.getAnnotation(MAPPING, Mapping.class).sourcePath;
+            return mappingSource != null && mappingSource.startsWith(sourcePath);
         }
 
         return false;
@@ -520,7 +636,7 @@ public class EsqlRenderer extends XmlSchemaBaseRenderer implements MappingFeatur
         }
 
     }
-
+/*
     private boolean mapped(XmlSchemaBase.MappingNode node) {
         if (node.getNodeType().equals(XmlSchemaBase.NodeType.Folder)) {
             for (XmlSchemaBase.MappingNode e : node.getChildren()) {
@@ -534,5 +650,5 @@ public class EsqlRenderer extends XmlSchemaBaseRenderer implements MappingFeatur
         }
 
         return false;
-    }
+    }*/
 }
