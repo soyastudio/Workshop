@@ -11,21 +11,21 @@ import soya.framework.tools.xmlbeans.XmlSchemaBase.MappingNode;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFeature {
 
     private String url;
     private String sheet;
+    private List<String> excludes;
     private List<?> targetFix;
     private List<?> sourceFix;
 
     private transient int targetIndex;
     private transient int ruleIndex;
     private transient int sourceIndex;
+
+    private transient Set<String> ignores = new HashSet<>();
 
     public XlsxMappingAnnotator() {
     }
@@ -34,6 +34,10 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
 
         Map<String, String> targetFixMap = new HashMap();
         Map<String, String> sourceFixMap = new HashMap();
+        if(excludes != null) {
+            ignores.addAll(excludes);
+        }
+
         if (this.targetFix != null) {
             this.targetFix.forEach((e) -> {
                 Map<String, String> t = (Map) e;
@@ -85,7 +89,7 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
                         mapping.sourcePath = sourcePath;
 
                         MappingNode node = base.get(targetPath);
-                        if (node != null) {
+                        if (node != null && !ignored(node)) {
                             if (node.getAnnotation(MAPPING) == null) {
                                 node.annotate(MAPPING, mapping);
                                 markParent(node);
@@ -130,6 +134,18 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
         } catch (IOException | InvalidFormatException e) {
             e.printStackTrace();
         }
+    }
+
+    private boolean ignored(MappingNode node) {
+        String path = node.getPath();
+        for(String prefix: ignores) {
+            if(path.startsWith(prefix)) {
+                System.out.println("===================== ignored: " + node.getPath());
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void markParent(MappingNode node) {

@@ -2,8 +2,10 @@
     source: "D:/Workshop/Repository/CMM/BOD/GetGroceryOrder.xsd"
 
 - soya.framework.tools.xmlbeans.XlsxMappingAnnotator:
-    url: "D:/Workshop/Repository/BusinessObjects/GroceryOrder/requirement/GroceryOrder_ERUMS_to_Canonical_Mapping_v1.3.xlsx"
+    url: "D:/Workshop/Repository/BusinessObjects/GroceryOrder/requirement/GroceryOrder_ERUMS_to_Canonical_Mapping_v1.4.xlsx"
     sheet: "Mapping Source to Canonical"
+    excludes:
+      - GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryPromotion
 
 - soya.framework.tools.xmlbeans.AssignmentAnnotator:
     globalVariables:
@@ -13,36 +15,78 @@
     loops:
       - sourcePath: customer/contact[*]
         targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact
+        name: contact
+        variable: _contact
 
       - sourcePath: customer/email[*]
         targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact
+        name: email
+        variable: _email
 
       - sourcePath: customer/address[*]
         targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact
+        name: address
+        variable: _address
 
       - sourcePath: customer/preference/optIn[*]
         targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerPreference
+        name: optIn
+        variable: _optIn
 
       - sourcePath: paymentDetails[*]
         targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender
+        name: paymentDetails
+        variable: _paymentDetails
 
       - sourcePath: tender[*]
         targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Refund
+        name: tender
+        variable: _tender
+
+      - sourcePath: orderTotal/cardSavings[*]
+        targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerSavings/SavingsCategoryType
+        name: card_savings
+        variable: _card_savings
 
       - sourcePath: subOrders[*]
         targetPath: GetGroceryOrder/GroceryOrderData/GrocerySubOrder
+        name: subOrder
+        variable: _subOrder
 
       - sourcePath: subOrders[*]/orderLines[*]
         targetPath: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail
+        name: orderLine
+        variable: _orderLine
 
       - sourcePath: subOrders[*]/promoCodes[*]
         targetPath: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail
+        name: promoCode
+        variable: _promoCode
 
       - sourcePath: subOrders[*]/refundedOrderLines[*]
         targetPath: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem
+        name: refundedOrderLine
+        variable: _refundedOrderLine
 
       - sourcePath: subOrders[*]/charges[*]
         targetPath: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ChargeInfo
+        name: charge
+        variable: _charge
+
+      - sourcePath: subOrders[*]/customerService/contact[*]
+        targetPath: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService
+        name: service_contact
+        variable: _service_contact
+
+      - sourcePath: subOrders[*]/orderLines[*]/itemPrice/savings[*]
+        targetPath: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers
+        name: customer_savings
+        variable: _customer_savings
+
+      - sourcePath: subOrders[*]/orderLines[*]/itemPrice/savings[*]/points
+        targetPath: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/CustomerRewards
+        name: point
+        variable: _point
 
     assignments:
       - GetGroceryOrder/DocumentData/Document/@SystemEnvironmentCd: SYSTEM_ENVIRONMENT_CODE
@@ -51,13 +95,30 @@
       - GetGroceryOrder/DocumentData/Document/DocumentNm: "'GroceryOrder'"
       - GetGroceryOrder/DocumentData/Document/CreationDt: "CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT 'YYYYMMdd_HH:mm:ss')"
 
+
 - soya.framework.tools.xmlbeans.DecimalFunctionAnnotator:
 
 - soya.framework.tools.xmlbeans.NodeBuildAnnotator:
     path: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility
+    block:
+      RetailStoreId: $.storeNumber
+      BannerCd: $.banner
+      _while:
+        sourcePath: storeInfo[*]
+        name: store_info
+        variable: _storeInfo
+        block:
+          MFCInd: "'???'"
+          HybridStoreInd: "'???'"
+          PremiumStoreInd: "'???'"
+          ThirdPartyDeliveryOnlyInd: "'???'"
+          ERUMSEnabledInd: "'???'"
 
 - soya.framework.tools.xmlbeans.SampleXmlRenderer:
+
 - soya.framework.tools.xmlbeans.XPathRenderer:
+    printUnmapped: true
+
 - soya.framework.tools.xmlbeans.JsonMappingRenderer:
 - soya.framework.tools.xmlbeans.LoopAnalyzeRenderer:
 - soya.framework.tools.xmlbeans.AvroSchemaRenderer:
