@@ -12,6 +12,7 @@
 	<!--!=============================================================================================-->
 	<!--V1.0 - 7/23/2020 - Alex Nunes - Initial version.-->
 	<!--V1.1 - 8/14/2020 - Alex Nunes - Removed unecessary data elements on this lightweight interface.-->
+	<!--V1.2 - 9/9/2020 - Alex Nunes - Reduced even further the number of elements needed on this cross-reference data.-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:element name="Promotion">
 		<xs:annotation>
@@ -23,12 +24,8 @@
 			<xs:documentation>Lightweight type promotion to cross reference promotion and allowance / vendor offer numbers.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element ref="CorporationId" minOccurs="0"/>
-			<xs:element ref="DivisionId" minOccurs="0"/>
-			<xs:element ref="ROGCd" minOccurs="0"/>
-			<xs:element ref="RetailStoreId" minOccurs="0"/>
-			<xs:element name="RetailScanCd" type="UPC" minOccurs="0"/>
-			<xs:element name="LinkPLUNbr" minOccurs="0">
+			<xs:element ref="ROGCd"/>
+			<xs:element name="LinkPLUNbr">
 				<xs:annotation>
 					<xs:documentation>This is the link number assigned for the electronic coupon. If non-zero, CPN_PLU must be zero.  The CMS application responsible for pricing electronic club card promotions currently has a pool of 5 digit link numbers attached to it for identifying promotions. The starting digit of all the links is 8. This is currently done to identify the electronic promotion links from paper coupon PLUs and grocery lookup codes at Point of Sales.  In order to increase the number of available links, so that business will have the flexibility to price significantly more promotions in coming years, the 5 digit link is being expanded to 12 digits starting with 248. </xs:documentation>
 				</xs:annotation>
@@ -39,75 +36,39 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element ref="CorporateItemCd" minOccurs="0"/>
-			<xs:element name="PromotionIds">
+			<xs:element name="PromotionId" type="xs:integer" nillable="false">
 				<xs:annotation>
-					<xs:documentation>Different identifiers related to promotion generated during the lifecycle of a promotion.</xs:documentation>
+					<xs:documentation>A Promotion is an instance of a vehicle, which is attached to a specific time and a geographic location. A Promotion may span many Divisions and Zones. Examples are: Eastern Divisions July Savings Guide, Eastern Divisions Week 30 Weekly Flyer, Northern California Divisions Week 20 Weekly Flyer Promotions are defined on the promohdr table in the SPOT Informix database.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VendorOffer" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Vendor original Offers captured in NOPA/eDeals</xs:documentation>
 				</xs:annotation>
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="PromotionId" type="xs:integer" nillable="false" minOccurs="0">
+						<xs:element name="VendorOfferNbr">
 							<xs:annotation>
-								<xs:documentation>A Promotion is an instance of a vehicle, which is attached to a specific time and a geographic location. A Promotion may span many Divisions and Zones. Examples are: Eastern Divisions July Savings Guide, Eastern Divisions Week 30 Weekly Flyer, Northern California Divisions Week 20 Weekly Flyer Promotions are defined on the promohdr table in the SPOT Informix database.</xs:documentation>
+								<xs:documentation>Vendor original Offer number captured in NOPA/eDeals</xs:documentation>
 							</xs:annotation>
-						</xs:element>
-						<xs:element name="VendorOffer" minOccurs="0" maxOccurs="unbounded">
-							<xs:annotation>
-								<xs:documentation>Vendor original Offers captured in NOPA/eDeals</xs:documentation>
-							</xs:annotation>
-							<xs:complexType>
-								<xs:sequence minOccurs="0">
-									<xs:element name="VendorOfferNbr" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Vendor original Offer number captured in NOPA/eDeals</xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:maxLength value="20"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-								</xs:sequence>
-								<xs:attribute ref="preferredInd"/>
-							</xs:complexType>
-						</xs:element>
-						<xs:element name="DivisionalADSelectId" type="xs:integer" default="0" nillable="false" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>This is an internal identification Nbr used by the Merchandisers to separate ADs that run in the same period.</xs:documentation>
-							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
 						</xs:element>
 					</xs:sequence>
+					<xs:attribute ref="preferredInd"/>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="PromotionPeriod">
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element name="PromotionStartDt" type="xs:dateTime" nillable="false" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>This is the date the information on the record becomes effective</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="PromotionEndDt" type="xs:dateTime" nillable="false" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>This is the final date the information on this record is effective.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="PacsAdplanSequenceNbr" nillable="false" minOccurs="0">
+			<xs:element name="PromotionStartDt" type="xs:dateTime" nillable="false">
 				<xs:annotation>
-					<xs:documentation>This is a sequence Nbr generated and maintained by the PACS/Adplan Bridge program (ADD760) to enforce uniqueness in SSPENADI by ROG, ADSELECT, CORPITEMCD, and UNITTYPE. For rows created online, this column will be zero. For rows created by the bridge program, this column will be set to 1 for the initial entry, and incremented for each subsequent row where the PACS row matches an existing ROG, ADSELECT, CORPITEMCD and UNITTYPE, but does not match on an existing PACS item key in SSPENADI (the X2 index). This enforces uniqueness and acommodates PACS items.</xs:documentation>
+					<xs:documentation>Effective date when the promotion starts for a ROG.</xs:documentation>
 				</xs:annotation>
-				<xs:simpleType>
-					<xs:restriction base="xs:decimal">
-						<xs:totalDigits value="12"/>
-					</xs:restriction>
-				</xs:simpleType>
 			</xs:element>
-			<xs:element name="PromotionCd" type="xs:integer" nillable="false" minOccurs="0">
+			<xs:element name="PromotionEndDt" type="xs:dateTime" nillable="false">
 				<xs:annotation>
-					<xs:documentation>This is the promotion Cd assigned for the coupon</xs:documentation>
+					<xs:documentation>Effective date when the promotion ends for a ROG.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 		</xs:sequence>

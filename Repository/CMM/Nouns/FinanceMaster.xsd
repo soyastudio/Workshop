@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by jsoli17 (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<!--Patrick Oliver 7/22/20 - Updated VendorId to string(20)-->
@@ -39,6 +39,13 @@ Cost, revenue, accrual,  pass thru</xs:documentation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="20"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="AccountingPeriodNm">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="50"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -1247,7 +1254,7 @@ defined in the System Accounts subform.</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="50"/>
+				<xs:maxLength value="240"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -1320,7 +1327,7 @@ Employees can sometimes belong to the same PayrollPaymentNumber especially if th
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="20"/>
+				<xs:maxLength value="25"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -1602,9 +1609,19 @@ options defined in the Detail Accounts</xs:documentation>
 			<xs:documentation>The General Ledger Transaction message contains the journal entry detail information to be posted to the General Ledger system.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element ref="CompanyId"/>
+			<xs:element name="CompanyId">
+				<xs:annotation>
+					<xs:documentation>The number that identifies a company. A company represents a business or legal  entity of an organization.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="25"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element ref="CompanyNm"/>
 			<xs:element ref="FiscalYearId"/>
+			<xs:element ref="AccountingPeriodNm" minOccurs="0"/>
 			<xs:element ref="AccountingPeriodNbr"/>
 			<xs:element name="GLSystem" type="Abs:CodeWithName">
 				<xs:annotation>
@@ -1632,9 +1649,24 @@ options defined in the Detail Accounts</xs:documentation>
 			<xs:element ref="AccountingUnitId"/>
 			<xs:element ref="AccountingUnitNm" minOccurs="0"/>
 			<xs:element ref="VariableLevelNbr"/>
-			<xs:element ref="AccountId"/>
+			<xs:element name="AccountId">
+				<xs:annotation>
+					<xs:documentation>This field along with the accounting unit and subaccount make up the location (account) where amounts and other  account information is stored. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="25"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element ref="AccountNm" minOccurs="0"/>
-			<xs:element ref="AccountDsc" minOccurs="0"/>
+			<xs:element name="AccountDsc" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="240"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element ref="SubAccountId" minOccurs="0"/>
 			<xs:element ref="SubSystemRecordId" minOccurs="0"/>
 			<xs:element name="TransactionId" minOccurs="0">
@@ -1674,7 +1706,7 @@ options defined in the Detail Accounts</xs:documentation>
 			<xs:element name="ReferenceTxt" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="100"/>
+						<xs:maxLength value="150"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -1702,7 +1734,7 @@ options defined in the Detail Accounts</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="5"/>
+						<xs:maxLength value="100"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -1796,15 +1828,104 @@ Management system. All transactions are posted to an account category within an 
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="InterCompanyCd" type="CodeWithDescription" minOccurs="0"/>
-			<xs:element name="JournalEntryBatch" type="CodeWithDescription" minOccurs="0">
+			<xs:element name="JournalEntryBatch" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Concatinated value of Journal Entry source code and SourceApplicationCd from JournalEntry BOD. example: FS - Facility Sales Management.</xs:documentation>
 				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Code" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Element for the communication of all codes.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="Description" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="250"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ShortDescription" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
 			</xs:element>
-			<xs:element name="JournalEntryNm" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="JournalEntryNm" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Code" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Element for the communication of all codes.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="Description" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="250"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ShortDescription" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
 			<xs:element name="JournalEntryReferenceTxt" minOccurs="0"/>
-			<xs:element name="JournalEntryReversalPeriodNbr" type="xs:int" minOccurs="0"/>
-			<xs:element name="JournalEntryReversalMethod" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="JournalEntryReversalPeriodNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="JournalEntryReversalMethod" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Code" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="Description" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ShortDescription" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
 			<xs:element name="CurrencyConversion" minOccurs="0">
 				<xs:complexType>
 					<xs:sequence>
@@ -2049,7 +2170,7 @@ Management system. All transactions are posted to an account category within an 
 			<xs:element name="UserNm" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="50"/>
+						<xs:maxLength value="64"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -2077,7 +2198,7 @@ Same as Current Lawson Account Number</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:decimal">
-				<xs:totalDigits value="14"/>
+				<xs:totalDigits value="25"/>
 				<xs:fractionDigits value="0"/>
 			</xs:restriction>
 		</xs:simpleType>
@@ -2098,7 +2219,7 @@ sample 13018273097</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="20"/>
+				<xs:maxLength value="35"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>

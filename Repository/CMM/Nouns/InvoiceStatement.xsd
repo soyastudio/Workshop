@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Schema Owner: 	Safeway Inc
+   Date Created:      07 May 2020
+   Author:		Patrick Oliver
+   Description: Contains commonly used Safeway Purchase order schema.
+   Name: /SFWY/Nouns/SwyPurchaseOrder.xsd
+-->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.0  Patrick Oliver 09/10/2020: Initial Draft-->
+	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:complexType name="InvoiceStatementType">
+		<xs:annotation>
+			<xs:documentation>The Invoice Statement object will be used to show customer statement balances for customers that preformed services to ABS facilities (stores/warehouses/backstage/etc.).</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="InvoiceStatementHeader" type="InvoiceStatementHeaderType"/>
+			<xs:element name="InvoiceStatementDetail" type="InvoiceStatementDetailType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InvoiceStatementHeaderType">
+		<xs:annotation>
+			<xs:documentation>Information that applies to the entire invoice statement document. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CompanyId"/>
+			<xs:element ref="TransactionType" minOccurs="0"/>
+			<xs:element name="StatmentType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This can be used to distincuish the different invoice statement types (ex: Accounts Payable) </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StatementCycleInd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Used to group customers w/ like statement cycles for statement processing.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StatementDeliveryMethod" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Tells if statement will be delivered via email, fax, printed (in oracle there will be a delivery method)
+blank or 
+1 - printed
+2 - fax
+3 - email</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CustomerGroup" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Legacy application customer groups.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="CustomerGroupId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Customer group. A group that customers belong to that transcends companies.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CustomerGroupNm" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The name or description of the customer group.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CustomerParty" type="CustomerPartyType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The customer party can be a Person, Organization, Group or Relationship. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CustomerAccount">
+				<xs:annotation>
+					<xs:documentation>Customer Party that received goods and services from Albertson companies </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="CustomerAccountNbr" minOccurs="0"/>
+						<xs:element name="CustomerSiteNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CustomerFacilityId" type="xs:string" minOccurs="0"/>
+						<xs:element name="CustomerFacilityNm" type="xs:string" minOccurs="0"/>
+						<xs:element name="CustomerDUNSNbr" type="xs:string" minOccurs="0"/>
+						<xs:element name="AccountClassId" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Customer class indentifier.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="AccountTypeCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates the type of customer account</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CustomerContact" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ContactNm" type="PersonNameType" minOccurs="0"/>
+						<xs:element ref="PhoneFaxContact" minOccurs="0"/>
+						<xs:element ref="DigitalContact" minOccurs="0"/>
+					</xs:sequence>
+					<xs:attribute ref="typeCode"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CustomerAddress" type="AddressType" minOccurs="0" maxOccurs="2"/>
+			<xs:element name="CustomerMajorClassId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The major class assigned to this customer.         </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CustomerMinorClassId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The minor class assigned to this customer.         </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="StatementDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Invoice Statement Date</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StatementStatus" type="StatusType" minOccurs="0"/>
+			<xs:element name="StatementCommentsTxt" default="" minOccurs="0" maxOccurs="5">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="Type" type="xs:string" default=""/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="TotalStatementQty" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="12"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RecordId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BatchNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="6"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InvoiceStatementDetailType">
+		<xs:annotation>
+			<xs:documentation>Contains detail line information for the invoice statement </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="GLCompanyId" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> The general ledger company associated with this distribution</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StatementFacility" type="SubmittingFacilityType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the facility for the customer that is submitting the Invoice statement. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="CustomerAccountNbr" minOccurs="0"/>
+			<xs:element name="CustomerSiteNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TransactionNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Transaction number</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TransactionDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Transaction Date</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TransactionDsc" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="StatementPurchaseOrder" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Customer PO Number                    Customer purchase order number that  relates to this credit memo, debit memo, or invoice.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="PurchaseOrderNbr" type="xs:string" minOccurs="0"/>
+						<xs:element name="PurchaseOrderDt" type="xs:date" minOccurs="0"/>
+						<xs:element name="PurchaseOrderStatusCd" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+					<xs:attribute name="ReferenceType" use="optional">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:maxLength value="20"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:attribute>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="LastStatementDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Last Statement Date - Date of the last statement on which this payment appeared
+last time statement was generated for a customer</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TransactionAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Transaction Amount</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="18"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OpenAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Open Amount</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="18"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TransactionUserTxt" minOccurs="0" maxOccurs="4">
+				<xs:annotation>
+					<xs:documentation>Transaction User fields. These character fields are used in  record selection and record sorting.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute ref="typeCode"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="TotalDebitAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Total Debits amount</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="18"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TotalCreditAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Total Credits amount</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="18"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TotalPastDueAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Total Past Due due in last statement</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="18"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TotalOpenItemsAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Total Open Items which is total past due plus Total Current Due</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="18"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PaymentAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Pay this amount</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="18"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PaymentTerms" type="PaymentTermType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identifies the payment term for an Order or Invoice. Supports the abiility to specify an absolute due date, a number of days from a start date, a percent discount or an absolute discount. A common term like "Net30Days" is explicitly code as either a calculated DueDateTime or a PaymentTermsDateTime and NumberOfDays.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LineNbr" type="xs:integer" minOccurs="0"/>
+			<xs:element name="RecordType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This can be used to distinguish between a detail record and a trailer record</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CustomerPartyType">
+		<xs:annotation>
+			<xs:documentation>Common object used to identify various business parties like, customer, shipper, vendor, bilto, ship to..etc</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PartyId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Generic identifier field for party. A party can have multiple types of identifiers that can be qualified by Type.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PartyNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of a party of the Organization party type.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PartyTypeCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The party type can only be Person, Organization, Group or Relationship. For Customer Import, only Person or Organization is applicable</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

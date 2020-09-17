@@ -109,6 +109,75 @@ Commercial Money Transfer Service</xs:documentation>
 					<xs:documentation source="http://www.openapplications.org/platform/1">Mostly applicable to fund transfers to another party, defines the underlying reason for the payment transaction, e.g. a charity payment, or a commerical agreement between the creditor and the debitor. Provided by the code contained.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="CustomerParty" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Customer Party that received goods and services from Albertson companies </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="CustomerAccountNbr" minOccurs="0"/>
+						<xs:element name="CustomerSiteNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CustomerFacilityId" type="xs:string" minOccurs="0"/>
+						<xs:element name="CustomerFacilityNm" type="xs:string" minOccurs="0"/>
+						<xs:element name="CustomerDUNSNbr" type="xs:string" minOccurs="0"/>
+						<xs:element name="CustomerContact" minOccurs="0" maxOccurs="2">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="ContactNm" type="PersonNameType" minOccurs="0"/>
+									<xs:element name="PhoneNbr" type="xs:string" minOccurs="0"/>
+									<xs:element name="EmailAddresstxt" type="xs:string" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="AccountClassId" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Customer class indentifier.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="AccountTypeCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates the type of customer account</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CustomerAddress" type="AddressType" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="FundsTransferTrailerData" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The trailer fields need to be included because the computation of these values will be done on the target side - (KMPG)</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="HashTotalCnt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>numerical sum of the Bank Transit Number for all detail records.  Used to indicate if data is missing from the file transfer</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="TotalDebitAmt" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Total Debit Amount for all detail records</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="TotalRecordCnt" type="xs:int" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Total number of Detail Records</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="TotalBatchCnt" type="xs:integer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Total number of physical blocks in the file including both the file header and file control records.  (Block Size is 10 Records)</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="FundsTransferPartyType">

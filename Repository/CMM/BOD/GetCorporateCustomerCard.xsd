@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/CorporateCustomerCard.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="GetCorporateCustomerCard" type="GetCorporateCustomerCard">
+		<xs:annotation>
+			<xs:documentation>The Corporate Customer Card object will be used for extracts from the AR system for the customers who have corporate charge cards to send back the card status, customer balance, and credit limit. Examples of customers who have corporate charge cards are schools, churches, and charity organizations. </xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetCorporateCustomerCard">
+		<xs:annotation>
+			<xs:documentation>The Accounting Customer object will contain customer information that is relevant to a specific company level customer. Customer processing rules, statistical fields and other processing fields are part of the object. In addition to keep customer information synchronized from legacy to new ERP the object will allow for Customer Groups/Customers and Customer Parties/Accounts.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CorporateCustomerCardData" type="Abs:CorporateCustomerCardType"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

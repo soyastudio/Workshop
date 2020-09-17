@@ -1,0 +1,922 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Schema Owner: 	Safeway Inc
+   Date Created:      07 May 2020
+   Author:		Patrick Oliver
+   Description: Contains commonly used Safeway Purchase order schema.
+   Name: /SFWY/Nouns/SwyPurchaseOrder.xsd
+-->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.0  Patrick Oliver 09/01/20 - Initial Draft-->
+	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:complexType name="CorporateCustomerCardType">
+		<xs:annotation>
+			<xs:documentation>The Corporate Customer Card object will be used for extracts from the AR system for the customers who have corporate charge cards to send back the card status, customer balance, and credit limit. Examples of customers who have corporate charge cards are schools, churches, and charity organizations. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CompanyId" minOccurs="0"/>
+			<xs:element name="CustomerCardSource" type="SourceSystemType" minOccurs="0"/>
+			<xs:element name="CustomerAccount" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="CustomerAccountNbr" minOccurs="0"/>
+						<xs:element name="CustomerSrcNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CustomerSiteNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AccountTypeCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates the type of customer account</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="KeyAccountInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Key account for sales representatives.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AccountClassId" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Customer class indentifier.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="AccountDsc" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Description chosen by external party </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="250"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="EffectivePeriod" type="EffetiveDateTimeType" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AccountProfile" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Represensts the customer account profile</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ProfileClsCd" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="CreditReviewCycleCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Credit review cycle that determines the frequency of periodic credit reviews</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="OrderLimitNbr" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Order Limit in customer group currency for a given customer across all AR companies utilizing this customer.  </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CreditLimitNbr" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Maximum amount of credit extended to a customer, in customer group currency, for all AR compaies utilizing this customer.        </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CreditToleranceNbr" type="xs:integer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Credit check tolerance amount over the credit limit.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CreditRatingNbr" type="xs:integer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>credit rating of the customer account or site.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="DiscountRatePct" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The rate used to calculate the discount amount of the invoice payment.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="5"/>
+									<xs:fractionDigits value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DiscountDt" type="DateType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The date through which the available discount amount of the invoice can be taken.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CreditLimitDt" type="xs:date" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The date the credit limit was defined or last reviewed.     </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="LastReviewDt" type="xs:date" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Last Review Date   </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="NextReviewDt" type="xs:date" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Review Date   </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="BillTypeCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Format of balance forward bill. Can be SUMMARY, DETAIL, or IMPORTED (for Site only).</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ShipToSiteNbr" type="xs:integer" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>This will be used to store customer ship to numbers </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="BillToSiteNbr" type="xs:integer" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>This will be used to store customer bill to numbers</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="BillLevelCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Level at which balance forward billing is done, ACCOUNT or SITE. </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="NationalAccntInd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates whether the customer is a national account customer. N = Parent and I = Invoiced</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CustomerHoldCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates whether a customer is on hold</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CreditAnalystCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>tThe credit analyst code assigned to this customer.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CollectorCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Collector name</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SalesRepresentativeCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The sales representative for this  invoice, debit memo or credit memo (note numeric)</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="DunProcessLetterCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Dunning letter process code.  A unique code that represents a combination of Dunning Letter options.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PrePaymentCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Prepayment code. This is the default code to be used for a check entered as a preayment. This will be the offset instead of RNA to cash.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element ref="AccountReceivableCd" minOccurs="0"/>
+						<xs:element name="AutoCashNm" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Autocash hierarchy name.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CustomerBankData" type="BankType" minOccurs="0"/>
+			<xs:element name="CustomerCardData" type="CorpCardType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CorpCardType">
+		<xs:annotation>
+			<xs:documentation>Corp Card type will contain card information for cards submitted to customers (ex: schools, churches, etc.). The card information will be card name, card number, expiration dates,  pin number, amounts, etc. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="CardNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>It is the number of the corp card </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RecordNbr" type="xs:integer" minOccurs="0"/>
+			<xs:element name="Amount" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the numerical value of the amount for transaction to or from the cardholder?s credit card account. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LastUpdateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Timestamp for last update</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CardStatus" type="StatusType" minOccurs="0"/>
+			<xs:element name="CardNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Card name</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CustomerNm" type="PersonNameType" minOccurs="0"/>
+			<xs:element name="PinNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Personal identification number (PIN) is a numerical code issued with a payment card that is required to be entered to complete various financial transactions. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ExpirationDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>MMYY for when the cardholder?s credit card expires.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CardCd" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Thie card code, also called CVC, is usually between 3 and 6 characters long and will vary depending on the type of credit card. For VISA and Mastercard the CVC is often a 3 digit code printed on the reverse side of the card. American express often print a 4 digit code on the front side of the card. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Merchant" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="MerchantId" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is your merchant services account identifier.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="MerchantNm" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>ex: PAYPAL INC MARK</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="200"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="MerchantAddress" type="AddressType" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element ref="AmountType" minOccurs="0"/>
+			<xs:element name="BillingAddress" type="AddressType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The billing address for purposes of address verification when processing a credit card</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ShippingAddress" type="AddressType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The shipping address for payment transactions</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ImageRequiredInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicator is say if image is needed for credit card expenses. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BilledDescription" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CustomerVendor">
+		<xs:annotation>
+			<xs:documentation>Contains vendor information related to AR Customers</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="VendorId" minOccurs="0"/>
+			<xs:element name="VendorSubAccountId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="VendorGrp" minOccurs="0"/>
+			<xs:element ref="VendorClass" minOccurs="0"/>
+			<xs:element ref="VendorClassDsc" minOccurs="0"/>
+			<xs:element name="VendorNm" type="xs:string" minOccurs="0"/>
+			<xs:element name="VendorContact" minOccurs="0" maxOccurs="2">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ContactNm" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PhoneNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="EmailAddresstxt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Address" type="AddressType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CustomerGrpType">
+		<xs:annotation>
+			<xs:documentation>The AR Customer Group file contains customer group records. A customer group
+defines the customer number/numbering conventions, and allows one or more
+companies to use the same set of customers. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CompanyId"/>
+			<xs:element ref="CustomerAccountNbr"/>
+			<xs:element ref="AccountReceivableCd" minOccurs="0"/>
+			<xs:element name="ARCustomerStatus" type="StatusType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates the status of the customer.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PrePaymentCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Prepayment code. This is the default code to be used for a check entered as a preayment. This will be the offset instead of RNA to cash.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="NationalAccntInd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates whether the customer is a national account customer. N = Parent and I = Invoiced</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ARCustomerBalances" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="CurrentBalance" type="ARBalanceType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is the current, non Bill of      Exchange balance for this customer,  cumulative for all companies utilizing this customer, in customer group currency.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="DraftBalance" type="ARBalanceType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is the current Bill of Exchange balance for this customer, cumulative                        for all companies utilizing this          customer, in customer group  currency.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ARCustomerLimits" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="OrderLimit" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Order Limit in customer group currency for a given customer across all AR companies utilizing this customer.  </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CreditLimit" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Maximum amount of credit extended to a customer, in customer group currency, for all AR compaies utilizing this customer.        </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ARCustomerHoldCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Customer Hold Code.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ARSalesRepresentativeCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The sales representative for this  invoice, debit memo or credit memo (note numeric)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AutoRemoveInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field determines whether payments and trransactions can be removed automatically (Y/N)</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AutoCashInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates the automatic cash application method for this customer. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ARCustomerStartDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The date the customer first began doing business with the company.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LineTax" type="TaxType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="PaymentTerms" type="PaymentTermType" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>Identifies the payment term for customer</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ARCustomerUser" minOccurs="0" maxOccurs="10">
+				<xs:annotation>
+					<xs:documentation>Customer user-defined field</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CustomerPartySitesType">
+		<xs:annotation>
+			<xs:documentation>Object used to identify various paty sites</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PartySiteId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Generic identifier field for party site. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PartySiteNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the Party Site.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MailStopCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A user-defined code to indicate a mail drop point within their organization.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PartySiteTypeCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Site use type, e.g. BILL_TO, SHIP_TO, SOLD_TO, etc.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PrimaryAddressInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicated if this is the identifying address for the party</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PrimaryInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates that the record is marked as primary.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SiteLanguage" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Language of the translated text in Party Site.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Address" type="AddressType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Contact" type="CommunicationType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Contact person or party name</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EffectivePeriod" type="EffetiveDateTimeType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CustomerPartyType">
+		<xs:annotation>
+			<xs:documentation>Common object used to identify various business parties like, customer, shipper, vendor, bilto, ship to..etc</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PartyId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Generic identifier field for party. A party can have multiple types of identifiers that can be qualified by Type.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PartyNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of a party of the Organization party type.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PartyTypeCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The party type can only be Person, Organization, Group or Relationship. For Customer Import, only Person or Organization is applicable</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TaxTypeCd" default="" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DUNSNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EffectivePeriod" type="EffetiveDateTimeType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AccoutingCustomerAddressType">
+		<xs:annotation>
+			<xs:documentation>Retail customer addresses and contact data.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0">
+			<xs:element name="AddressId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Unique identifier of the address.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="36"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AddressNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the customer address.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="36"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AddressTypeDsc" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Description of the customer address type.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Address" type="CommunicationType" minOccurs="0"/>
+			<xs:element name="CustomerName" type="PersonNameType" minOccurs="0"/>
+			<xs:element name="Notes" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Customer notes regarding the address.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="NoteTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Text value of the note. Free format comments from customer.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="250"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+					<xs:attribute ref="typeCode"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AddressPurposes" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Purpose of customer addresses.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="PurposeCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Code of the purpose.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PurposeDsc" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Description of the address purpose.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+					<xs:attribute ref="typeCode"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PostalCodes" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="PostalCodeId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Unique identifier postal code.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="36"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PurposeCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Code of the purpose.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PurposeDsc" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Description or name of the purpose.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PostalCd" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Postal code.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element ref="BannerCd" minOccurs="0"/>
+					</xs:sequence>
+					<xs:attribute ref="typeCode"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AddressStatuses" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="AddressStatusCd" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Address Status code.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="AddressStatusDsc" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Description of the address status.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="200"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AddressStatusVal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field represents the address status value.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SourcePlatformCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Code of the source platform.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SourcePlatformDsc" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Name of the source platform.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SourceStatusVal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This fields represents the status value for the source.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element ref="BannerCd" minOccurs="0"/>
+						<xs:element name="StoreId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Store number.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="MessageTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Address status message.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="200"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ReferenceId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Reference Id. Cross check with external systems.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="200"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="EffectivePeriod" type="EffetiveDateTimeType" minOccurs="0"/>
+					</xs:sequence>
+					<xs:attribute ref="typeCode"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="SelectedAddresses" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="AddressId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Unique identifier of the address.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="36"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element ref="BannerCd" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="EffectivePeriod" type="EffetiveDateTimeType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SourceSystemType">
+		<xs:annotation>
+			<xs:documentation>Common type for specifying a specific individuals designator.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="EntrySource" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This will be used to store the system ID (code) and system reference (desc) for each entity</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BatchNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Batch identifier.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute ref="typeCode">
+			<xs:annotation>
+				<xs:documentation>Attribute used to describe what is the type of the associated entity. This allows for extension of the model without the need for pre-defining a static ID element. For this BOD it can be used for the type of source.
+Examples are: Party, Party Site, Account, Contact, Role, etc.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute ref="preferredInd"/>
+	</xs:complexType>
+	<xs:complexType name="EffetiveDateTimeType">
+		<xs:annotation>
+			<xs:documentation>Common type for Customer effective date and time.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0">
+			<xs:element ref="FirstEffectiveDt" minOccurs="0"/>
+			<xs:element ref="FirstEffectiveTm" minOccurs="0"/>
+			<xs:element ref="LastEffectiveDt" minOccurs="0"/>
+			<xs:element ref="LastEffectiveTm" minOccurs="0"/>
+			<xs:element name="DurationNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Number that represents the duration.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DurationUnitDsc" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Duration unit. D for Days, W for weeks.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InclusiveInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates whether or not the dates and times are inclusive or not.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute ref="typeCode"/>
+	</xs:complexType>
+</xs:schema>

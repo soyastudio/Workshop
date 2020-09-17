@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.5 9/15/2020 Alex Nunes - Added AP Vendor Account Number element as per Jira EBC-12226 -->
 	<!--09/08/20: Patrick Oliver - Updated DealtypeCd to VedorDealSourceType at topmost level for source systems-->
 	<!--6/11/20 Patrick updated VendorAllowances in detail to unbounded in order to handle mulitple allowance types from WMALWCOM-->
 	<!--6/1/20: Patrick - Unbounded DealLocationTypeCd per CABS request as can have mulitple values per division -->
@@ -566,6 +567,16 @@ Valid values for deal rejected/inactivated at header level:
 4 - Rejected, vendor canceled                                   
 5 - Rejected, offer too late                                    </xs:documentation>
 				</xs:annotation>
+			</xs:element>
+			<xs:element name="APVendorAccountNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Account number of AP Vendor which allow allowance billing be sent to Accounting.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
