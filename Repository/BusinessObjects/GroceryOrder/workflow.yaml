@@ -2,10 +2,14 @@
     source: "D:/Workshop/Repository/CMM/BOD/GetGroceryOrder.xsd"
 
 - soya.framework.tools.xmlbeans.XlsxMappingAnnotator:
-    url: "D:/Workshop/Repository/BusinessObjects/GroceryOrder/requirement/GroceryOrder_ERUMS_to_Canonical_Mapping_v1.4.xlsx"
+    url: "D:/Workshop/Repository/BusinessObjects/GroceryOrder/requirement/GroceryOrder_ERUMS_to_Canonical_Mapping_v1.4.1.xlsx"
     sheet: "Mapping Source to Canonical"
     excludes:
+      - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address
       - GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryPromotion
+      - GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/PromotionTxt
+      - GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/PromotionalDsc
+      - GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/PromotionPriceAmt
 
 - soya.framework.tools.xmlbeans.AssignmentAnnotator:
     globalVariables:
@@ -80,12 +84,12 @@
 
       - sourcePath: subOrders[*]/orderLines[*]/itemPrice/savings[*]
         targetPath: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers
-        name: customer_savings
+        name: customer_savings_loop
         variable: _customer_savings
 
-      - sourcePath: subOrders[*]/orderLines[*]/itemPrice/savings[*]/points
+      - sourcePath: subOrders[*]/orderLines[*]/itemPrice/savings[*]/points[*]
         targetPath: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/CustomerRewards
-        name: point
+        name: points_loop
         variable: _point
 
     assignments:
@@ -94,6 +98,12 @@
       - GetGroceryOrder/DocumentData/Document/AlternateDocumentID: "'OSMS-EMOM_C02_ORDER-' || CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT 'YYYYMMddHHmmssSSSSSS')"
       - GetGroceryOrder/DocumentData/Document/DocumentNm: "'GroceryOrder'"
       - GetGroceryOrder/DocumentData/Document/CreationDt: "CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT 'YYYYMMdd_HH:mm:ss')"
+
+      - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/RequiredAuthAmt: CAST($$ AS DECIMAL(10, 2))
+
+      - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/@TypeCode: _contact.type
+      - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/ExpireMonthYearTxt:  _paymentDetails.cardExpiryMonth
+      - GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ChargeInfo/ChargeAmt: CAST($$ AS DECIMAL(10, 2))
 
 
 - soya.framework.tools.xmlbeans.DecimalFunctionAnnotator:
