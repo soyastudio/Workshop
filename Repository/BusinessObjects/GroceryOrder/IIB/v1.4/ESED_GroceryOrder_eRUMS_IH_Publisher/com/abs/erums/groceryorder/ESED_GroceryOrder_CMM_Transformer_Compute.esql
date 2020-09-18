@@ -41,7 +41,7 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 				SET Document_.(XMLNSC.Field)Abs:DocumentNm = 'GroceryOrder';
 
 				-- GetGroceryOrder/DocumentData/Document/CreationDt
-				SET Document_.(XMLNSC.Field)Abs:CreationDt = CURRENT_TIMESTAMP;
+				SET Document_.(XMLNSC.Field)Abs:CreationDt = CAST(CURRENT_GMTTIMESTAMP AS CHARACTER FORMAT 'YYYY-MM-dd''T''HH:mm:ss.SSS') || 'Z';
 
 				-- GetGroceryOrder/DocumentData/Document/Description
 				SET Document_.(XMLNSC.Field)Abs:Description = 'GroceryOrderDetail';

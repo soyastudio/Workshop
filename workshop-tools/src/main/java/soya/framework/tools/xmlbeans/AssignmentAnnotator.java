@@ -78,7 +78,7 @@ public class AssignmentAnnotator implements Buffalo.Annotator<XmlSchemaBase>, Ma
 
             }
 
-            if (!node.getNodeType().equals(XmlSchemaBase.NodeType.Folder) && node.getAnnotation(MAPPING) != null) {
+            if (node.getAnnotation(MAPPING) != null) {
                 Mapping mapping = node.getAnnotation(MAPPING, Mapping.class);
                 WhileLoop whileLoop = findParent(mapping.sourcePath);
                 if (whileLoop != null) {

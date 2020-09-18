@@ -106,7 +106,17 @@ public class EsqlRenderer extends XmlSchemaBaseRenderer implements MappingFeatur
 
     private void printNode(XmlSchemaBase.MappingNode node, StringBuilder builder) {
         if (XmlSchemaBase.NodeType.Folder.equals(node.getNodeType())) {
-            if (node.getAnnotation(MAPPED) == null) {
+            if(node.getAnnotation(MAPPING) != null) {
+                String assignment = node.getAnnotation(MAPPING, Mapping.class).assignment;
+                if(assignment != null) {
+                    assignment = assignment.replace(INPUT_ROOT, inputRootVariable + ".");
+                    StringBuilderUtils.println("-- " + node.getPath(), builder, node.getLevel());
+                    StringBuilderUtils.println("SET " + node.getAlias() + ".(XMLNSC.Field)" + getFullName(node) + " = " + assignment + ";", builder, node.getLevel());
+                    StringBuilderUtils.println(builder);
+                }
+
+
+            } else if (node.getAnnotation(MAPPED) == null) {
                 // do nothing:
 
             } else if (node.getAnnotation(BLOCK) != null) {
@@ -384,92 +394,6 @@ public class EsqlRenderer extends XmlSchemaBaseRenderer implements MappingFeatur
         }
 
     }
-/*
-
-    private void printNode2(XmlSchemaBase.MappingNode e, StringBuilder builder) {
-        if (!mapped(e)) {
-            return;
-        }
-
-        Mapping mapping = e.getAnnotation(MAPPING, Mapping.class);
-        // if marked as ignore or no mapping for field or attribute
-        if (mapping != null && "ignore()".equals(mapping.assignment) || (!XmlSchemaBase.NodeType.Folder.equals(e.getNodeType()) && mapping == null)) {
-            return;
-        }
-
-        if (e.getAnnotation("loop") != null) {
-            JsonArray loops = e.getAnnotation("loop", JsonArray.class);
-            loops.forEach(l -> {
-                WhileLoop wl = GSON.fromJson(l, WhileLoop.class);
-                wl.parent = findParent(wl.sourcePath);
-                loopMap.put(wl.sourcePath, wl);
-
-                StringBuilderUtils.println("-- LOOP FROM " + wl.sourcePath + " TO " + e.getPath() + ":", builder, e.getLevel());
-                String assignment = getAssignment(wl, inputRootVariable);
-                StringBuilderUtils.println("DECLARE " + wl.variable + " REFERENCE TO " + assignment + ";", builder, e.getLevel());
-
-                StringBuilderUtils.println(wl.name + " : WHILE LASTMOVE(" + wl.variable + ") DO", builder, e.getLevel());
-                StringBuilderUtils.println(builder);
-
-                if (XmlSchemaBase.NodeType.Folder.equals(e.getNodeType())) {
-                    if (e.getParent() != null) {
-                        StringBuilderUtils.println("DECLARE " + e.getAlias() + " REFERENCE TO " + e.getParent().getAlias() + ";", builder, e.getLevel() + 1);
-                        StringBuilderUtils.println("CREATE LASTCHILD OF " + e.getParent().getAlias() + " AS " + e.getAlias() + " TYPE XMLNSC.Folder NAME '" + getFullName(e) + "';"
-                                , builder, e.getLevel() + 1);
-                        StringBuilderUtils.println(builder);
-
-                    }
-
-                    e.getChildren().forEach(n -> {
-                        printNode(n, wl, builder);
-                    });
-
-                } else if (XmlSchemaBase.NodeType.Field.equals(e.getNodeType())) {
-                    StringBuilderUtils.println("SET " + e.getParent().getAlias() + ".(XMLNSC.Field)" + getFullName(e) + " = " + wl.variable + ";", builder, e.getLevel());
-                }
-
-                StringBuilderUtils.println("MOVE " + wl.variable + " NEXTSIBLING;", builder, e.getLevel());
-                StringBuilderUtils.println("END WHILE " + wl.name + ";", builder, e.getLevel());
-                StringBuilderUtils.println(builder);
-
-            });
-
-        } else {
-            if (XmlSchemaBase.NodeType.Folder.equals(e.getNodeType())) {
-                // Folder:
-                if (e.getParent() != null) {
-                    StringBuilderUtils.println("-- " + e.getPath(), builder, e.getLevel());
-                    StringBuilderUtils.println("DECLARE " + e.getAlias() + " REFERENCE TO " + e.getParent().getAlias() + ";", builder, e.getLevel());
-                    StringBuilderUtils.println("CREATE LASTCHILD OF " + e.getParent().getAlias() + " AS " + e.getAlias() + " TYPE XMLNSC.Folder NAME '" + getFullName(e) + "';"
-                            , builder, e.getLevel());
-                    StringBuilderUtils.println(builder);
-                }
-
-                e.getChildren().forEach(n -> {
-                    printNode(n, builder);
-                });
-
-            } else {
-                String assignment = getAssignment(mapping, inputRootVariable);
-                if (assignment != null) {
-                    StringBuilderUtils.println("-- " + e.getPath(), builder, e.getLevel());
-                    if (XmlSchemaBase.NodeType.Field.equals(e.getNodeType())) {
-                        // Field:
-                        StringBuilderUtils.println("SET " + e.getParent().getAlias() + ".(XMLNSC.Field)" + getFullName(e) + " = " + assignment + ";", builder, e.getLevel());
-
-                    } else if (XmlSchemaBase.NodeType.Attribute.equals(e.getNodeType())) {
-                        // Attribute:
-                        StringBuilderUtils.println("SET " + e.getParent().getAlias() + ".(XMLNSC.Attribute)" + getFullName(e) + " = " + assignment + ";", builder, e.getLevel());
-
-                    }
-
-                    StringBuilderUtils.println(builder);
-                }
-            }
-        }
-
-    }
-*/
 
     private void printNode(XmlSchemaBase.MappingNode e, WhileLoop parentLoop, StringBuilder builder) {
         if (!underWhileLoop(e, parentLoop)) {
@@ -539,6 +463,7 @@ public class EsqlRenderer extends XmlSchemaBaseRenderer implements MappingFeatur
                         StringBuilderUtils.println("SET " + e.getParent().getAlias() + ".(XMLNSC.Field)" + getFullName(e) + " = " + assignment + ";", builder, e.getLevel() + depth);
 
                     } else if (XmlSchemaBase.NodeType.Attribute.equals(e.getNodeType())) {
+                        System.out.println("======================== " + e.getPath());
                         StringBuilderUtils.println("SET " + e.getParent().getAlias() + ".(XMLNSC.Attribute)" + getFullName(e) + " = " + assignment + ";", builder, e.getLevel() + depth);
 
                     }
@@ -636,19 +561,5 @@ public class EsqlRenderer extends XmlSchemaBaseRenderer implements MappingFeatur
         }
 
     }
-/*
-    private boolean mapped(XmlSchemaBase.MappingNode node) {
-        if (node.getNodeType().equals(XmlSchemaBase.NodeType.Folder)) {
-            for (XmlSchemaBase.MappingNode e : node.getChildren()) {
-                if (mapped(e)) {
-                    return true;
-                }
-            }
 
-        } else {
-            return node.getAnnotation(MAPPING) != null;
-        }
-
-        return false;
-    }*/
 }

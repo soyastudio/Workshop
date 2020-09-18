@@ -140,7 +140,6 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
         String path = node.getPath();
         for(String prefix: ignores) {
             if(path.startsWith(prefix)) {
-                System.out.println("===================== ignored: " + node.getPath());
                 return true;
             }
         }
