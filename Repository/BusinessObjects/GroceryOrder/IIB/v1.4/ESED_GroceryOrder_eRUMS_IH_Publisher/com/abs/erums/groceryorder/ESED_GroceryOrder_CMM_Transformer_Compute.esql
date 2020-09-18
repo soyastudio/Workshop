@@ -119,14 +119,14 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 				DECLARE OrderStatus_ REFERENCE TO GroceryOrderHeader_;
 				CREATE LASTCHILD OF GroceryOrderHeader_ AS OrderStatus_ TYPE XMLNSC.Folder NAME 'Abs:OrderStatus';
 
-					-- Set Field StatusTypeCd
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderStatus/StatusTypeCd
 					SET OrderStatus_.(XMLNSC.Field)Abs:StatusTypeCd = _inputRootNode.orderStatus;
 
 				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderActionStatus
 				DECLARE OrderActionStatus_ REFERENCE TO GroceryOrderHeader_;
 				CREATE LASTCHILD OF GroceryOrderHeader_ AS OrderActionStatus_ TYPE XMLNSC.Folder NAME 'Abs:OrderActionStatus';
 
-					-- Set Field Type
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderActionStatus/StatusTypeCd
 					SET OrderActionStatus_.(XMLNSC.Field)Abs:StatusTypeCd = _inputRootNode.messageAction;
 
 					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderActionStatus/Description
@@ -186,8 +186,8 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 								SET FulfillingFacility_.(XMLNSC.Field)Abs:ERUMSEnabledInd = 'N';
 							END IF;
 
-						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility/ERUMSEnabledInd
-						ELSEIF _storeInfo.key = 'WYSIWYG' THEN
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType
+						ELSEIF _storeInfo.key = 'isWYSIWYGEnabled' THEN
 							IF _storeInfo.value = 'true' THEN
 
 								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType
@@ -214,7 +214,7 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 				DECLARE RetailCustomer_ REFERENCE TO GroceryOrderHeader_;
 				CREATE LASTCHILD OF GroceryOrderHeader_ AS RetailCustomer_ TYPE XMLNSC.Folder NAME 'Abs:RetailCustomer';
 
-					-- Set Field CustomerId
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerId
 					SET RetailCustomer_.(XMLNSC.Field)Abs:CustomerId = _inputRootNode.customer.customerId;
 
 					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerNm
@@ -454,9 +454,6 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 				DECLARE CustomerSavings_ REFERENCE TO GroceryOrderHeader_;
 				CREATE LASTCHILD OF GroceryOrderHeader_ AS CustomerSavings_ TYPE XMLNSC.Folder NAME 'Abs:CustomerSavings';
 
-					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerSavings/TotalCustomerSavingsAmt
-					-- SET CustomerSavings_.(XMLNSC.Field)Abs:TotalCustomerSavingsAmt = CAST(_inputRootNode.orderTotal.totalCardSavings AS DECIMAL(10, 2));
-
 					-- LOOP FROM orderTotal/cardSavings[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerSavings/SavingsCategoryType:
 					DECLARE _card_savings REFERENCE TO _inputRootNode.orderTotal.cardSavings.Item;
 					card_savings : WHILE LASTMOVE(_card_savings) DO
@@ -517,7 +514,7 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 					-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/SubOrderNbr
 					SET GrocerySubOrder_.(XMLNSC.Field)Abs:SubOrderNbr = _subOrder.subOrderNumber;
 
-					-- Generate Node SubOrderStatus
+					-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/SubOrderStatus
 					DECLARE SubOrderStatus_ REFERENCE TO GrocerySubOrder_;
 					CREATE LASTCHILD OF GrocerySubOrder_ AS SubOrderStatus_ TYPE XMLNSC.Folder NAME 'Abs:SubOrderStatus';
 
@@ -528,7 +525,7 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 					DECLARE SubOrderActionStatus_ REFERENCE TO GrocerySubOrder_;
 					CREATE LASTCHILD OF GrocerySubOrder_ AS SubOrderActionStatus_ TYPE XMLNSC.Folder NAME 'Abs:SubOrderActionStatus';
 
-						-- Set Field Type
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/SubOrderActionStatus/StatusTypeCd
 						SET SubOrderActionStatus_.(XMLNSC.Attribute)Abs:StatusTypeCd = _subOrder.messageAction;
 
 						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/SubOrderActionStatus/Description
@@ -605,14 +602,12 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CouponPLUNbr
 							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:CouponPLUNbr = _orderLine.itemPrice.itemPluNumber;
 
-							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/PromotionPriceAmt
-							-- SET GroceryOrderDetail_.(XMLNSC.Field)Abs:PromotionPriceAmt = CAST(_delivery_promotion_savings.promotionPrice AS DECIMAL(14, 4));
-
-							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers
-							DECLARE CustomerOffers_ REFERENCE TO GroceryOrderDetail_;
 							-- LOOP FROM subOrders[*]/orderLines[*]/itemPrice/savings[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerOffers:
 							DECLARE _customer_savings REFERENCE TO _orderLine.itemPrice.savings.Item;
 							customer_savings_loop: WHILE LASTMOVE(_customer_savings) DO
+
+                                -- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers
+                                DECLARE CustomerOffers_ REFERENCE TO GroceryOrderDetail_;
 
 							CREATE LASTCHILD OF GroceryOrderDetail_ AS CustomerOffers_ TYPE XMLNSC.Folder NAME 'Abs:CustomerOffers';
 
@@ -665,16 +660,23 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 							DECLARE DeliveredItem_ REFERENCE TO GroceryOrderDetail_;
 							CREATE LASTCHILD OF GroceryOrderDetail_ AS DeliveredItem_ TYPE XMLNSC.Folder NAME 'Abs:DeliveredItem';
 
+							-- LOOP FROM subOrders[*]/orderLines[*]/fulfilledUpc[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item:
+							DECLARE _fulfilledUpc REFERENCE TO _orderLine.fulfilledUpc.Item;
+							fulfilledUpc : WHILE LASTMOVE(_fulfilledUpc) DO
+
 								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item
 								DECLARE Item_ REFERENCE TO DeliveredItem_;
 								CREATE LASTCHILD OF DeliveredItem_ AS Item_ TYPE XMLNSC.Folder NAME 'Abs:Item';
 
-									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item/UPC
-									DECLARE UPC_1 REFERENCE TO Item_;
-									CREATE LASTCHILD OF Item_ AS UPC_1 TYPE XMLNSC.Folder NAME 'Abs:UPC';
+										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item/UPC
+										DECLARE UPC_1 REFERENCE TO Item_;
+										CREATE LASTCHILD OF Item_ AS UPC_1 TYPE XMLNSC.Folder NAME 'Abs:UPC';
 
-										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item/UPC/UPCTxt
-										-- FIXME: SET UPC_1.(XMLNSC.Field)Abs:UPCTxt = _orderLine.fulfilledUpc[*].upcId;
+											-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item/UPC/UPCTxt
+											SET UPC_1.(XMLNSC.Field)Abs:UPCTxt = _fulfilledUpc.upcId;
+
+							MOVE _fulfilledUpc NEXTSIBLING;
+							END WHILE fulfilledUpc;
 
 								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Quantity
 								SET DeliveredItem_.(XMLNSC.Field)Abs:Quantity = CAST(_orderLine.suppliedQuantity AS DECIMAL(14, 4));
@@ -888,7 +890,7 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService/PhoneFaxContact
 							DECLARE PhoneFaxContact_1 REFERENCE TO CustomerService_;
 							CREATE LASTCHILD OF CustomerService_ AS PhoneFaxContact_1 TYPE XMLNSC.Folder NAME 'Abs:PhoneFaxContact';
-								
+
 								-- Set Field TypeCode
 								SET PhoneFaxContact_1.(XMLNSC.Attribute)TypeCode = _service_contact.type;
 
