@@ -27,8 +27,7 @@ public class LoopAnalyzeRenderer extends XmlSchemaBaseRenderer implements Mappin
     private XmlSchemaBase.MappingNode findParent(XmlSchemaBase.MappingNode mappingNode) {
         XmlSchemaBase.MappingNode node = mappingNode.getParent();
         while (node != null) {
-            Mapping mapping = node.getAnnotation(MAPPING, Mapping.class);
-            if (!node.getCardinality().endsWith("-1")) {
+            if (node.getCardinality() != null && !node.getCardinality().endsWith("-1")) {
                 break;
             }
             node = node.getParent();
