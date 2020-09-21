@@ -83,7 +83,7 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
                         sourcePath = sourceFixMap.get(sourcePath);
                     }
 
-                    if (targetPath != null && mappingRule != null) {
+                    if (targetPath != null && mappingRule != null && !excludes.contains(targetPath)) {
                         Mapping mapping = new Mapping();
                         mapping.mappingRule = mappingRule;
                         mapping.sourcePath = sourcePath;
@@ -139,7 +139,7 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
     private boolean ignored(MappingNode node) {
         String path = node.getPath();
         for(String prefix: ignores) {
-            if(path.startsWith(prefix)) {
+            if(path.startsWith(prefix + "/")) {
                 return true;
             }
         }

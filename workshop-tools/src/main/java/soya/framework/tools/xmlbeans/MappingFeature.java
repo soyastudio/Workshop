@@ -2,6 +2,8 @@ package soya.framework.tools.xmlbeans;
 
 import com.google.gson.JsonObject;
 
+import java.util.StringTokenizer;
+
 public interface MappingFeature {
     String INPUT_ROOT = "$.";
     String FUNCTION_PARAM = "$$";
@@ -19,13 +21,10 @@ public interface MappingFeature {
         protected String variable;
 
         protected MappingFeature.WhileLoop parent;
-        protected int depth = 1;
-
-        public WhileLoop() {
-        }
 
         protected int getDepth() {
-            return this.parent == null ? this.depth : this.parent.getDepth() + this.depth;
+            StringTokenizer tokenizer = new StringTokenizer(sourcePath, "*");
+            return tokenizer.countTokens() - 1;
         }
     }
 

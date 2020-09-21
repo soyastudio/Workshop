@@ -110,8 +110,9 @@ public class EsqlRenderer extends XmlSchemaBaseRenderer implements MappingFeatur
                 String assignment = node.getAnnotation(MAPPING, Mapping.class).assignment;
                 if(assignment != null) {
                     assignment = assignment.replace(INPUT_ROOT, inputRootVariable + ".");
+
                     StringBuilderUtils.println("-- " + node.getPath(), builder, node.getLevel());
-                    StringBuilderUtils.println("SET " + node.getAlias() + ".(XMLNSC.Field)" + getFullName(node) + " = " + assignment + ";", builder, node.getLevel());
+                    StringBuilderUtils.println("SET " + node.getParent().getAlias() + ".(XMLNSC.Field)" + getFullName(node) + " = " + assignment + ";", builder, node.getLevel());
                     StringBuilderUtils.println(builder);
                 }
 
@@ -392,7 +393,6 @@ public class EsqlRenderer extends XmlSchemaBaseRenderer implements MappingFeatur
 
             StringBuilderUtils.println(builder);
         }
-
     }
 
     private void printNode(XmlSchemaBase.MappingNode e, WhileLoop parentLoop, StringBuilder builder) {
@@ -422,7 +422,6 @@ public class EsqlRenderer extends XmlSchemaBaseRenderer implements MappingFeatur
                         StringBuilderUtils.println("CREATE LASTCHILD OF " + e.getParent().getAlias() + " AS " + e.getAlias() + " TYPE XMLNSC.Folder NAME '" + getFullName(e) + "';"
                                 , builder, e.getLevel() + 2);
                         StringBuilderUtils.println(builder);
-
                     }
 
                     e.getChildren().forEach(n -> {
@@ -463,7 +462,6 @@ public class EsqlRenderer extends XmlSchemaBaseRenderer implements MappingFeatur
                         StringBuilderUtils.println("SET " + e.getParent().getAlias() + ".(XMLNSC.Field)" + getFullName(e) + " = " + assignment + ";", builder, e.getLevel() + depth);
 
                     } else if (XmlSchemaBase.NodeType.Attribute.equals(e.getNodeType())) {
-                        System.out.println("======================== " + e.getPath());
                         StringBuilderUtils.println("SET " + e.getParent().getAlias() + ".(XMLNSC.Attribute)" + getFullName(e) + " = " + assignment + ";", builder, e.getLevel() + depth);
 
                     }
