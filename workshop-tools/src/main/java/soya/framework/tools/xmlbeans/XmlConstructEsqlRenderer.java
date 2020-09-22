@@ -110,7 +110,17 @@ public class XmlConstructEsqlRenderer extends XmlSchemaBaseRenderer implements M
             printBlock(node, builder, indent);
 
         } else if (XmlSchemaBase.NodeType.Folder.equals(node.getNodeType())) {
-            printSimpleFolder(node, builder, indent);
+            if (node.getAnnotation(CONDITION) != null) {
+                String condition = node.getAnnotation(CONDITION, String.class);
+
+                StringBuilderUtils.println("IF " + condition + " THEN", builder, node.getLevel() + indent);
+                printSimpleFolder(node, builder, indent + 1);
+                StringBuilderUtils.println("END IF;", builder, node.getLevel() + indent);
+                StringBuilderUtils.println(builder);
+
+            } else {
+                printSimpleFolder(node, builder, indent);
+            }
 
         }
     }
@@ -128,18 +138,30 @@ public class XmlConstructEsqlRenderer extends XmlSchemaBaseRenderer implements M
             StringBuilderUtils.println(loop.name + " : WHILE LASTMOVE(" + loop.variable + ") DO", builder, node.getLevel() + indent);
             StringBuilderUtils.println(builder);
 
-            if (node.getParent() != null) {
-                StringBuilderUtils.println("-- " + node.getPath(), builder, node.getLevel() + indent + 1);
-                StringBuilderUtils.println("DECLARE " + node.getAlias() + " REFERENCE TO " + node.getParent().getAlias() + ";", builder, node.getLevel() + indent + 1);
-                StringBuilderUtils.println("CREATE LASTCHILD OF " + node.getParent().getAlias() + " AS " + node.getAlias() + " TYPE XMLNSC.Folder NAME '" + getFullName(node) + "';"
-                        , builder, node.getLevel() + indent + 1);
+            int offset = 1;
+            if (node.getAnnotation(CONDITION) != null) {
+                String condition = node.getAnnotation(CONDITION, String.class);
+                StringBuilderUtils.println("IF " + condition + " THEN", builder, node.getLevel() + indent + 1);
                 StringBuilderUtils.println(builder);
+                offset ++;
             }
+
+
+            StringBuilderUtils.println("-- " + node.getPath(), builder, node.getLevel() + indent + offset);
+            StringBuilderUtils.println("DECLARE " + node.getAlias() + " REFERENCE TO " + node.getParent().getAlias() + ";", builder, node.getLevel() + indent + offset);
+            StringBuilderUtils.println("CREATE LASTCHILD OF " + node.getParent().getAlias() + " AS " + node.getAlias() + " TYPE XMLNSC.Folder NAME '" + getFullName(node) + "';"
+                    , builder, node.getLevel() + indent + offset);
+            StringBuilderUtils.println(builder);
 
             for (XmlSchemaBase.MappingNode child : node.getChildren()) {
                 if (inLoop(child, loop)) {
-                    printNode(child, builder, indent + 1);
+                    printNode(child, builder, indent + offset);
                 }
+            }
+
+            if (node.getAnnotation(CONDITION) != null) {
+                StringBuilderUtils.println("END IF;", builder, node.getLevel() + indent + 1);
+                StringBuilderUtils.println(builder);
             }
 
             StringBuilderUtils.println("MOVE " + loop.variable + " NEXTSIBLING;", builder, node.getLevel() + indent);
@@ -149,6 +171,18 @@ public class XmlConstructEsqlRenderer extends XmlSchemaBaseRenderer implements M
     }
 
     private void printBlock(XmlSchemaBase.MappingNode node, StringBuilder builder, int indent) {
+
+        StringBuilderUtils.println("-- " + node.getPath(), builder, node.getLevel() + indent);
+        StringBuilderUtils.println("DECLARE " + node.getAlias() + " REFERENCE TO " + node.getParent().getAlias() + ";", builder, node.getLevel() + indent);
+        StringBuilderUtils.println("CREATE LASTCHILD OF " + node.getParent().getAlias() + " AS " + node.getAlias() + " TYPE XMLNSC.Folder NAME '" + getFullName(node) + "';"
+                , builder, node.getLevel() + indent);
+        StringBuilderUtils.println(builder);
+
+        String[] lines = node.getAnnotation(BLOCK, String[].class);
+        for(String line: lines) {
+            StringBuilderUtils.println(line, builder, node.getLevel() + indent);
+        }
+        StringBuilderUtils.println(builder);
 
     }
 
@@ -261,17 +295,15 @@ public class XmlConstructEsqlRenderer extends XmlSchemaBaseRenderer implements M
     private boolean inLoop(XmlSchemaBase.MappingNode node, WhileLoop loop) {
         String source = loop.sourcePath + "/";
 
-        if (XmlSchemaBase.NodeType.Folder.equals(node.getNodeType())) {
+        if (node.getAnnotation(MAPPING) != null) {
+            Mapping mapping = node.getAnnotation(MAPPING, Mapping.class);
+            return mapping.sourcePath != null && mapping.sourcePath.startsWith(source);
+
+        } else if (XmlSchemaBase.NodeType.Folder.equals(node.getNodeType())) {
             for (XmlSchemaBase.MappingNode child : node.getChildren()) {
                 if (inLoop(child, loop)) {
                     return true;
                 }
-            }
-
-        } else {
-            if (node.getAnnotation(MAPPING) != null) {
-                Mapping mapping = node.getAnnotation(MAPPING, Mapping.class);
-                return mapping.sourcePath != null && mapping.sourcePath.startsWith(source);
             }
         }
 

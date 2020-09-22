@@ -49,11 +49,23 @@
             name: address
             variable: _address
 
+      GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/PostalZoneCd:
+        mapping:
+          mappingRule: Direct Mapping
+          sourcePath: customer/address[*]/zipCode
+
       GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerPreference:
         loop:
           - sourcePath: customer/preference/optIn[*]
             name: optIn
             variable: _optIn
+
+        condition: _optIn.isOptin = 'true'
+
+      GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerPreference/PreferenceType/Code:
+        mapping:
+          sourcePath: customer/preference/optIn[*]/type
+          mappingRule: Direct Mapping
 
       GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender:
         loop:
@@ -61,11 +73,15 @@
             name: paymentDetails
             variable: _paymentDetails
 
-      GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Refund:
-        loop:
           - sourcePath: tender[*]
             name: tender
             variable: _tender
+
+      GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Refund:
+        condition: _tender.tenderType = 'REFUND'
+
+      GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Cancellation:
+        condition: _tender.tenderType = 'CANCELLATION'
 
       GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerSavings/SavingsCategoryType:
         loop:
@@ -89,11 +105,10 @@
             name: promoCode
             variable: _promoCode
 
-      GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item:
-        loop:
-          - sourcePath: subOrders[*]/orderLines[*]/fulfilledUpc[*]
-            name: fulfilledUpc
-            variable: _fulfilledUpc
+      GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ItemId/BaseProductNbr:
+        mapping:
+          mappingRule: Direct Mapping
+          sourcePath: subOrders[*]/orderLines[*]/itemId
 
       GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem:
         loop:
@@ -139,24 +154,27 @@
       - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/ExpireMonthYearTxt:  _paymentDetails.cardExpiryMonth
       - GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ChargeInfo/ChargeAmt: CAST($$ AS DECIMAL(10, 2))
 
-
 - soya.framework.tools.xmlbeans.DecimalFunctionAnnotator:
 
 - soya.framework.tools.xmlbeans.NodeBuildAnnotator:
     path: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility
     block:
-      RetailStoreId: $.storeNumber
-      BannerCd: $.banner
-      _while:
-        sourcePath: storeInfo[*]
-        name: store_info
-        variable: _storeInfo
-        block:
-          MFCInd: "'???'"
-          HybridStoreInd: "'???'"
-          PremiumStoreInd: "'???'"
-          ThirdPartyDeliveryOnlyInd: "'???'"
-          ERUMSEnabledInd: "'???'"
+      - ""
+
+- soya.framework.tools.xmlbeans.NodeBuildAnnotator:
+    path: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerSubscription
+    block:
+      - "IF _inputRootNode.customer.isSubscription = 'true' THEN"
+      - ""
+      - "-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerSubscription/SubscriptionTypeCd"
+      - "SET CustomerSubscription_.(XMLNSC.Field)Abs:SubscriptionTypeCd = 'Subscription';"
+      - ""
+      - "-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerSubscription/OptInInd"
+      - "SET CustomerSubscription_.(XMLNSC.Field)Abs:OptInInd = 'true';"
+      - "ELSE"
+      - "SET CustomerSubscription_.(XMLNSC.Field)Abs:OptInInd = 'false';"
+      - ""
+      - "END IF;"
 
 - soya.framework.tools.xmlbeans.SampleXmlRenderer:
 
