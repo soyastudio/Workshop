@@ -12,6 +12,7 @@ public interface MappingFeature {
     String MAPPED = "mapped";
     String MAPPING = "mapping";
     String MAPPINGS = "mappings";
+    String CONDITION = "condition";
     String LOOP = "loop";
     String BLOCK = "block";
 

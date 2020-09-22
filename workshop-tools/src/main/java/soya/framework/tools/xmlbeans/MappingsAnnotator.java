@@ -25,6 +25,10 @@ public class MappingsAnnotator extends MappingFeatureSupport implements Buffalo.
                 String path = e.getKey();
                 XmlSchemaBase.MappingNode node = base.get(path);
                 Map<String, ?> settings = e.getValue();
+                if(settings.containsKey(CONDITION)) {
+                    node.annotate(CONDITION, settings.get(CONDITION));
+                }
+
                 if (settings.containsKey(MAPPING)) {
                     Mapping mapping = GSON.fromJson(GSON.toJson(settings.get(MAPPING)), Mapping.class);
                     node.annotate(MAPPING, mapping);
