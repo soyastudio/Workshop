@@ -8,6 +8,7 @@
 -->
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns:oa="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.3 Alex Nunes 9/2120 - Added Establishment Nbumber and Item Availability Date (Detail).-->
 	<!--V1.2 Alex Nunes 8/18/20 - Added wholesale busines data for roll-up stores (Corp/Div/Fac).-->
 	<!--V1.1 Patrick Oliver 7/22/20 - Updated VendorId & VendorSubAccountNbr to string(20)-->
 	<!--04/07/20   Added DataBatchCd to OrderType-->
@@ -1114,6 +1115,12 @@ position</xs:documentation>
 					<xs:documentation>Retail department Id</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="ItemAvailabilityDtTm" type="DateTimeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time of when item will be available on the shelf.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ManufacturingFacility" type="ManufacturingFacilityType" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="ItemSubstitutionType">
@@ -1755,6 +1762,26 @@ Buyer/Merchandisers may break a Vendor outlet into different WIMS Vendors to sui
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element name="HierarchyType" type="HierarchyType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ManufacturingFacilityType">
+		<xs:annotation>
+			<xs:documentation>Defines detail of where item was manufactured.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="Id" minOccurs="0"/>
+			<xs:element name="EstablishmentNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>All containers of meat, poultry, and egg products must be labeled with a USDA mark of inspection and establishment (EST number), which is assigned to the plant where the product was produced. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="Name" minOccurs="0"/>
+			<xs:element ref="Address" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 </xs:schema>

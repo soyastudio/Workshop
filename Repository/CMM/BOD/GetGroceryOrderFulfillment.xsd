@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--   Schema Owner: 	Safeway Inc
+   Date Created:      08/27/2019
+   Author:		Jayson Soliman
+   Description: BOD for Grocery Delivery.
+   Name: /SFWY/BOD/GetGroceryDelivery.xsd-->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
+<xs:schema xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.0 Sai. N 09/18/20  Initial Version-->
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/GroceryOrderFulfillment.xsd"/>
+	<xs:element name="GetGroceryOrderFulfillment" type="GetGroceryOrderFulfillmentType">
+		<xs:annotation>
+			<xs:documentation>root</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetGroceryOrderFulfillmentType">
+		<xs:annotation>
+			<xs:documentation>Business Object Document for Albertsons Grocery Order Fulfillment activities. Grocery Orders are received from online customers thru various channels. Albertsos will receive these orders for fulfillment and customer delivery through various delivery service types. Grocery Order fulfillment can have multiple assignments and events involved in it. Order picking, staging, consolidation and delivery are different types of assginments involved in the process.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GroceryOrderFulfillmentData" type="Abs:GroceryOrderFulfillmentType"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

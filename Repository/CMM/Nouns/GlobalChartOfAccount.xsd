@@ -16,19 +16,24 @@
 			<xs:documentation>Chart Of Accounts represents the accounting structure of a business.   Each account represents a financial aspect of a business, such as its Accounts Payable, or the value of its inventory, or its office supply expenses. The purpose of the GlobalChartOfAccounts is to enable legacy applications to cross reference  specific Chart Of Accounts information from Oracle's business application module.  </xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="LegacyStructureCd" type="CodeWithDescription" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Identifies if processing accounting or merchandising chart of accounts </xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="SegmentCd" type="CodeWithDescription" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Identifies the chart of account record being processed (legal entity, line of business, site, cost center, etc.) and corresponding segment number  </xs:documentation>
-				</xs:annotation>
-			</xs:element>
 			<xs:element name="LegacyChartOfAccount">
 				<xs:complexType>
 					<xs:sequence>
+						<xs:element name="LegacyStructureCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Identifies if processing accounting or merchandising chart of accounts (Lawson, MARS) </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LegacySegmentCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Identifies the segment number for legacy chart of account elemnet (Segment1 = Company, Segment2 = Facility, Segment3 = Section, etc.) </xs:documentation>
+							</xs:annotation>
+						</xs:element>
 						<xs:element ref="CompanyId" minOccurs="0"/>
 						<xs:element name="CorporationId" minOccurs="0">
 							<xs:simpleType>
@@ -138,6 +143,11 @@
 			<xs:element name="ChartOfAccount">
 				<xs:complexType>
 					<xs:sequence>
+						<xs:element name="SegmentCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Identifies the segment number for chart of account element (Segment1 = Entity, Segment2 = Line of Business, Segmen3 = Site, Segment4 = Cost Center, etc.)</xs:documentation>
+							</xs:annotation>
+						</xs:element>
 						<xs:element name="Entity" type="CodeWithDescription" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>Companies with EIN's allows for flexibility of hundreds if not thousands of legal entities and room for special purposes.</xs:documentation>
