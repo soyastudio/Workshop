@@ -43,6 +43,7 @@ graph LR
     su - esd02ed
     password: #Today@321!
     cd /appl/esed/kafka
+    cd /appl/esed/kafka/kafkaFL
 
 ```
 
