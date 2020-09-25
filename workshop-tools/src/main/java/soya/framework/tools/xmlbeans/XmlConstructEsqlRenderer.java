@@ -44,11 +44,13 @@ public class XmlConstructEsqlRenderer extends XmlSchemaBaseRenderer implements M
             StringBuilderUtils.println(builder);
         }
 
+        // Namespace
+        declareNamespace(builder);
+
         StringBuilderUtils.println("CREATE FUNCTION Main() RETURNS BOOLEAN", builder, 1);
         begin(builder, 1);
 
         declareInputRoot(builder);
-        declareNamespace(builder);
 
         // Declare Output Domain
         StringBuilderUtils.indent(builder, 2);
@@ -90,8 +92,8 @@ public class XmlConstructEsqlRenderer extends XmlSchemaBaseRenderer implements M
     }
 
     private void declareNamespace(StringBuilder builder) {
-        StringBuilderUtils.println("-- Declare Namespace", builder, 2);
-        StringBuilderUtils.println("DECLARE " + "Abs" + " NAMESPACE " + "'https://collab.safeway.com/it/architecture/info/default.aspx'" + ";", builder, 2);
+        StringBuilderUtils.println("-- Declare Namespace", builder, 1);
+        StringBuilderUtils.println("DECLARE " + "Abs" + " NAMESPACE " + "'https://collab.safeway.com/it/architecture/info/default.aspx'" + ";", builder, 1);
         StringBuilderUtils.println(builder);
     }
 
@@ -180,7 +182,13 @@ public class XmlConstructEsqlRenderer extends XmlSchemaBaseRenderer implements M
 
         String[] lines = node.getAnnotation(BLOCK, String[].class);
         for(String line: lines) {
-            StringBuilderUtils.println(line, builder, node.getLevel() + indent);
+            String ln = line.trim();
+            int offset = 0;
+            while (ln.startsWith("+")) {
+                ln = ln.substring(1).trim();
+                offset ++;
+            }
+            StringBuilderUtils.println(ln, builder, node.getLevel() + indent + offset);
         }
         StringBuilderUtils.println(builder);
 

@@ -1262,6 +1262,19 @@ public class XmlSchemaBase extends AnnotatableSupport {
             return defaultValue;
         }
 
+
+        public void setNamespaceURI(String namespaceURI) {
+            this.namespaceURI = namespaceURI;
+        }
+
+        public void setAlias(String alias) {
+            this.alias = alias;
+        }
+
+        public void setDefaultValue(String defaultValue) {
+            this.defaultValue = defaultValue;
+        }
+
         public MappingNode getParent() {
             return parent;
         }
