@@ -83,37 +83,6 @@ public class RepositoryResource {
         }
     }
 
-    @POST
-    @Path("/cmm/esql")
-    @Consumes(MediaType.TEXT_PLAIN)
-    @Produces(MediaType.TEXT_PLAIN)
-    public Response projectESQL(@HeaderParam("bod") String bod,
-                                @HeaderParam("brokerSchema") String brokerSchema,
-                                @HeaderParam("moduleName") String moduleName,
-                                String flow) {
-        if (!schemaCache.contains(bod)) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-
-        } else {
-            SchemaTypeSystem sts = schemaCache.getXmlSchemaTypeSystem(bod);
-            XmlSchemaBase.Builder builder = XmlSchemaBase.builder().schemaTypeSystem(sts);
-
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("source", "C:/Workshop/Repository/BusinessObjects/GroceryOrder/requirement/GroceryOrder_ERUMS_to_Canonical_Mapping_v1.2.1.xlsx");
-            jsonObject.addProperty("sheet", "Mapping Source to Canonical");
-
-            XlsxMappingAnnotator mappingAnnotator = new Gson().fromJson(jsonObject, XlsxMappingAnnotator.class);
-            builder.annotate(mappingAnnotator);
-
-            EsqlRenderer renderer = new EsqlRenderer();
-            renderer.setBrokerSchema(brokerSchema);
-            renderer.setModuleName(moduleName);
-
-            return Response.ok(builder.render(renderer)).build();
-
-        }
-    }
-
     @GET
     @Path("/cmm/avro/{bod}")
     @Produces(MediaType.APPLICATION_JSON)

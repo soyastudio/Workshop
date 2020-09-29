@@ -19,23 +19,33 @@ public class MappingsAnnotator extends MappingFeatureSupport implements Buffalo.
             }
         }
 
+        if(base.getAnnotation(UNKNOWN_MAPPINGS) != null) {
+            UnknownMapping[] unknownMappings = base.getAnnotation(UNKNOWN_MAPPINGS, UnknownMapping[].class);
+            for(UnknownMapping unknownMapping: unknownMappings) {
+                
+            }
+        }
+
         // Components:
         if (mappings != null) {
             mappings.entrySet().forEach(e -> {
                 String path = e.getKey();
                 XmlSchemaBase.MappingNode node = base.get(path);
                 Map<String, ?> settings = e.getValue();
-                if(settings.containsKey(CONDITION)) {
+                if (settings.containsKey(CONDITION)) {
                     node.annotate(CONDITION, settings.get(CONDITION));
                 }
 
-                if (settings.containsKey(MAPPING)) {
+                if (settings.containsKey(PROCEDURE)) {
+                    node.annotate(PROCEDURE, settings.get(PROCEDURE));
+
+                } else if (settings.containsKey(MAPPING)) {
                     Mapping mapping = GSON.fromJson(GSON.toJson(settings.get(MAPPING)), Mapping.class);
                     node.annotate(MAPPING, mapping);
 
                 } else if (settings.containsKey(LOOP)) {
                     WhileLoop[] loops = GSON.fromJson(GSON.toJson(settings.get(LOOP)), WhileLoop[].class);
-                    for(WhileLoop loop: loops) {
+                    for (WhileLoop loop : loops) {
                         node.annotateAsArrayElement(LOOP, loop);
                     }
                 }

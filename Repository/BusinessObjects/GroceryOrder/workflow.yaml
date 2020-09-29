@@ -2,16 +2,15 @@
     source: "D:/Workshop/Repository/CMM/BOD/GetGroceryOrder.xsd"
 
 - soya.framework.tools.xmlbeans.XlsxMappingAnnotator:
-    url: "D:/Workshop/Repository/BusinessObjects/GroceryOrder/requirement/GroceryOrder_ERUMS_to_Canonical_Mapping_v1.4.2.xlsx"
-    sheet: "Mapping Source to Canonical"
+    sourceFiles:
+      - D:/Workshop/Repository/BusinessObjects/GroceryOrder/requirement/echo.json
 
-    targetFix:
-      - GetGroceryOrder/DocumentData/Document/SystemEnvironmentCd: GetGroceryOrder/DocumentData/Document/@SystemEnvironmentCd
-      - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/TypeCode: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/@TypeCode
-      - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact/EmailStatuses/typeCode: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact/EmailStatuses/@typeCode
-      - GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/DeliverytimeZoneCd: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/DeliveryTimeZoneCd
-      - GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService/PhoneFaxContact/TypeCode: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService/PhoneFaxContact/@TypeCode
+    mappingFile: D:/Workshop/Repository/BusinessObjects/GroceryOrder/requirement/GroceryOrder_ERUMS_to_Canonical_Mapping_v1.4.2.xlsx
+    sourceSheet:
+      - "erums_to_edis_sample_payload"
+      - "WYSIWYG_edis_sample_payload"
 
+    mappingSheet: "Mapping Source to Canonical"
     excludes:
       - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/PhoneNbr
       - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType
@@ -20,13 +19,37 @@
       - GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/PromotionalDsc
       - GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/PromotionPriceAmt
 
+- soya.framework.tools.xmlbeans.NodeMappingFixAnnotator:
+    nodeFixes:
+      GetGroceryOrder/DocumentData/Document:
+        namespaceURI: http://collab.safeway.com/it/architecture/info/default.aspx
+      GetGroceryOrder/DocumentData/DocumentAction:
+        namespaceURI: http://collab.safeway.com/it/architecture/info/default.aspx
+
+    targetPathFixes:
+      GetGroceryOrder/DocumentData/Document/SystemEnvironmentCd: GetGroceryOrder/DocumentData/Document/@SystemEnvironmentCd
+      GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/TypeCode: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/@TypeCode
+      GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact/EmailStatuses/typeCode: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact/EmailStatuses/@typeCode
+      GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/DeliverytimeZoneCd: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/DeliveryTimeZoneCd
+      GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService/PhoneFaxContact/TypeCode: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService/PhoneFaxContact/@TypeCode
+
+    sourcePathFixes:
+      GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/PostalZoneCd: customer/address[*]/zipCode
+
 - soya.framework.tools.xmlbeans.MappingsAnnotator:
     globalVariables:
+      - name: VERSION_ID
+        type: CHARACTER
+        defaultValue: "'1.4.0.017'"
       - name: SYSTEM_ENVIRONMENT_CODE
         type: CHARACTER
         defaultValue: "'PROD'"
 
     mappings:
+      GetGroceryOrder/DocumentData/Document/@VersionId:
+        mapping:
+          assignment: VERSION_ID
+
       GetGroceryOrder/DocumentData/Document/@SystemEnvironmentCd:
         mapping:
           assignment: SYSTEM_ENVIRONMENT_CODE
@@ -34,6 +57,9 @@
       GetGroceryOrder/DocumentData/Document/DocumentID:
         mapping:
           assignment: "'GROCERY_ORDER'"
+
+      GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility:
+        procedure: ConstructFulfillingFacility(_inputRootNode, FulfillingFacility_, GroceryOrderHeader_)
 
       GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact:
         loop:
@@ -105,6 +131,11 @@
             name: promoCode
             variable: _promoCode
 
+      GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ItemId/InternalItemId:
+        mapping:
+          mappingRule: Direct Mapping
+          sourcePath: subOrders[*]/orderLines[*]/itemPrice/itemCode
+
       GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ItemId/BaseProductNbr:
         mapping:
           mappingRule: Direct Mapping
@@ -151,28 +182,25 @@
       - GetGroceryOrder/DocumentData/Document/CreationDt: CURRENT_TIMESTAMP
 
       - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/RequiredAuthAmt: CAST($$ AS DECIMAL(10, 2))
-      - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/ExpireMonthYearTxt:  _paymentDetails.cardExpiryMonth
+      - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/ExpireMonthYearTxt: _paymentDetails.cardExpiryMonth
       - GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ChargeInfo/ChargeAmt: CAST($$ AS DECIMAL(10, 2))
 
 - soya.framework.tools.xmlbeans.DecimalFunctionAnnotator:
-
-- soya.framework.tools.xmlbeans.NodeBuildAnnotator:
-    path: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility
-    block:
-      - ""
 
 - soya.framework.tools.xmlbeans.NodeBuildAnnotator:
     path: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerSubscription
     block:
       - "IF _inputRootNode.customer.isSubscription = 'true' THEN"
       - ""
-      - "-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerSubscription/SubscriptionTypeCd"
-      - "SET CustomerSubscription_.(XMLNSC.Field)Abs:SubscriptionTypeCd = 'Subscription';"
+      - "+ -- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerSubscription/SubscriptionTypeCd"
+      - "+ SET CustomerSubscription_.(XMLNSC.Field)Abs:SubscriptionTypeCd = 'Subscription';"
       - ""
-      - "-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerSubscription/OptInInd"
-      - "SET CustomerSubscription_.(XMLNSC.Field)Abs:OptInInd = 'true';"
+      - "+ -- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerSubscription/OptInInd"
+      - "+ SET CustomerSubscription_.(XMLNSC.Field)Abs:OptInInd = 'true';"
+      - ""
       - "ELSE"
-      - "SET CustomerSubscription_.(XMLNSC.Field)Abs:OptInInd = 'false';"
+      - ""
+      - "+ SET CustomerSubscription_.(XMLNSC.Field)Abs:OptInInd = 'false';"
       - ""
       - "END IF;"
 
@@ -183,17 +211,15 @@
 
 - soya.framework.tools.xmlbeans.XmlConstructTreeRenderer:
 
+- soya.framework.tools.xmlbeans.BaseAnnotationRenderer:
+    name: UnknownMappings
+    annotation: UNKNOWN_MAPPINGS
+
 - soya.framework.tools.xmlbeans.JsonMappingRenderer:
 - soya.framework.tools.xmlbeans.LoopAnalyzeRenderer:
 - soya.framework.tools.xmlbeans.AvroSchemaRenderer:
 
 - soya.framework.tools.xmlbeans.XmlConstructEsqlRenderer:
-    brokerSchema: com.abs.erums.groceryorder
-    moduleName: ESED_GroceryOrder_CMM_Transformer_Compute
-    inputRootVariable: _inputRootNode
-    inputRootReference: InputRoot.JSON.Data
-
-- soya.framework.tools.xmlbeans.EsqlRenderer:
     brokerSchema: com.abs.erums.groceryorder
     moduleName: ESED_GroceryOrder_CMM_Transformer_Compute
     inputRootVariable: _inputRootNode

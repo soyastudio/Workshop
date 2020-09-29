@@ -5,9 +5,13 @@ import com.google.gson.JsonObject;
 import java.util.StringTokenizer;
 
 public interface MappingFeature {
+    String UNKNOWN_MAPPINGS = "UNKNOWN_MAPPINGS";
+
+    String SOURCE_PATHS = "SOURCE_PATHS";
+
+    String GLOBAL_VARIABLE = "GLOBAL_VARIABLE";
     String INPUT_ROOT = "$.";
     String FUNCTION_PARAM = "$$";
-    String GLOBAL_VARIABLE = "global_variable";
 
     String MAPPED = "mapped";
     String MAPPING = "mapping";
@@ -15,6 +19,19 @@ public interface MappingFeature {
     String CONDITION = "condition";
     String LOOP = "loop";
     String BLOCK = "block";
+    String PROCEDURE = "procedure";
+
+    enum  UnknownType {
+        UNKNOWN_TARGET_PATH, UNKNOWN_MAPPING_RULE, UNKNOWN_SOURCE_PATH
+    }
+
+    class UnknownMapping {
+        UnknownType unknownType;
+        String targetPath;
+        String mappingRule;
+        String sourcePath;
+        String fix;
+    }
 
     class WhileLoop {
         protected String name;
@@ -49,14 +66,7 @@ public interface MappingFeature {
         }
     }
 
-    class Construction {
-        protected String from;
-        protected String condition;
-        protected JsonObject assignments;
+    class Procedure {
+        
     }
-
-    class Block {
-
-    }
-
 }

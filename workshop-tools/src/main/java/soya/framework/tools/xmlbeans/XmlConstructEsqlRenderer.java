@@ -3,8 +3,7 @@ package soya.framework.tools.xmlbeans;
 import com.google.gson.Gson;
 import soya.framework.tools.util.StringBuilderUtils;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class XmlConstructEsqlRenderer extends XmlSchemaBaseRenderer implements MappingFeature, IntegrationApplicationFeature {
     public static final String URI = "http://collab.safeway.com/it/architecture/info/default.aspx";
@@ -20,10 +19,12 @@ public class XmlConstructEsqlRenderer extends XmlSchemaBaseRenderer implements M
 
     private XmlSchemaBase base;
     private Map<String, WhileLoop> loopMap = new LinkedHashMap<>();
+    private Set<String> procedures = new LinkedHashSet<>();
 
     @Override
     public String render(XmlSchemaBase base) {
         this.base = base;
+
         StringBuilder builder = new StringBuilder();
 
         if (brokerSchema != null && brokerSchema.trim().length() > 0) {
@@ -72,6 +73,8 @@ public class XmlConstructEsqlRenderer extends XmlSchemaBaseRenderer implements M
         StringBuilderUtils.println("END;", builder, 1);
         StringBuilderUtils.println(builder);
 
+        printProcedures(builder);
+
         builder.append("END MODULE;");
 
         return builder.toString();
@@ -102,7 +105,10 @@ public class XmlConstructEsqlRenderer extends XmlSchemaBaseRenderer implements M
             return;
         }
 
-        if (node.getAnnotation(MAPPING) != null && node.getAnnotation(MAPPING, Mapping.class).assignment != null) {
+        if (node.getAnnotation(PROCEDURE) != null) {
+            printProcedureCall(node, builder, indent);
+
+        } else if (node.getAnnotation(MAPPING) != null && node.getAnnotation(MAPPING, Mapping.class).assignment != null) {
             printAssignment(node, builder, indent);
 
         } else if (node.getAnnotation(LOOP) != null) {
@@ -112,6 +118,7 @@ public class XmlConstructEsqlRenderer extends XmlSchemaBaseRenderer implements M
             printBlock(node, builder, indent);
 
         } else if (XmlSchemaBase.NodeType.Folder.equals(node.getNodeType())) {
+
             if (node.getAnnotation(CONDITION) != null) {
                 String condition = node.getAnnotation(CONDITION, String.class);
 
@@ -127,9 +134,57 @@ public class XmlConstructEsqlRenderer extends XmlSchemaBaseRenderer implements M
         }
     }
 
+    private void printProcedureCall(XmlSchemaBase.MappingNode node, StringBuilder builder, int indent) {
+        String procedure = node.getAnnotation(PROCEDURE, String.class);
+        procedures.add(procedure);
+
+        StringBuilderUtils.println("-- " + node.getPath(), builder, node.getLevel() + indent);
+        StringBuilderUtils.println("DECLARE " + node.getAlias() + " REFERENCE TO " + node.getParent().getAlias() + ";", builder, node.getLevel() + indent);
+        StringBuilderUtils.println("CREATE LASTCHILD OF " + node.getParent().getAlias() + " AS " + node.getAlias() + " TYPE XMLNSC.Folder NAME '" + getFullName(node) + "';"
+                , builder, node.getLevel() + indent);
+        StringBuilderUtils.println(builder);
+        StringBuilderUtils.println("CALL " + procedure + ";", builder, node.getLevel() + indent);
+        StringBuilderUtils.println(builder);
+
+    }
+
+    private void printProcedures(StringBuilder builder) {
+        procedures.forEach(e -> {
+            printProcedure(e, builder);
+        });
+    }
+
+    private void printProcedure(String expression, StringBuilder builder) {
+        String name = null;
+        String[] params = new String[0];
+
+        int begin = expression.indexOf('(');
+        int end = expression.indexOf(')');
+
+        name = expression.substring(0, begin);
+        params = expression.substring(begin + 1, end).split(",");
+
+        StringBuilder buf = new StringBuilder(name).append("(");
+        for (int i = 0; i < params.length; i++) {
+            if (i > 0) {
+                buf.append(", ");
+            }
+
+            buf.append("IN ").append(params[i].trim());
+        }
+        buf.append(")");
+
+        StringBuilderUtils.println("CREATE PROCEDURE " + buf.toString(), builder, 1);
+        StringBuilderUtils.println("BEGIN", builder, 2);
+        StringBuilderUtils.println(builder);
+        StringBuilderUtils.println(builder);
+        StringBuilderUtils.println("END;", builder, 2);
+
+        StringBuilderUtils.println(builder);
+
+    }
+
     private void printLoop(XmlSchemaBase.MappingNode node, StringBuilder builder, int indent) {
-
-
         WhileLoop[] loops = node.getAnnotation(LOOP, WhileLoop[].class);
         for (WhileLoop loop : loops) {
             loop.parent = findParent(loop.sourcePath);
@@ -145,7 +200,7 @@ public class XmlConstructEsqlRenderer extends XmlSchemaBaseRenderer implements M
                 String condition = node.getAnnotation(CONDITION, String.class);
                 StringBuilderUtils.println("IF " + condition + " THEN", builder, node.getLevel() + indent + 1);
                 StringBuilderUtils.println(builder);
-                offset ++;
+                offset++;
             }
 
 
@@ -181,14 +236,19 @@ public class XmlConstructEsqlRenderer extends XmlSchemaBaseRenderer implements M
         StringBuilderUtils.println(builder);
 
         String[] lines = node.getAnnotation(BLOCK, String[].class);
-        for(String line: lines) {
+        for (String line : lines) {
             String ln = line.trim();
             int offset = 0;
             while (ln.startsWith("+")) {
                 ln = ln.substring(1).trim();
-                offset ++;
+                offset++;
             }
-            StringBuilderUtils.println(ln, builder, node.getLevel() + indent + offset);
+
+            if (ln.equals("")) {
+                StringBuilderUtils.println(builder);
+            } else {
+                StringBuilderUtils.println(ln, builder, node.getLevel() + indent + offset);
+            }
         }
         StringBuilderUtils.println(builder);
 
