@@ -1,16 +1,17 @@
 package soya.framework.tools.xmlbeans;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 public class NodeBuildAnnotator implements Buffalo.Annotator<XmlSchemaBase>, MappingFeature {
 
-    private String path;
-    private List<String> block = new ArrayList<>();
+    private String targetPath;
+
+    private String sourcePath;
+    private String condition;
+    private Map<String, ?> construction;
 
     @Override
     public void annotate(XmlSchemaBase base) {
-        XmlSchemaBase.MappingNode node = base.get(path);
-        node.annotate(BLOCK, block);
+
     }
 }

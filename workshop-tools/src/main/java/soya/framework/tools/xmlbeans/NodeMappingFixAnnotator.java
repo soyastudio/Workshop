@@ -39,7 +39,7 @@ public class NodeMappingFixAnnotator implements Buffalo.Annotator<XmlSchemaBase>
             for (UnknownMapping unknownMapping : mappings) {
                 if (unknownMapping.fix != null) {
                     UnknownType ut = unknownMapping.unknownType;
-                    String path = unknownMapping.unknownType.equals(ut) ? unknownMapping.fix : unknownMapping.targetPath;
+                    String path = UnknownType.UNKNOWN_TARGET_PATH.equals(ut) ? unknownMapping.fix : unknownMapping.targetPath;
                     XmlSchemaBase.MappingNode node = base.get(path);
                     if (node == null) {
                         throw new NullPointerException("Cannot find node: " + path);
@@ -47,6 +47,9 @@ public class NodeMappingFixAnnotator implements Buffalo.Annotator<XmlSchemaBase>
 
                     if(!node.getNodeType().equals(XmlSchemaBase.NodeType.Folder)) {
                         Mapping mapping = node.getAnnotation(MAPPING, Mapping.class);
+                        if(mapping == null) {
+                            mapping = new Mapping();
+                        }
                         if (ut.equals(UnknownType.UNKNOWN_TARGET_PATH)) {
                             mapping.mappingRule = unknownMapping.mappingRule;
                             mapping.sourcePath = unknownMapping.sourcePath;

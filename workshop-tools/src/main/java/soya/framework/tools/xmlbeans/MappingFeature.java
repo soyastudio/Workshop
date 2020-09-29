@@ -14,9 +14,11 @@ public interface MappingFeature {
     String FUNCTION_PARAM = "$$";
 
     String MAPPED = "mapped";
-    String MAPPING = "mapping";
     String MAPPINGS = "mappings";
+
+    String MAPPING = "mapping";
     String CONDITION = "condition";
+    String CONSTRUCTION = "construction";
     String LOOP = "loop";
     String BLOCK = "block";
     String PROCEDURE = "procedure";
