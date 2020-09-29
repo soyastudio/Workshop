@@ -19,13 +19,6 @@ public class MappingsAnnotator extends MappingFeatureSupport implements Buffalo.
             }
         }
 
-        if(base.getAnnotation(UNKNOWN_MAPPINGS) != null) {
-            UnknownMapping[] unknownMappings = base.getAnnotation(UNKNOWN_MAPPINGS, UnknownMapping[].class);
-            for(UnknownMapping unknownMapping: unknownMappings) {
-                
-            }
-        }
-
         // Components:
         if (mappings != null) {
             mappings.entrySet().forEach(e -> {

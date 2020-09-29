@@ -34,8 +34,39 @@ public class NodeMappingFixAnnotator implements Buffalo.Annotator<XmlSchemaBase>
         UnknownMapping[] mappings = base.getAnnotation(UNKNOWN_MAPPINGS, UnknownMapping[].class);
         if (mappings != null) {
             fixUnknownMappings(mappings);
+
+            // update node mappings:
+            for (UnknownMapping unknownMapping : mappings) {
+                if (unknownMapping.fix != null) {
+                    UnknownType ut = unknownMapping.unknownType;
+                    String path = unknownMapping.unknownType.equals(ut) ? unknownMapping.fix : unknownMapping.targetPath;
+                    XmlSchemaBase.MappingNode node = base.get(path);
+                    if (node == null) {
+                        throw new NullPointerException("Cannot find node: " + path);
+                    }
+
+                    if(!node.getNodeType().equals(XmlSchemaBase.NodeType.Folder)) {
+                        Mapping mapping = node.getAnnotation(MAPPING, Mapping.class);
+                        if (ut.equals(UnknownType.UNKNOWN_TARGET_PATH)) {
+                            mapping.mappingRule = unknownMapping.mappingRule;
+                            mapping.sourcePath = unknownMapping.sourcePath;
+
+                        } else if(ut.equals(UnknownType.UNKNOWN_MAPPING_RULE)) {
+                            mapping.mappingRule = unknownMapping.fix;
+
+                        } else if(ut.equals(UnknownType.UNKNOWN_SOURCE_PATH)) {
+                            mapping.sourcePath = unknownMapping.fix;
+                        }
+                        node.annotate(MAPPING, mapping);
+
+                    } else {
+                        // TODO: for folder type?
+                    }
+                }
+            }
+
+            base.annotate(UNKNOWN_MAPPINGS, mappings);
         }
-        base.annotate(UNKNOWN_MAPPINGS, mappings);
     }
 
     private void applyChange(XmlSchemaBase.MappingNode node, NodeChange change) {
@@ -70,10 +101,6 @@ public class NodeMappingFixAnnotator implements Buffalo.Annotator<XmlSchemaBase>
 
             }
         }
-    }
-
-    private void fixUnknownSourcePaths(UnknownMapping[] unknownMappings, Map<String, String> sourceFixMap) {
-
     }
 
     static class NodeChange {

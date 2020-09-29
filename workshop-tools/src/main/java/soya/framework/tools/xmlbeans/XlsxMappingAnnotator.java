@@ -108,7 +108,6 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
                 for (int i = payloadIndex; i <= currentRow.getLastCellNum(); i++) {
                     Cell cell = currentRow.getCell(i);
                     if (!isEmpty(cell)&& cell.getCellType().equals(CellType.STRING)) {
-                        
                         buf.append(cell.getStringCellValue().trim());
                     }
                 }
