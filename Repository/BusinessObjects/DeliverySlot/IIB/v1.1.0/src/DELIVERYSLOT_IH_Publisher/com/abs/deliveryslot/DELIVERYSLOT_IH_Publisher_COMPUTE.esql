@@ -1,0 +1,244 @@
+BROKER SCHEMA com.abs.deliveryslot
+
+CREATE COMPUTE MODULE DELIVERYSLOT_IH_Publisher_COMPUTE
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- Declare Namespace
+		DECLARE Abs NAMESPACE 'https://collab.safeway.com/it/architecture/info/default.aspx';
+
+		-- Declare Output Message Root
+		CREATE LASTCHILD OF OutputRoot DOMAIN 'XMLNSC';
+
+		DECLARE xmlDocRoot REFERENCE TO OutputRoot.XMLNSC.GetDeliverySlot;
+		CREATE LASTCHILD OF OutputRoot.XMLNSC AS xmlDocRoot TYPE XMLNSC.Folder NAME 'GetDeliverySlot';
+		SET OutputRoot.XMLNSC.GetDeliverySlot.(XMLNSC.NamespaceDecl)xmlns:Abs=Abs;
+
+		-- Declare Variables for Input Message
+		DECLARE _inputRootNode REFERENCE TO InputRoot.JSON.Data;
+
+		-- Declare Variables for DocumentData
+		DECLARE documentData REFERENCE TO xmlDocRoot;
+		DECLARE document REFERENCE TO documentData;
+		DECLARE dataClassification REFERENCE TO document;
+		DECLARE dataClassificationLevel REFERENCE TO dataClassification;
+		DECLARE businessSensitivityLevel REFERENCE TO dataClassification;
+		DECLARE documentAction REFERENCE TO documentData;
+
+		-- Declare Variables for DeliverySlotData
+		DECLARE deliverySlotData REFERENCE TO xmlDocRoot;
+		DECLARE deliveryAreaType REFERENCE TO deliverySlotData;
+		DECLARE slotWindow REFERENCE TO deliverySlotData;
+		DECLARE slotType REFERENCE TO deliverySlotData;
+		DECLARE slotPlanType REFERENCE TO deliverySlotData;
+		DECLARE deliveryServiceType REFERENCE TO deliverySlotData;
+		DECLARE deliveryChargeType REFERENCE TO deliverySlotData;
+		DECLARE customerType REFERENCE TO deliveryChargeType;
+		DECLARE slotBookingType REFERENCE TO deliverySlotData;
+		DECLARE customer REFERENCE TO slotBookingType;
+
+		-- Construct DocumentData
+		CREATE LASTCHILD OF xmlDocRoot AS documentData TYPE XMLNSC.Folder NAME 'DocumentData';
+			-- Generate Node Document
+			CREATE LASTCHILD OF documentData AS document TYPE XMLNSC.Folder NAME 'Abs:Document';
+			-- Set Field AlternateDocumentID
+			-- TODO: SET document.(XMLNSC.Field)Abs:AlternateDocumentID = ?;
+
+			-- Set Field DocumentNm
+			SET document.(XMLNSC.Field)Abs:DocumentNm = 'DeliverySlot';
+
+			-- Set Field CreationDt
+			SET document.(XMLNSC.Field)Abs:CreationDt = CURRENT_TIMESTAMP;
+
+			-- Set Field Description
+			SET document.(XMLNSC.Field)Abs:Description = 'Time window slots for an online customer to place an order';
+
+			-- Set Field SourceApplicationCd
+			SET document.(XMLNSC.Field)Abs:SourceApplicationCd = 'ERUMS';
+
+			-- Set Field TargetApplicationCd
+			SET document.(XMLNSC.Field)Abs:TargetApplicationCd = 'EDIS';
+
+			-- Set Field InternalFileTransferInd
+			SET document.(XMLNSC.Field)Abs:InternalFileTransferInd = 'Y';
+
+				-- Generate Node DataClassification
+				CREATE LASTCHILD OF document AS dataClassification TYPE XMLNSC.Folder NAME 'Abs:DataClassification';
+					-- Generate Node DataClassificationLevel
+					CREATE LASTCHILD OF dataClassification AS dataClassificationLevel TYPE XMLNSC.Folder NAME 'Abs:DataClassificationLevel';
+					-- Set Field Code
+					SET dataClassificationLevel.(XMLNSC.Field)Abs:Code = 'Internal';
+
+
+					-- Generate Node BusinessSensitivityLevel
+					CREATE LASTCHILD OF dataClassification AS businessSensitivityLevel TYPE XMLNSC.Folder NAME 'Abs:BusinessSensitivityLevel';
+					-- Set Field Code
+					SET businessSensitivityLevel.(XMLNSC.Field)Abs:Code = 'Low';
+
+
+				-- Set Field PHIdataInd
+				SET dataClassification.(XMLNSC.Field)Abs:PHIdataInd = 'N';
+
+				-- Set Field PCIdataInd
+				SET dataClassification.(XMLNSC.Field)Abs:PCIdataInd = 'N';
+
+				-- Set Field PIIdataInd
+				SET dataClassification.(XMLNSC.Field)Abs:PIIdataInd = 'N';
+
+
+
+			-- Generate Node DocumentAction
+			CREATE LASTCHILD OF documentData AS documentAction TYPE XMLNSC.Folder NAME 'Abs:DocumentAction';
+			-- Set Field ActionTypeCd
+			SET documentAction.(XMLNSC.Field)Abs:ActionTypeCd = 'UPDATE';
+
+			-- Set Field RecordTypeCd
+			SET documentAction.(XMLNSC.Field)Abs:RecordTypeCd = 'CHANGE';
+
+
+
+		-- Construct Business Object Data
+		CREATE LASTCHILD OF xmlDocRoot AS deliverySlotData TYPE XMLNSC.Folder NAME 'DeliverySlotData';
+
+			-- Generate Node DeliveryAreaType
+			CREATE LASTCHILD OF deliverySlotData AS deliveryAreaType TYPE XMLNSC.Folder NAME 'Abs:DeliveryAreaType';
+			-- Set Field DivisionId
+			-- SET deliveryAreaType.(XMLNSC.Field)Abs:DivisionId = sql(select DIV from RDS_SRCSSIMS.ssstoctl where FAC = '$.storeId');
+
+			-- Set Field DeliveryAreaValueTxt
+			SET deliveryAreaType.(XMLNSC.Field)Abs:DeliveryAreaValueTxt = _inputRootNode.storeId;
+
+
+		-- Set Field SlotId
+		SET deliverySlotData.(XMLNSC.Field)Abs:SlotId = _inputRootNode.slotId;
+
+			-- Generate Node SlotWindow
+			CREATE LASTCHILD OF deliverySlotData AS slotWindow TYPE XMLNSC.Folder NAME 'Abs:SlotWindow';
+			-- Set Field StartTs
+			SET slotWindow.(XMLNSC.Field)Abs:StartTs = _inputRootNode.slotStartTS;
+
+			-- Set Field EndTs
+			SET slotWindow.(XMLNSC.Field)Abs:EndTs = _inputRootNode.slotEndTS;
+
+			-- Set Field ExpiryTs
+			SET slotWindow.(XMLNSC.Field)Abs:ExpiryTs = _inputRootNode.slotExpiryTS;
+
+			-- Set Field DayOfWeek
+			SET slotWindow.(XMLNSC.Field)Abs:DayOfWeek = _inputRootNode.dayOfWeek;
+
+
+			-- Generate Node SlotType
+			CREATE LASTCHILD OF deliverySlotData AS slotType TYPE XMLNSC.Folder NAME 'Abs:SlotType';
+			-- Set Field Code
+			SET slotType.(XMLNSC.Field)Abs:Code = _inputRootNode.serviceType;
+
+
+			-- Generate Node SlotPlanType
+			CREATE LASTCHILD OF deliverySlotData AS slotPlanType TYPE XMLNSC.Folder NAME 'Abs:SlotPlanType';
+			-- Set Field Code
+			SET slotPlanType.(XMLNSC.Field)Abs:Code = _inputRootNode.slotPlan;
+
+
+		-- Set Field MaxDeliveryCnt
+		SET deliverySlotData.(XMLNSC.Field)Abs:MaxDeliveryCnt = _inputRootNode.maxDeliveries;
+
+			-- Generate Node DeliveryServiceType
+			CREATE LASTCHILD OF deliverySlotData AS deliveryServiceType TYPE XMLNSC.Folder NAME 'Abs:DeliveryServiceType';
+			-- Set Field Code
+			SET deliveryServiceType.(XMLNSC.Field)Abs:Code = _inputRootNode.slotType;
+
+
+
+		-- Process JsonObjectToXml from _inputRootNode.b2bCharge toDeliveryChargeType
+		DECLARE _b2bCharge REFERENCE TO _inputRootNode.b2bCharge;
+		CREATE LASTCHILD OF deliverySlotData AS deliveryChargeType TYPE XMLNSC.Folder NAME 'Abs:DeliveryChargeType';
+
+				-- Generate Node CustomerType
+				CREATE LASTCHILD OF deliveryChargeType AS customerType TYPE XMLNSC.Folder NAME 'Abs:CustomerType';
+				-- Set Field Code
+				SET customerType.(XMLNSC.Field)Abs:Code = _b2bCharge.userType;
+
+
+			-- Set Field DeliveryChargeAmt
+			SET deliveryChargeType.(XMLNSC.Field)Abs:DeliveryChargeAmt = _b2bCharge.deliveryCharge;
+
+			-- Set Field DiscountedDeliveryChargeAmt
+			SET deliveryChargeType.(XMLNSC.Field)Abs:DiscountedDeliveryChargeAmt = _b2bCharge.reducedDeliveryCharge;
+
+			-- Set Field ItemDeliveryChargeAmt
+			SET deliveryChargeType.(XMLNSC.Field)Abs:ItemDeliveryChargeAmt = _b2bCharge.deliveryChargeUPC;
+
+			-- Set Field ItemDiscountedDeliveryChargeAmt
+			SET deliveryChargeType.(XMLNSC.Field)Abs:ItemDiscountedDeliveryChargeAmt = _b2bCharge.reducedDeliveryChargeUPC;
+
+			-- Set Field BasketSizeCnt
+			SET deliveryChargeType.(XMLNSC.Field)Abs:BasketSizeCnt = _b2bCharge.minimumBasketSize;
+
+			-- Set Field AlertBasketSizeCnt
+			SET deliveryChargeType.(XMLNSC.Field)Abs:AlertBasketSizeCnt = _b2bCharge.alertBasketSize;
+
+
+		-- Process JsonObjectToXml from _inputRootNode.b2cCharge toDeliveryChargeType
+		DECLARE _b2cCharge REFERENCE TO _inputRootNode.b2cCharge;
+		CREATE LASTCHILD OF deliverySlotData AS deliveryChargeType TYPE XMLNSC.Folder NAME 'Abs:DeliveryChargeType';
+
+				-- Generate Node CustomerType
+				CREATE LASTCHILD OF deliveryChargeType AS customerType TYPE XMLNSC.Folder NAME 'Abs:CustomerType';
+				-- Set Field Code
+				SET customerType.(XMLNSC.Field)Abs:Code = _b2cCharge.userType;
+
+
+			-- Set Field DeliveryChargeAmt
+			SET deliveryChargeType.(XMLNSC.Field)Abs:DeliveryChargeAmt = _b2cCharge.deliveryCharge;
+
+			-- Set Field DiscountedDeliveryChargeAmt
+			SET deliveryChargeType.(XMLNSC.Field)Abs:DiscountedDeliveryChargeAmt = _b2cCharge.reducedDeliveryCharge;
+
+			-- Set Field ItemDeliveryChargeAmt
+			SET deliveryChargeType.(XMLNSC.Field)Abs:ItemDeliveryChargeAmt = _b2cCharge.deliveryChargeUPC;
+
+			-- Set Field ItemDiscountedDeliveryChargeAmt
+			SET deliveryChargeType.(XMLNSC.Field)Abs:ItemDiscountedDeliveryChargeAmt = _b2cCharge.reducedDeliveryChargeUPC;
+
+			-- Set Field BasketSizeCnt
+			SET deliveryChargeType.(XMLNSC.Field)Abs:BasketSizeCnt = _b2cCharge.minimumBasketSize;
+
+			-- Set Field AlertBasketSizeCnt
+			SET deliveryChargeType.(XMLNSC.Field)Abs:AlertBasketSizeCnt = _b2cCharge.alertBasketSize;
+
+
+		-- Process JsonArrayToXml for SlotBookingType
+		DECLARE _item REFERENCE TO _inputRootNode.bookings.Item;
+		WHILE LASTMOVE(_item) DO
+			-- Generate Node SlotBookingType
+			CREATE LASTCHILD OF deliverySlotData AS slotBookingType TYPE XMLNSC.Folder NAME 'Abs:SlotBookingType';
+
+				-- Generate Node Customer
+				CREATE LASTCHILD OF slotBookingType AS customer TYPE XMLNSC.Folder NAME 'Abs:Customer';
+				-- Set Field GUID
+				SET customer.(XMLNSC.Field)Abs:GUID = _item.userGuid;
+
+
+			-- Set Field CartNbr
+			SET slotBookingType.(XMLNSC.Field)Abs:CartNbr = _item.cartId;
+
+			-- Set Field ExpiryTs
+			SET slotBookingType.(XMLNSC.Field)Abs:ExpiryTs = _item.expiryTime;
+
+			-- Set Field BookingNbr
+			SET slotBookingType.(XMLNSC.Field)Abs:BookingNbr = _item.OrderId;
+
+				-- Generate Node DeliveryServiceType
+				CREATE LASTCHILD OF slotBookingType AS deliveryServiceType TYPE XMLNSC.Folder NAME 'Abs:DeliveryServiceType';
+				-- Set Field Code
+				SET deliveryServiceType.(XMLNSC.Field)Abs:Code = _item.deliveryType;
+
+
+
+			MOVE _item NEXTSIBLING;
+		END WHILE;
+
+		RETURN TRUE;
+	END;
+
+END MODULE;
