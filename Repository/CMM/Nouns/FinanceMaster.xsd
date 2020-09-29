@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by jsoli17 (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<!--Patrick Oliver 7/22/20 - Updated VendorId to string(20)-->
 	<!--7/30/19 - Patrick  - Changed ARCode to CodeWithDescription in Receivable Type -->
@@ -100,6 +100,16 @@ S = Summary</xs:documentation>
 						<xs:maxLength value="5"/>
 					</xs:restriction>
 				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CreditAccountId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains the account Id used for Credit type Transactions. Normally found in Journal Entries</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DebitAccountId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains the account Id used for Debit type Transactions. Normally found in Journal Entries</xs:documentation>
+				</xs:annotation>
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
@@ -1031,7 +1041,17 @@ Y = Yes; process bills of exchange</xs:documentation>
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
-	<xs:element name="BaseAmount" type="AmountType"/>
+	<xs:element name="BaseAmount">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="AmountType">
+					<xs:sequence>
+						<xs:element ref="CreditDebitInd" minOccurs="0"/>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
 	<xs:element name="BatchNbr" type="xs:integer">
 		<xs:annotation>
 			<xs:documentation>The batch number associated with the invoice. Used only if the company has Yes selected in the Batch Release Option field.</xs:documentation>
@@ -1725,8 +1745,18 @@ options defined in the Detail Accounts</xs:documentation>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element ref="BaseAmount" minOccurs="0"/>
-			<xs:element name="UnitAmount" type="AmountType" minOccurs="0"/>
+			<xs:element ref="BaseAmount" minOccurs="0" maxOccurs="2"/>
+			<xs:element name="UnitAmount" minOccurs="0" maxOccurs="2">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="AmountType">
+							<xs:sequence>
+								<xs:element ref="CreditDebitInd" minOccurs="0"/>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
 			<xs:element name="AutoReverseInd" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>When the Auto Reversal field is set to "Y," the General Ledger Closing program  creates an opposite                        entry  for this transaction in the next  period.   
@@ -1755,8 +1785,18 @@ Management system. All transactions are posted to an account category within an 
 			</xs:element>
 			<xs:element ref="CurrencyCd" minOccurs="0"/>
 			<xs:element ref="CurrencyExchangeRate" minOccurs="0"/>
-			<xs:element ref="TransactionAmt" minOccurs="0"/>
-			<xs:element name="AccountAmt" type="AmountType" minOccurs="0"/>
+			<xs:element ref="TransactionAmt" minOccurs="0" maxOccurs="2"/>
+			<xs:element name="AccountAmt" minOccurs="0" maxOccurs="2">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="AmountType">
+							<xs:sequence>
+								<xs:element ref="CreditDebitInd" minOccurs="0"/>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
 			<xs:element name="OriginCompany" minOccurs="0">
 				<xs:complexType>
 					<xs:sequence>
@@ -1773,7 +1813,17 @@ Management system. All transactions are posted to an account category within an 
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="ToBaseAmt" type="AmountType" minOccurs="0"/>
+			<xs:element name="ToBaseAmt" minOccurs="0" maxOccurs="2">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="AmountType">
+							<xs:sequence>
+								<xs:element ref="CreditDebitInd" minOccurs="0"/>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
 			<xs:element name="ReconcileInd" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Indicates the reconciliation of transactions.</xs:documentation>
@@ -2759,7 +2809,17 @@ information and report options</xs:documentation>
 for Peoplesoft Trust (PT) to GL, if JEMISINT-JH1-SOURCE-ID = 'PT' then Increments from T-Z the same way as JIF-GG</xs:documentation>
 		</xs:annotation>
 	</xs:element>
-	<xs:element name="TransactionAmt" type="AmountType"/>
+	<xs:element name="TransactionAmt">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="AmountType">
+					<xs:sequence>
+						<xs:element ref="CreditDebitInd" minOccurs="0"/>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
 	<xs:element name="TransactionType" type="CodeWithDescription">
 		<xs:annotation>
 			<xs:documentation>Indicates the type of accounting transaction.
@@ -3571,4 +3631,14 @@ restrictions apply.</xs:documentation>
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
+	<xs:element name="CreditDebitInd">
+		<xs:annotation>
+			<xs:documentation>Indicates if this transaction is a debit or credit transaction.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
 </xs:schema>

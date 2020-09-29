@@ -21,6 +21,16 @@
 					<xs:complexContent>
 						<xs:extension base="FacilityType">
 							<xs:sequence>
+								<xs:element name="TimeChargeFacilityId" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Sometimes employee's punching facility and facility to which his time is charged against may be different .</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="10"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
 								<xs:element ref="DepartmentId" minOccurs="0"/>
 								<xs:element name="OrgHierarchy" type="OrgMasterNameType" minOccurs="0" maxOccurs="unbounded">
 									<xs:annotation>

@@ -80,7 +80,7 @@ The concept of escheat maintains that property always has a recognized owner, wh
 							</xs:annotation>
 							<xs:complexType>
 								<xs:simpleContent>
-									<xs:extension base="xs:long">
+									<xs:extension base="xs:string">
 										<xs:attribute name="QualifierCd" type="xs:string">
 											<xs:annotation>
 												<xs:documentation>Qualifies the kind of identifier. Can be Gift Certificate Id, Insurance Policy Number, Certificate of Deposit Number, etc.</xs:documentation>
@@ -136,6 +136,11 @@ The concept of escheat maintains that property always has a recognized owner, wh
 			<xs:element name="EscheatmentPropertyHolder" type="CodeWithDescription" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Also known as Holder ID Number or State ID. A state ID number distributed by some states to identify holders that have previously reported unclaimed property in their state. This ID is usually included in subsequent filings and can be used by states to ensure timely filing of reports.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SourceCreateDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Create date from source system like Oracle.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 		</xs:sequence>
