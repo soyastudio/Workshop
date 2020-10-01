@@ -29,6 +29,9 @@ CREATE COMPUTE MODULE ESED_DELIVERYSLOT_OSMS_CMM_Compute
 			DECLARE Document_ REFERENCE TO DocumentData_;
 			CREATE LASTCHILD OF DocumentData_ AS Document_ TYPE XMLNSC.Folder NAME 'Document';
 
+				-- GetGroceryOrder/DocumentData/Document/@VersionId
+				SET Document_.(XMLNSC.Attribute)VersionId = VERSION_ID;
+
 				-- GetDeliverySlot/DocumentData/Document/@SystemEnvironmentCd
 				SET Document_.(XMLNSC.Attribute)SystemEnvironmentCd = SYSTEM_ENVIRONMENT_CODE;
 

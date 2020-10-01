@@ -7,32 +7,31 @@
     <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/ESED_DELIVERYSLOT_IH_Publisher/icons/full/obj16/ESED_DELIVERYSLOT_IH_Publisher.gif"/>
     <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/ESED_DELIVERYSLOT_IH_Publisher/icons/full/obj30/ESED_DELIVERYSLOT_IH_Publisher.gif"/>
     <composition>
-      <nodes xmi:type="com_ibm_connector_kafka_ComIbmEventInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="67,224" connectorName="Kafka" topicName="OSMS_Slots_C02.slots.slots" bootstrapServers="pgv013e8b.safeway.com:9093,pgv013e8d.safeway.com:9093,pgv013e8e.safeway.com:9093,pgv013e8f.safeway.com:9093,pgv013e90.safeway.com:9093,pgv013e91.safeway.com:9093" groupId="delivery_slot_consumer_group" initialOffset="latest" enableAutoCommit="true" clientId="delivery_slot_consumer" useClientIdSuffix="true"
-          connectionTimeout="15" sessionTimeout="10" receiveBatchSize="1" securityProtocol="SSL" sslProtocol="TLSv1.2" messageDomainProperty="JSON" validateTiming="deferred" parserXmlnscBuildTreeUsingXMLSchema="false" parserXmlnscUseForXmlnsDomain="false" parserXmlnscMixedContentRetainMode="none" parserXmlnscCommentsRetainMode="none" parserXmlnscProcessingInstructionsRetainMode="none" validateMaster="none" validateFailureAction="exception" componentLevel="flow" additionalInstances="0">
+      <nodes xmi:type="com_ibm_connector_kafka_ComIbmEventInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="117,280" connectorName="Kafka" topicName="OSMS_Slots_C02.slots.slots" bootstrapServers="pgv013e8b.safeway.com:9093,pgv013e8d.safeway.com:9093,pgv013e8e.safeway.com:9093,pgv013e8f.safeway.com:9093,pgv013e90.safeway.com:9093,pgv013e91.safeway.com:9093" groupId="delivery_slot_consumer" initialOffset="latest" enableAutoCommit="true" clientId="delivery_slot_client" useClientIdSuffix="true"
+          connectionTimeout="15" sessionTimeout="10" receiveBatchSize="1" securityProtocol="PLAINTEXT" sslProtocol="TLSv1.2" messageDomainProperty="JSON" validateTiming="deferred" parserXmlnscBuildTreeUsingXMLSchema="false" parserXmlnscUseForXmlnsDomain="false" parserXmlnscMixedContentRetainMode="none" parserXmlnscCommentsRetainMode="none" parserXmlnscProcessingInstructionsRetainMode="none" validateMaster="none" validateFailureAction="exception" componentLevel="flow" additionalInstances="0">
         <translation xmi:type="utility:ConstantString" string="KafkaConsumer"/>
       </nodes>
-      <nodes xmi:type="com_ibm_connector_kafka_ComIbmOutput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="1199,246" connectorName="Kafka" topicName="ESED_C01_DeliverySlot" bootstrapServers="localhost:9092" clientId="delivery_slot_producer" useClientIdSuffix="true" acks="1" timeout="60" securityProtocol="PLAINTEXT" sslProtocol="TLSv1.2" validateMaster="inherit" validateFailureAction="exception">
+      <nodes xmi:type="com_ibm_connector_kafka_ComIbmOutput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="1024,275" connectorName="Kafka" topicName="ESED_C01_DeliverySlot" bootstrapServers="pgv013e8b.safeway.com:9093,pgv013e8d.safeway.com:9093,pgv013e8e.safeway.com:9093,pgv013e8f.safeway.com:9093,pgv013e90.safeway.com:9093,pgv013e91.safeway.com:9093" useClientIdSuffix="true" acks="1" timeout="60" securityProtocol="PLAINTEXT" sslProtocol="TLSv1.2" validateMaster="inherit" validateFailureAction="exception">
         <translation xmi:type="utility:ConstantString" string="KafkaProducer"/>
       </nodes>
-      <nodes xmi:type="com_abs_cmnflows_Audit_Validate_Input.subflow:FCMComposite_1" xmi:id="FCMComposite_1_3" location="325,25" APPLICATION_NAME="ESED_DELIVERYSLOT_IH_Publisher" APPLICATION_DESC="Transform Json to Canonical Message and Publish to Kafka" BO_NAME="DeliverySlot" COMPONENT_DESC="ESED_DELIVERYSLOT_IH_Publisher" COMPONENT_INPUT_TYPE="KAFKA" SOURCE_SYSTEM_NAME="OSMS" PATH_SRC_UNQ_ID="InputRoot.JSON.Data.slotId" PATH_TRGT_UNQ_ID="InputRoot.JSON.Data.slotId" COMPONENT_INPUT_NAME="OSMS_Slots_C02.slots.slots"
-          domain="MRM" queueName="ESEDPR.AUDIT.MSG" PATH_MDL_UNQ_ID="InputRoot.JSON.Data.slotId">
-        <translation xmi:type="utility:ConstantString" string="Audit_Validate_Input"/>
-      </nodes>
-      <nodes xmi:type="com_abs_cmnflows_Audit_Validate_Output.subflow:FCMComposite_1" xmi:id="FCMComposite_1_4" location="879,36" queueName="ESEDPR.AUDIT.MSG">
-        <translation xmi:type="utility:ConstantString" string="Audit_Validate_Output"/>
-      </nodes>
-      <nodes xmi:type="com_abs_cmnflows_ExceptionSubFlow.subflow:FCMComposite_1" xmi:id="FCMComposite_1_5" location="306,440" APPLICATIONNAME="ESED_DELIVERYSLOT_IH_Publisher" BONAME="DeliverySlot" INPUTTYPE="KAFKA" INPUTNAME="OSMS_Slots_C02.slots.slots" COMPONENTNAME="ESED_DELIVERYSLOT_IH_Publisher" queueName="ESEDPR.EXCEPTION.MSG">
-        <translation xmi:type="utility:ConstantString" string="ExceptionSubFlow"/>
-      </nodes>
-      <nodes xmi:type="com_abs_osms_deliveryslot_ESED_DELIVERYSLOT_OSMS_CMM.subflow:FCMComposite_1" xmi:id="FCMComposite_1_6" location="562,232">
+      <nodes xmi:type="com_abs_osms_deliveryslot_ESED_DELIVERYSLOT_OSMS_CMM.subflow:FCMComposite_1" xmi:id="FCMComposite_1_3" location="488,260">
         <translation xmi:type="utility:ConstantString" string="ESED_DELIVERYSLOT_OSMS_CMM"/>
       </nodes>
-      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_1" targetNode="FCMComposite_1_3" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
-      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_2" targetNode="FCMComposite_1_6" sourceNode="FCMComposite_1_3" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.Input"/>
-      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_3" targetNode="FCMComposite_1_4" sourceNode="FCMComposite_1_6" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.Input"/>
-      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_4" targetNode="FCMComposite_1_2" sourceNode="FCMComposite_1_4" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.in"/>
-      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_5" targetNode="FCMComposite_1_5" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.Input"/>
-      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_6" targetNode="FCMComposite_1_5" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.catch" targetTerminalName="InTerminal.Input"/>
+      <nodes xmi:type="com_abs_cmnflows_ExceptionSubFlow.subflow:FCMComposite_1" xmi:id="FCMComposite_1_4" location="417,534" APPLICATIONNAME="ESED_DELIVERYSLOT_IH_Publisher" BONAME="DeliverySlot" INPUTNAME="OSMS_Slots_C02.slots.slots" COMPONENTNAME="OSMS_Slots_C02.slots.slots">
+        <translation xmi:type="utility:ConstantString" string="ExceptionSubFlow"/>
+      </nodes>
+      <nodes xmi:type="com_abs_cmnflows_Audit_Validate_Input.subflow:FCMComposite_1" xmi:id="FCMComposite_1_5" location="332,115" APPLICATION_NAME="ESED_DELIVERYSLOT_IH_Publisher" APPLICATION_DESC="ESED_DELIVERYSLOT_IH_Publisher" BO_NAME="DeliverySlot" COMPONENT_DESC="Transform json data to cmm xml and publish to kafka" SOURCE_SYSTEM_NAME="OSMS" PATH_TRGT_UNQ_ID="InputRoot.JSON.Data.slotId" COMPONENT_INPUT_NAME="OSMS_Slots_C02.slots.slots">
+        <translation xmi:type="utility:ConstantString" string="Audit_Validate_Input"/>
+      </nodes>
+      <nodes xmi:type="com_abs_cmnflows_Audit_Validate_Output.subflow:FCMComposite_1" xmi:id="FCMComposite_1_6" location="747,109">
+        <translation xmi:type="utility:ConstantString" string="Audit_Validate_Output"/>
+      </nodes>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_1" targetNode="FCMComposite_1_5" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_2" targetNode="FCMComposite_1_3" sourceNode="FCMComposite_1_5" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_4" targetNode="FCMComposite_1_6" sourceNode="FCMComposite_1_3" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_5" targetNode="FCMComposite_1_2" sourceNode="FCMComposite_1_6" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_6" targetNode="FCMComposite_1_4" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_7" targetNode="FCMComposite_1_4" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.catch" targetTerminalName="InTerminal.Input"/>
     </composition>
     <propertyOrganizer/>
     <stickyBoard/>
