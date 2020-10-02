@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Schema Owner: 	Safeway Inc
+   Date Created:      07 May 2020
+   Author:		Patrick Oliver
+   Description: Contains commonly used Safeway Purchase order schema.
+   Name: /SFWY/Nouns/SwyPurchaseOrder.xsd
+-->
+<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by Rosabel Macario (Safeway Philtech, Inc) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.0  Patrick Oliver 09/15/20: Initial Version-->
+	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:complexType name="CrossReferenceDataType">
+		<xs:annotation>
+			<xs:documentation>CrossReference object will be use  any kind of cross reference data between systems for data conversion.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="CrossReferenceSource" type="Abs:SourceData" minOccurs="0"/>
+			<xs:element name="CrossReferenceTarget" type="Abs:TargetData" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SourceData">
+		<xs:annotation>
+			<xs:documentation>Contains attributes from source system/s</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="SourceBusinessKey" type="BusinessKeyType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Contains source information. Sample KeyFieldName - Vendor ID and KeyFieldValue will contain the actual vendor ID. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AltSourceBusinessKey" type="BusinessKeyType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Contains alternate source information. Sample KeyFieldName may be Alternate Vendor ID and KeyFieldValue will be the actual value of Alternate Vendor ID.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TargetData">
+		<xs:annotation>
+			<xs:documentation>Contains attributed from target system/s</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="TargetBusinessKey" type="BusinessKeyType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Contains target information. Sample KeyFieldName as OracleID and KeyFieldValue will contain the actual oracle ID value</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AltTargetBusinessKey" type="BusinessKeyType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Contains alternate target information. Sample for KeyFieldName may be Alternate OracleID and KeyFieldValue will be the actual value of Alternate OracleID.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>
