@@ -2,6 +2,7 @@ package soya.framework.tools.xmlbeans;
 
 import com.google.gson.JsonObject;
 
+import java.util.Map;
 import java.util.StringTokenizer;
 
 public interface MappingFeature {
@@ -68,7 +69,11 @@ public interface MappingFeature {
         }
     }
 
-    class Procedure {
-        
+    class Construction {
+        protected String sourcePath;
+        protected String variable;
+        protected String condition;
+        protected boolean loop;
+        protected Map<String, String> assignments;
     }
 }

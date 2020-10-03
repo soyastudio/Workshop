@@ -29,7 +29,7 @@ CREATE COMPUTE MODULE ESED_DELIVERYSLOT_OSMS_CMM_Compute
 			DECLARE Document_ REFERENCE TO DocumentData_;
 			CREATE LASTCHILD OF DocumentData_ AS Document_ TYPE XMLNSC.Folder NAME 'Document';
 
-				-- GetGroceryOrder/DocumentData/Document/@VersionId
+				-- GetDeliverySlot/DocumentData/Document/@VersionId
 				SET Document_.(XMLNSC.Attribute)VersionId = VERSION_ID;
 
 				-- GetDeliverySlot/DocumentData/Document/@SystemEnvironmentCd
@@ -157,19 +157,19 @@ CREATE COMPUTE MODULE ESED_DELIVERYSLOT_OSMS_CMM_Compute
 				-- GetDeliverySlot/DeliverySlotData/DeliveryReceiveType
 				DECLARE DeliveryReceiveType_ REFERENCE TO DeliverySlotData_;
 				CREATE LASTCHILD OF DeliverySlotData_ AS DeliveryReceiveType_ TYPE XMLNSC.Folder NAME 'Abs:DeliveryReceiveType';
-				
+
 					-- GetDeliverySlot/DeliverySlotData/DeliveryReceiveType/Code
 					SET DeliveryReceiveType_.(XMLNSC.Field)Abs:Code = _deliveryType;
-					
+
 			MOVE _deliveryType NEXTSIBLING;
 			END WHILE deliveryType_loop;
 
 			-- GetDeliverySlot/DeliverySlotData/DeliveryChargeType
+
+			-- FROM b2bCharge:
+			DECLARE _b2bCharge REFERENCE TO _inputRootNode.b2bCharge;
 			DECLARE DeliveryChargeType_ REFERENCE TO DeliverySlotData_;
-			
-			DECLARE _b2bCharge REFERENCE TO _inputRootNode.b2bCharge;	
 			CREATE LASTCHILD OF DeliverySlotData_ AS DeliveryChargeType_ TYPE XMLNSC.Folder NAME 'Abs:DeliveryChargeType';
-			
 				-- GetDeliverySlot/DeliverySlotData/DeliveryChargeType/CustomerType
 				DECLARE CustomerType_ REFERENCE TO DeliveryChargeType_;
 				CREATE LASTCHILD OF DeliveryChargeType_ AS CustomerType_ TYPE XMLNSC.Folder NAME 'Abs:CustomerType';
@@ -190,37 +190,40 @@ CREATE COMPUTE MODULE ESED_DELIVERYSLOT_OSMS_CMM_Compute
 				SET DeliveryChargeType_.(XMLNSC.Field)Abs:ItemDiscountedDeliveryChargeAmt = _b2bCharge.reducedDeliveryChargeUPC;
 
 				-- GetDeliverySlot/DeliverySlotData/DeliveryChargeType/BasketSizeCnt
-				SET DeliveryChargeType_.(XMLNSC.Field)Abs:BasketSizeCnt = CAST(_b2bCharge.minimumBasketSize AS DECIMAL(10, 4));
+				SET DeliveryChargeType_.(XMLNSC.Field)Abs:BasketSizeCnt = _b2bCharge.minimumBasketSize;
 
 				-- GetDeliverySlot/DeliverySlotData/DeliveryChargeType/AlertBasketSizeCnt
-				SET DeliveryChargeType_.(XMLNSC.Field)Abs:AlertBasketSizeCnt = CAST(_b2bCharge.alertBasketSize AS DECIMAL(10, 4));
+				SET DeliveryChargeType_.(XMLNSC.Field)Abs:AlertBasketSizeCnt = _b2bCharge.alertBasketSize;
 
-			DECLARE _b2cCharge REFERENCE TO _inputRootNode.b2cCharge;	
-			CREATE LASTCHILD OF DeliverySlotData_ AS DeliveryChargeType_ TYPE XMLNSC.Folder NAME 'Abs:DeliveryChargeType';
-				
+
+			-- FROM b2cCharge:
+			DECLARE _b2cCharge REFERENCE TO _inputRootNode.b2cCharge;
+			DECLARE DeliveryChargeType_1 REFERENCE TO DeliverySlotData_;
+			CREATE LASTCHILD OF DeliverySlotData_ AS DeliveryChargeType_1 TYPE XMLNSC.Folder NAME 'Abs:DeliveryChargeType';
 				-- GetDeliverySlot/DeliverySlotData/DeliveryChargeType/CustomerType
-				CREATE LASTCHILD OF DeliveryChargeType_ AS CustomerType_ TYPE XMLNSC.Folder NAME 'Abs:CustomerType';
+				DECLARE CustomerType_1 REFERENCE TO DeliveryChargeType_;
+				CREATE LASTCHILD OF DeliveryChargeType_1 AS CustomerType_1 TYPE XMLNSC.Folder NAME 'Abs:CustomerType';
 
 					-- GetDeliverySlot/DeliverySlotData/DeliveryChargeType/CustomerType/Code
-					SET CustomerType_.(XMLNSC.Field)Abs:Code = _b2cCharge.userType;
+					SET CustomerType_1.(XMLNSC.Field)Abs:Code = _b2cCharge.userType;
 
 				-- GetDeliverySlot/DeliverySlotData/DeliveryChargeType/DeliveryChargeAmt
-				SET DeliveryChargeType_.(XMLNSC.Field)Abs:DeliveryChargeAmt = CAST(_b2cCharge.deliveryCharge AS DECIMAL(6, 2));
+				SET DeliveryChargeType_1.(XMLNSC.Field)Abs:DeliveryChargeAmt = CAST(_b2cCharge.deliveryCharge AS DECIMAL(6, 2));
 
 				-- GetDeliverySlot/DeliverySlotData/DeliveryChargeType/DiscountedDeliveryChargeAmt
-				SET DeliveryChargeType_.(XMLNSC.Field)Abs:DiscountedDeliveryChargeAmt = CAST(_b2cCharge.reducedDeliveryCharge AS DECIMAL(6, 2));
+				SET DeliveryChargeType_1.(XMLNSC.Field)Abs:DiscountedDeliveryChargeAmt = CAST(_b2cCharge.reducedDeliveryCharge AS DECIMAL(6, 2));
 
 				-- GetDeliverySlot/DeliverySlotData/DeliveryChargeType/ItemDeliveryChargeAmt
-				SET DeliveryChargeType_.(XMLNSC.Field)Abs:ItemDeliveryChargeAmt = _b2cCharge.deliveryChargeUPC;
+				SET DeliveryChargeType_1.(XMLNSC.Field)Abs:ItemDeliveryChargeAmt = _b2cCharge.deliveryChargeUPC;
 
 				-- GetDeliverySlot/DeliverySlotData/DeliveryChargeType/ItemDiscountedDeliveryChargeAmt
-				SET DeliveryChargeType_.(XMLNSC.Field)Abs:ItemDiscountedDeliveryChargeAmt = _b2cCharge.reducedDeliveryChargeUPC;
+				SET DeliveryChargeType_1.(XMLNSC.Field)Abs:ItemDiscountedDeliveryChargeAmt = _b2cCharge.reducedDeliveryChargeUPC;
 
 				-- GetDeliverySlot/DeliverySlotData/DeliveryChargeType/BasketSizeCnt
-				SET DeliveryChargeType_.(XMLNSC.Field)Abs:BasketSizeCnt = CAST(_b2cCharge.minimumBasketSize AS DECIMAL(10, 4));
+				SET DeliveryChargeType_1.(XMLNSC.Field)Abs:BasketSizeCnt = _b2cCharge.minimumBasketSize;
 
 				-- GetDeliverySlot/DeliverySlotData/DeliveryChargeType/AlertBasketSizeCnt
-				SET DeliveryChargeType_.(XMLNSC.Field)Abs:AlertBasketSizeCnt = CAST(_b2cCharge.alertBasketSize AS DECIMAL(10, 4));
+				SET DeliveryChargeType_1.(XMLNSC.Field)Abs:AlertBasketSizeCnt = _b2cCharge.alertBasketSize;
 
 
 			-- GetDeliverySlot/DeliverySlotData/ReservedInd

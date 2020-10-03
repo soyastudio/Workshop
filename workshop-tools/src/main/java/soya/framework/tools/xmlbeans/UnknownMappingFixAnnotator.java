@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 
 import java.util.*;
 
-public class NodeMappingFixAnnotator implements Buffalo.Annotator<XmlSchemaBase>, MappingFeature {
+public class UnknownMappingFixAnnotator implements Buffalo.Annotator<XmlSchemaBase>, MappingFeature {
     private static Gson GSON = new Gson();
 
     private Map<String, Map<String, ?>> nodeFixes;
