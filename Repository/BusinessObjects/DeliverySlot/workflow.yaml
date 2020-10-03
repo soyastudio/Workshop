@@ -4,7 +4,7 @@
 - soya.framework.tools.xmlbeans.XlsxMappingAnnotator:
     sourceFiles:
       - D:/Workshop/Repository/BusinessObjects/DeliverySlot/requirement/input.json
-    mappingFile: D:/Workshop/Repository/BusinessObjects/DeliverySlot/requirement/DeliverySlot_OSMS_TO_EDIS_Canonical_Mapping_v1.1.1.xlsx
+    mappingFile: D:/Workshop/Repository/BusinessObjects/DeliverySlot/requirement/DeliverySlot_OSMS_TO_EDIS_Canonical_Mapping_v1.2.1.xlsx
     mappingSheet: "Mapping Source to Canonical"
 
 - soya.framework.tools.xmlbeans.UnknownMappingFixAnnotator:
@@ -21,8 +21,8 @@
       CustomerType/Code: _b2bCharge.userType
       DeliveryChargeAmt: CAST(_b2bCharge.deliveryCharge AS DECIMAL(6, 2))
       DiscountedDeliveryChargeAmt: CAST(_b2bCharge.reducedDeliveryCharge AS DECIMAL(6, 2))
-      ItemDeliveryChargeAmt: _b2bCharge.deliveryChargeUPC
-      ItemDiscountedDeliveryChargeAmt: _b2bCharge.reducedDeliveryChargeUPC
+      DeliveryChargeId: _b2bCharge.deliveryChargeUPC
+      DiscountedDeliveryChargeId: _b2bCharge.reducedDeliveryChargeUPC
       BasketSizeCnt: _b2bCharge.minimumBasketSize
       AlertBasketSizeCnt: _b2bCharge.alertBasketSize
 
@@ -34,8 +34,8 @@
       CustomerType/Code: _b2cCharge.userType
       DeliveryChargeAmt: CAST(_b2cCharge.deliveryCharge AS DECIMAL(6, 2))
       DiscountedDeliveryChargeAmt: CAST(_b2cCharge.reducedDeliveryCharge AS DECIMAL(6, 2))
-      ItemDeliveryChargeAmt: _b2cCharge.deliveryChargeUPC
-      ItemDiscountedDeliveryChargeAmt: _b2cCharge.reducedDeliveryChargeUPC
+      DeliveryChargeId: _b2cCharge.deliveryChargeUPC
+      DiscountedDeliveryChargeId: _b2cCharge.reducedDeliveryChargeUPC
       BasketSizeCnt: _b2cCharge.minimumBasketSize
       AlertBasketSizeCnt: _b2cCharge.alertBasketSize
 
@@ -43,7 +43,7 @@
     globalVariables:
       - name: VERSION_ID
         type: CHARACTER
-        defaultValue: "'1.1.1.012'"
+        defaultValue: "'1.2.1.022'"
 
       - name: SYSTEM_ENVIRONMENT_CODE
         type: CHARACTER

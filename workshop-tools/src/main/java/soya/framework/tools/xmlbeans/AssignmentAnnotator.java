@@ -238,11 +238,17 @@ public class AssignmentAnnotator implements Buffalo.Annotator<XmlSchemaBase>, Ma
         Mapping mapping = node.getAnnotation(MAPPING, Mapping.class);
         String token = mapping.sourcePath;
 
+        if(token == null) {
+            return null;
+        }
+
         WhileLoop whileLoop = findParent(token);
         if (whileLoop != null) {
             token = whileLoop.variable + "." + token.substring(whileLoop.sourcePath.length() + 1);
-        } else {
+
+        } else if(token != null){
             token = INPUT_ROOT + mapping.sourcePath.replace("[*]", "/Item");
+
         }
 
         token = token.replaceAll("/", "\\.");
