@@ -12,6 +12,7 @@ public class LoopAnalyzeRenderer extends XmlSchemaBaseRenderer implements Mappin
         base.getMappings().entrySet().forEach(e -> {
             Mapper mapping = e.getValue().getAnnotation(MAPPING, Mapper.class);
             if (mapping != null && mapping.sourcePath != null && mapping.sourcePath.contains("[*]/")) {
+
                 XmlSchemaBase.MappingNode node = findParent(e.getValue());
                 if (node != null) {
                     String sourcePath = mapping.sourcePath;

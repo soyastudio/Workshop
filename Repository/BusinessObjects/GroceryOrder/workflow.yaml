@@ -1,17 +1,22 @@
+# Baseline:
+## Generate baseline from XSD
 - soya.framework.tools.xmlbeans.XmlSchemaBaseLoader:
     source: "D:/Workshop/Repository/CMM/BOD/GetGroceryOrder.xsd"
 
+# Annotations:
+## Apply basic annotation from xlsx mapping sheet:
 - soya.framework.tools.xmlbeans.XlsxMappingAnnotator:
-    sourceFiles:
+    sourceFiles: # load source json from files
       - D:/Workshop/Repository/BusinessObjects/GroceryOrder/requirement/erums.json
       - D:/Workshop/Repository/BusinessObjects/GroceryOrder/requirement/echo.json
 
     mappingFile: D:/Workshop/Repository/BusinessObjects/GroceryOrder/requirement/GroceryOrder_ERUMS_to_Canonical_Mapping_v1.4.2.xlsx
-    sourceSheet:
+    sourceSheet: # load source json from spreadsheet
       - "WYSIWYG_edis_sample_payload"
 
     mappingSheet: "Mapping Source to Canonical"
-    excludes:
+
+    excludes: # mappings defined but not in this version
       - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/PhoneNbr
       - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType
       - GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryPromotion
@@ -19,6 +24,7 @@
       - GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/PromotionalDsc
       - GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/PromotionPriceAmt
 
+## Fix unknown mappings: target paths, source paths and mapping rules...
 - soya.framework.tools.xmlbeans.UnknownMappingFixAnnotator:
     nodeFixes:
       GetGroceryOrder/DocumentData/Document:
@@ -39,156 +45,92 @@
       GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/PostalZoneCd: customer/address[*]/zipCode
 
 
-- soya.framework.tools.xmlbeans.MappingsAnnotator:
-    globalVariables:
-      - name: VERSION_ID
-        type: CHARACTER
-        defaultValue: "'1.4.0.017'"
-      - name: SYSTEM_ENVIRONMENT_CODE
-        type: CHARACTER
-        defaultValue: "'PROD'"
+## Special scenarios of node annotation: loops, constructions, blocks, sub procedures...
+- soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
+    path: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact
+    loops:
+      - sourcePath: customer/contact[*]
+        name: contact
+        variable: _contact
 
-    mappings:
-      GetGroceryOrder/DocumentData/Document/@VersionId:
-        mapping:
-          assignment: VERSION_ID
+      - sourcePath: customer/email[*]
+        name: email
+        variable: _email
 
-      GetGroceryOrder/DocumentData/Document/@SystemEnvironmentCd:
-        mapping:
-          assignment: SYSTEM_ENVIRONMENT_CODE
+      - sourcePath: customer/address[*]
+        name: address
+        variable: _address
 
-      GetGroceryOrder/DocumentData/Document/DocumentID:
-        mapping:
-          assignment: "'GROCERY_ORDER'"
+- soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
+    path: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender
+    loops:
+      - sourcePath: paymentDetails[*]
+        name: paymentDetails
+        variable: _paymentDetails
 
-      GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility:
-        procedure: ConstructFulfillingFacility(_inputRootNode, FulfillingFacility_, GroceryOrderHeader_)
+      - sourcePath: tender[*]
+        name: tender
+        variable: _tender
 
-      GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact:
-        loop:
-          - sourcePath: customer/contact[*]
-            name: contact
-            variable: _contact
+- soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
+    path: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerSavings/SavingsCategoryType
+    loops:
+      - sourcePath: orderTotal/cardSavings[*]
+        name: card_savings
+        variable: _card_savings
 
-          - sourcePath: customer/email[*]
-            name: email
-            variable: _email
+- soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
+    path: GetGroceryOrder/GroceryOrderData/GrocerySubOrder
+    loops:
+      - sourcePath: subOrders[*]
+        name: subOrder
+        variable: _subOrder
 
-          - sourcePath: customer/address[*]
-            name: address
-            variable: _address
+- soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
+    path: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail
+    loops:
+      - sourcePath: subOrders[*]/orderLines[*]
+        name: orderLine
+        variable: _orderLine
 
-      GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/PostalZoneCd:
-        mapping:
-          mappingRule: Direct Mapping
-          sourcePath: customer/address[*]/zipCode
+      - sourcePath: subOrders[*]/promoCodes[*]
+        name: promoCode
+        variable: _promoCode
 
-      GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerPreference:
-        loop:
-          - sourcePath: customer/preference/optIn[*]
-            name: optIn
-            variable: _optIn
+- soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
+    path: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem
+    loops:
+      - sourcePath: subOrders[*]/refundedOrderLines[*]
+        name: refundedOrderLine
+        variable: _refundedOrderLine
 
-        condition: _optIn.isOptin = 'true'
+- soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
+    path: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ChargeInfo
+    loops:
+      - sourcePath: subOrders[*]/charges[*]
+        name: charge
+        variable: _charge
 
-      GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerPreference/PreferenceType/Code:
-        mapping:
-          sourcePath: customer/preference/optIn[*]/type
-          mappingRule: Direct Mapping
+- soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
+    path: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService
+    loops:
+      - sourcePath: subOrders[*]/customerService/contact[*]
+        name: service_contact
+        variable: _service_contact
 
-      GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender:
-        loop:
-          - sourcePath: paymentDetails[*]
-            name: paymentDetails
-            variable: _paymentDetails
+- soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
+    path: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers
+    loops:
+      - sourcePath: subOrders[*]/orderLines[*]/itemPrice/savings[*]
+        name: customer_savings_loop
+        variable: _customer_savings
 
-          - sourcePath: tender[*]
-            name: tender
-            variable: _tender
-
-      GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Refund:
-        condition: _tender.tenderType = 'REFUND'
-
-      GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Cancellation:
-        condition: _tender.tenderType = 'CANCELLATION'
-
-      GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerSavings/SavingsCategoryType:
-        loop:
-          - sourcePath: orderTotal/cardSavings[*]
-            name: card_savings
-            variable: _card_savings
-
-      GetGroceryOrder/GroceryOrderData/GrocerySubOrder:
-        loop:
-          - sourcePath: subOrders[*]
-            name: subOrder
-            variable: _subOrder
-
-      GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail:
-        loop:
-          - sourcePath: subOrders[*]/orderLines[*]
-            name: orderLine
-            variable: _orderLine
-
-          - sourcePath: subOrders[*]/promoCodes[*]
-            name: promoCode
-            variable: _promoCode
-
-      GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ItemId/InternalItemId:
-        mapping:
-          mappingRule: Direct Mapping
-          sourcePath: subOrders[*]/orderLines[*]/itemPrice/itemCode
-
-      GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ItemId/BaseProductNbr:
-        mapping:
-          mappingRule: Direct Mapping
-          sourcePath: subOrders[*]/orderLines[*]/itemId
-
-      GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem:
-        loop:
-          - sourcePath: subOrders[*]/refundedOrderLines[*]
-            name: refundedOrderLine
-            variable: _refundedOrderLine
-
-      GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ChargeInfo:
-        loop:
-          - sourcePath: subOrders[*]/charges[*]
-            name: charge
-            variable: _charge
-
-      GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService:
-        loop:
-          - sourcePath: subOrders[*]/customerService/contact[*]
-            name: service_contact
-            variable: _service_contact
-
-      GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers:
-        loop:
-          - sourcePath: subOrders[*]/orderLines[*]/itemPrice/savings[*]
-            name: customer_savings_loop
-            variable: _customer_savings
-
-      GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/CustomerRewards:
-        loop:
-          - sourcePath: subOrders[*]/orderLines[*]/itemPrice/savings[*]/points[*]
-            name: points_loop
-            variable: _point
-
-      GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/DeliveryTimeZoneCd:
-        mapping:
-          assignment: _subOrder.deliveryInfo.slotInfo.timeZone
-
-- soya.framework.tools.xmlbeans.AssignmentAnnotator:
-    assignments:
-      - GetGroceryOrder/DocumentData/Document/AlternateDocumentID: "'OSMS-EMOM_C02_ORDER-' || CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT 'YYYYMMddHHmmssSSSSSS')"
-      - GetGroceryOrder/DocumentData/Document/DocumentNm: "'GroceryOrder'"
-      - GetGroceryOrder/DocumentData/Document/CreationDt: CURRENT_TIMESTAMP
-
-      - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/RequiredAuthAmt: CAST($$ AS DECIMAL(10, 2))
-      - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/ExpireMonthYearTxt: _paymentDetails.cardExpiryMonth
-      - GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ChargeInfo/ChargeAmt: CAST($$ AS DECIMAL(10, 2))
-
-- soya.framework.tools.xmlbeans.DecimalFunctionAnnotator:
+- soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
+    path: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/CustomerRewards
+    loops:
+      - sourcePath: subOrders[*]/orderLines[*]/itemPrice/savings[*]/points[*]
+        name: points_loop
+        variable: _point
 
 - soya.framework.tools.xmlbeans.NodeCodeBlockAnnotator:
     path: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerSubscription
@@ -206,6 +148,71 @@
       - "+ SET CustomerSubscription_.(XMLNSC.Field)Abs:OptInInd = 'false';"
       - ""
       - "END IF;"
+
+##
+- soya.framework.tools.xmlbeans.MappingsAnnotator:
+
+    mappings:
+      GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility:
+        procedure: ConstructFulfillingFacility(_inputRootNode, FulfillingFacility_, GroceryOrderHeader_)
+
+      GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerPreference:
+        loop:
+          - sourcePath: customer/preference/optIn[*]
+            name: optIn
+            variable: _optIn
+
+        condition: _optIn.isOptin = 'true'
+
+      GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerPreference/PreferenceType/Code:
+        mapping:
+          sourcePath: customer/preference/optIn[*]/type
+          mappingRule: Direct Mapping
+
+      GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Refund:
+        condition: _tender.tenderType = 'REFUND'
+
+      GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Cancellation:
+        condition: _tender.tenderType = 'CANCELLATION'
+
+
+      GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ItemId/InternalItemId:
+        mapping:
+          mappingRule: Direct Mapping
+          sourcePath: subOrders[*]/orderLines[*]/itemPrice/itemCode
+
+      GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ItemId/BaseProductNbr:
+        mapping:
+          mappingRule: Direct Mapping
+          sourcePath: subOrders[*]/orderLines[*]/itemId
+
+      GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/DeliveryTimeZoneCd:
+        mapping:
+          assignment: _subOrder.deliveryInfo.slotInfo.timeZone
+
+## Generate assignments:
+- soya.framework.tools.xmlbeans.AssignmentAnnotator:
+    globalVariables:
+      - name: VERSION_ID
+        type: CHARACTER
+        defaultValue: "'1.4.0.017'"
+      - name: SYSTEM_ENVIRONMENT_CODE
+        type: CHARACTER
+        defaultValue: "'PROD'"
+
+    assignments:
+      - GetGroceryOrder/DocumentData/Document/@VersionId: VERSION_ID
+      - GetGroceryOrder/DocumentData/Document/@SystemEnvironmentCd: SYSTEM_ENVIRONMENT_CODE
+      - GetGroceryOrder/DocumentData/Document/DocumentID: "'GROCERY_ORDER'"
+      - GetGroceryOrder/DocumentData/Document/AlternateDocumentID: "'OSMS-EMOM_C02_ORDER-' || CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT 'YYYYMMddHHmmssSSSSSS')"
+      - GetGroceryOrder/DocumentData/Document/DocumentNm: "'GroceryOrder'"
+      - GetGroceryOrder/DocumentData/Document/CreationDt: CURRENT_TIMESTAMP
+
+      - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/RequiredAuthAmt: CAST($$ AS DECIMAL(10, 2))
+      - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/ExpireMonthYearTxt: _paymentDetails.cardExpiryMonth
+      - GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ChargeInfo/ChargeAmt: CAST($$ AS DECIMAL(10, 2))
+
+- soya.framework.tools.xmlbeans.DecimalFunctionAnnotator:
 
 - soya.framework.tools.xmlbeans.SampleXmlRenderer:
 
