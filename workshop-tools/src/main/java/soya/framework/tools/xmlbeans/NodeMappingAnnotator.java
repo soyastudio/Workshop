@@ -1,7 +1,13 @@
 package soya.framework.tools.xmlbeans;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 public abstract class NodeMappingAnnotator implements Buffalo.Annotator<XmlSchemaBase>, MappingFeature {
+    protected static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+
     protected String path;
+    protected String condition;
 
     protected XmlSchemaBase base;
     protected XmlSchemaBase.MappingNode node;
@@ -19,6 +25,10 @@ public abstract class NodeMappingAnnotator implements Buffalo.Annotator<XmlSchem
         }
 
         this.node = base.get(path);
+
+        if(condition != null) {
+            node.annotate(CONDITION, condition);
+        }
 
         annotate(node);
 

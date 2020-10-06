@@ -19,7 +19,7 @@ public class XmlConstructEsqlRenderer extends XmlSchemaBaseRenderer implements M
 
     private XmlSchemaBase base;
     private Map<String, WhileLoop> loopMap = new LinkedHashMap<>();
-    private Set<String> procedures = new LinkedHashSet<>();
+    private Set<Procedure> procedures = new LinkedHashSet<>();
 
     @Override
     public String render(XmlSchemaBase base) {
@@ -138,15 +138,19 @@ public class XmlConstructEsqlRenderer extends XmlSchemaBaseRenderer implements M
     }
 
     private void printProcedureCall(XmlSchemaBase.MappingNode node, StringBuilder builder, int indent) {
-        String procedure = node.getAnnotation(PROCEDURE, String.class);
+
+        Procedure procedure = node.getAnnotation(PROCEDURE, Procedure.class);
         procedures.add(procedure);
 
         StringBuilderUtils.println("-- " + node.getPath(), builder, node.getLevel() + indent);
+
+        // FIXME:
         StringBuilderUtils.println("DECLARE " + node.getAlias() + " REFERENCE TO " + node.getParent().getAlias() + ";", builder, node.getLevel() + indent);
         StringBuilderUtils.println("CREATE LASTCHILD OF " + node.getParent().getAlias() + " AS " + node.getAlias() + " TYPE XMLNSC.Folder NAME '" + getFullName(node) + "';"
                 , builder, node.getLevel() + indent);
+
         StringBuilderUtils.println(builder);
-        StringBuilderUtils.println("CALL " + procedure + ";", builder, node.getLevel() + indent);
+        StringBuilderUtils.println("CALL " + procedure.invocation() + ";", builder, node.getLevel() + indent);
         StringBuilderUtils.println(builder);
 
     }
@@ -157,29 +161,13 @@ public class XmlConstructEsqlRenderer extends XmlSchemaBaseRenderer implements M
         });
     }
 
-    private void printProcedure(String expression, StringBuilder builder) {
-        String name = null;
-        String[] params = new String[0];
+    private void printProcedure(Procedure procedure, StringBuilder builder) {
 
-        int begin = expression.indexOf('(');
-        int end = expression.indexOf(')');
-
-        name = expression.substring(0, begin);
-        params = expression.substring(begin + 1, end).split(",");
-
-        StringBuilder buf = new StringBuilder(name).append("(");
-        for (int i = 0; i < params.length; i++) {
-            if (i > 0) {
-                buf.append(", ");
-            }
-
-            buf.append("IN ").append(params[i].trim());
-        }
-        buf.append(")");
-
-        StringBuilderUtils.println("CREATE PROCEDURE " + buf.toString(), builder, 1);
+        StringBuilderUtils.println("CREATE PROCEDURE " + procedure.signature(), builder, 1);
         StringBuilderUtils.println("BEGIN", builder, 2);
-        StringBuilderUtils.println(builder);
+        if (procedure.body != null) {
+            StringBuilderUtils.println(decode(procedure.body), builder);
+        }
         StringBuilderUtils.println(builder);
         StringBuilderUtils.println("END;", builder, 2);
 
@@ -458,5 +446,9 @@ public class XmlConstructEsqlRenderer extends XmlSchemaBaseRenderer implements M
         }
 
         return list;
+    }
+
+    private String decode(String contents) {
+        return new String(Base64.getDecoder().decode(contents.getBytes()));
     }
 }

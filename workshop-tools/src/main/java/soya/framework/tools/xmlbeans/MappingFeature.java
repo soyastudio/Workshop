@@ -1,9 +1,9 @@
 package soya.framework.tools.xmlbeans;
 
 import com.google.gson.JsonObject;
+import soya.framework.tools.util.StringBuilderUtils;
 
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public interface MappingFeature {
     String UNKNOWN_MAPPINGS = "UNKNOWN_MAPPINGS";
@@ -75,5 +75,40 @@ public interface MappingFeature {
         protected String condition;
         protected boolean loop;
         protected Map<String, String> assignments;
+    }
+
+    class Procedure {
+        String name;
+        List<ProcedureParameter> parameters = new ArrayList<>();
+        String body;
+
+        String signature() {
+            StringBuilder builder = new StringBuilder(name).append("(");
+            for (int i = 0; i <parameters.size(); i ++) {
+                if(i > 0) {
+                    builder.append(", ");
+                }
+                builder.append("IN ").append(parameters.get(i).name).append(" REFERENCE");
+            }
+            builder.append(")");
+            return builder.toString();
+        }
+
+        String invocation() {
+            StringBuilder builder = new StringBuilder(name).append("(");
+            for (int i = 0; i <parameters.size(); i ++) {
+                if(i > 0) {
+                    builder.append(", ");
+                }
+                builder.append(parameters.get(i).name);
+            }
+            builder.append(")");
+            return builder.toString();
+        }
+    }
+
+    class ProcedureParameter {
+        private String name;
+        private String assignment;
     }
 }

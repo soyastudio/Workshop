@@ -5,7 +5,6 @@ import java.util.Map;
 public class NodeConstructionAnnotator extends NodeMappingAnnotator {
     private String sourcePath;
     private String variable;
-    private String condition;
     private boolean loop;
     private Map<String, String> assignments;
 
