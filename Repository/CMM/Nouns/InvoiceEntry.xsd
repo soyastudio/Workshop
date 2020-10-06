@@ -8,6 +8,7 @@
 -->
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.6 Patrick Oliver 10/05/20: Added WarehouseId. Update AccountingOfficeId to string. Changed CustomerNbr (string 20) to CustomerAccountNbr( string 50)-->
 	<!--V1.5 Patrick Oliver 09/10/20: : InvoiceEntry Header: Changed Status to InvoiceEntryStatus; added InvoiceEntryAllowances, MinBillStartDt, MaxBillStartDt, LeadCorporateItemCd,  LeadItemDescription, RecordAuditData, OverToleranceStatusCd, OverToleranceInd. FlatCd, RecordType. InvoiceDetail: added CorporateItemCd, UPCID, ItemPackDetails. Added new segment InvoiceEntryDetailItem which will be used to roll up item totals for CABS invoice processing and contains attributes CIC, UPC, Whse, & total amounts.-->
 	<!--V1.4 Patrick Oliver 09/09/20: Updated Customer to include AccountClassId and AccountTypeCd-->
 	<!--V1.3 Patrick Oliver 8/13/20 - Updated RecordId to string(10)-->
@@ -174,6 +175,12 @@
 				<xs:annotation>
 					<xs:documentation>Is an amount not including taxes or charges. In the case of orders, this is typically the Unit Price times the Order Quantity.</xs:documentation>
 				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
 			</xs:element>
 			<xs:element name="LineTax" type="TaxType" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="Description" type="xs:string" default="" minOccurs="0" maxOccurs="5">
@@ -292,16 +299,7 @@ and conversion purposes.
 				</xs:annotation>
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="CustomerNbr">
-							<xs:annotation>
-								<xs:documentation>Required. Customer number info. </xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="20"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
+						<xs:element ref="CustomerAccountNbr"/>
 						<xs:element name="CustomerId" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>Ac Customer Id Used for Drill access from the AR system

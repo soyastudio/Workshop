@@ -2736,6 +2736,7 @@ Increment GTR-RUN-GROUP +1 when  number of transaction > 40000. </xs:documentati
 			<xs:element ref="CorporationId" minOccurs="0"/>
 			<xs:element ref="DivisionId" minOccurs="0"/>
 			<xs:element ref="DistributionCenterId" minOccurs="0"/>
+			<xs:element ref="WarehouseId" minOccurs="0"/>
 			<xs:element name="FacilityId" type="xs:string" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Can be warehouse or retail facility depending on the JE Interface. For Store Charges, Facility is Retail. For WIMS, Facility is Warehouse. </xs:documentation>
@@ -2746,7 +2747,7 @@ Increment GTR-RUN-GROUP +1 when  number of transaction > 40000. </xs:documentati
 					<xs:documentation>Indicate the type of facility. Can be Warehouse, Retail, or Manufacturing Plant.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="AccountingOfficeId" minOccurs="0">
+			<xs:element name="AccountingOfficeId" type="xs:string" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Corporate Accounting facility like NASC or CABS billing unit.</xs:documentation>
 				</xs:annotation>
@@ -3354,6 +3355,7 @@ M = Mixed</xs:documentation>
 			<xs:documentation>Banktype will be used to store customer bank attributes such as bank codes, account numbers, bank routing numbers, bank adddress, region, branch information, account balance</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
+			<xs:element ref="CompanyId" minOccurs="0"/>
 			<xs:element name="BankCd" type="CodeWithDescription" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation> A user-defined code representing a bank     account at a bank location. Also referred to as Cash Code</xs:documentation>

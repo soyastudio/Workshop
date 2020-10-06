@@ -8,6 +8,7 @@
 -->
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V3.0: Patrick Oliver 10/05/20: Updated ApprovalOperatorCd to string (20) and LeadItemDescription to string (250)-->
 	<!--V2.9 Patrick Oliver 09/09/20: Updated CustomerParty to include AccountClassId and AccountTypeCd. Added to Invoice Header: LifecycleCategoryStatusCd, OfferNbr, ItemsSumAmt, OverToleranceInd, FlatCd-->
 	<!--V2.8 V2.8 Patrick Oliver 09/01/20:  Added to InvoiceHeader:  DivisionAccountUnitCd, MinBillStartDt,  MaxBillStartDt, LeadCorpItemCode,  LeadItemDesc, RecordAuditData. Added new 'InvoiceDetailItem' segment to model that will be used to roll up item totals for CABS invoice processing systems. The 'InvoiceDetailItem' will contain attributes CIC, UPC, Whse, & total amounts.  Note this will be used by CABS different than 'InvoiceDetail' which will be used by CABS to roll up totals by Account-Store. -->
 	<!--V2.7 Patrick Oliver 08/19/20 - Added CustomerSiteNbr, CrossReferenceTransaction; Updated ContactNm -->
@@ -161,6 +162,12 @@
 				<xs:annotation>
 					<xs:documentation>Is an amount not including taxes or charges. In the case of orders, this is typically the Unit Price times the Order Quantity.</xs:documentation>
 				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
 			</xs:element>
 			<xs:element name="TotalLineAmt" type="AmountType" minOccurs="0">
 				<xs:annotation>
@@ -905,7 +912,7 @@ The summary amounts in the Header include the Line level amounts and Header leve
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="200"/>
+						<xs:maxLength value="250"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -1578,7 +1585,7 @@ payments that require enclosures when  you run AP150 (Cash Requirements). Valid 
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="10"/>
+						<xs:maxLength value="20"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
