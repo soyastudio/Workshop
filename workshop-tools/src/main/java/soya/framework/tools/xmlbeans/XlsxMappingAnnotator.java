@@ -107,7 +107,7 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
                 StringBuilder buf = new StringBuilder();
                 for (int i = payloadIndex; i <= currentRow.getLastCellNum(); i++) {
                     Cell cell = currentRow.getCell(i);
-                    if (!isEmpty(cell)&& cell.getCellType().equals(CellType.STRING)) {
+                    if (!isEmpty(cell) && cell.getCellType().equals(CellType.STRING)) {
                         buf.append(cell.getStringCellValue().trim());
                     }
                 }
@@ -122,9 +122,6 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
         }
 
         String json = builder.toString();
-
-
-        System.out.println(json);
 
 
         JsonObject root = JsonParser.parseString(json).getAsJsonObject();
@@ -143,41 +140,23 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
                 Cell ruleCell = currentRow.getCell(ruleIndex);
                 Cell sourceCell = currentRow.getCell(sourceIndex);
 
-
                 String targetPath = isEmpty(targetCell) ? null : targetCell.getStringCellValue().trim();
                 String mappingRule = isEmpty(ruleCell) ? null : ruleCell.getStringCellValue().trim();
                 String sourcePath = isEmpty(sourceCell) ? null : sourceCell.getStringCellValue().trim();
 
-                if (sourcePath != null && !sourcePaths.contains(sourcePath)) {
-                    UnknownMapping unknownMapping = new UnknownMapping();
-                    unknownMapping.unknownType = UnknownType.UNKNOWN_SOURCE_PATH;
-                    unknownMapping.targetPath = targetPath;
-                    unknownMapping.sourcePath = sourcePath;
-                    unknownMapping.mappingRule = mappingRule;
+                // check unknown mapping:
+                UnknownMapping unknownMapping = checkUnknown(targetPath, mappingRule, sourcePath, base);
+                if (unknownMapping.unknownType != null) {
                     base.annotateAsArrayElement(UNKNOWN_MAPPINGS, unknownMapping);
 
-                }
-
-                if (targetPath != null && mappingRule != null && !ignores.contains(targetPath)) {
+                } else if (base.get(targetPath) != null) {
+                    MappingNode node = base.get(targetPath);
                     Mapping mapping = new Mapping();
                     mapping.mappingRule = mappingRule;
                     mapping.sourcePath = sourcePath;
 
-                    MappingNode node = base.get(targetPath);
-                    if (node != null && !ignored(node)) {
-                        if (node.getAnnotation(MAPPING) == null) {
-                            node.annotate(MAPPING, mapping);
-                            markParent(node);
-
-                        }
-                    } else {
-                        UnknownMapping unknownMapping = new UnknownMapping();
-                        unknownMapping.unknownType = UnknownType.UNKNOWN_TARGET_PATH;
-                        unknownMapping.targetPath = targetPath;
-                        unknownMapping.sourcePath = sourcePath;
-                        unknownMapping.mappingRule = mappingRule;
-                        base.annotateAsArrayElement(UNKNOWN_MAPPINGS, unknownMapping);
-                    }
+                    node.annotate(MAPPING, mapping);
+                    markParent(node);
                 }
 
             } else {
@@ -213,6 +192,27 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
         }
     }
 
+    private UnknownMapping checkUnknown(String targetPath, String mappingRule, String sourcePath, XmlSchemaBase base) {
+        UnknownMapping unknownMapping = new UnknownMapping();
+        unknownMapping.targetPath = targetPath;
+        unknownMapping.mappingRule = mappingRule;
+        unknownMapping.sourcePath = sourcePath;
+
+        if (ignored(targetPath) || mappingRule == null) {
+            // no mapping, do nothing
+
+        } else if (base.get(targetPath) == null) {
+            unknownMapping.unknownType = UnknownType.UNKNOWN_TARGET_PATH;
+
+        } else if (mappingRule != null && mappingRule.toUpperCase().contains("DIRECT") && mappingRule.toUpperCase().contains("MAPPING")
+                && sourcePath != null && !sourcePaths.contains(sourcePath)) {
+            unknownMapping.unknownType = UnknownType.UNKNOWN_SOURCE_PATH;
+
+        }
+
+        return unknownMapping;
+    }
+
     private void extract(JsonObject jsonObject, String parent) {
         String prefix = parent == null ? "" : parent + "/";
         jsonObject.entrySet().forEach(e -> {
@@ -241,10 +241,10 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
         });
     }
 
-    private boolean ignored(MappingNode node) {
-        String path = node.getPath();
+    private boolean ignored(String xpath) {
+        String path = xpath;
         for (String prefix : ignores) {
-            if (path.startsWith(prefix + "/")) {
+            if (path.equals(prefix) || path.startsWith(prefix + "/")) {
                 return true;
             }
         }

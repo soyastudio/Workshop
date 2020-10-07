@@ -107,8 +107,12 @@ public class AssignmentAnnotator implements Buffalo.Annotator<XmlSchemaBase>, Ma
                                 Mapping mapping = node.getAnnotation(MAPPING, Mapping.class);
                                 assignment = mapping.assignment;
                             }
-                            assignment = convert(function, assignment);
-                            node.annotateAsMappedElement(MAPPING, "assignment", assignment);
+                            try {
+                                assignment = convert(function, assignment);
+                                node.annotateAsMappedElement(MAPPING, "assignment", assignment);
+                            } catch (Exception ex) {
+                                System.out.println("==================== " + node.getPath());
+                            }
                         }
                     });
                 }
