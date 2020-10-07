@@ -7,10 +7,15 @@
 ## Apply basic annotation from xlsx mapping sheet:
 - soya.framework.tools.xmlbeans.XlsxMappingAnnotator:
     sourceFiles: # load source json from files
-      - D:/Workshop/Repository/BusinessObjects/GroceryOrder/requirement/oms.json
+      - D:/Workshop/Repository/BusinessObjects/GroceryOrder/requirement/erums.json
+      - D:/Workshop/Repository/BusinessObjects/GroceryOrder/requirement/echo.json
 
-    mappingFile: D:/Workshop/Repository/BusinessObjects/GroceryOrder/requirement/GroceryOrder_ERUMS_to_Canonical_Mapping_v1.5.1.xlsx
-    mappingSheet: "Mapping OMS to Canonical"
+    mappingFile: D:/Workshop/Repository/BusinessObjects/GroceryOrder/requirement/GroceryOrder_ERUMS_to_Canonical_Mapping_v1.5.xlsx
+    sourceSheet: # load source json from spreadsheet
+      - WYSIWYG_edis_sample_payload
+
+    mappingSheet: "Mapping ErumsEcho to Canonical"
+
     excludes: # mappings defined but not in this version
       - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/PhoneNbr
       - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType
@@ -19,67 +24,25 @@
       - GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/PromotionalDsc
       - GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/PromotionPriceAmt
 
-## Apply node attribute changes:
-- soya.framework.tools.xmlbeans.XmlSchemaNodeAnnotator:
-    nodes:
+## Fix unknown mappings: target paths, source paths and mapping rules...
+- soya.framework.tools.xmlbeans.UnknownMappingFixAnnotator:
+    nodeFixes:
       GetGroceryOrder/DocumentData/Document:
         namespaceURI: http://collab.safeway.com/it/architecture/info/default.aspx
       GetGroceryOrder/DocumentData/DocumentAction:
         namespaceURI: http://collab.safeway.com/it/architecture/info/default.aspx
 
-## Fix unknown mappings: target paths, source paths and mapping rules...
-- soya.framework.tools.xmlbeans.UnknownMappingFixAnnotator:
-    fixes:
-      ### unknown target paths:
-      - unknownType: UNKNOWN_TARGET_PATH
-        targetPath: GetGroceryOrder/DocumentData/Document/SystemEnvironmentCd
-        fix: GetGroceryOrder/DocumentData/Document/@SystemEnvironmentCd
+    targetPathFixes:
+      GetGroceryOrder/DocumentData/Document/SystemEnvironmentCd: GetGroceryOrder/DocumentData/Document/@SystemEnvironmentCd
+      GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/TypeCode: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/@TypeCode
+      GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact/EmailStatuses/typeCode: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact/EmailStatuses/@typeCode
+      GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/DeliverytimeZoneCd: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/DeliveryTimeZoneCd
+      # GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService/PhoneFaxContact/typeCode: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService/PhoneFaxContact/@typeCode
 
-      - unknownType: UNKNOWN_TARGET_PATH
-        targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/EditCutoffDttm
-        fix: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/EditCutoffDtTm
+    mappingRuleFixes:
 
-      - unknownType: UNKNOWN_TARGET_PATH
-        targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerAlternateId/sequenceNbr
-        fix: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerAlternateId/@sequenceNbr
-
-      - unknownType: UNKNOWN_TARGET_PATH
-        targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/TypeCode
-        fix: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/@TypeCode
-
-      - unknownType: UNKNOWN_TARGET_PATH
-        targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact/EmailStatuses/typeCode
-        fix: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact/EmailStatuses/@typeCode
-
-      - unknownType: UNKNOWN_TARGET_PATH
-        targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerNotesTxt/typeCode
-        fix: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerNotesTxt/@typeCode
-
-      - unknownType: UNKNOWN_TARGET_PATH
-        targetPath: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/EditCutoffDttm
-        fix: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/EditCutoffDtTm
-
-      - unknownType: UNKNOWN_TARGET_PATH
-        targetPath: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/DeliverytimeZoneCd
-        fix: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/DeliveryTimeZoneCd
-
-      - unknownType: UNKNOWN_TARGET_PATH
-        targetPath: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService/PhoneFaxContact/TypeCode
-        fix: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService/PhoneFaxContact/@TypeCode
-
-      - unknownType: UNKNOWN_TARGET_PATH
-        targetPath: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/PromotionalPriceAmt
-        fix: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/PromotionPriceAmt
-
-      - unknownType: UNKNOWN_TARGET_PATH
-        targetPath: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/FulFilledQty
-        fix: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/FulfilledQty
-
-      ### unknown source path:
-      - unknownType: UNKNOWN_SOURCE_PATH
-        targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/PostalZoneCd
-        fix: customer/address[*]/zipCode
-
+    sourcePathFixes:
+      GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/PostalZoneCd: customer/address[*]/zipCode
 
 ## Special scenarios of node annotation: loops, constructions, blocks, sub procedures...
 - soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
@@ -89,13 +52,6 @@
       - sourcePath: customer/preference/optIn[*]
         name: optIn
         variable: _optIn
-
-- soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
-    path: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerOffers
-    loops:
-      - sourcePath: orderTotal/txnLevelSavings[*]
-        name: txnLevelSaving
-        variable: _txnLevelSaving
 
 - soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
     path: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact
@@ -131,13 +87,6 @@
         variable: _card_savings
 
 - soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
-    path: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerNotesTxt
-    loops:
-      - sourcePath: orderInfo/data[*]
-        name: order_info_data
-        variable: _order_info_data
-
-- soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
     path: GetGroceryOrder/GroceryOrderData/GrocerySubOrder
     loops:
       - sourcePath: subOrders[*]
@@ -154,34 +103,6 @@
       - sourcePath: subOrders[*]/promoCodes[*]
         name: promoCode
         variable: _promoCode
-
-- soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
-    path: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers
-    loops:
-      - sourcePath: subOrders[*]/orderLines[*]/itemPrice/savings[*]
-        name: customer_savings_loop
-        variable: _customer_savings
-
-- soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
-    path: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/CustomerRewards
-    loops:
-      - sourcePath: subOrders[*]/orderLines[*]/itemPrice/savings[*]/points[*]
-        name: points_loop
-        variable: _point
-
-- soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
-    path: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem
-    loops:
-      - sourcePath: subOrders[*]/orderLines[*]/fulfilledUpc[*]
-        name: fulfilled_upc_loop
-        variable: _fulfilled_upc
-
-- soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
-    path: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerOffers/CustomerRewards
-    loops:
-      - sourcePath: subOrders[*]/orderLines[*]/fulfilledUpc[*]/itemPrice/savings[*]/points[*]
-        name: fulfilled_upc_loop
-        variable: _fulfilled_upc
 
 - soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
     path: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem
@@ -204,6 +125,19 @@
         name: service_contact
         variable: _service_contact
 
+- soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
+    path: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers
+    loops:
+      - sourcePath: subOrders[*]/orderLines[*]/itemPrice/savings[*]
+        name: customer_savings_loop
+        variable: _customer_savings
+
+- soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
+    path: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/CustomerRewards
+    loops:
+      - sourcePath: subOrders[*]/orderLines[*]/itemPrice/savings[*]/points[*]
+        name: points_loop
+        variable: _point
 
 - soya.framework.tools.xmlbeans.NodeCodeBlockAnnotator:
     path: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerSubscription
@@ -246,6 +180,7 @@
       GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Cancellation:
         condition: _tender.tenderType = 'CANCELLATION'
 
+
       GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ItemId/InternalItemId:
         mapping:
           mappingRule: Direct Mapping
@@ -265,7 +200,7 @@
     globalVariables:
       - name: VERSION_ID
         type: CHARACTER
-        defaultValue: "'1.5.1.057'"
+        defaultValue: "'1.4.0.017'"
       - name: SYSTEM_ENVIRONMENT_CODE
         type: CHARACTER
         defaultValue: "'PROD'"
