@@ -30,6 +30,10 @@ public class XmlSchemaNodeAnnotator implements Buffalo.Annotator<XmlSchemaBase> 
                 node.setNamespaceURI(change.namespaceURI);
             }
 
+            if (change.cardinality != null && change.cardinality.trim().length() > 0) {
+                node.setCardinality(change.cardinality);
+            }
+
             if (change.alias != null && change.alias.trim().length() > 0) {
                 node.setAlias(change.alias);
             }
@@ -42,6 +46,7 @@ public class XmlSchemaNodeAnnotator implements Buffalo.Annotator<XmlSchemaBase> 
 
     static class NodeChange {
         private String namespaceURI;
+        private String cardinality;
         private String alias;
         private String defaultValue;
 

@@ -1267,6 +1267,10 @@ public class XmlSchemaBase extends AnnotatableSupport {
             this.namespaceURI = namespaceURI;
         }
 
+        public void setCardinality(String cardinality) {
+            this.cardinality = cardinality;
+        }
+
         public void setAlias(String alias) {
             this.alias = alias;
         }

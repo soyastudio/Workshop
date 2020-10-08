@@ -1,15 +1,13 @@
 package soya.framework.tools.xmlbeans;
 
-import com.google.gson.Gson;
 import soya.framework.tools.util.StringBuilderUtils;
 
 import java.util.*;
 
-public class XmlConstructEsqlRenderer extends XmlSchemaBaseRenderer implements MappingFeature, IntegrationApplicationFeature {
+public class XmlConstructEsqlRenderer extends XmlConstructTree implements IntegrationApplicationFeature {
+
     public static final String URI = "http://collab.safeway.com/it/architecture/info/default.aspx";
     public static final String DOCUMENT_ROOT = "xmlDocRoot";
-
-    private static Gson GSON = new Gson();
 
     private String brokerSchema;
     private String moduleName;
@@ -100,7 +98,7 @@ public class XmlConstructEsqlRenderer extends XmlSchemaBaseRenderer implements M
         StringBuilderUtils.println(builder);
     }
 
-    private void printNode(XmlSchemaBase.MappingNode node, StringBuilder builder, int indent) {
+    protected void printNode(XmlSchemaBase.MappingNode node, StringBuilder builder, int indent) {
         if (!isMapped(node)) {
             return;
         }
@@ -399,41 +397,6 @@ public class XmlConstructEsqlRenderer extends XmlSchemaBaseRenderer implements M
 
         }
 
-    }
-
-    private boolean isMapped(XmlSchemaBase.MappingNode node) {
-        if (XmlSchemaBase.NodeType.Folder.equals(node.getNodeType())) {
-            if (node.getAnnotation(MAPPED) != null
-                    || node.getAnnotation(MAPPING) != null
-                    || node.getAnnotation(LOOP) != null
-                    || node.getAnnotation(BLOCK) != null) {
-
-                return true;
-            }
-
-        } else {
-            return node.getAnnotation(MAPPING) != null;
-        }
-
-        return false;
-    }
-
-    private boolean inLoop(XmlSchemaBase.MappingNode node, WhileLoop loop) {
-
-        String source = loop.sourcePath + "/";
-        if (node.getAnnotation(MAPPING) != null) {
-            Mapping mapping = node.getAnnotation(MAPPING, Mapping.class);
-            return mapping.sourcePath != null && (mapping.sourcePath.equals(loop.sourcePath) || mapping.sourcePath.startsWith(source));
-
-        } else if (XmlSchemaBase.NodeType.Folder.equals(node.getNodeType())) {
-            for (XmlSchemaBase.MappingNode child : node.getChildren()) {
-                if (inLoop(child, loop)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 
     private List<String> getAllPath(String path) {
