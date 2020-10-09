@@ -206,7 +206,13 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
 
         } else if (mappingRule != null && mappingRule.toUpperCase().contains("DIRECT") && mappingRule.toUpperCase().contains("MAPPING")
                 && sourcePath != null && !sourcePaths.contains(sourcePath)) {
-            unknownMapping.unknownType = UnknownType.UNKNOWN_SOURCE_PATH;
+            if(sourcePath.contains(" ")|| sourcePath.contains("\n") ) {
+                unknownMapping.unknownType = UnknownType.ILLEGAL_SOURCE_PATH;
+
+            } else {
+                unknownMapping.unknownType = UnknownType.UNKNOWN_SOURCE_PATH;
+
+            }
 
         }
 

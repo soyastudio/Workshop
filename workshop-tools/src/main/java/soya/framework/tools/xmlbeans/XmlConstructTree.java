@@ -8,6 +8,7 @@ public abstract class XmlConstructTree extends XmlSchemaBaseRenderer implements 
 
 
     protected boolean isMapped(XmlSchemaBase.MappingNode node) {
+
         if (node.getAnnotation(MAPPING) != null) {
             return true;
 
