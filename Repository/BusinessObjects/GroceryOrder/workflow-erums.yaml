@@ -10,7 +10,8 @@
       - D:/Workshop/Repository/BusinessObjects/GroceryOrder/requirement/erums.json
       - D:/Workshop/Repository/BusinessObjects/GroceryOrder/requirement/echo.json
 
-    mappingFile: D:/Workshop/Repository/BusinessObjects/GroceryOrder/requirement/GroceryOrder_ERUMS_to_Canonical_Mapping_v1.5.xlsx
+    mappingFile: D:/Workshop/Repository/BusinessObjects/GroceryOrder/requirement/GroceryOrder_ERUMS_to_Canonical_Mapping_v1.5.1.xlsx
+
     sourceSheet: # load source json from spreadsheet
       - WYSIWYG_edis_sample_payload
 
@@ -18,31 +19,19 @@
 
     excludes: # mappings defined but not in this version
       - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/PhoneNbr
+      - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/PhoneNbr
       - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType
-      - GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryPromotion
-      - GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/PromotionTxt
-      - GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/PromotionalDsc
-      - GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/PromotionPriceAmt
 
-## Fix unknown mappings: target paths, source paths and mapping rules...
-- soya.framework.tools.xmlbeans.UnknownMappingFixAnnotator:
-    nodeFixes:
+
+## Apply node attribute changes:
+- soya.framework.tools.xmlbeans.XmlSchemaNodeAnnotator:
+    nodes:
       GetGroceryOrder/DocumentData/Document:
         namespaceURI: http://collab.safeway.com/it/architecture/info/default.aspx
       GetGroceryOrder/DocumentData/DocumentAction:
         namespaceURI: http://collab.safeway.com/it/architecture/info/default.aspx
-
-    targetPathFixes:
-      GetGroceryOrder/DocumentData/Document/SystemEnvironmentCd: GetGroceryOrder/DocumentData/Document/@SystemEnvironmentCd
-      GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/TypeCode: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/@TypeCode
-      GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact/EmailStatuses/typeCode: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact/EmailStatuses/@typeCode
-      GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/DeliverytimeZoneCd: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/DeliveryTimeZoneCd
-      # GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService/PhoneFaxContact/typeCode: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService/PhoneFaxContact/@typeCode
-
-    mappingRuleFixes:
-
-    sourcePathFixes:
-      GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/PostalZoneCd: customer/address[*]/zipCode
+      GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem:
+        cardinality: 0-n
 
 ## Special scenarios of node annotation: loops, constructions, blocks, sub procedures...
 - soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
@@ -200,7 +189,7 @@
     globalVariables:
       - name: VERSION_ID
         type: CHARACTER
-        defaultValue: "'1.4.0.017'"
+        defaultValue: "'1.5.1.051'"
       - name: SYSTEM_ENVIRONMENT_CODE
         type: CHARACTER
         defaultValue: "'PROD'"
@@ -226,6 +215,8 @@
 
 - soya.framework.tools.xmlbeans.SampleXmlRenderer:
 
+- soya.framework.tools.xmlbeans.XmlConstructionRenderer:
+    includeUnmapped: false
 
 - soya.framework.tools.xmlbeans.XmlConstructTreeRenderer:
 

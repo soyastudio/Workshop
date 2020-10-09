@@ -7,18 +7,17 @@
 ## Apply basic annotation from xlsx mapping sheet:
 - soya.framework.tools.xmlbeans.XlsxMappingAnnotator:
     sourceFiles: # load source json from files
-      - D:/Workshop/Repository/BusinessObjects/GroceryOrder/requirement/erums.json
-      - D:/Workshop/Repository/BusinessObjects/GroceryOrder/requirement/echo.json
+      - D:/Workshop/Repository/BusinessObjects/GroceryOrder/requirement/oms.json
 
     mappingFile: D:/Workshop/Repository/BusinessObjects/GroceryOrder/requirement/GroceryOrder_ERUMS_to_Canonical_Mapping_v1.5.1.xlsx
-
-    sourceSheet: # load source json from spreadsheet
-      - WYSIWYG_edis_sample_payload
-
-    mappingSheet: "Mapping ErumsEcho to Canonical"
-
+    mappingSheet: "Mapping OMS to Canonical"
     excludes: # mappings defined but not in this version
       - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/PhoneNbr
+      - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/PhoneNbr
+      - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType
+
+      - GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem
+
 
 ## Apply node attribute changes:
 - soya.framework.tools.xmlbeans.XmlSchemaNodeAnnotator:
@@ -30,6 +29,60 @@
       GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem:
         cardinality: 0-n
 
+## Fix unknown mappings: target paths, source paths and mapping rules...
+- soya.framework.tools.xmlbeans.UnknownMappingFixAnnotator:
+    fixes:
+      ### unknown target paths:
+      - unknownType: UNKNOWN_TARGET_PATH
+        targetPath: GetGroceryOrder/DocumentData/Document/SystemEnvironmentCd
+        fix: GetGroceryOrder/DocumentData/Document/@SystemEnvironmentCd
+
+      - unknownType: UNKNOWN_TARGET_PATH
+        targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/EditCutoffDttm
+        fix: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/EditCutoffDtTm
+
+      - unknownType: UNKNOWN_TARGET_PATH
+        targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerAlternateId/sequenceNbr
+        fix: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerAlternateId/@sequenceNbr
+
+      - unknownType: UNKNOWN_TARGET_PATH
+        targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/TypeCode
+        fix: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/@TypeCode
+
+      - unknownType: UNKNOWN_TARGET_PATH
+        targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact/EmailStatuses/typeCode
+        fix: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact/EmailStatuses/@typeCode
+
+      - unknownType: UNKNOWN_TARGET_PATH
+        targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerNotesTxt/typeCode
+        fix: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerNotesTxt/@typeCode
+
+      - unknownType: UNKNOWN_TARGET_PATH
+        targetPath: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/EditCutoffDttm
+        fix: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/EditCutoffDtTm
+
+      - unknownType: UNKNOWN_TARGET_PATH
+        targetPath: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/DeliverytimeZoneCd
+        fix: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/DeliveryTimeZoneCd
+
+      - unknownType: UNKNOWN_TARGET_PATH
+        targetPath: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService/PhoneFaxContact/TypeCode
+        fix: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService/PhoneFaxContact/@TypeCode
+
+      - unknownType: UNKNOWN_TARGET_PATH
+        targetPath: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/PromotionalPriceAmt
+        fix: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/PromotionPriceAmt
+
+      - unknownType: UNKNOWN_TARGET_PATH
+        targetPath: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/FulFilledQty
+        fix: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/FulfilledQty
+
+      ### unknown source path:
+      - unknownType: UNKNOWN_SOURCE_PATH
+        targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/PostalZoneCd
+        fix: customer/address[*]/zipCode
+
+
 ## Special scenarios of node annotation: loops, constructions, blocks, sub procedures...
 - soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
     path: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerPreference
@@ -38,6 +91,13 @@
       - sourcePath: customer/preference/optIn[*]
         name: optIn
         variable: _optIn
+
+- soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
+    path: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerOffers
+    loops:
+      - sourcePath: orderTotal/txnLevelSavings[*]
+        name: txnLevelSaving
+        variable: _txnLevelSaving
 
 - soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
     path: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact
@@ -73,6 +133,13 @@
         variable: _card_savings
 
 - soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
+    path: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerNotesTxt
+    loops:
+      - sourcePath: orderInfo/data[*]
+        name: order_info_data
+        variable: _order_info_data
+
+- soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
     path: GetGroceryOrder/GroceryOrderData/GrocerySubOrder
     loops:
       - sourcePath: subOrders[*]
@@ -89,6 +156,41 @@
       - sourcePath: subOrders[*]/promoCodes[*]
         name: promoCode
         variable: _promoCode
+
+- soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
+    path: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers
+    loops:
+      - sourcePath: subOrders[*]/orderLines[*]/itemPrice/savings[*]
+        name: customer_savings_loop
+        variable: _customer_savings
+
+- soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
+    path: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/CustomerRewards
+    loops:
+      - sourcePath: subOrders[*]/orderLines[*]/itemPrice/savings[*]/points[*]
+        name: points_loop
+        variable: _point
+
+- soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
+    path: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem
+    loops:
+      - sourcePath: subOrders[*]/orderLines[*]/fulfilledUpc[*]
+        name: fulfilled_upc_loop
+        variable: _fulfilled_upc
+
+- soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
+    path: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerOffers
+    loops:
+      - sourcePath: subOrders[*]/orderLines[*]/fulfilledUpc[*]/itemPrice/savings[*]
+        name: fulfilled_upc_savings_loop
+        variable: _fulfilled_upc_savings
+
+- soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
+    path: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerOffers/CustomerRewards
+    loops:
+      - sourcePath: subOrders[*]/orderLines[*]/fulfilledUpc[*]/itemPrice/savings[*]/points[*]
+        name: fulfilled_upc_savings_points_loop
+        variable: _fulfilled_upc_savings_point
 
 - soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
     path: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem
@@ -111,19 +213,6 @@
         name: service_contact
         variable: _service_contact
 
-- soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
-    path: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers
-    loops:
-      - sourcePath: subOrders[*]/orderLines[*]/itemPrice/savings[*]
-        name: customer_savings_loop
-        variable: _customer_savings
-
-- soya.framework.tools.xmlbeans.NodeLoopsAnnotator:
-    path: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/CustomerRewards
-    loops:
-      - sourcePath: subOrders[*]/orderLines[*]/itemPrice/savings[*]/points[*]
-        name: points_loop
-        variable: _point
 
 - soya.framework.tools.xmlbeans.NodeCodeBlockAnnotator:
     path: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerSubscription
@@ -152,6 +241,13 @@
       - name: GroceryOrderHeader_
     body: CgkJCQkJLS0gR2V0R3JvY2VyeU9yZGVyL0dyb2NlcnlPcmRlckRhdGEvR3JvY2VyeU9yZGVySGVhZGVyL0Z1bGZpbGxpbmdGYWNpbGl0eS9SZXRhaWxTdG9yZUlkCgkJCQkJU0VUIEZ1bGZpbGxpbmdGYWNpbGl0eV8uKFhNTE5TQy5GaWVsZClBYnM6UmV0YWlsU3RvcmVJZCA9IF9pbnB1dFJvb3ROb2RlLnN0b3JlTnVtYmVyOwoKCQkJCQktLSBHZXRHcm9jZXJ5T3JkZXIvR3JvY2VyeU9yZGVyRGF0YS9Hcm9jZXJ5T3JkZXJIZWFkZXIvRnVsZmlsbGluZ0ZhY2lsaXR5L0Jhbm5lckNkCgkJCQkJU0VUIEZ1bGZpbGxpbmdGYWNpbGl0eV8uKFhNTE5TQy5GaWVsZClBYnM6QmFubmVyQ2QgPSBfaW5wdXRSb290Tm9kZS5iYW5uZXI7CgoJCQkJCS0tIEJVSUxEIEZST00gc3RvcmVJbmZvWypdIFRPIEdldEdyb2NlcnlPcmRlci9Hcm9jZXJ5T3JkZXJEYXRhL0dyb2NlcnlPcmRlckhlYWRlci9GdWxmaWxsaW5nRmFjaWxpdHk6CgkJCQkJREVDTEFSRSBfc3RvcmVJbmZvIFJFRkVSRU5DRSBUTyBfaW5wdXRSb290Tm9kZS5zdG9yZUluZm8uSXRlbTsKCQkJCQlzdG9yZV9pbmZvIDogV0hJTEUgTEFTVE1PVkUoX3N0b3JlSW5mbykgRE8KCgkJCQkJCS0tIEdldEdyb2NlcnlPcmRlci9Hcm9jZXJ5T3JkZXJEYXRhL0dyb2NlcnlPcmRlckhlYWRlci9GdWxmaWxsaW5nRmFjaWxpdHkvTUZDSW5kCgkJCQkJCUlGIF9zdG9yZUluZm8ua2V5ID0gJ2lzTUZDJyBUSEVOCgkJCQkJCQlJRiBfc3RvcmVJbmZvLnZhbHVlID0gJ3RydWUnIFRIRU4KCQkJCQkJCQlTRVQgRnVsZmlsbGluZ0ZhY2lsaXR5Xy4oWE1MTlNDLkZpZWxkKUFiczpNRkNJbmQgPSAnWSc7CgkJCQkJCQlFTFNFCgkJCQkJCQkJU0VUIEZ1bGZpbGxpbmdGYWNpbGl0eV8uKFhNTE5TQy5GaWVsZClBYnM6TUZDSW5kID0gJ04nOwoJCQkJCQkJRU5EIElGOwoKCQkJCQkJLS0gR2V0R3JvY2VyeU9yZGVyL0dyb2NlcnlPcmRlckRhdGEvR3JvY2VyeU9yZGVySGVhZGVyL0Z1bGZpbGxpbmdGYWNpbGl0eS9IeWJyaWRTdG9yZUluZAoJCQkJCQlFTFNFSUYgX3N0b3JlSW5mby5rZXkgPSAnaXNIeWJyaWRTdG9yZScgVEhFTgoJCQkJCQkJSUYgX3N0b3JlSW5mby52YWx1ZSA9ICd0cnVlJyBUSEVOCgkJCQkJCQkJU0VUIEZ1bGZpbGxpbmdGYWNpbGl0eV8uKFhNTE5TQy5GaWVsZClBYnM6SHlicmlkU3RvcmVJbmQgPSAnWSc7CgkJCQkJCQlFTFNFCgkJCQkJCQkJU0VUIEZ1bGZpbGxpbmdGYWNpbGl0eV8uKFhNTE5TQy5GaWVsZClBYnM6SHlicmlkU3RvcmVJbmQgPSAnTic7CgkJCQkJCQlFTkQgSUY7CgoJCQkJCQktLSBHZXRHcm9jZXJ5T3JkZXIvR3JvY2VyeU9yZGVyRGF0YS9Hcm9jZXJ5T3JkZXJIZWFkZXIvRnVsZmlsbGluZ0ZhY2lsaXR5L1ByZW1pdW1TdG9yZUluZAoJCQkJCQlFTFNFSUYgX3N0b3JlSW5mby5rZXkgPSAnaXNQcmVtaXVtU3RvcmUnIFRIRU4KCQkJCQkJCUlGIF9zdG9yZUluZm8udmFsdWUgPSAndHJ1ZScgVEhFTgoJCQkJCQkJCVNFVCBGdWxmaWxsaW5nRmFjaWxpdHlfLihYTUxOU0MuRmllbGQpQWJzOlByZW1pdW1TdG9yZUluZCA9ICdZJzsKCQkJCQkJCUVMU0UKCQkJCQkJCQlTRVQgRnVsZmlsbGluZ0ZhY2lsaXR5Xy4oWE1MTlNDLkZpZWxkKUFiczpQcmVtaXVtU3RvcmVJbmQgPSAnTic7CgkJCQkJCQlFTkQgSUY7CgoJCQkJCQktLSBHZXRHcm9jZXJ5T3JkZXIvR3JvY2VyeU9yZGVyRGF0YS9Hcm9jZXJ5T3JkZXJIZWFkZXIvRnVsZmlsbGluZ0ZhY2lsaXR5L1RoaXJkUGFydHlEZWxpdmVyeU9ubHlJbmQKCQkJCQkJRUxTRUlGIF9zdG9yZUluZm8ua2V5ID0gJ2lzM1BMU3RvcmUnIFRIRU4KCQkJCQkJCUlGIF9zdG9yZUluZm8udmFsdWUgPSAndHJ1ZScgVEhFTgoJCQkJCQkJCVNFVCBGdWxmaWxsaW5nRmFjaWxpdHlfLihYTUxOU0MuRmllbGQpQWJzOlRoaXJkUGFydHlEZWxpdmVyeU9ubHlJbmQgPSAnWSc7CgkJCQkJCQlFTFNFCgkJCQkJCQkJU0VUIEZ1bGZpbGxpbmdGYWNpbGl0eV8uKFhNTE5TQy5GaWVsZClBYnM6VGhpcmRQYXJ0eURlbGl2ZXJ5T25seUluZCA9ICdOJzsKCQkJCQkJCUVORCBJRjsKCgkJCQkJCS0tIEdldEdyb2NlcnlPcmRlci9Hcm9jZXJ5T3JkZXJEYXRhL0dyb2NlcnlPcmRlckhlYWRlci9GdWxmaWxsaW5nRmFjaWxpdHkvRVJVTVNFbmFibGVkSW5kCgkJCQkJCUVMU0VJRiBfc3RvcmVJbmZvLmtleSA9ICdpc0VydW1zRW5hYmxlZCcgVEhFTgoJCQkJCQkJSUYgX3N0b3JlSW5mby52YWx1ZSA9ICd0cnVlJyBUSEVOCgkJCQkJCQkJU0VUIEZ1bGZpbGxpbmdGYWNpbGl0eV8uKFhNTE5TQy5GaWVsZClBYnM6RVJVTVNFbmFibGVkSW5kID0gJ1knOwoJCQkJCQkJRUxTRQoJCQkJCQkJCVNFVCBGdWxmaWxsaW5nRmFjaWxpdHlfLihYTUxOU0MuRmllbGQpQWJzOkVSVU1TRW5hYmxlZEluZCA9ICdOJzsKCQkJCQkJCUVORCBJRjsKCgkJCQkJCS0tIEdldEdyb2NlcnlPcmRlci9Hcm9jZXJ5T3JkZXJEYXRhL0dyb2NlcnlPcmRlckhlYWRlci9Hcm9jZXJ5T3JkZXJQcm9maWxlVHlwZQoJCQkJCQlFTFNFSUYgX3N0b3JlSW5mby5rZXkgPSAnaXNXWVNJV1lHRW5hYmxlZCcgVEhFTgoJCQkJCQkJSUYgX3N0b3JlSW5mby52YWx1ZSA9ICd0cnVlJyBUSEVOCgoJCQkJCQkJCS0tIEdldEdyb2NlcnlPcmRlci9Hcm9jZXJ5T3JkZXJEYXRhL0dyb2NlcnlPcmRlckhlYWRlci9Hcm9jZXJ5T3JkZXJQcm9maWxlVHlwZQoJCQkJCQkJCURFQ0xBUkUgR3JvY2VyeU9yZGVyUHJvZmlsZVR5cGVfIFJFRkVSRU5DRSBUTyBHcm9jZXJ5T3JkZXJIZWFkZXJfOwoJCQkJCQkJCUNSRUFURSBMQVNUQ0hJTEQgT0YgR3JvY2VyeU9yZGVySGVhZGVyXyBBUyBHcm9jZXJ5T3JkZXJQcm9maWxlVHlwZV8gVFlQRSBYTUxOU0MuRm9sZGVyIE5BTUUgJ0FiczpHcm9jZXJ5T3JkZXJQcm9maWxlVHlwZSc7CgoJCQkJCQkJCQktLSBHZXRHcm9jZXJ5T3JkZXIvR3JvY2VyeU9yZGVyRGF0YS9Hcm9jZXJ5T3JkZXJIZWFkZXIvR3JvY2VyeU9yZGVyUHJvZmlsZVR5cGUvUHJvZmlsZVR5cGUKCQkJCQkJCQkJREVDTEFSRSBQcm9maWxlVHlwZV8gUkVGRVJFTkNFIFRPIEdyb2NlcnlPcmRlclByb2ZpbGVUeXBlXzsKCQkJCQkJCQkJQ1JFQVRFIExBU1RDSElMRCBPRiBHcm9jZXJ5T3JkZXJQcm9maWxlVHlwZV8gQVMgUHJvZmlsZVR5cGVfIFRZUEUgWE1MTlNDLkZvbGRlciBOQU1FICdBYnM6UHJvZmlsZVR5cGUnOwoKCQkJCQkJCQkJCS0tIEdldEdyb2NlcnlPcmRlci9Hcm9jZXJ5T3JkZXJEYXRhL0dyb2NlcnlPcmRlckhlYWRlci9Hcm9jZXJ5T3JkZXJQcm9maWxlVHlwZS9Qcm9maWxlVHlwZS9Db2RlCgkJCQkJCQkJCQlTRVQgUHJvZmlsZVR5cGVfLihYTUxOU0MuRmllbGQpQWJzOkNvZGUgPSAnV1lTSVdZRyc7CgoJCQkJCQkJCQkJLS0gR2V0R3JvY2VyeU9yZGVyL0dyb2NlcnlPcmRlckRhdGEvR3JvY2VyeU9yZGVySGVhZGVyL0dyb2NlcnlPcmRlclByb2ZpbGVUeXBlL1Byb2ZpbGVWYWx1ZUluZAoJCQkJCQkJCQkJU0VUIEdyb2NlcnlPcmRlclByb2ZpbGVUeXBlXy4oWE1MTlNDLkZpZWxkKUFiczpQcm9maWxlVmFsdWVJbmQgPSAndHJ1ZSc7CgkJCQkJCQlFTkQgSUY7CgoJCQkJCQlFTkQgSUY7CgoJCQkJCU1PVkUgX3N0b3JlSW5mbyBORVhUU0lCTElORzsKCQkJCQlFTkQgV0hJTEUgc3RvcmVfaW5mbzsK
 
+- soya.framework.tools.xmlbeans.NodeProcedureAnnotator:
+    path: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType
+    procedure: ConstructGroceryOrderProfileType
+    parameters:
+      - name: _inputRootNode
+      - name: GroceryOrderProfileType_
+
 ##
 - soya.framework.tools.xmlbeans.MappingsAnnotator:
     mappings:
@@ -165,7 +261,6 @@
 
       GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Cancellation:
         condition: _tender.tenderType = 'CANCELLATION'
-
 
       GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ItemId/InternalItemId:
         mapping:
@@ -186,7 +281,7 @@
     globalVariables:
       - name: VERSION_ID
         type: CHARACTER
-        defaultValue: "'1.4.0.017'"
+        defaultValue: "'1.5.1.057'"
       - name: SYSTEM_ENVIRONMENT_CODE
         type: CHARACTER
         defaultValue: "'PROD'"
@@ -195,13 +290,17 @@
       - GetGroceryOrder/DocumentData/Document/@VersionId: VERSION_ID
       - GetGroceryOrder/DocumentData/Document/@SystemEnvironmentCd: SYSTEM_ENVIRONMENT_CODE
       - GetGroceryOrder/DocumentData/Document/DocumentID: "'GROCERY_ORDER'"
-      - GetGroceryOrder/DocumentData/Document/AlternateDocumentID: "'OSMS-EMOM_C02_ORDER-' || CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT 'YYYYMMddHHmmssSSSSSS')"
+      - GetGroceryOrder/DocumentData/Document/AlternateDocumentID: "'OSCO_ESED_C02_ORDER-' || CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT 'YYYYMMddHHmmssSSSSSS')"
       - GetGroceryOrder/DocumentData/Document/DocumentNm: "'GroceryOrder'"
       - GetGroceryOrder/DocumentData/Document/CreationDt: CURRENT_TIMESTAMP
 
       - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/RequiredAuthAmt: CAST($$ AS DECIMAL(10, 2))
       - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/ExpireMonthYearTxt: _paymentDetails.cardExpiryMonth
       - GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ChargeInfo/ChargeAmt: CAST($$ AS DECIMAL(10, 2))
+
+      - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType/ProfileType/Code: "'taxExempt'"
+      - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType/ProfileType/Description: "'???'"
+      - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType/ProfileValueInd: "'???'"
 
 - soya.framework.tools.xmlbeans.DecimalFunctionAnnotator:
 
@@ -213,7 +312,7 @@
 - soya.framework.tools.xmlbeans.SampleXmlRenderer:
 
 - soya.framework.tools.xmlbeans.XmlConstructionRenderer:
-    includeUnmapped: false
+        includeUnmapped: false
 
 - soya.framework.tools.xmlbeans.XmlConstructTreeRenderer:
 
@@ -226,7 +325,7 @@
 - soya.framework.tools.xmlbeans.AvroSchemaRenderer:
 
 - soya.framework.tools.xmlbeans.XmlConstructEsqlRenderer:
-    brokerSchema: com.abs.erums.groceryorder
-    moduleName: ESED_GroceryOrder_CMM_Transformer_Compute
+    brokerSchema: com.abs.oms.groceryorder
+    moduleName: ESED_GroceryOrder_OMS_Transformer_Compute
     inputRootVariable: _inputRootNode
     inputRootReference: InputRoot.JSON.Data

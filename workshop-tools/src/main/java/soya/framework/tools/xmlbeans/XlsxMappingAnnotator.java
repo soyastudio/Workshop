@@ -155,8 +155,10 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
                     mapping.mappingRule = mappingRule;
                     mapping.sourcePath = sourcePath;
 
-                    node.annotate(MAPPING, mapping);
-                    markParent(node);
+                    if (!ignored(node.getPath())) {
+                        node.annotate(MAPPING, mapping);
+                        markParent(node);
+                    }
                 }
 
             } else {
@@ -206,7 +208,7 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
 
         } else if (mappingRule != null && mappingRule.toUpperCase().contains("DIRECT") && mappingRule.toUpperCase().contains("MAPPING")
                 && sourcePath != null && !sourcePaths.contains(sourcePath)) {
-            if(sourcePath.contains(" ")|| sourcePath.contains("\n") ) {
+            if (sourcePath.contains(" ") || sourcePath.contains("\n")) {
                 unknownMapping.unknownType = UnknownType.ILLEGAL_SOURCE_PATH;
 
             } else {
@@ -248,7 +250,7 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
     }
 
     private boolean ignored(String xpath) {
-        if(xpath == null) {
+        if (xpath == null) {
             return true;
         }
 
