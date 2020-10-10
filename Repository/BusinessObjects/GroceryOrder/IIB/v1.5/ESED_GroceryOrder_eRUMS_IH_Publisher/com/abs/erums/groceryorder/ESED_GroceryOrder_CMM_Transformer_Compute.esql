@@ -3,7 +3,7 @@ BROKER SCHEMA com.abs.erums.groceryorder
 CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 
 	-- Declare UDPs
-	DECLARE VERSION_ID EXTERNAL CHARACTER '1.5.1.051';
+	DECLARE VERSION_ID EXTERNAL CHARACTER '1.4.0.000';
 	DECLARE SYSTEM_ENVIRONMENT_CODE EXTERNAL CHARACTER 'PROD';
 
 	-- Declare Namespace
@@ -174,8 +174,8 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/@TypeCode
 								SET PhoneFaxContact_.(XMLNSC.Attribute)TypeCode = _contact.type;
 
-								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/PhoneNbrTxt
-								SET PhoneFaxContact_.(XMLNSC.Field)Abs:PhoneNbrTxt = _contact.number;
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/PhoneNbr
+								SET PhoneFaxContact_.(XMLNSC.Field)Abs:PhoneNbr = _contact.number;
 
 					MOVE _contact NEXTSIBLING;
 					END WHILE contact;
@@ -564,35 +564,35 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 							customer_savings_loop : WHILE LASTMOVE(_customer_savings) DO
 
 								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers
-								DECLARE CustomerOffers_1 REFERENCE TO GroceryOrderDetail_;
-								CREATE LASTCHILD OF GroceryOrderDetail_ AS CustomerOffers_1 TYPE XMLNSC.Folder NAME 'Abs:CustomerOffers';
+								DECLARE CustomerOffers_ REFERENCE TO GroceryOrderDetail_;
+								CREATE LASTCHILD OF GroceryOrderDetail_ AS CustomerOffers_ TYPE XMLNSC.Folder NAME 'Abs:CustomerOffers';
 
 									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/OfferId
-									SET CustomerOffers_1.(XMLNSC.Field)Abs:OfferId = _customer_savings.offerId;
+									SET CustomerOffers_.(XMLNSC.Field)Abs:OfferId = _customer_savings.offerId;
 
 									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/OfferSourceType
-									DECLARE OfferSourceType_1 REFERENCE TO CustomerOffers_1;
-									CREATE LASTCHILD OF CustomerOffers_1 AS OfferSourceType_1 TYPE XMLNSC.Folder NAME 'Abs:OfferSourceType';
+									DECLARE OfferSourceType_ REFERENCE TO CustomerOffers_;
+									CREATE LASTCHILD OF CustomerOffers_ AS OfferSourceType_ TYPE XMLNSC.Folder NAME 'Abs:OfferSourceType';
 
 										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/OfferSourceType/Code
-										SET OfferSourceType_1.(XMLNSC.Field)Abs:Code = _customer_savings.source;
+										SET OfferSourceType_.(XMLNSC.Field)Abs:Code = _customer_savings.source;
 
 									-- LOOP FROM subOrders[*]/orderLines[*]/itemPrice/savings[*]/points[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/CustomerRewards:
 									DECLARE _point REFERENCE TO _customer_savings.points.Item;
 									points_loop : WHILE LASTMOVE(_point) DO
 
 										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/CustomerRewards
-										DECLARE CustomerRewards_1 REFERENCE TO CustomerOffers_1;
-										CREATE LASTCHILD OF CustomerOffers_1 AS CustomerRewards_1 TYPE XMLNSC.Folder NAME 'Abs:CustomerRewards';
+										DECLARE CustomerRewards_ REFERENCE TO CustomerOffers_;
+										CREATE LASTCHILD OF CustomerOffers_ AS CustomerRewards_ TYPE XMLNSC.Folder NAME 'Abs:CustomerRewards';
 
 											-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/CustomerRewards/RewardsProgramNm
-											SET CustomerRewards_1.(XMLNSC.Field)Abs:RewardsProgramNm = _point.programName;
+											SET CustomerRewards_.(XMLNSC.Field)Abs:RewardsProgramNm = _point.programName;
 
 											-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/CustomerRewards/EarnedQty
-											SET CustomerRewards_1.(XMLNSC.Field)Abs:EarnedQty = _point.earn;
+											SET CustomerRewards_.(XMLNSC.Field)Abs:EarnedQty = _point.earn;
 
 											-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/CustomerRewards/UsedQty
-											SET CustomerRewards_1.(XMLNSC.Field)Abs:UsedQty = _point.burn;
+											SET CustomerRewards_.(XMLNSC.Field)Abs:UsedQty = _point.burn;
 
 									MOVE _point NEXTSIBLING;
 									END WHILE points_loop;
@@ -772,8 +772,8 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/StageByDttm
 						SET DeliveryInfo_.(XMLNSC.Field)Abs:StageByDttm = _subOrder.deliveryInfo.stageByDateTime;
 
-						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/EditCutoffDtTm
-						SET DeliveryInfo_.(XMLNSC.Field)Abs:EditCutoffDtTm = _subOrder.deliveryInfo.slotInfo.editingCutoffDate;
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/EditCutoffDttm
+						SET DeliveryInfo_.(XMLNSC.Field)Abs:EditCutoffDttm = _subOrder.deliveryInfo.slotInfo.editingCutoffDate;
 
 						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/CustomerInstructionTxt
 						SET DeliveryInfo_.(XMLNSC.Field)Abs:CustomerInstructionTxt = _subOrder.deliveryInfo.instructions;
@@ -830,8 +830,8 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService/PhoneFaxContact/@TypeCode
 								SET PhoneFaxContact_1.(XMLNSC.Attribute)TypeCode = _service_contact.type;
 
-								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService/PhoneFaxContact/PhoneNbrTxt
-								SET PhoneFaxContact_1.(XMLNSC.Field)Abs:PhoneNbrTxt = _service_contact.number;
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService/PhoneFaxContact/PhoneNbr
+								SET PhoneFaxContact_1.(XMLNSC.Field)Abs:PhoneNbr = _service_contact.number;
 
 								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService/PhoneFaxContact/PhonePurposes
 								DECLARE PhonePurposes_1 REFERENCE TO PhoneFaxContact_1;
@@ -849,83 +849,83 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 		RETURN TRUE;
 	END;
 
+
 	CREATE PROCEDURE ConstructFulfillingFacility(IN _inputRootNode REFERENCE, IN FulfillingFacility_ REFERENCE, IN GroceryOrderHeader_ REFERENCE)
 		BEGIN
 
-					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility/RetailStoreId
-					SET FulfillingFacility_.(XMLNSC.Field)Abs:RetailStoreId = _inputRootNode.storeNumber;
+			-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility/RetailStoreId
+			SET FulfillingFacility_.(XMLNSC.Field)Abs:RetailStoreId = _inputRootNode.storeNumber;
 
-					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility/BannerCd
-					SET FulfillingFacility_.(XMLNSC.Field)Abs:BannerCd = _inputRootNode.banner;
+			-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility/BannerCd
+			SET FulfillingFacility_.(XMLNSC.Field)Abs:BannerCd = _inputRootNode.banner;
 
-					-- BUILD FROM storeInfo[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility:
-					DECLARE _storeInfo REFERENCE TO _inputRootNode.storeInfo.Item;
-					store_info : WHILE LASTMOVE(_storeInfo) DO
+			-- BUILD FROM storeInfo[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility:
+			DECLARE _storeInfo REFERENCE TO _inputRootNode.storeInfo.Item;
+			store_info : WHILE LASTMOVE(_storeInfo) DO
 
-						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility/MFCInd
-						IF _storeInfo.key = 'isMFC' THEN
-							IF _storeInfo.value = 'true' THEN
-								SET FulfillingFacility_.(XMLNSC.Field)Abs:MFCInd = 'Y';
-							ELSE
-								SET FulfillingFacility_.(XMLNSC.Field)Abs:MFCInd = 'N';
-							END IF;
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility/MFCInd
+				IF _storeInfo.key = 'isMFC' THEN
+					IF _storeInfo.value = 'true' THEN
+						SET FulfillingFacility_.(XMLNSC.Field)Abs:MFCInd = 'Y';
+					ELSE
+						SET FulfillingFacility_.(XMLNSC.Field)Abs:MFCInd = 'N';
+					END IF;
 
-						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility/HybridStoreInd
-						ELSEIF _storeInfo.key = 'isHybridStore' THEN
-							IF _storeInfo.value = 'true' THEN
-								SET FulfillingFacility_.(XMLNSC.Field)Abs:HybridStoreInd = 'Y';
-							ELSE
-								SET FulfillingFacility_.(XMLNSC.Field)Abs:HybridStoreInd = 'N';
-							END IF;
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility/HybridStoreInd
+				ELSEIF _storeInfo.key = 'isHybridStore' THEN
+					IF _storeInfo.value = 'true' THEN
+						SET FulfillingFacility_.(XMLNSC.Field)Abs:HybridStoreInd = 'Y';
+					ELSE
+						SET FulfillingFacility_.(XMLNSC.Field)Abs:HybridStoreInd = 'N';
+					END IF;
 
-						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility/PremiumStoreInd
-						ELSEIF _storeInfo.key = 'isPremiumStore' THEN
-							IF _storeInfo.value = 'true' THEN
-								SET FulfillingFacility_.(XMLNSC.Field)Abs:PremiumStoreInd = 'Y';
-							ELSE
-								SET FulfillingFacility_.(XMLNSC.Field)Abs:PremiumStoreInd = 'N';
-							END IF;
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility/PremiumStoreInd
+				ELSEIF _storeInfo.key = 'isPremiumStore' THEN
+					IF _storeInfo.value = 'true' THEN
+						SET FulfillingFacility_.(XMLNSC.Field)Abs:PremiumStoreInd = 'Y';
+					ELSE
+						SET FulfillingFacility_.(XMLNSC.Field)Abs:PremiumStoreInd = 'N';
+					END IF;
 
-						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility/ThirdPartyDeliveryOnlyInd
-						ELSEIF _storeInfo.key = 'is3PLStore' THEN
-							IF _storeInfo.value = 'true' THEN
-								SET FulfillingFacility_.(XMLNSC.Field)Abs:ThirdPartyDeliveryOnlyInd = 'Y';
-							ELSE
-								SET FulfillingFacility_.(XMLNSC.Field)Abs:ThirdPartyDeliveryOnlyInd = 'N';
-							END IF;
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility/ThirdPartyDeliveryOnlyInd
+				ELSEIF _storeInfo.key = 'is3PLStore' THEN
+					IF _storeInfo.value = 'true' THEN
+						SET FulfillingFacility_.(XMLNSC.Field)Abs:ThirdPartyDeliveryOnlyInd = 'Y';
+					ELSE
+						SET FulfillingFacility_.(XMLNSC.Field)Abs:ThirdPartyDeliveryOnlyInd = 'N';
+					END IF;
 
-						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility/ERUMSEnabledInd
-						ELSEIF _storeInfo.key = 'isErumsEnabled' THEN
-							IF _storeInfo.value = 'true' THEN
-								SET FulfillingFacility_.(XMLNSC.Field)Abs:ERUMSEnabledInd = 'Y';
-							ELSE
-								SET FulfillingFacility_.(XMLNSC.Field)Abs:ERUMSEnabledInd = 'N';
-							END IF;
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility/ERUMSEnabledInd
+				ELSEIF _storeInfo.key = 'isErumsEnabled' THEN
+					IF _storeInfo.value = 'true' THEN
+						SET FulfillingFacility_.(XMLNSC.Field)Abs:ERUMSEnabledInd = 'Y';
+					ELSE
+						SET FulfillingFacility_.(XMLNSC.Field)Abs:ERUMSEnabledInd = 'N';
+					END IF;
+
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType
+				ELSEIF _storeInfo.key = 'isWYSIWYGEnabled' THEN
+					IF _storeInfo.value = 'true' THEN
 
 						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType
-						ELSEIF _storeInfo.key = 'isWYSIWYGEnabled' THEN
-							IF _storeInfo.value = 'true' THEN
+						DECLARE GroceryOrderProfileType_ REFERENCE TO GroceryOrderHeader_;
+						CREATE LASTCHILD OF GroceryOrderHeader_ AS GroceryOrderProfileType_ TYPE XMLNSC.Folder NAME 'Abs:GroceryOrderProfileType';
 
-								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType
-								DECLARE GroceryOrderProfileType_ REFERENCE TO GroceryOrderHeader_;
-								CREATE LASTCHILD OF GroceryOrderHeader_ AS GroceryOrderProfileType_ TYPE XMLNSC.Folder NAME 'Abs:GroceryOrderProfileType';
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType/ProfileType
+							DECLARE ProfileType_ REFERENCE TO GroceryOrderProfileType_;
+							CREATE LASTCHILD OF GroceryOrderProfileType_ AS ProfileType_ TYPE XMLNSC.Folder NAME 'Abs:ProfileType';
 
-									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType/ProfileType
-									DECLARE ProfileType_ REFERENCE TO GroceryOrderProfileType_;
-									CREATE LASTCHILD OF GroceryOrderProfileType_ AS ProfileType_ TYPE XMLNSC.Folder NAME 'Abs:ProfileType';
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType/ProfileType/Code
+								SET ProfileType_.(XMLNSC.Field)Abs:Code = 'WYSIWYG';
 
-										-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType/ProfileType/Code
-										SET ProfileType_.(XMLNSC.Field)Abs:Code = 'WYSIWYG';
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType/ProfileValueInd
+								SET GroceryOrderProfileType_.(XMLNSC.Field)Abs:ProfileValueInd = 'true';
+					END IF;
 
-										-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType/ProfileValueInd
-										SET GroceryOrderProfileType_.(XMLNSC.Field)Abs:ProfileValueInd = 'true';
-							END IF;
+				END IF;
 
-						END IF;
-
-					MOVE _storeInfo NEXTSIBLING;
-					END WHILE store_info;
-
+			MOVE _storeInfo NEXTSIBLING;
+			END WHILE store_info;
 
 		END;
 
