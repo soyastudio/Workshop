@@ -1,39 +1,97 @@
 package soya.framework.tools.xmlbeans;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Function {
     public static final String CHAIN = "chain().";
 
-    public static final Function TODO = new Function("todo", "");
-    public static final Function IGNORE = new Function("ignore", "");
+    public static final String DEFAULT_FUNCTION = "DEFAULT";
+    public static final String FROM_FUNCTION = "FROM";
 
     private String name;
-    private String argument;
+    private String[] arguments;
 
-    public Function(String name, String argument) {
+    private Function(String name, String[] args) {
         this.name = name;
-        this.argument = argument;
+        this.arguments = new String[args.length];
+        for(int i = 0; i < args.length; i ++) {
+            this.arguments[i] = args[i].trim();
+        }
     }
 
     public String getName() {
         return name;
     }
 
-    public String getArgument() {
-        return argument;
+    public String[] getArguments() {
+        return arguments;
     }
 
     @Override
     public String toString() {
-        return name + "(" + argument + ")";
+        StringBuilder sb = new StringBuilder(name).append("(");
+        for (int i = 0; i < arguments.length; i++) {
+            if (i > 0) {
+                sb.append(", ");
+            }
+
+            sb.append(arguments[i]);
+        }
+        sb.append(")");
+        return sb.toString();
     }
 
-    public static Function parse(String func) {
-        int start = func.indexOf('(');
-        int end = func.indexOf(')');
+    public static String toString(Function[] functions) {
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < functions.length; i ++) {
+            if(i > 0) {
+                sb.append(".");
+            }
+            sb.append(functions[i].toString());
+        }
+        return sb.toString();
+    }
 
-        String name = func.substring(0, start);
-        String arg = func.substring(start + 1, end);
+    public static Builder builder() {
+        return new Builder();
+    }
 
-        return new Function(name, arg);
+    public static Function[] fromString(String func) {
+        String[] array = func.split("\\)\\.");
+        Function[] functions = new Function[array.length];
+        for(int i = 0; i < array.length; i ++) {
+            String exp = array[i];
+            if(exp.endsWith(")")) {
+                exp = exp.substring(0, exp.length() - 1);
+            }
+
+            int sep = exp.indexOf('(');
+            String funcName = exp.substring(0, sep);
+            String[] args = exp.substring(sep + 1).split(",");
+
+            functions[i] = new Function(funcName, args);
+        }
+
+        return functions;
+    }
+
+    public static class Builder {
+        private String name;
+        private List<String> arguments = new ArrayList<>();
+
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder argument(String arg) {
+            this.arguments.add(arg);
+            return this;
+        }
+
+        public Function create() {
+            return new Function(name, arguments.toArray(new String[arguments.size()]));
+        }
     }
 }

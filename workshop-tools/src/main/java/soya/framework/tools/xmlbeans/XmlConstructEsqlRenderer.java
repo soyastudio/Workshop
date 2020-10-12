@@ -222,6 +222,37 @@ public class XmlConstructEsqlRenderer extends XmlConstructTree implements Integr
         StringBuilderUtils.println("-- " + node.getPath(), builder, node.getLevel() + indent);
         StringBuilderUtils.println(builder);
 
+        String exp = node.getAnnotation(CONSTRUCTION, String.class);
+
+        String[] definitions = exp.split(".end()");
+        for(String def : definitions) {
+
+        }
+
+
+
+
+
+        Construction[] constructions = node.getAnnotation(CONSTRUCTION, Construction[].class);
+        for (int i = 0; i < constructions.length; i++) {
+            Construction construction = constructions[i];
+            String suffix = i == 0 ? "" : "" + i;
+            if (construction.condition != null) {
+                StringBuilderUtils.println("IF " + construction.condition + " THEN", builder, node.getLevel() + indent);
+                printConstruction(construction, suffix, node, builder, indent + 1);
+                StringBuilderUtils.println("END IF;", builder, node.getLevel() + indent);
+                StringBuilderUtils.println(builder);
+
+            } else {
+                printConstruction(construction, suffix, node, builder, indent);
+            }
+        }
+    }
+
+    private void printConstructions2(XmlSchemaBase.MappingNode node, StringBuilder builder, int indent) {
+        StringBuilderUtils.println("-- " + node.getPath(), builder, node.getLevel() + indent);
+        StringBuilderUtils.println(builder);
+
         Construction[] constructions = node.getAnnotation(CONSTRUCTION, Construction[].class);
         for (int i = 0; i < constructions.length; i++) {
             Construction construction = constructions[i];

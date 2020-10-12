@@ -1,8 +1,11 @@
 package soya.framework.tools.xmlbeans;
 
 
-public class XPathRenderer extends XmlSchemaBaseRenderer implements MappingFeature {
-    private boolean printUnmapped;
+public abstract class XPathRenderer extends XmlSchemaBaseRenderer implements MappingFeature {
+    public static String TODO = "TODO(???)";
+    public static String UNKNOWN = "???";
+
+    private boolean printUnmapped = true;
 
     @Override
     public String render(XmlSchemaBase base) {
@@ -10,29 +13,14 @@ public class XPathRenderer extends XmlSchemaBaseRenderer implements MappingFeatu
         base.getMappings().entrySet().forEach(e -> {
             String key = e.getKey();
             XmlSchemaBase.MappingNode node = e.getValue();
-            if (node.getNodeType().equals(XmlSchemaBase.NodeType.Folder)) {
+
+            if (node.getAnnotation(MAPPING) != null) {
+                builder.append(key).append("=").append(printAssignment(node)).append("\n");
+
+            } else if (node.getNodeType().equals(XmlSchemaBase.NodeType.Folder)) {
                 if (node.getAnnotation(MAPPED) != null) {
                     builder.append(key).append("=");
-
-                    if(node.getAnnotation(LOOP) != null) {
-                        builder.append("loop(");
-                        WhileLoop[] whileLoops = node.getAnnotation(LOOP, WhileLoop[].class);
-                        for(int i = 0; i < whileLoops.length; i ++) {
-                            if(i > 0) {
-                                builder.append(", ");
-                            }
-                            builder.append(whileLoops[i].variable);
-                        }
-
-                        builder.append(")");
-
-                    } else if(node.getAnnotation(MAPPINGS) != null) {
-                        builder.append("from()");
-
-                    } else if(node.getAnnotation(BLOCK) != null) {
-                        builder.append("block()");
-                    }
-
+                    builder.append(printConstruction(node));
                     builder.append("\n");
 
                 } else if (printUnmapped) {
@@ -40,17 +28,48 @@ public class XPathRenderer extends XmlSchemaBaseRenderer implements MappingFeatu
 
                 }
 
-            } else {
-                if (node.getAnnotation(MAPPING) != null) {
-                    Mapping mapping = node.getAnnotation(MAPPING, Mapping.class);
-                    builder.append(key).append("=").append(mapping.assignment).append("\n");
+            } else if (printUnmapped) {
+                builder.append("# ").append(key).append("=").append("\n");
 
-                } else if (printUnmapped) {
-                    builder.append("# ").append(key).append("=").append("\n");
-
-                }
             }
         });
+
         return builder.toString();
     }
+
+    protected abstract String printConstruction(XmlSchemaBase.MappingNode node);
+
+    protected abstract String printAssignment(XmlSchemaBase.MappingNode node);
+
+    protected Function[] parse(Mapping mapping) {
+        String mappingRule = mapping.mappingRule;
+        StringBuilder builder = new StringBuilder();
+        if (mappingRule.toUpperCase().startsWith("DEFAULT TO ")) {
+            builder.append("DEFAULT(");
+            if (mappingRule.contains("'")) {
+                String token = mappingRule.substring(mappingRule.indexOf("'"));
+                builder.append(token);
+            } else {
+                builder.append(UNKNOWN);
+            }
+            builder.append(")");
+
+        } else if (mappingRule.toUpperCase().contains("DIRECT") && mappingRule.toUpperCase().contains("MAPPING")) {
+            builder.append("FROM(");
+            if (mapping.sourcePath != null && !mapping.sourcePath.contains(" ") && !mapping.sourcePath.contains("\n")) {
+                builder.append(mapping.sourcePath);
+
+            } else {
+                builder.append(UNKNOWN);
+            }
+
+            builder.append(")");
+
+        } else {
+            builder.append(TODO);
+        }
+
+        return Function.fromString(builder.toString());
+    }
+
 }

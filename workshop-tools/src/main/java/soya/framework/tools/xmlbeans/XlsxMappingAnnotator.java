@@ -148,8 +148,9 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
                 UnknownMapping unknownMapping = checkUnknown(targetPath, mappingRule, sourcePath, base);
                 if (unknownMapping.unknownType != null) {
                     base.annotateAsArrayElement(UNKNOWN_MAPPINGS, unknownMapping);
+                }
 
-                } else if (base.get(targetPath) != null && mappingRule != null) {
+                if (base.get(targetPath) != null && mappingRule != null) {
                     MappingNode node = base.get(targetPath);
                     Mapping mapping = new Mapping();
                     mapping.mappingRule = mappingRule;

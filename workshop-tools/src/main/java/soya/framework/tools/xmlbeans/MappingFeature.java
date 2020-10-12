@@ -70,6 +70,7 @@ public interface MappingFeature {
     }
 
     class Construction {
+        protected String name;
         protected String sourcePath;
         protected String variable;
         protected String condition;

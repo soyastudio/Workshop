@@ -41,6 +41,9 @@
       BasketSizeCnt: _b2cCharge.minimumBasketSize
       AlertBasketSizeCnt: _b2cCharge.alertBasketSize
 
+## Apply functions based on special rules:
+- soya.framework.tools.xmlbeans.DecimalFunctionAnnotator:
+
 ## Generate assignments:
 - soya.framework.tools.xmlbeans.AssignmentAnnotator:
     globalVariables:
@@ -50,21 +53,22 @@
       - name: SYSTEM_ENVIRONMENT_CODE
         type: CHARACTER
         defaultValue: "'PROD'"
-    autoAnnotateLoop: true
-    assignments:
-      - GetDeliverySlot/DocumentData/Document/@VersionId: VERSION_ID
-      - GetDeliverySlot/DocumentData/Document/@SystemEnvironmentCd: SYSTEM_ENVIRONMENT_CODE
-      - GetDeliverySlot/DocumentData/Document/DocumentID: "'DeliverySlot'"
-      - GetDeliverySlot/DocumentData/Document/AlternateDocumentID: "'DeliverySlot_' || CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT 'YYYYMMddHHmmssSSSSSS')"
-      - GetDeliverySlot/DocumentData/Document/CreationDt: CURRENT_TIMESTAMP
 
-## Apply functions based on special rules:
-- soya.framework.tools.xmlbeans.DecimalFunctionAnnotator:
+    mappingFile: D:/Workshop/Repository/BusinessObjects/DeliverySlot/mappings.properties
+
+## Apply auto loops annotation:
+- soya.framework.tools.xmlbeans.AutoLoopsAnnotator:
 
 # Renderers:
-## Print all XPaths:
-- soya.framework.tools.xmlbeans.XPathRenderer:
-    name: XPath
+## Print XPaths Mappings:
+- soya.framework.tools.xmlbeans.XPathMappingsRenderer:
+    name: XPathMappings
+    printUnmapped: true
+
+## Print XPaths Assignments:
+- soya.framework.tools.xmlbeans.XPathAssignmentsRenderer:
+    name: XPathAssignments
+    printUnmapped: true
 
 ## Print Sample XML:
 - soya.framework.tools.xmlbeans.SampleXmlRenderer:
@@ -82,8 +86,6 @@
 ## Print XML construct tree:
 - soya.framework.tools.xmlbeans.XmlConstructTreeRenderer:
     name: XmlConstructTree
-
-- soya.framework.tools.xmlbeans.AssignmentRenderer:
 
 
 - soya.framework.tools.xmlbeans.LoopAnalyzeRenderer:

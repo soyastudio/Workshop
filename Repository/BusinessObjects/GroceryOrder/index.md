@@ -51,3 +51,7 @@
 
 
 mqsiapplybaroverride -k ESED_GroceryOrder_eRUMS_IH_Publisher -b ESED_GroceryOrder_eRUMS_IH_Publisher.bar -p ESED_GroceryOrder_eRUMS_IH_Publisher.BASE.override.properties
+
+
+b2bCharge/reducedDeliveryChargeUPC
+b2cCharge/reducedDeliveryChargeUPC
