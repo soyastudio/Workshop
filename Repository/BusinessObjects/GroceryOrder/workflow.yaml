@@ -14,9 +14,6 @@
     excludes: # mappings defined but not in this version
       - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/PhoneNbr
       - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/PhoneNbr
-      - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType
-
-      - GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem
 
 
 ## Apply node attribute changes:
@@ -306,13 +303,20 @@
 
 # Renderers:
 ## Print all XPaths:
-- soya.framework.tools.xmlbeans.XPathRenderer:
+## Print XPaths Mappings:
+- soya.framework.tools.xmlbeans.XPathMappingsRenderer:
+    name: XPathMappings
+    printUnmapped: true
+
+## Print XPaths Assignments:
+- soya.framework.tools.xmlbeans.XPathAssignmentsRenderer:
+    name: XPathAssignments
     printUnmapped: true
 
 - soya.framework.tools.xmlbeans.SampleXmlRenderer:
 
 - soya.framework.tools.xmlbeans.XmlConstructionRenderer:
-        includeUnmapped: false
+    includeUnmapped: false
 
 - soya.framework.tools.xmlbeans.XmlConstructTreeRenderer:
 

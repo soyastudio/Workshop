@@ -159,7 +159,7 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 
 				CALL ConstructFulfillingFacility(_inputRootNode, FulfillingFacility_, GroceryOrderHeader_);
 
-				IF FIELDTYPE(_inputRootNode.customer.tax.taxExempt) IS NOT NULL THEN
+				IF _inputRootNode.customer.tax.taxExempt IS NOT NULL THEN
 
 					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType
 					DECLARE GroceryOrderProfileType_ REFERENCE TO GroceryOrderHeader_;
@@ -855,8 +855,8 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 												SET OfferSourceType_1.(XMLNSC.Field)Abs:Code = _delivered_item_savings.source;
 
 											-- LOOP FROM subOrders[*]/orderLines[*]/fulfilledUpc[*]/itemPrice/savings[*]/points[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerOffers/CustomerRewards:
-											DECLARE _delivered_item_savings_point REFERENCE TO _delivered_item_savings.points.Item;
-											delivered_item_savings_points_loop : WHILE LASTMOVE(_delivered_item_savings_point) DO
+											DECLARE _delivered_item_savings_point REFERENCE TO _delivered_item_savings.Item;
+											delivered_item_savings_points_loop : WHILE LASTMOVE(_delivered_item_savings) DO
 
 												-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerOffers/CustomerRewards
 												DECLARE CustomerRewards_1 REFERENCE TO CustomerOffers_1;
