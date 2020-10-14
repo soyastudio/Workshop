@@ -40,12 +40,12 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
     }
 
     public void annotate(XmlSchemaBase base) {
-
         if (sourceFiles != null) {
             sourceFiles.forEach(sf -> {
                 try {
-                    FileReader reader = new FileReader(new File(sf));
+                    FileReader reader = new FileReader(WorkshopRepository.getFile(sf));
                     JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
+
                     extract(root, null);
                     base.annotate(SOURCE_PATHS, sourcePaths);
 
@@ -59,7 +59,7 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
             ignores.addAll(excludes);
         }
 
-        File excelFile = new File(this.mappingFile);
+        File excelFile = WorkshopRepository.getFile(mappingFile);
         XSSFWorkbook workbook = null;
 
         try {

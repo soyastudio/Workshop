@@ -71,11 +71,12 @@ public interface MappingFeature {
 
     class Construction {
         protected String name;
+        protected String type;
         protected String sourcePath;
         protected String variable;
         protected String condition;
         protected boolean loop;
-        protected Map<String, String> assignments;
+        protected Map<String, String> assignments = new LinkedHashMap<>();
     }
 
     class Procedure {

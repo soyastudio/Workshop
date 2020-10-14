@@ -19,6 +19,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.FileReader;
+import java.util.*;
 
 @Component
 @Path("/workshop")
@@ -49,6 +50,30 @@ public class WorkshopResource {
         }
 
         return Response.ok(root).build();
+    }
+
+    @GET
+    @Path("/configuration")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response configuration() {
+        List<String> list = new ArrayList<>();
+        Properties properties = System.getProperties();
+        Enumeration<?> enumeration = properties.propertyNames();
+        while (enumeration.hasMoreElements()) {
+            String key = (String) enumeration.nextElement();
+            if(key.startsWith("soya.framework.workshop.")) {
+                list.add(key);
+            }
+        }
+        Collections.sort(list);
+
+        Map<String, String> configuration = new LinkedHashMap<>();
+        list.forEach(e -> {
+            configuration.put(e, System.getProperty(e));
+        });
+
+
+        return Response.ok(configuration).build();
     }
 
     @GET

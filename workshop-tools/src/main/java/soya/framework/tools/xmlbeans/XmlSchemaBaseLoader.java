@@ -11,8 +11,7 @@ public class XmlSchemaBaseLoader implements Buffalo.BaseLoader<XmlSchemaBase> {
     @Override
     public XmlSchemaBase create() {
         try {
-            File file = new File(source);
-            SchemaTypeSystem sts = XmlBeansUtils.getSchemaTypeSystem(file);
+            SchemaTypeSystem sts = XmlBeansUtils.getSchemaTypeSystem(WorkshopRepository.getFile(source));
             return XmlSchemaBase.builder().schemaTypeSystem(sts).create();
 
         } catch (Exception e) {

@@ -9,7 +9,10 @@ import org.springframework.core.env.Environment;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.Properties;
 
 @Configuration
 public class RepositoryConfiguration {
@@ -18,16 +21,35 @@ public class RepositoryConfiguration {
     private Environment environment;
 
     private File home;
-
     private File cmmHome;
-
     private File projectHome;
 
     @PostConstruct
-    void init() {
-        home = new File("D:/Workshop/Repository");
-        if (!home.exists()) {
-            home = new File("C:/Workshop/Repository");
+    void init() throws Exception {
+        File userHome = new File(System.getProperty("user.home"));
+        File soyaHome = new File(userHome, ".soya");
+        if (!soyaHome.exists()) {
+            soyaHome.mkdir();
+        }
+
+        File workshopConfigFile = new File(soyaHome, "workshop.properties");
+        if (!workshopConfigFile.exists()) {
+            workshopConfigFile.createNewFile();
+        }
+
+        Properties properties = new Properties();
+        properties.load(new FileInputStream(workshopConfigFile));
+
+        Enumeration<?> enumeration = properties.propertyNames();
+        while(enumeration.hasMoreElements()) {
+            String propName = (String) enumeration.nextElement();
+            String propValue = properties.getProperty(propName);
+
+            System.setProperty(propName, propValue);
+        }
+
+        if(properties.getProperty("soya.framework.workshop.repository.home") != null) {
+            home = new File(properties.getProperty("soya.framework.workshop.repository.home"));
         }
 
         cmmHome = new File(home, "CMM");

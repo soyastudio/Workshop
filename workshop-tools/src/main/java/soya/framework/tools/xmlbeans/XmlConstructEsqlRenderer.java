@@ -1,5 +1,7 @@
 package soya.framework.tools.xmlbeans;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import soya.framework.tools.util.StringBuilderUtils;
 
 import java.util.*;
@@ -219,34 +221,70 @@ public class XmlConstructEsqlRenderer extends XmlConstructTree implements Integr
     }
 
     private void printConstructions(XmlSchemaBase.MappingNode node, StringBuilder builder, int indent) {
-        StringBuilderUtils.println("-- " + node.getPath(), builder, node.getLevel() + indent);
-        StringBuilderUtils.println(builder);
-
+        Map<String, Construction> constructionMap = new LinkedHashMap<>();
         String exp = node.getAnnotation(CONSTRUCTION, String.class);
-
-        String[] definitions = exp.split(".end()");
-        for(String def : definitions) {
-
-        }
-
-
-
-
-
-        Construction[] constructions = node.getAnnotation(CONSTRUCTION, Construction[].class);
-        for (int i = 0; i < constructions.length; i++) {
-            Construction construction = constructions[i];
-            String suffix = i == 0 ? "" : "" + i;
-            if (construction.condition != null) {
-                StringBuilderUtils.println("IF " + construction.condition + " THEN", builder, node.getLevel() + indent);
-                printConstruction(construction, suffix, node, builder, indent + 1);
-                StringBuilderUtils.println("END IF;", builder, node.getLevel() + indent);
-                StringBuilderUtils.println(builder);
-
-            } else {
-                printConstruction(construction, suffix, node, builder, indent);
+        String[] definitions = exp.split(".end\\(\\)");
+        for (int i = 0; i < definitions.length; i++) {
+            Function[] functions = Function.fromString(definitions[i]);
+            Construction construction = createConstruction(functions);
+            if (construction != null) {
+                constructionMap.put(construction.name, construction);
             }
         }
+
+        node.getChildren().forEach(c -> {
+            sort(c, constructionMap);
+        });
+
+        List<Construction> list = new ArrayList<>(constructionMap.values());
+        for (int i = 0; i < list.size(); i++) {
+            String suffix = i == 0 ? "" : "" + i;
+            Construction construction = list.get(i);
+            printConstruction(construction, suffix, node, builder, indent);
+        }
+
+    }
+
+    private void sort(XmlSchemaBase.MappingNode node, Map<String, Construction> constructionMap) {
+        if (node.getAnnotation(MAPPING) != null) {
+            Mapping mapping = node.getAnnotation(MAPPING, Mapping.class);
+            String assignment = mapping.assignment;
+            if (assignment != null && assignment.startsWith("for(")) {
+                String[] arr = assignment.split("end\\(\\)");
+                for(String exp: arr) {
+                    Function[] assignments = Function.fromString(exp);
+                    String dest = assignments[0].getArguments()[0];
+                    String assign = assignments[1].getArguments()[0];
+
+                    if(constructionMap.containsKey(dest)) {
+                        constructionMap.get(dest).assignments.put(node.getPath(), assign);
+                    }
+                }
+
+            }
+        }
+    }
+
+    private Construction createConstruction(Function[] functions) {
+        Construction construction = null;
+        if(functions != null && functions.length > 1) {
+            construction = new Construction();
+            construction.type = functions[0].getName();
+            construction.name = functions[0].getArguments()[0];
+
+            for (int i = 1; i < functions.length; i++) {
+                Function func = functions[i];
+                if (func.getName().equals("from")) {
+                    construction.sourcePath = func.getArguments()[0];
+
+                } else if (func.getName().equals("as")) {
+                    construction.variable = func.getArguments()[0];
+
+                }
+            }
+        }
+
+        return construction;
     }
 
     private void printConstructions2(XmlSchemaBase.MappingNode node, StringBuilder builder, int indent) {
@@ -257,6 +295,7 @@ public class XmlConstructEsqlRenderer extends XmlConstructTree implements Integr
         for (int i = 0; i < constructions.length; i++) {
             Construction construction = constructions[i];
             String suffix = i == 0 ? "" : "" + i;
+
             if (construction.condition != null) {
                 StringBuilderUtils.println("IF " + construction.condition + " THEN", builder, node.getLevel() + indent);
                 printConstruction(construction, suffix, node, builder, indent + 1);
@@ -270,25 +309,19 @@ public class XmlConstructEsqlRenderer extends XmlConstructTree implements Integr
     }
 
     private void printConstruction(Construction construction, String suffix, XmlSchemaBase.MappingNode node, StringBuilder builder, int indent) {
-        StringBuilderUtils.println("-- FROM " + construction.sourcePath + ":", builder, node.getLevel() + indent);
+        StringBuilderUtils.println("-- Construct " + node.getName() + " FROM " + construction.sourcePath + ":", builder, node.getLevel() + indent);
         StringBuilderUtils.println("DECLARE " + construction.variable + " REFERENCE TO " + inputRootVariable + "." + construction.sourcePath.replaceAll("/", ".") + ";", builder, node.getLevel() + indent);
-        StringBuilderUtils.println("DECLARE " + node.getAlias() + suffix + " REFERENCE TO " + node.getParent().getAlias() + ";", builder, node.getLevel() + indent);
-        StringBuilderUtils.println("CREATE LASTCHILD OF " + node.getParent().getAlias() + " AS " + node.getAlias() + suffix + " TYPE XMLNSC.Folder NAME '" + getFullName(node) + "';"
-                , builder, node.getLevel() + indent);
+        StringBuilderUtils.println(builder);
 
-        String basePath = node.getPath() + "/";
+
+
         Map<String, XmlSchemaBase.MappingNode> map = new LinkedHashMap<>();
-        Map<String, String> assignments = new HashMap<>();
-
-        Map<String, String> jsonObject = construction.assignments;
-        jsonObject.entrySet().forEach(e -> {
+        Map<String, String> assignments = construction.assignments;
+        assignments.entrySet().forEach(e -> {
             String path = e.getKey();
-            assignments.put(basePath + path, e.getValue());
-
-            List paths = getAllPath(path);
+            List<String> paths = getAllPath(path, node.getPath());
             paths.forEach(p -> {
-                String pp = basePath + p;
-                map.put(pp, base.get(pp));
+                map.put(p, base.get(p));
             });
         });
 
@@ -430,11 +463,11 @@ public class XmlConstructEsqlRenderer extends XmlConstructTree implements Integr
 
     }
 
-    private List<String> getAllPath(String path) {
+    private List<String> getAllPath(String path, String base) {
         List<String> list = new ArrayList();
         list.add(path);
         String token = path;
-        while (token.contains("/")) {
+        while (!token.equals(base)) {
             token = token.substring(0, token.lastIndexOf("/"));
             list.add(0, token);
         }
