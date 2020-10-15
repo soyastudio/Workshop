@@ -1,9 +1,9 @@
 package soya.framework.tools.xmlbeans;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import org.apache.commons.io.IOUtils;
+
+import java.io.*;
+import java.nio.charset.Charset;
 
 public class WorkshopRepository {
     private static File repositoryHome;
@@ -25,7 +25,7 @@ public class WorkshopRepository {
         return file;
     }
 
-    public static InputStream fromResource(String path) {
+    public static InputStream getResourceAsInputStream(String path) {
         try {
             return new FileInputStream(new File(repositoryHome, path));
 
@@ -35,6 +35,15 @@ public class WorkshopRepository {
             } catch (FileNotFoundException fileNotFoundException) {
                 throw new IllegalArgumentException(e);
             }
+        }
+    }
+
+    public static String getResourceAsString(String path) {
+        try {
+            return IOUtils.toString(getResourceAsInputStream(path), Charset.defaultCharset());
+
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
         }
     }
 }

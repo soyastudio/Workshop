@@ -1,8 +1,7 @@
 package soya.framework.tools.workbench.resource;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
+import com.samskivert.mustache.Mustache;
 import io.swagger.annotations.Api;
 import org.apache.commons.io.IOUtils;
 import org.commonmark.parser.Parser;
@@ -12,6 +11,8 @@ import org.springframework.stereotype.Component;
 import soya.framework.tools.workbench.configuration.BusinessObjectSchemaCache;
 import soya.framework.tools.workbench.configuration.RepositoryConfiguration;
 import soya.framework.tools.xmlbeans.Buffalo;
+import soya.framework.tools.xmlbeans.MustacheVariableVisitor;
+import soya.framework.tools.xmlbeans.WorkshopRepository;
 import soya.framework.tools.xmlbeans.XmlSchemaBase;
 
 import javax.ws.rs.*;
@@ -135,13 +136,63 @@ public class WorkshopResource {
         }
     }
 
+    @GET
+    @Path("/mustache")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response parseMustache(@HeaderParam("template") String template) {
+        MustacheVariableVisitor visitor = new MustacheVariableVisitor();
+        Mustache.compiler().compile(WorkshopRepository.getResourceAsString(template)).visit(visitor);
+        return Response.ok(visitor.getVariables()).build();
+    }
+
     @POST
     @Path("/mustache")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces({MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response mustache(@HeaderParam("template") String template, String data) {
+        JsonObject jsonObject = JsonParser.parseString(data).getAsJsonObject();
+        String result = Mustache.compiler().compile(WorkshopRepository.getResourceAsString(template)).execute(toMap(jsonObject));
 
-        return Response.ok().build();
+        return Response.ok(result).build();
+    }
+
+    public static Map<String, Object> toMap(JsonObject jsonObject) {
+        Map<String, Object> map = new LinkedHashMap<String, Object>();
+
+        jsonObject.entrySet().forEach(e -> {
+            String key = e.getKey();
+            JsonElement value = e.getValue();
+            if (value.isJsonArray()) {
+                map.put(key, toList(value.getAsJsonArray()));
+
+            } else if (value.isJsonObject()) {
+                map.put(key, toMap(value.getAsJsonObject()));
+
+            } else {
+                map.put(key, value.getAsString());
+            }
+
+        });
+
+        return map;
+    }
+
+    public static List<Object> toList(JsonArray array) {
+        List<Object> list = new ArrayList<Object>();
+        array.forEach(e -> {
+            if (e.isJsonArray()) {
+                list.add(toList(e.getAsJsonArray()));
+
+            } else if (e.isJsonObject()) {
+                list.add(toMap(e.getAsJsonObject()));
+
+            } else {
+                list.add(e.getAsString());
+            }
+
+        });
+
+        return list;
     }
 
 

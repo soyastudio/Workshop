@@ -23,7 +23,7 @@ public class AssignmentAnnotator implements Buffalo.Annotator<XmlSchemaBase>, Ma
         if (mappingFile != null) {
             Properties properties = new Properties();
             try {
-                properties.load(WorkshopRepository.fromResource(mappingFile));
+                properties.load(WorkshopRepository.getResourceAsInputStream(mappingFile));
                 Enumeration<?> enumeration = properties.propertyNames();
                 while (enumeration.hasMoreElements()) {
                     String key = (String) enumeration.nextElement();
