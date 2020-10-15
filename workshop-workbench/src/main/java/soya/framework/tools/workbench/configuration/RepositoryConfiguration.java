@@ -71,7 +71,7 @@ public class RepositoryConfiguration {
                 }
             }
         }
-
+        System.out.println("==================== Repository Home: " + home);
     }
 
     @Bean

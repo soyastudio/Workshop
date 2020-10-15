@@ -25,6 +25,7 @@ import java.util.*;
 @Path("/workshop")
 @Api(value = "Workshop Service", hidden = false)
 public class WorkshopResource {
+
     @Autowired
     RepositoryConfiguration configuration;
     BusinessObjectSchemaCache schemaCache = BusinessObjectSchemaCache.getInstance();
@@ -32,7 +33,14 @@ public class WorkshopResource {
     @GET
     @Path("/index")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response index() {
+    public Response index(@PathParam("path") String path) {
+        return Response.ok(configuration).build();
+    }
+
+    @GET
+    @Path("/cmm")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response cmm() {
         Gson gson = new Gson();
 
         JsonObject root = new JsonObject();
@@ -61,7 +69,7 @@ public class WorkshopResource {
         Enumeration<?> enumeration = properties.propertyNames();
         while (enumeration.hasMoreElements()) {
             String key = (String) enumeration.nextElement();
-            if(key.startsWith("soya.framework.workshop.")) {
+            if (key.startsWith("soya.framework.workshop.")) {
                 list.add(key);
             }
         }
@@ -126,4 +134,15 @@ public class WorkshopResource {
 
         }
     }
+
+    @POST
+    @Path("/mustache")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces({MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    public Response mustache(@HeaderParam("template") String template, String data) {
+
+        return Response.ok().build();
+    }
+
+
 }

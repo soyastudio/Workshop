@@ -1,0 +1,171 @@
+<!--==========================================================================-->
+<!--===================== ANT Version 1.7 ==========================-->
+<!--============= Created By IBM-Safeway 11052007 ================-->
+<!--==========================================================================-->
+<!--==========================================================================-->
+
+<project name ="Project" default="main" basedir=".">
+<taskdef resource="net/sf/antcontrib/antlib.xml"/>
+	<description>
+		 Safeway Bar File Version v.1.0 November 2007 
+	</description>
+	
+<!-- <target name="main" depends="setup,source,barcompile,updatebar,renamebar,cleanup,updatebar_qa,updatebar_pr"> -->
+<target name="main" depends="setup,source,barcompile,renamebar,cleanup"> 
+<description>
+		This executes the targets in the right order resolving all the dependencies. 
+</description>
+</target>
+
+<target name="setup">
+    <property file="BuildConfig.txt" prefix="conf"/>
+	<property file="CommonConfig.txt" prefix="comconf"/>
+   
+  <tstamp>
+    <format property="today" pattern="yyyyMMdd" locale="en"/>
+    <format property = "time" pattern="hhmmss" locale="en"/>
+  </tstamp>
+  
+    <echo message="Completed apply overrides in Broker Archive file - ${comconf.barfilepath}/${PRconf.targetbarfile}" />  
+  
+<echo message="BUILD ${conf.buildnum}" />
+<echo message="====================================================" />
+<echo message="=========== STARTING SETUP OF BUILD ================" />
+<echo message="====================================================" />
+  
+<!--===================================================================-->
+<!--======= Create the build directory structure  =====================-->
+<!--===================================================================-->      
+
+<echo message="====================================================" />
+<echo message="CREATING DIRECTORIES " />
+<echo message="====================================================" />
+
+	 <mkdir dir="${comconf.configworkingdir}/${conf.projectname}"/>
+	 <mkdir dir="${comconf.barfilepath}/${conf.projectname}"/>
+     <mkdir dir="${comconf.configworkingdir}/logs/${conf.projectname}/${today}"/>
+     
+    
+<echo message="====================================================" />
+<echo message="================ SETUP FINISHED ====================" />
+<echo message="====================================================" />
+
+
+<record name="${comconf.configworkingdir}/logs/${conf.projectname}/${today}/${conf.projectname}_${time}.log" action="start" loglevel="verbose" />
+
+<echo message="====================================================" />
+<echo message="================ END OF TARGET =====================" />
+<echo message="====================================================" />
+
+</target>
+
+<target name="source" if="com.lib" depends="commonlib">
+  <property file="BuildConfig.txt" prefix="conf"/>
+  <property file="CommonConfig.txt" prefix="comconf"/>
+  		
+<echo message="====================================================" />
+<echo message="============== COPY RELATED LIBRARIES ==============" />
+<echo message="====================================================" />
+
+<for param="this.lib" list="${conf.commonlibraries}">
+	<sequential>
+	       <copy todir="${workspacedir}/@{this.lib}">
+		<fileset dir="${workspacedir}/../../IIB_COMMON_LIB/@{this.lib}"/>
+	       </copy>
+	</sequential>
+</for>
+
+<echo message="====================================================" />
+<echo message="================== END OF TARGET ===================" />
+<echo message="====================================================" />
+
+</target>  
+
+<target name="commonlib">
+    <property file="BuildConfig.txt" prefix="conf"/>
+    <property name="com.lib" value="a" />    
+
+      <condition property="com.lib">
+          <isset property="${conf.commonlibraries}"/> 
+      </condition>
+
+</target>
+
+<target name="barcompile">
+ 
+<property file="BuildConfig.txt" prefix="conf"/> 
+<property file="CommonConfig.txt" prefix="comconf"/> 
+
+<record name="${comconf.configworkingdir}/logs/${conf.projectname}/${today}/${conf.projectname}_${time}.log" action="start" loglevel="verbose" />
+
+<echo message="====================================================" /> 
+<echo message="========= COMPILING BAR PROJECT   =============" />
+<echo message="====================================================" /> 
+
+<exec executable="${comconf.toolkithome}/mqsicreatebar.exe"  failonerror="true" spawn="false" logError="true" vmlauncher="false">
+<arg value="-data"/>
+<arg value="${workspacedir}"/>
+<arg value="-b"/>
+<arg value="${comconf.barfilepath}/${conf.projectname}_${today}_${time}_${conf.buildnum}_temp.bar"/>
+<arg value="-cleanBuild"/>
+<arg value="-a"/>
+<arg line="${conf.projectname}"/>
+<arg value="-l"/>
+<arg line="${conf.relatedlibraries}"/>
+<arg value="-debug"/>
+</exec>
+    
+<!--===================================================================-->
+<!--================ End of CLASSPATH declaration =====================-->
+<!--===================================================================--> 
+
+<echo message="====================================================" /> 
+<echo message="========= END OF COMPILING THE BAR =============" /> 
+<echo message="====================================================" />         
+
+</target>
+
+
+
+<target name="renamebar">
+	<echo message="====================================================" />
+	<echo message="RENAMING BARFILE " />
+	<echo message="====================================================" />
+		<property file="BuildConfig.txt" prefix="conf"/> 
+		<property file="CommonConfig.txt" prefix="cmnconf"/>
+
+	<record name="${comconf.configworkingdir}/logs/${conf.projectname}/${today}/${conf.projectname}_${time}.log" action="start" loglevel="verbose" />
+	<echo message="Rename barfile to final name - ${comconf.barfilepath}/${conf.projectname}_${today}_${time}_${conf.buildnum}_temp.bar " />
+	<delete file="${comconf.barfilepath}/${conf.projectname}.bar"/>
+	<copy file="${comconf.barfilepath}/${conf.projectname}_${today}_${time}_${conf.buildnum}_temp.bar" tofile="${comconf.barfilepath}/${conf.projectname}.bar"/>
+</target>
+
+<target name="cleanup">
+	<property file="BuildConfig.txt" prefix="conf"/> 
+	<record name="${comconf.configworkingdir}/logs/${conf.projectname}/${today}/${conf.projectname}_${time}.log" action="start" loglevel="verbose" />
+	<delete includeemptydirs="true">
+			<fileset dir="${comconf.configworkingdir}/${conf.projectname}" defaultexcludes="false"/>
+	</delete>
+
+</target>
+
+
+<!-- ============================================================== -->
+<!-- Freeze project from ChangeMan                                  -->
+<!-- ============================================================== -->
+
+<!--	<target name="freeze"  >
+		<echo message="****************  freeze begin *****************"/>
+		<tstamp>
+			<format property="freeze.time" pattern="MMddyyyy_HHmmss" />
+		</tstamp>
+		<property name="freeze.stamp" value="${version}_${freeze.time}"/>
+	Create a new freeze from the passed in Release Id 
+		<echo message="Freezing project ${serena.project} with release name ${freeze.stamp}"/>
+        <exec dir="." executable="${serena.dir}\freeze">
+			<arg line="-h:${serena.server} -d:${freeze.stamp} -p:${serena.project} -rl:${freeze.stamp} -u:${serena.user} -ps:${serena.pw} -v"/>
+        </exec>
+		<echo message="****************  freeze end   *****************"/>
+	</target>
+-->
+</project>

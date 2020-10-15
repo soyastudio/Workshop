@@ -1,3 +1,58 @@
+# Design
+## Flow Chart
+``` mermaid
+graph LR
+  subgraph SRC1 [ERUMS]
+    ERUMS
+  end
+    
+    ERUMS --> AKS
+    AKS --> KIT
+
+  subgraph SRC2 [OMS]
+    OMS
+  end
+
+    OMS --> AKS2
+    AKS2 --> KIT2
+
+  subgraph EDIS [EDIS - GroceryOrder]
+    KIT --> |<Json Data>|IIB
+    IIB --> |<CMM XML>|KOT
+    
+    KIT2 --> |<Json Data>|IIB2
+    IIB2 --> |<CMM XML>|KOT
+  end
+
+    KOT --> AKT
+    AKT --> END
+
+  subgraph TGT [EDM]
+    END
+  end
+
+  ERUMS((ERUMS))
+  AKS[(Azure Kafka ERUMS SRC)]
+
+  OMS((OMS))
+  AKS2[(Azure Kafka OMS SRC)]
+
+  KIT[(Kafka ERUMS SRC Topic)]
+  IIB[ESED_GroceryOrder_ERUMS_IH_Publisher]
+
+  
+  KIT2[(Kafka OMS SRC Topic)]
+  IIB2[ESED_GroceryOrder_OMS_IH_Publisher]
+
+  KOT[(Kafka Producer Topic)]
+
+  AKT[(Azure Kafka TGT)]
+  END((Consumer))         
+
+```
+
+
+
 # DEV
 ## 1. ssh dgv012efa
 
