@@ -1,8 +1,10 @@
 package soya.framework.tools.xmlbeans;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import org.yaml.snakeyaml.Yaml;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -108,7 +110,8 @@ public class Buffalo<T> {
     }
 
     public String render() {
-        return renderer == null ? null : renderer.render(base);
+        List<String> list = new ArrayList<>(renderers.keySet());
+        return new Gson().toJson(list);
     }
 
     public String render(Renderer<T> renderer) {

@@ -22,8 +22,8 @@ public class MustacheVariableVisitor implements Mustache.Visitor {
     public void visitVariable(String s) {
         JsonObject current = jsonObject;
         String path = s;
-        while (s.contains(".")) {
-            int point = s.indexOf('.');
+        while (path.contains(".")) {
+            int point = path.indexOf('.');
             String key = path.substring(0, point);
             JsonElement jsonElement = current.get(key);
             if(jsonElement == null) {
@@ -36,7 +36,7 @@ public class MustacheVariableVisitor implements Mustache.Visitor {
 
         }
 
-        current.add(path, new JsonPrimitive("_" + path.toUpperCase()));
+        current.add(path, new JsonPrimitive("???"));
     }
 
     @Override

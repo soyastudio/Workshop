@@ -10,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import soya.framework.tools.workbench.configuration.BusinessObjectSchemaCache;
 import soya.framework.tools.workbench.configuration.RepositoryConfiguration;
-import soya.framework.tools.xmlbeans.Buffalo;
-import soya.framework.tools.xmlbeans.MustacheVariableVisitor;
-import soya.framework.tools.xmlbeans.WorkshopRepository;
-import soya.framework.tools.xmlbeans.XmlSchemaBase;
+import soya.framework.tools.xmlbeans.*;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -151,49 +148,9 @@ public class WorkshopResource {
     @Produces({MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response mustache(@HeaderParam("template") String template, String data) {
         JsonObject jsonObject = JsonParser.parseString(data).getAsJsonObject();
-        String result = Mustache.compiler().compile(WorkshopRepository.getResourceAsString(template)).execute(toMap(jsonObject));
+        String result = Mustache.compiler().compile(WorkshopRepository.getResourceAsString(template)).execute(JsonUtils.toMap(jsonObject));
 
         return Response.ok(result).build();
     }
-
-    public static Map<String, Object> toMap(JsonObject jsonObject) {
-        Map<String, Object> map = new LinkedHashMap<String, Object>();
-
-        jsonObject.entrySet().forEach(e -> {
-            String key = e.getKey();
-            JsonElement value = e.getValue();
-            if (value.isJsonArray()) {
-                map.put(key, toList(value.getAsJsonArray()));
-
-            } else if (value.isJsonObject()) {
-                map.put(key, toMap(value.getAsJsonObject()));
-
-            } else {
-                map.put(key, value.getAsString());
-            }
-
-        });
-
-        return map;
-    }
-
-    public static List<Object> toList(JsonArray array) {
-        List<Object> list = new ArrayList<Object>();
-        array.forEach(e -> {
-            if (e.isJsonArray()) {
-                list.add(toList(e.getAsJsonArray()));
-
-            } else if (e.isJsonObject()) {
-                list.add(toMap(e.getAsJsonObject()));
-
-            } else {
-                list.add(e.getAsString());
-            }
-
-        });
-
-        return list;
-    }
-
 
 }

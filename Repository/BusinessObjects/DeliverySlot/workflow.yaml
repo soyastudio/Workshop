@@ -4,6 +4,10 @@
     source: CMM/BOD/GetDeliverySlot.xsd
 
 # Annotations:
+## Application Definition:
+- soya.framework.tools.xmlbeans.ApplicationAnnotator:
+    uri: BusinessObjects/DeliverySlot/application.json
+
 ## Apply basic annotation from xlsx mapping sheet:
 - soya.framework.tools.xmlbeans.XlsxMappingAnnotator:
     sourceFiles:
@@ -108,12 +112,18 @@
     name: AvroSchema
 
 ## Print deployment artifacts:
-- soya.framework.tools.xmlbeans.OverwritePropertiesRenderer:
-    name: DEVOverwriteProperties
-    properties:
-      ESED_DELIVERYSLOT_OSMS_CMM.SYSTEM_ENVIRONMENT_CODE: DEV
+- soya.framework.tools.xmlbeans.OverridePropertiesRenderer:
+    name: ProductOverride
+    template: Templates/override.pr.mustache
 
-- soya.framework.tools.xmlbeans.OverwritePropertiesRenderer:
-    name: QAOverwriteProperties
-    properties:
-      ESED_DELIVERYSLOT_OSMS_CMM.SYSTEM_ENVIRONMENT_CODE: QA
+- soya.framework.tools.xmlbeans.OverridePropertiesRenderer:
+    name: DevOverride
+    template: Templates/override.dv.mustache
+
+- soya.framework.tools.xmlbeans.OverridePropertiesRenderer:
+    name: QAOverride
+    template: Templates/override.qa.mustache
+
+- soya.framework.tools.xmlbeans.OverridePropertiesRenderer:
+    name: IIBConsole
+    template: Templates/iib.mustache

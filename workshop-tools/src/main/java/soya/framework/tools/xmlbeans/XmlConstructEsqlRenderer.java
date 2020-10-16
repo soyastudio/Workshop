@@ -1,12 +1,10 @@
 package soya.framework.tools.xmlbeans;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import soya.framework.tools.util.StringBuilderUtils;
 
 import java.util.*;
 
-public class XmlConstructEsqlRenderer extends XmlConstructTree implements IntegrationApplicationFeature {
+public class XmlConstructEsqlRenderer extends XmlConstructTree {
 
     public static final String URI = "http://collab.safeway.com/it/architecture/info/default.aspx";
     public static final String DOCUMENT_ROOT = "xmlDocRoot";
@@ -251,12 +249,12 @@ public class XmlConstructEsqlRenderer extends XmlConstructTree implements Integr
             String assignment = mapping.assignment;
             if (assignment != null && assignment.startsWith("for(")) {
                 String[] arr = assignment.split("end\\(\\)");
-                for(String exp: arr) {
+                for (String exp : arr) {
                     Function[] assignments = Function.fromString(exp);
                     String dest = assignments[0].getArguments()[0];
                     String assign = assignments[1].getArguments()[0];
 
-                    if(constructionMap.containsKey(dest)) {
+                    if (constructionMap.containsKey(dest)) {
                         constructionMap.get(dest).assignments.put(node.getPath(), assign);
                     }
                 }
@@ -267,7 +265,7 @@ public class XmlConstructEsqlRenderer extends XmlConstructTree implements Integr
 
     private Construction createConstruction(Function[] functions) {
         Construction construction = null;
-        if(functions != null && functions.length > 1) {
+        if (functions != null && functions.length > 1) {
             construction = new Construction();
             construction.type = functions[0].getName();
             construction.name = functions[0].getArguments()[0];
@@ -312,7 +310,6 @@ public class XmlConstructEsqlRenderer extends XmlConstructTree implements Integr
         StringBuilderUtils.println("-- Construct " + node.getName() + " FROM " + construction.sourcePath + ":", builder, node.getLevel() + indent);
         StringBuilderUtils.println("DECLARE " + construction.variable + " REFERENCE TO " + inputRootVariable + "." + construction.sourcePath.replaceAll("/", ".") + ";", builder, node.getLevel() + indent);
         StringBuilderUtils.println(builder);
-
 
 
         Map<String, XmlSchemaBase.MappingNode> map = new LinkedHashMap<>();

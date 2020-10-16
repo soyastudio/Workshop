@@ -10,6 +10,7 @@ public interface MappingFeature {
 
     String SOURCE_PATHS = "SOURCE_PATHS";
 
+    String APPLICATION = "APPLICATION";
     String GLOBAL_VARIABLE = "GLOBAL_VARIABLE";
     String INPUT_ROOT = "$.";
     String FUNCTION_PARAM = "$$";
