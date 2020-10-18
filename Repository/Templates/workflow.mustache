@@ -1,52 +1,26 @@
 # Baseline:
 ## Generate baseline from XSD
 - soya.framework.tools.xmlbeans.XmlSchemaBaseLoader:
-    schema: CMM/BOD/GetDeliverySlot.xsd
+    schema: CMM/BOD/{{schemaFile}}.xsd
 
 # Annotations:
 ## Application Definition:
 - soya.framework.tools.xmlbeans.ApplicationAnnotator:
-    uri: BusinessObjects/DeliverySlot/application.json
+    uri: BusinessObjects/{{businessObject}}/application.json
 
 ## Apply basic annotation from xlsx mapping sheet:
 - soya.framework.tools.xmlbeans.XlsxMappingAnnotator:
     sourceFiles:
-      - BusinessObjects/DeliverySlot/requirement/input.json
-    mappingFile: BusinessObjects/DeliverySlot/requirement/DeliverySlot_OSMS_TO_EDIS_Canonical_Mapping_v1.2.2.xlsx
-    mappingSheet: "Mapping Source to Canonical"
+      - BusinessObjects/{{businessObject}}/requirement/input.json
+    mappingFile: BusinessObjects/{{businessObject}}/requirement/{{mappingFile}}.xlsx
+    mappingSheet: "{{mappingSheet}}"
+
+## Apply node attribute changes:
+- soya.framework.tools.xmlbeans.XmlSchemaNodeAnnotator:
+    nodes:
 
 ## Fix unknown mappings: target paths, source paths and mapping rules...
 - soya.framework.tools.xmlbeans.UnknownMappingFixAnnotator:
-
-## Special scenarios of node annotation: blocks, loops, constructions, sub procedures...
-- soya.framework.tools.xmlbeans.NodeConstructionAnnotator:
-    path: GetDeliverySlot/DeliverySlotData/DeliveryChargeType
-    sourcePath: b2bCharge
-    variable: _b2bCharge
-    assignments:
-      CustomerType/Code: _b2bCharge.userType
-      DeliveryChargeAmt: CAST(_b2bCharge.deliveryCharge AS DECIMAL(6, 2))
-      DiscountedDeliveryChargeAmt: CAST(_b2bCharge.reducedDeliveryCharge AS DECIMAL(6, 2))
-      DeliveryChargeId: _b2bCharge.deliveryChargeUPC
-      DiscountedDeliveryChargeId: _b2bCharge.reducedDeliveryChargeUPC
-      BasketSizeCnt: _b2bCharge.minimumBasketSize
-      AlertBasketSizeCnt: _b2bCharge.alertBasketSize
-
-- soya.framework.tools.xmlbeans.NodeConstructionAnnotator:
-    path: GetDeliverySlot/DeliverySlotData/DeliveryChargeType
-    sourcePath: b2cCharge
-    variable: _b2cCharge
-    assignments:
-      CustomerType/Code: _b2cCharge.userType
-      DeliveryChargeAmt: CAST(_b2cCharge.deliveryCharge AS DECIMAL(6, 2))
-      DiscountedDeliveryChargeAmt: CAST(_b2cCharge.reducedDeliveryCharge AS DECIMAL(6, 2))
-      DeliveryChargeId: _b2cCharge.deliveryChargeUPC
-      DiscountedDeliveryChargeId: _b2cCharge.reducedDeliveryChargeUPC
-      BasketSizeCnt: _b2cCharge.minimumBasketSize
-      AlertBasketSizeCnt: _b2cCharge.alertBasketSize
-
-## Apply functions based on special rules:
-- soya.framework.tools.xmlbeans.DecimalFunctionAnnotator:
 
 ## Generate assignments:
 - soya.framework.tools.xmlbeans.AssignmentAnnotator:
@@ -58,7 +32,10 @@
         type: CHARACTER
         defaultValue: "'PROD'"
 
-    mappingFile: BusinessObjects/DeliverySlot/mappings.properties
+    mappingFile: BusinessObjects/{{businessObject}}/mappings.properties
+
+## Apply functions based on special rules:
+- soya.framework.tools.xmlbeans.DecimalFunctionAnnotator:
 
 ## Apply auto loops annotation:
 - soya.framework.tools.xmlbeans.AutoLoopsAnnotator:
@@ -105,7 +82,7 @@
 
 ## Print transformation output xml:
 - soya.framework.tools.xmlbeans.XmlMessageRenderer:
-    inputMessageFile: BusinessObjects/DeliverySlot/requirement/input.json
+    inputMessageFile: BusinessObjects/{{businessObject}}/requirement/input.json
 
 ## Print Avro Schema
 - soya.framework.tools.xmlbeans.AvroSchemaRenderer:
