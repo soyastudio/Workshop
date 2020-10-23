@@ -36,7 +36,7 @@ public class MustacheVariableVisitor implements Mustache.Visitor {
 
         }
 
-        current.add(path, new JsonPrimitive("???"));
+        current.add(path, new JsonPrimitive("?"));
     }
 
     @Override

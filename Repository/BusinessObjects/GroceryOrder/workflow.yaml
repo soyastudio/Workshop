@@ -6,18 +6,19 @@
 # Annotations:
 ## Application Definition:
 - soya.framework.tools.xmlbeans.ApplicationAnnotator:
-    uri: BusinessObjects/GroceryOrder/oms-application.json
+    uri: BusinessObjects/GroceryOrder/erums-application.json
 
 ## Apply basic annotation from xlsx mapping sheet:
 - soya.framework.tools.xmlbeans.XlsxMappingAnnotator:
     sourceFiles: # load source json from files
-      - BusinessObjects/GroceryOrder/requirement/oms.json
+      - BusinessObjects/GroceryOrder/requirement/erums.json
+      - BusinessObjects/GroceryOrder/requirement/echo.json
+      - BusinessObjects/GroceryOrder/requirement/wysiwyg.json
 
     mappingFile: BusinessObjects/GroceryOrder/requirement/GroceryOrder_ERUMS_to_Canonical_Mapping_v1.5.1.xlsx
-    mappingSheet: "Mapping OMS to Canonical"
+    mappingSheet: "Mapping ErumsEcho to Canonical"
     excludes: # mappings defined but not in this version
       - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/PhoneNbr
-      - GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/PhoneNbr
 
 ## Apply node attribute changes:
 - soya.framework.tools.xmlbeans.XmlSchemaNodeAnnotator:
@@ -38,24 +39,12 @@
         fix: GetGroceryOrder/DocumentData/Document/@SystemEnvironmentCd
 
       - unknownType: UNKNOWN_TARGET_PATH
-        targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/EditCutoffDttm
-        fix: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/EditCutoffDtTm
-
-      - unknownType: UNKNOWN_TARGET_PATH
-        targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerAlternateId/sequenceNbr
-        fix: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerAlternateId/@sequenceNbr
-
-      - unknownType: UNKNOWN_TARGET_PATH
         targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/TypeCode
         fix: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/@TypeCode
 
       - unknownType: UNKNOWN_TARGET_PATH
         targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact/EmailStatuses/typeCode
         fix: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact/EmailStatuses/@typeCode
-
-      - unknownType: UNKNOWN_TARGET_PATH
-        targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerNotesTxt/typeCode
-        fix: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerNotesTxt/@typeCode
 
       - unknownType: UNKNOWN_TARGET_PATH
         targetPath: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/EditCutoffDttm
@@ -69,21 +58,14 @@
         targetPath: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService/PhoneFaxContact/TypeCode
         fix: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService/PhoneFaxContact/@TypeCode
 
-      - unknownType: UNKNOWN_TARGET_PATH
-        targetPath: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/PromotionalPriceAmt
-        fix: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/PromotionPriceAmt
-
-      - unknownType: UNKNOWN_TARGET_PATH
-        targetPath: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/FulFilledQty
-        fix: GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/FulfilledQty
-
       ### unknown source path:
       - unknownType: UNKNOWN_SOURCE_PATH
         targetPath: GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/PostalZoneCd
         fix: customer/address[*]/zipCode
 
-
 ## Generate assignments:
+- soya.framework.tools.xmlbeans.LoopAutoAnnotator:
+
 - soya.framework.tools.xmlbeans.AssignmentAnnotator:
     globalVariables:
       - name: VERSION_ID
@@ -93,27 +75,44 @@
         type: CHARACTER
         defaultValue: "'PROD'"
 
-    mappingFile: BusinessObjects/GroceryOrder/oms-mappings.properties
+    mappingFile: BusinessObjects/GroceryOrder/erums-mappings.properties
 
 
 # Renderers:
+## Print Unknown mappings:
+- soya.framework.tools.xmlbeans.UnknownMappingsRenderer:
+    name: UnknownTargets
+    types:
+      - UNKNOWN_TARGET_PATH
+
+- soya.framework.tools.xmlbeans.UnknownMappingsRenderer:
+    name: UnknownSources
+    types:
+      - UNKNOWN_SOURCE_PATH
+
+- soya.framework.tools.xmlbeans.UnknownMappingsRenderer:
+    name: UnknownOthers
+    types:
+      - UNKNOWN_MAPPING_RULE
+      - ILLEGAL_SOURCE_PATH
+
 ## Print all XPaths:
-## Print XPaths Mappings:
+- soya.framework.tools.xmlbeans.XPathMappingsRenderer:
+    name: XPathMappings
+
+## Print XPath Mappings:
 - soya.framework.tools.xmlbeans.XPathMappingsRenderer:
     name: XPathMappings
     printUnmapped: true
 
-
-# Renderers:
-## Print XPaths Mappings:
-- soya.framework.tools.xmlbeans.XPathMappingsRenderer:
-    name: XPathMappings
-    printUnmapped: true
-
-## Print XPaths Assignments:
+## Print XPath Assignments:
 - soya.framework.tools.xmlbeans.XPathAssignmentsRenderer:
     name: XPathAssignments
-    printUnmapped: true
+    printUnmapped: false
+
+## Analyze Loops:
+- soya.framework.tools.xmlbeans.LoopAnalyzeRenderer:
+    name: LoopAnalyze
 
 ## Print Sample XML:
 - soya.framework.tools.xmlbeans.SampleXmlRenderer:
@@ -123,18 +122,11 @@
 - soya.framework.tools.xmlbeans.JsonMappingRenderer:
     name: JsonMapping
 
-## Print Base Annotation, eg. Unknown mappings:
-- soya.framework.tools.xmlbeans.BaseAnnotationRenderer:
-    name: UnknownMappings
-    annotation: UNKNOWN_MAPPINGS
 
 ## Print XML construct tree:
 - soya.framework.tools.xmlbeans.XmlConstructTreeRenderer:
     name: XmlConstructTree
 
-
-- soya.framework.tools.xmlbeans.LoopAnalyzeRenderer:
-    name: LoopAnalyze
 
 ## Print ESQL
 - soya.framework.tools.xmlbeans.XmlConstructEsqlRenderer:

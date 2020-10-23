@@ -2,7 +2,18 @@ package soya.framework.tools.xmlbeans;
 
 import soya.framework.tools.util.StringBuilderUtils;
 
+import java.util.List;
+
 public class XmlConstructTreeRenderer extends XmlConstructTree {
+
+    public static final String ROOT_PREFIX = "root://";
+    public static final String CREATE_PREFIX = "create://";
+    public static final String ASSIGN_PREFIX = "assign://";
+    public static final String CONSTRUCT_PREFIX = "construct://";
+    public static final String LOOP_PREFIX = "loop://";
+    public static final String CONSTRUCTOR_PREFIX = "constructor://";
+    public static final String PROCEDURE_PREFIX = "procedure://";
+    public static final String PARAM_PREFIX = "param://";
 
     @Override
     public String render(XmlSchemaBase base) {
@@ -19,51 +30,58 @@ public class XmlConstructTreeRenderer extends XmlConstructTree {
         }
 
         if (node.getNodeType().equals(XmlSchemaBase.NodeType.Folder)) {
-            if (node.getLevel() == 2 || node.getAnnotation(BLOCK) != null || node.getAnnotation(CONSTRUCTION) != null
-                    || node.getAnnotation(PROCEDURE) != null || node.getAnnotation(LOOP) != null) {
-                StringBuilderUtils.println(builder);
-            }
+            if (node.getAnnotation(CONSTRUCT) != null) {
+                ConstructTree tree = new ConstructTree(node);
+                Construct construct = tree.getConstruct();
+                StringBuilderUtils.println(CONSTRUCT_PREFIX + node.getName() + ":" + " # " + node.getPath(), builder, node.getLevel() + indent);
 
-            StringBuilderUtils.println(node.getName() + ":" + " # " + node.getPath(), builder, node.getLevel() + indent);
-            if (node.getAnnotation(PROCEDURE) != null) {
-                Procedure procedure = node.getAnnotation(PROCEDURE, Procedure.class);
-                StringBuilderUtils.println("procedure://" + procedure.invocation() + ":", builder, node.getLevel() + indent + 1);
-                for (XmlSchemaBase.MappingNode child : node.getChildren()) {
-                    printNode(child, builder, indent + 2);
-                }
-                StringBuilderUtils.println(builder);
+                if (construct.procedure != null) {
+                    Procedure procedure = construct.procedure;
+                    StringBuilderUtils.println(PROCEDURE_PREFIX + procedure.name + ":", builder, node.getLevel() + indent + 1);
+                    procedure.parameters.forEach(e -> {
+                        StringBuilderUtils.println("- " + PARAM_PREFIX + e.name, builder, node.getLevel() + indent + 2);
+                    });
 
-            } else if (node.getAnnotation(BLOCK) != null) {
-                for (XmlSchemaBase.MappingNode child : node.getChildren()) {
-                    printNode(child, builder, indent);
-                }
-                StringBuilderUtils.println(builder);
-                
-            } else if (node.getAnnotation(LOOP) != null) {
-                WhileLoop[] loops = node.getAnnotation(LOOP, WhileLoop[].class);
-                for (WhileLoop loop : loops) {
-                    StringBuilderUtils.println("- loop:" + loop.name + "://" + loop.sourcePath.replaceAll("/", ".") + "/" + loop.variable + ":", builder, node.getLevel() + indent + 1);
-                    for (XmlSchemaBase.MappingNode child : node.getChildren()) {
-                        if (inLoop(child, loop)) {
-                            printNode(child, builder, indent + 3);
-                        }
-                    }
                     StringBuilderUtils.println(builder);
-                }
 
-            } else if (node.getAnnotation(MAPPING) != null) {
-                Mapping mapping = getMapping(node);
-                String assignment = getAssignment(mapping);
-                StringBuilderUtils.println("assignment: " + assignment, builder, node.getLevel() + indent + 1);
+                } else {
+                    tree.getLoopTree().entrySet().forEach(e -> {
+                        WhileLoop loop = e.getValue().getObject();
+                        StringBuilderUtils.println("- " + LOOP_PREFIX + loop.name + ":", builder, node.getLevel() + indent + 1);
+                        List<XmlSchemaBase.MappingNode> l = e.getValue().getNodes();
+                        l.forEach(ln -> {
+                            printNode(ln, builder, indent + 1);
+                        });
+
+                        StringBuilderUtils.println(builder);
+                    });
+
+                    for (Constructor e : construct.constructors) {
+                        StringBuilderUtils.println("- " + CONSTRUCTOR_PREFIX + e.name + ":", builder, node.getLevel() + indent + 1);
+
+
+                        StringBuilderUtils.println(builder);
+                    }
+                }
 
             } else {
-                for (XmlSchemaBase.MappingNode child : node.getChildren()) {
-                    printNode(child, builder, indent);
+                StringBuilderUtils.println(CREATE_PREFIX + node.getName() + ":" + " # " + node.getPath(), builder, node.getLevel() + indent);
+                if (node.getAnnotation(MAPPING) != null) {
+                    Mapping mapping = getMapping(node);
+                    String assignment = getAssignment(mapping);
+                    StringBuilderUtils.println("assignment: " + assignment, builder, node.getLevel() + indent + 1);
+                    StringBuilderUtils.println(builder);
+
+                } else {
+                    for (XmlSchemaBase.MappingNode child : node.getChildren()) {
+                        printNode(child, builder, indent);
+                    }
                 }
             }
 
+
         } else {
-            StringBuilderUtils.println(node.getName() + ":" + " # " + node.getPath(), builder, node.getLevel() + indent);
+            StringBuilderUtils.println(ASSIGN_PREFIX + node.getName() + ":" + " # " + node.getPath(), builder, node.getLevel() + indent);
             Mapping mapping = getMapping(node);
             if (mapping != null) {
                 if (mapping.mappingRule != null) {
@@ -78,6 +96,8 @@ public class XmlConstructTreeRenderer extends XmlConstructTree {
                     String assignment = getAssignment(mapping);
                     StringBuilderUtils.println("assignment: " + assignment, builder, node.getLevel() + indent + 1);
                 }
+
+                StringBuilderUtils.println(builder);
             }
         }
     }

@@ -28,6 +28,7 @@ public abstract class XmlConstructTree extends XmlSchemaBaseRenderer implements 
         String source = loop.sourcePath + "/";
         if (node.getAnnotation(MAPPING) != null) {
             Mapping mapping = node.getAnnotation(MAPPING, Mapping.class);
+
             return mapping.sourcePath != null && (mapping.sourcePath.equals(loop.sourcePath) || mapping.sourcePath.startsWith(source));
 
         } else if (XmlSchemaBase.NodeType.Folder.equals(node.getNodeType())) {

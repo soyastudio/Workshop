@@ -18,37 +18,10 @@
 ## Fix unknown mappings: target paths, source paths and mapping rules...
 - soya.framework.tools.xmlbeans.UnknownMappingFixAnnotator:
 
-## Special scenarios of node annotation: blocks, loops, constructions, sub procedures...
-- soya.framework.tools.xmlbeans.NodeConstructionAnnotator:
-    path: GetDeliverySlot/DeliverySlotData/DeliveryChargeType
-    sourcePath: b2bCharge
-    variable: _b2bCharge
-    assignments:
-      CustomerType/Code: _b2bCharge.userType
-      DeliveryChargeAmt: CAST(_b2bCharge.deliveryCharge AS DECIMAL(6, 2))
-      DiscountedDeliveryChargeAmt: CAST(_b2bCharge.reducedDeliveryCharge AS DECIMAL(6, 2))
-      DeliveryChargeId: _b2bCharge.deliveryChargeUPC
-      DiscountedDeliveryChargeId: _b2bCharge.reducedDeliveryChargeUPC
-      BasketSizeCnt: _b2bCharge.minimumBasketSize
-      AlertBasketSizeCnt: _b2bCharge.alertBasketSize
-
-- soya.framework.tools.xmlbeans.NodeConstructionAnnotator:
-    path: GetDeliverySlot/DeliverySlotData/DeliveryChargeType
-    sourcePath: b2cCharge
-    variable: _b2cCharge
-    assignments:
-      CustomerType/Code: _b2cCharge.userType
-      DeliveryChargeAmt: CAST(_b2cCharge.deliveryCharge AS DECIMAL(6, 2))
-      DiscountedDeliveryChargeAmt: CAST(_b2cCharge.reducedDeliveryCharge AS DECIMAL(6, 2))
-      DeliveryChargeId: _b2cCharge.deliveryChargeUPC
-      DiscountedDeliveryChargeId: _b2cCharge.reducedDeliveryChargeUPC
-      BasketSizeCnt: _b2cCharge.minimumBasketSize
-      AlertBasketSizeCnt: _b2cCharge.alertBasketSize
-
-## Apply functions based on special rules:
-- soya.framework.tools.xmlbeans.DecimalFunctionAnnotator:
-
 ## Generate assignments:
+## Apply auto loops annotation:
+- soya.framework.tools.xmlbeans.LoopAutoAnnotator:
+
 - soya.framework.tools.xmlbeans.AssignmentAnnotator:
     globalVariables:
       - name: VERSION_ID
@@ -60,8 +33,6 @@
 
     mappingFile: BusinessObjects/DeliverySlot/mappings.properties
 
-## Apply auto loops annotation:
-- soya.framework.tools.xmlbeans.AutoLoopsAnnotator:
 
 # Renderers:
 ## Print XPaths Mappings:

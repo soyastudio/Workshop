@@ -2,8 +2,6 @@ package soya.framework.tools.xmlbeans;
 
 
 public abstract class XPathRenderer extends XmlSchemaBaseRenderer implements MappingFeature {
-    public static String TODO = "TODO(???)";
-    public static String UNKNOWN = "???";
 
     private boolean printUnmapped = true;
 
@@ -25,7 +23,6 @@ public abstract class XPathRenderer extends XmlSchemaBaseRenderer implements Map
 
                 } else if (printUnmapped) {
                     builder.append("# ").append(key).append("=").append("\n");
-
                 }
 
             } else if (printUnmapped) {

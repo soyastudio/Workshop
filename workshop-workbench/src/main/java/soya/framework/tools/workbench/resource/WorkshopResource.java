@@ -1,15 +1,22 @@
 package soya.framework.tools.workbench.resource;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.samskivert.mustache.Mustache;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.io.IOUtils;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import soya.framework.tools.workbench.configuration.BusinessObjectSchemaCache;
 import soya.framework.tools.workbench.configuration.RepositoryConfiguration;
+import soya.framework.tools.workbench.kafka.KafkaAdminService;
+import soya.framework.tools.workbench.kafka.RecordModel;
 import soya.framework.tools.xmlbeans.*;
 
 import javax.ws.rs.*;
@@ -23,6 +30,9 @@ import java.util.*;
 @Path("/workshop")
 @Api(value = "Workshop Service", hidden = false)
 public class WorkshopResource {
+
+    @Autowired
+    private KafkaAdminService kafkaAdminService;
 
     @Autowired
     RepositoryConfiguration configuration;
@@ -40,12 +50,9 @@ public class WorkshopResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response cmm() {
         Gson gson = new Gson();
-
         JsonObject root = new JsonObject();
-
         root.add("CMM", gson.toJsonTree(schemaCache.definedBusinessObjects()));
         JsonArray projects = new JsonArray();
-
         root.add("Projects", projects);
         File projectHome = configuration.getProjectHome();
         File[] files = projectHome.listFiles();
@@ -92,7 +99,6 @@ public class WorkshopResource {
             org.commonmark.node.Node document = parser.parseReader(new FileReader(file));
             HtmlRenderer renderer = HtmlRenderer.builder().build();
             return Response.ok(renderer.render(document)).build();
-
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
@@ -110,9 +116,7 @@ public class WorkshopResource {
                 return Response.ok(Buffalo.fromYaml(yaml, XmlSchemaBase.class).render()).build();
             } else {
                 return Response.ok(Buffalo.fromYaml(yaml, XmlSchemaBase.class).render(renderer)).build();
-
             }
-
         } catch (Exception e) {
             e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -126,10 +130,8 @@ public class WorkshopResource {
     public Response workflow(@HeaderParam("renderer") String renderer, String yaml) {
         if (renderer == null) {
             return Response.ok(Buffalo.fromYaml(yaml, XmlSchemaBase.class).render()).build();
-
         } else {
             return Response.ok(Buffalo.fromYaml(yaml, XmlSchemaBase.class).render(renderer)).build();
-
         }
     }
 
@@ -151,6 +153,23 @@ public class WorkshopResource {
         String result = Mustache.compiler().compile(WorkshopRepository.getResourceAsString(template)).execute(JsonUtils.toMap(jsonObject));
 
         return Response.ok(result).build();
+    }
+
+    @POST
+    @Path("/publish")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_XML)
+    @ApiOperation(value = "publish")
+    public Response publish(@HeaderParam("inboundTopic") String inboundTopic, @HeaderParam("outboundTopic") String outboundTopic, String input) {
+        RecordModel recordModel = kafkaAdminService.publish(inboundTopic, input);
+
+        List<ConsumerRecord<String, byte[]>> records = kafkaAdminService.getLatestRecords(outboundTopic, 2);
+        if (records.isEmpty()) {
+            return Response.status(200).build();
+        } else {
+            String message = new String(records.get(records.size() - 1).value());
+            return Response.status(200).entity(message).build();
+        }
     }
 
 }

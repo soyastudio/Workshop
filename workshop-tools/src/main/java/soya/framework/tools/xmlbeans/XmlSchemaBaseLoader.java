@@ -6,12 +6,12 @@ import java.io.File;
 
 public class XmlSchemaBaseLoader implements Buffalo.BaseLoader<XmlSchemaBase> {
 
-    private String source;
+    private String schema;
 
     @Override
     public XmlSchemaBase create() {
         try {
-            SchemaTypeSystem sts = XmlBeansUtils.getSchemaTypeSystem(WorkshopRepository.getFile(source));
+            SchemaTypeSystem sts = XmlBeansUtils.getSchemaTypeSystem(WorkshopRepository.getFile(schema));
             return XmlSchemaBase.builder().schemaTypeSystem(sts).create();
 
         } catch (Exception e) {
