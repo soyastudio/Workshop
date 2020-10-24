@@ -2,6 +2,7 @@ package soya.framework.tools.xmlbeans;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 
 import java.util.*;
 
@@ -21,9 +22,7 @@ public abstract class MappingFeatureSupport implements MappingFeature {
     }
 
     protected Set<Mapper> findLoops(XmlSchemaBase base) {
-        String[] sourcePaths = base.getAnnotation(SOURCE_PATHS, String[].class);
-        Set<String> sourcePathSet = new HashSet<>(Arrays.asList(sourcePaths));
-
+        JsonObject sourcePaths = base.getAnnotation(SOURCE_PATHS, JsonObject.class);
         LinkedHashSet<Mapper> list = new LinkedHashSet<>();
         base.getMappings().entrySet().forEach(e -> {
             Mapper mapping = e.getValue().getAnnotation(MAPPING, Mapper.class);
@@ -32,7 +31,7 @@ public abstract class MappingFeatureSupport implements MappingFeature {
                 XmlSchemaBase.MappingNode node = findParent(e.getValue());
                 if (node != null) {
                     String sourcePath = mapping.sourcePath;
-                    if (sourcePathSet.contains(sourcePath)) {
+                    if (sourcePaths.get(sourcePath) != null) {
                         sourcePath = sourcePath.substring(0, sourcePath.lastIndexOf("[*]/") + 3);
                         list.add(new Mapper(sourcePath, node.getPath()));
                     }

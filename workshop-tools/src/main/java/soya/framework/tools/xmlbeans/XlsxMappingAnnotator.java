@@ -1,9 +1,6 @@
 package soya.framework.tools.xmlbeans;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -34,7 +31,7 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
     private transient int sourceIndex;
 
     private Set<String> ignores = new HashSet<>();
-    private Set<String> sourcePaths = new LinkedHashSet<>();
+    private Map<String, String> sourcePaths = new LinkedHashMap<>();
 
     public XlsxMappingAnnotator() {
     }
@@ -130,6 +127,7 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
     }
 
     private void loadMappings(XmlSchemaBase base, Sheet mappingSheet) {
+
         boolean start = false;
         Iterator<Row> sheetIterator = mappingSheet.iterator();
         while (sheetIterator.hasNext()) {
@@ -152,9 +150,21 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
 
                 if (base.get(targetPath) != null && mappingRule != null) {
                     MappingNode node = base.get(targetPath);
+
                     Mapping mapping = new Mapping();
                     mapping.mappingRule = mappingRule;
                     mapping.sourcePath = sourcePath;
+
+                    String destType = node.getNodeType().equals(XmlSchemaBase.NodeType.Attribute) ? "string" : node.getDataType();
+                    String srcType = sourcePaths.get(sourcePath);
+                    if(srcType != null && "string".equalsIgnoreCase(destType) && !checkTypeCompatible(srcType, destType)) {
+                        UnknownMapping incompatible = new UnknownMapping();
+                        incompatible.targetPath = node.getPath();
+                        incompatible.sourcePath = sourcePath;
+                        incompatible.unknownType = UnknownType.TYPE_INCOMPATIBLE;
+
+                        base.annotateAsArrayElement(UNKNOWN_MAPPINGS, incompatible);
+                    }
 
                     if (!ignored(node.getPath())) {
                         node.annotate(MAPPING, mapping);
@@ -208,7 +218,7 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
             unknownMapping.unknownType = UnknownType.UNKNOWN_TARGET_PATH;
 
         } else if (mappingRule != null && mappingRule.toUpperCase().contains("DIRECT") && mappingRule.toUpperCase().contains("MAPPING")
-                && sourcePath != null && !sourcePaths.contains(sourcePath)) {
+                && sourcePath != null && !sourcePaths.containsKey(sourcePath)) {
             if (sourcePath.contains(" ") || sourcePath.contains("\n")) {
                 unknownMapping.unknownType = UnknownType.ILLEGAL_SOURCE_PATH;
 
@@ -222,6 +232,14 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
         return unknownMapping;
     }
 
+    private boolean checkTypeCompatible(String sourceType, String destType) {
+        /*if(sourceType.equalsIgnoreCase(destType) || destType.equalsIgnoreCase("string")) {
+            return true;
+        }*/
+
+        return true;
+    }
+
     private void extract(JsonObject jsonObject, String parent) {
         String prefix = parent == null ? "" : parent + "/";
         jsonObject.entrySet().forEach(e -> {
@@ -229,7 +247,7 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
             JsonElement element = e.getValue();
             if (element.isJsonArray()) {
                 path = path + "[*]";
-                sourcePaths.add(path);
+                sourcePaths.put(path, "array");
 
                 JsonArray array = element.getAsJsonArray();
                 String finalPath = path;
@@ -239,12 +257,21 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
                     }
                 });
 
-            } else {
-                sourcePaths.add(path);
-                if (element.isJsonObject()) {
-                    extract(element.getAsJsonObject(), path);
-                }
+            } else if (element.isJsonObject()) {
+                sourcePaths.put(path, "object");
+                extract(element.getAsJsonObject(), path);
 
+            } else if (element.isJsonPrimitive()) {
+                JsonPrimitive primitive = element.getAsJsonPrimitive();
+                if (primitive.isBoolean()) {
+                    sourcePaths.put(path, "boolean");
+
+                } else if (primitive.isNumber()) {
+                    sourcePaths.put(path, "number");
+
+                } else {
+                    sourcePaths.put(path, "string");
+                }
             }
 
         });

@@ -54,6 +54,7 @@ public class AnnotatableSupport implements Annotatable {
     public <T> T getAnnotation(String key, Class<T> type) {
         if (annotations.containsKey(key)) {
             return gson.fromJson(annotations.get(key), type);
+
         } else {
             return null;
         }

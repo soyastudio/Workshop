@@ -22,6 +22,7 @@ public abstract class XmlConstructTree extends XmlSchemaBaseRenderer implements 
 
         return false;
     }
+/*
 
     protected boolean inLoop(XmlSchemaBase.MappingNode node, WhileLoop loop) {
 
@@ -41,4 +42,6 @@ public abstract class XmlConstructTree extends XmlSchemaBaseRenderer implements 
 
         return false;
     }
+*/
+
 }

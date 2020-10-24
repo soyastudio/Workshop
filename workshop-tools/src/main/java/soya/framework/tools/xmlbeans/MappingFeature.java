@@ -24,7 +24,7 @@ public interface MappingFeature {
     String PROCEDURE = "procedure";
 
     enum UnknownType {
-        UNKNOWN_TARGET_PATH, UNKNOWN_MAPPING_RULE, ILLEGAL_SOURCE_PATH, UNKNOWN_SOURCE_PATH
+        UNKNOWN_TARGET_PATH, UNKNOWN_MAPPING_RULE, ILLEGAL_SOURCE_PATH, UNKNOWN_SOURCE_PATH, TYPE_INCOMPATIBLE
     }
 
     class UnknownMapping {
@@ -32,6 +32,7 @@ public interface MappingFeature {
         String targetPath;
         String mappingRule;
         String sourcePath;
+        String desc;
         String fix;
     }
 

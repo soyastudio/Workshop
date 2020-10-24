@@ -173,10 +173,10 @@ public class XmlConstructEsqlRenderer extends XmlConstructTree {
 
         for (XmlSchemaBase.MappingNode child : node.getChildren()) {
 
-            if (inLoop(child, loop)) {
+            /*if (inLoop(child, loop)) {
                 printNode(child, builder, indent + offset);
 
-            }
+            }*/
         }
 
         if (node.getAnnotation(CONDITION) != null) {

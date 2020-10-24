@@ -52,18 +52,18 @@ public class XmlConstructTreeRenderer extends XmlConstructTree {
                         l.forEach(ln -> {
                             printNode(ln, builder, indent + 1);
                         });
-
-                        StringBuilderUtils.println(builder);
                     });
 
-                    for (Constructor e : construct.constructors) {
-                        StringBuilderUtils.println("- " + CONSTRUCTOR_PREFIX + e.name + ":", builder, node.getLevel() + indent + 1);
+                    tree.getConstructorTree().entrySet().forEach(e -> {
+                        Constructor constructor = e.getValue().getObject();
+                        StringBuilderUtils.println("- " + CONSTRUCTOR_PREFIX + constructor.name + ":", builder, node.getLevel() + indent + 1);
+                        List<XmlSchemaBase.MappingNode> l = e.getValue().getNodes();
+                        l.forEach(ln -> {
+                            printNode(ln, builder, indent + 1);
+                        });
 
-
-                        StringBuilderUtils.println(builder);
-                    }
+                    });
                 }
-
             } else {
                 StringBuilderUtils.println(CREATE_PREFIX + node.getName() + ":" + " # " + node.getPath(), builder, node.getLevel() + indent);
                 if (node.getAnnotation(MAPPING) != null) {
@@ -78,27 +78,12 @@ public class XmlConstructTreeRenderer extends XmlConstructTree {
                     }
                 }
             }
-
-
         } else {
             StringBuilderUtils.println(ASSIGN_PREFIX + node.getName() + ":" + " # " + node.getPath(), builder, node.getLevel() + indent);
             Mapping mapping = getMapping(node);
-            if (mapping != null) {
-                if (mapping.mappingRule != null) {
-                    //StringBuilderUtils.println("mapping: " + mapping.mappingRule, builder, node.getLevel() + indent + 1);
-                }
-
-                if (mapping.sourcePath != null) {
-                    //StringBuilderUtils.println("source: " + mapping.sourcePath, builder, node.getLevel() + indent + 1);
-                }
-
-                if (mapping.assignment != null) {
-                    String assignment = getAssignment(mapping);
-                    StringBuilderUtils.println("assignment: " + assignment, builder, node.getLevel() + indent + 1);
-                }
-
-                StringBuilderUtils.println(builder);
-            }
+            String assignment = getAssignment(mapping);
+            StringBuilderUtils.println("assignment: " + assignment, builder, node.getLevel() + indent + 1);
+            StringBuilderUtils.println(builder);
         }
     }
 
