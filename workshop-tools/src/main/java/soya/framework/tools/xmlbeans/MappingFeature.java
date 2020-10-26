@@ -8,7 +8,7 @@ public interface MappingFeature {
     String APPLICATION = "APPLICATION";
     String GLOBAL_VARIABLE = "GLOBAL_VARIABLE";
 
-    String INPUT_ROOT = "$.";
+    String INPUT_ROOT = "$";
     String FUNCTION_PARAM = "$$";
 
     String MAPPED = "mapped";
@@ -126,10 +126,14 @@ public interface MappingFeature {
         }
     }
 
-    class WhileLoop {
+    abstract class ConstructNode {
         protected String name;
         protected String sourcePath;
         protected String variable;
+
+    }
+
+    class WhileLoop extends ConstructNode {
 
         protected transient MappingFeature.WhileLoop parent;
 
@@ -172,10 +176,7 @@ public interface MappingFeature {
         }
     }
 
-    class Constructor {
-        protected String name;
-        protected String sourcePath;
-        protected String variable;
+    class Constructor extends ConstructNode {
 
         protected transient Map<String, String> assignments = new LinkedHashMap<>();
 

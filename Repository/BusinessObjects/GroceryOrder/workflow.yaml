@@ -64,9 +64,7 @@
         fix: customer/address[*]/zipCode
 
 ## Generate assignments:
-- soya.framework.tools.xmlbeans.LoopAutoAnnotator:
-
-- soya.framework.tools.xmlbeans.AssignmentAnnotator:
+- soya.framework.tools.xmlbeans.MappingAnnotator:
     globalVariables:
       - name: VERSION_ID
         type: CHARACTER
@@ -77,8 +75,15 @@
 
     mappingFile: BusinessObjects/GroceryOrder/erums-mappings.properties
 
-
 # Renderers:
+## Print XML construct tree as Avro:
+- soya.framework.tools.xmlbeans.AvroSchemaRenderer:
+    name: AvroSchema
+
+## Print node tree in json, indexed by xpath:
+- soya.framework.tools.xmlbeans.XmlSchemaTreeRenderer:
+    name: XmlSchemaTree
+
 ## Print Unknown mappings:
 - soya.framework.tools.xmlbeans.UnknownMappingsRenderer:
     name: UnknownTargets
@@ -96,37 +101,32 @@
       - UNKNOWN_MAPPING_RULE
       - ILLEGAL_SOURCE_PATH
 
-## Print all XPaths:
-- soya.framework.tools.xmlbeans.XPathMappingsRenderer:
-    name: XPathMappings
-
 ## Print XPath Mappings:
 - soya.framework.tools.xmlbeans.XPathMappingsRenderer:
     name: XPathMappings
     printUnmapped: true
+
+## Analyze Loops:
+- soya.framework.tools.xmlbeans.LoopAnalyzeRenderer:
+    name: LoopAnalyzer
+
+## Print Loops:
+- soya.framework.tools.xmlbeans.XPathAutoAnnotateRenderer:
+    name: XPathAutoAnnotate
 
 ## Print XPath Assignments:
 - soya.framework.tools.xmlbeans.XPathAssignmentsRenderer:
     name: XPathAssignments
     printUnmapped: false
 
-## Analyze Loops:
-- soya.framework.tools.xmlbeans.LoopAnalyzeRenderer:
-    name: LoopAnalyze
-
 ## Print Sample XML:
 - soya.framework.tools.xmlbeans.SampleXmlRenderer:
     name: SampleXml
-
-## Print node tree in json, indexed by xpath:
-- soya.framework.tools.xmlbeans.JsonMappingRenderer:
-    name: JsonMapping
 
 
 ## Print XML construct tree:
 - soya.framework.tools.xmlbeans.XmlConstructTreeRenderer:
     name: XmlConstructTree
-
 
 ## Print ESQL
 - soya.framework.tools.xmlbeans.XmlConstructEsqlRenderer:

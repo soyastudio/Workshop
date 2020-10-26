@@ -67,8 +67,7 @@ public class XmlConstructTreeRenderer extends XmlConstructTree {
             } else {
                 StringBuilderUtils.println(CREATE_PREFIX + node.getName() + ":" + " # " + node.getPath(), builder, node.getLevel() + indent);
                 if (node.getAnnotation(MAPPING) != null) {
-                    Mapping mapping = getMapping(node);
-                    String assignment = getAssignment(mapping);
+                    String assignment = getAssignment(node);
                     StringBuilderUtils.println("assignment: " + assignment, builder, node.getLevel() + indent + 1);
                     StringBuilderUtils.println(builder);
 
@@ -80,18 +79,19 @@ public class XmlConstructTreeRenderer extends XmlConstructTree {
             }
         } else {
             StringBuilderUtils.println(ASSIGN_PREFIX + node.getName() + ":" + " # " + node.getPath(), builder, node.getLevel() + indent);
-            Mapping mapping = getMapping(node);
-            String assignment = getAssignment(mapping);
+            String assignment = getAssignment(node);
             StringBuilderUtils.println("assignment: " + assignment, builder, node.getLevel() + indent + 1);
             StringBuilderUtils.println(builder);
         }
     }
 
-    private String getAssignment(Mapping mapping) {
-        if (mapping == null) {
+    private String getAssignment(XmlSchemaBase.MappingNode node) {
+
+        if (node.getAnnotation(MAPPING) == null) {
             return null;
         }
 
+        Mapping mapping = node.getAnnotation(MAPPING, Mapping.class);
         if (mapping.assignment == null) {
             return "'???'";
 

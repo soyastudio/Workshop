@@ -78,7 +78,7 @@ public class RepositoryResource {
 
             builder.fromYaml(yaml);
 
-            return Response.ok(builder.render(new JsonMappingRenderer())).build();
+            return Response.ok(builder.render(new XmlSchemaTreeRenderer())).build();
 
         }
     }

@@ -33,7 +33,7 @@ public class XPathAssignmentsRenderer extends XPathRenderer {
     @Override
     protected String printAssignment(XmlSchemaBase.MappingNode node) {
         Mapping mapping = node.getAnnotation(MAPPING, Mapping.class);
-        return getAssignment(mapping, constructions);
+        return mapping.assignment;
     }
 
 }

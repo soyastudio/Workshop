@@ -1,5 +1,7 @@
 package soya.framework.tools.xmlbeans;
 
+import com.google.gson.Gson;
+
 import java.util.List;
 import java.util.Map;
 
@@ -8,14 +10,13 @@ public class NodeLoopsAnnotator extends NodeMappingAnnotator {
 
     @Override
     protected void annotate(XmlSchemaBase.MappingNode node) {
-        Construct construct = getConstruct(node);
-        if (loops != null) {
+        Gson gson = new Gson();
+        if(loops != null) {
             loops.forEach(e -> {
-                WhileLoop whileLoop = GSON.fromJson(GSON.toJson(e), WhileLoop.class);
-                construct.loops.add(whileLoop);
+                WhileLoop whileLoop = gson.fromJson(gson.toJson(e), WhileLoop.class);
+                node.annotateAsArrayElement(LOOP, whileLoop);
+
             });
         }
-
-        setConstruct(construct, node);
     }
 }

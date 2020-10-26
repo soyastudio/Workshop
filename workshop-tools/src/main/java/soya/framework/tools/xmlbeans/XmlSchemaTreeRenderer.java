@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class JsonMappingRenderer extends XmlSchemaBaseRenderer {
+public class XmlSchemaTreeRenderer extends XmlSchemaBaseRenderer {
 
     @Override
     public String render(XmlSchemaBase base) {
