@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:complexType name="PatientType">
@@ -1164,7 +1164,6 @@ ex Active, Inactive, Active plus Preferred, Information only - not fillable.</xs
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element ref="DrugCostType" minOccurs="0"/>
 			<xs:element ref="DrugGPIType" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
@@ -1238,15 +1237,50 @@ ex Active, Inactive, Active plus Preferred, Information only - not fillable.</xs
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
+	<xs:complexType name="DrugMasterCostType">
+		<xs:sequence>
+			<xs:element name="DrugIdType" type="DrugIdType" minOccurs="0"/>
+			<xs:element ref="DrugCostType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="SourceSystemCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
 	<xs:element name="DrugCostType">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="CostType" type="CodeWithDescription" minOccurs="0"/>
+				<xs:element name="CostType" type="CodeWithDescription" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Indicates the type of drug cost.
+Ex: Base Cost, Acquisition Cost, MAC Cost or AWP Cost.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
 				<xs:element name="CostAmt" minOccurs="0">
 					<xs:simpleType>
 						<xs:restriction base="xs:decimal">
-							<xs:totalDigits value="12"/>
+							<xs:totalDigits value="14"/>
 							<xs:fractionDigits value="4"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="CurrencyCd" minOccurs="0">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="10"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="EffectiveStartDt" type="xs:date" minOccurs="0"/>
+				<xs:element name="EffectiveEndDt" type="xs:date" minOccurs="0"/>
+				<xs:element name="DrugCostAuditData" type="RecordAuditData" minOccurs="0"/>
+				<xs:element name="DrugCostSourceCd" minOccurs="0">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="50"/>
 						</xs:restriction>
 					</xs:simpleType>
 				</xs:element>
@@ -1276,11 +1310,224 @@ ex Active, Inactive, Active plus Preferred, Information only - not fillable.</xs
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
+	<xs:complexType name="PharmacyType">
+		<xs:annotation>
+			<xs:documentation>Defines Albertsons Pharmacy facility master data</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PharmacyFacility" type="PharmacyFacilityIdType" minOccurs="0"/>
+			<xs:element name="PharmacyStatus" type="StatusType" minOccurs="0"/>
+			<xs:element name="PharmacyLicenseType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Various type of licenses needed for pharmacy facility to operate in a particular geographical area. Ex DEA license, State License</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence maxOccurs="unbounded">
+						<xs:element name="LicenseTypeCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>E: DEA License</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LicenseNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Ex DEA Nbr. A DEA number is a number assigned to a health
+care provider (such as a medical practitioner,
+dentist, or Pharmacy) by the U.S. Drug
+Enforcement Administration allowing them to write
+prescriptions for controlled substances. Legally,
+the DEA number is solely to be used for tracking
+controlled substances. It is often used by the
+industry, however, as a general "prescriber
+number" that is a unique identifier for anyone who
+can prescribe medication.
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="EffectiveStartDt" type="xs:date" minOccurs="0"/>
+						<xs:element name="EffectiveEndDt" type="xs:date" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>License Expiry date.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="LicenseIssueAgency" type="CodeWithName" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>State or Federal agencies that iissued the license.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="NPINbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>National provider identifier number.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="30"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MedicareNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="30"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CSRNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Controlled susbstance registration number</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="30"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="NCPDPNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>NCPDP - National Council For Prescription Drug
+Program.
+The NCPDP Provider Identification number (NCPDP
+Prov
+ider ID) formerly known as the NABP number, was
+developed over 25 years ago to provide
+pharmacies with
+a unique, national identifier that would assist
+pharmacies in their interactions with pharmacy
+payers
+and claims processors. The NCPDP Provider ID is a
+seven-digit numbering system that is assigned to
+every licensed pharmacy and qualified
+Non-Pharmacy
+Dispensing Sites (NPDS) in the United States.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="30"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PharmacyTaxNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="30"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PharmacyAddress" minOccurs="0">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="AddressType">
+							<xs:sequence>
+								<xs:element name="AlternatePhoneNbr" type="xs:string" minOccurs="0"/>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PharmacyHoursData" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="WeekDay" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Determines the day of the week (Monday, Tuesday, etc.)</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="OpenHr" type="xs:time" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Defines the starting hour of the facility operation.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CloseHr" type="xs:time" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Defines the ending hour of the facility operation.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="BreakStartHr" type="xs:time" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Pharmacy Break time starts at</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="BreakEndHr" type="xs:time" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Pharmacy Break time ends at</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PharmacyHolidayHoursData" type="HolidayWorkHoursType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="PharmacyPriceRegion" type="CodeWithName" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Pricing region for the pharmacy</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PharmacyDrugRegion" type="CodeWithName" minOccurs="0"/>
+			<xs:element name="PharmacyProfileType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>various kinds of profiles for a pharmacy. ex: Flu shots administered,</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="ProfileTypeCd" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="ProfileValueTxt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ProfileValueNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ProfileValueInd" type="xs:boolean" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PharmacySystemData" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Various types of systems used in the Pharmacy facility like Dispensing system procurement system, IVR system, Mobile system data.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="SystemTypeCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Ex: Dispensing system IVR system, Mobile System</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SystemCd" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="SystemEffectiveDt" type="xs:date" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
 	<xs:complexType name="PharmacyFacilityIdType">
 		<xs:annotation>
 			<xs:documentation>Identiifiers for a pharmacy facility.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
+			<xs:element ref="CorporationId"/>
 			<xs:element ref="DivisionId"/>
 			<xs:element name="PharmacyFacilityType" type="CodeWithDescription">
 				<xs:annotation>
@@ -1294,7 +1541,7 @@ ex Active, Inactive, Active plus Preferred, Information only - not fillable.</xs
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element ref="RetailStoreId"/>
+			<xs:element ref="RetailStoreId" minOccurs="0"/>
 			<xs:element name="NHINId" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Identification number assinged to a store pharmacy by NHIN.</xs:documentation>
@@ -1312,6 +1559,8 @@ ex Active, Inactive, Active plus Preferred, Information only - not fillable.</xs
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
+			<xs:element ref="BannerCd" minOccurs="0"/>
+			<xs:element name="DistrictId" type="xs:integer" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="FacilityDrugType">

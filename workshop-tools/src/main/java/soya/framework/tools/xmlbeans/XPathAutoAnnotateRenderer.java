@@ -106,7 +106,11 @@ public class XPathAutoAnnotateRenderer extends XmlSchemaBaseRenderer implements 
     private String getAssignment(String path, String parent) {
         WhileLoop loop = loops.get(parent);
         if (loop != null) {
-            return new StringBuilder("ASSIGN(")
+            return new StringBuilder("FOR(")
+                    .append(loop.name)
+                    .append(")")
+                    .append(".")
+                    .append("ASSIGN(")
                     .append(loop.variable)
                     .append(path.substring(parent.length()).replaceAll("/", "."))
                     .append(")")

@@ -8,6 +8,7 @@
 -->
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.1 Patrick Oliver 09/08/2020: Added GLCombinationId, Ledger, Entity, LineOfBusiness, Site, CostCenter, ProductTypeGroup, CustomerGroup, CashflowMovement, InterCompanyCd-->
 	<!--V1.0  Patrick Oliver 09/10/2020: Initial Draft-->
 	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
@@ -350,6 +351,48 @@ last time statement was generated for a customer</xs:documentation>
 					<xs:documentation>This can be used to distinguish between a detail record and a trailer record</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="Ledger" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="GLCombinationId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Concatination  of Chart of Accounts segment Fields</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Entity" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Companies with EIN's allows for flexibility of hundreds if not thousands of legal entities and room for special purposes.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LineOfBusiness" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Represents the type of business based on the organizational structure, revenue channels and manufacturing. Used for high level management view of the organization that changes frequently</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Site" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Represents physical space, captures a physical space at a facility or location. Allows for Hierarchy structure to capture multiple sites that roll up to facilities</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CostCenter" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A function that is responsible for the costs that it incurs related to its normal business operations</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ProductTypeGroup" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Groupings of product types is based on a consolidated version of the organization's products that is needed for management reporting within distribution centers and manufacturing plants.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CustomerGroup" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Groupings of customers is based on a consolidated version of the organization's customers that is needed for management reporting.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CashflowMovement" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Cash flows is based on the organization's cash flow and rollforward classifications with linkages to select balance sheet account activity.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InterCompanyCd" type="CodeWithDescription" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="CustomerPartyType">

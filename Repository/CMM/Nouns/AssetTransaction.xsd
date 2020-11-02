@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.1 Patrick Oliver 10/20/20: Added AltAccountId-->
 	<!--V1.0  Alex Nunes 7/18/2019 Initial version -->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
@@ -135,6 +136,16 @@
 			</xs:element>
 			<xs:element ref="AccountingUnitId" minOccurs="0"/>
 			<xs:element ref="AccountId" minOccurs="0"/>
+			<xs:element name="AltAccountId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Can be account ID but in string format.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="25"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element ref="SubAccountId" minOccurs="0"/>
 			<xs:element name="AssetProcessCd" minOccurs="0">
 				<xs:annotation>

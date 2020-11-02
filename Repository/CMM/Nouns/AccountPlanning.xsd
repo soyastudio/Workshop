@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.2 Patrick Oliver 10/2020 - Added AltAccountId-->
 	<!--08/26/20 - Patrick Oliver V1.1 - Added ReportLine and updated TransactionAmt to (18,4)-->
 	<!--08/06/2020 - Patrick Oliver  - V1.0 Initial Draft-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
@@ -88,6 +89,16 @@ Synonyms are Business Unit, Fund, G/L Company, Joint Venture, Non-Profit Associa
 				<xs:complexType>
 					<xs:sequence>
 						<xs:element ref="AccountId" minOccurs="0"/>
+						<xs:element name="AltAccountId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Can be account ID but in string format.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="25"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
 						<xs:element ref="SubAccountId" minOccurs="0"/>
 						<xs:element ref="SubSystemRecordId" minOccurs="0"/>
 						<xs:element ref="ChartOfAccountNm" minOccurs="0"/>

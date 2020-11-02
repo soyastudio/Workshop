@@ -6,8 +6,11 @@
    Description: Contains commonly used Safeway Purchase order schema.
    Name: /SFWY/Nouns/SwyPurchaseOrder.xsd
 -->
-<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by Rosabel Macario (Safeway Philtech, Inc) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--v2.2 Patrick Oliver - Added HierachyLevelNbr to the SourceDataElement and TargetDataElement-->
+	<!--v2.1 Rosabel Macario 10/13/20: Added Source and TargetSystem. Rename elements-->
+	<!--v2.0 Rosabel Macario 10/02/20: Update based on initial review-->
 	<!--V1.0  Patrick Oliver 09/15/20: Initial Version-->
 	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
@@ -16,6 +19,12 @@
 			<xs:documentation>CrossReference object will be use  any kind of cross reference data between systems for data conversion.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
+			<xs:element ref="CrossReferenceType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the data for which cross reference is defined here.
+Ex: Chart of Accounts, HR Pay group..etc</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="CrossReferenceSource" type="Abs:SourceData" minOccurs="0"/>
 			<xs:element name="CrossReferenceTarget" type="Abs:TargetData" minOccurs="0"/>
 		</xs:sequence>
@@ -25,14 +34,14 @@
 			<xs:documentation>Contains attributes from source system/s</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="SourceBusinessKey" type="BusinessKeyType" minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="SourceSystem" type="CodeWithName" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Contains source information. Sample KeyFieldName - Vendor ID and KeyFieldValue will contain the actual vendor ID. </xs:documentation>
+					<xs:documentation>Contains source system ID, name. </xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="AltSourceBusinessKey" type="BusinessKeyType" minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="SourceDataElement" type="BusinessKeyType" minOccurs="0" maxOccurs="10">
 				<xs:annotation>
-					<xs:documentation>Contains alternate source information. Sample KeyFieldName may be Alternate Vendor ID and KeyFieldValue will be the actual value of Alternate Vendor ID.</xs:documentation>
+					<xs:documentation>Contains source information. Sample KeyFieldName - Vendor ID and KeyFieldValue will contain the actual vendor ID. </xs:documentation>
 				</xs:annotation>
 			</xs:element>
 		</xs:sequence>
@@ -42,16 +51,17 @@
 			<xs:documentation>Contains attributed from target system/s</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="TargetBusinessKey" type="BusinessKeyType" minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="TargetSystem" type="CodeWithName" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains target system ID, name.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TargetDataElement" type="BusinessKeyType" minOccurs="0" maxOccurs="10">
 				<xs:annotation>
 					<xs:documentation>Contains target information. Sample KeyFieldName as OracleID and KeyFieldValue will contain the actual oracle ID value</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="AltTargetBusinessKey" type="BusinessKeyType" minOccurs="0" maxOccurs="unbounded">
-				<xs:annotation>
-					<xs:documentation>Contains alternate target information. Sample for KeyFieldName may be Alternate OracleID and KeyFieldValue will be the actual value of Alternate OracleID.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
+	<xs:element name="CrossReferenceType" type="CodeWithDescription"/>
 </xs:schema>

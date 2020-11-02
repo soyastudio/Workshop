@@ -17,6 +17,7 @@
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element ref="CompanyId" minOccurs="0"/>
+			<xs:element name="CustomerSource" type="SourceSystemType" maxOccurs="unbounded"/>
 			<xs:element name="CustomerGroup" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Legacy application customer groups.</xs:documentation>
@@ -121,7 +122,6 @@ Y = Yes; process bills of exchange</xs:documentation>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
-						<xs:element name="EffectivePeriod" type="EffetiveDateTimeType" minOccurs="0"/>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
@@ -131,7 +131,6 @@ Y = Yes; process bills of exchange</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="CustomerPartySite" type="CustomerPartySitesType" minOccurs="0" maxOccurs="unbounded"/>
-			<xs:element name="CustomerSource" type="SourceSystemType" maxOccurs="unbounded"/>
 			<xs:element name="CustomerAccounts" maxOccurs="unbounded">
 				<xs:complexType>
 					<xs:sequence>
@@ -183,15 +182,14 @@ Y = Yes; process bills of exchange</xs:documentation>
 											</xs:restriction>
 										</xs:simpleType>
 									</xs:element>
-									<xs:element name="EffectivePeriod" type="EffetiveDateTimeType" minOccurs="0"/>
 								</xs:sequence>
 							</xs:complexType>
 						</xs:element>
-						<xs:element name="AccountSource" type="SourceSystemType" minOccurs="0" maxOccurs="unbounded"/>
-						<xs:element name="AccountPurpose" minOccurs="0" maxOccurs="unbounded">
+						<xs:element name="AccountSource" type="SourceSystemType" minOccurs="0"/>
+						<xs:element name="AccountPurpose" minOccurs="0">
 							<xs:complexType>
 								<xs:sequence>
-									<xs:element name="PurposeNbr" type="xs:decimal" minOccurs="0">
+									<xs:element name="PurposeNbr" type="xs:integer" minOccurs="0">
 										<xs:annotation>
 											<xs:documentation>Business purpose number</xs:documentation>
 										</xs:annotation>
@@ -211,11 +209,10 @@ Y = Yes; process bills of exchange</xs:documentation>
 											</xs:restriction>
 										</xs:simpleType>
 									</xs:element>
-									<xs:element name="EffectivePeriod" type="EffetiveDateTimeType" minOccurs="0"/>
 								</xs:sequence>
 							</xs:complexType>
 						</xs:element>
-						<xs:element name="AccountRelationship" minOccurs="0" maxOccurs="unbounded">
+						<xs:element name="AccountRelationship" minOccurs="0">
 							<xs:complexType>
 								<xs:sequence>
 									<xs:element name="RelationshipNbr" type="xs:integer" minOccurs="0">
@@ -258,11 +255,10 @@ Y = Yes; process bills of exchange</xs:documentation>
 											</xs:restriction>
 										</xs:simpleType>
 									</xs:element>
-									<xs:element name="EffectivePeriod" type="EffetiveDateTimeType" minOccurs="0"/>
 								</xs:sequence>
 							</xs:complexType>
 						</xs:element>
-						<xs:element name="AccountClassification" minOccurs="0" maxOccurs="unbounded">
+						<xs:element name="AccountClassification" minOccurs="0">
 							<xs:complexType>
 								<xs:sequence>
 									<xs:element name="CategoryClsCd" type="CodeWithDescription" minOccurs="0">
@@ -285,7 +281,6 @@ Y = Yes; process bills of exchange</xs:documentation>
 											<xs:documentation>Used to rank classes if multiple classes have been assigned to a party.</xs:documentation>
 										</xs:annotation>
 									</xs:element>
-									<xs:element name="EffectivePeriod" type="EffetiveDateTimeType" minOccurs="0"/>
 								</xs:sequence>
 							</xs:complexType>
 						</xs:element>
@@ -352,23 +347,17 @@ Y = Yes; process bills of exchange</xs:documentation>
 											</xs:restriction>
 										</xs:simpleType>
 									</xs:element>
-									<xs:element name="EffectivePeriod" type="EffetiveDateTimeType" minOccurs="0"/>
 								</xs:sequence>
 								<xs:attribute ref="typeCode"/>
 							</xs:complexType>
 						</xs:element>
-						<xs:element name="AccountAddresses" type="AccoutingCustomerAddressType" minOccurs="0" maxOccurs="unbounded"/>
-						<xs:element name="AccountContact" minOccurs="0" maxOccurs="unbounded">
+						<xs:element name="AccountAddresses" type="AccoutingCustomerAddressType" minOccurs="0" maxOccurs="5"/>
+						<xs:element name="AccountContact" type="AccountingCustomerContactType" minOccurs="0" maxOccurs="5">
 							<xs:annotation>
 								<xs:documentation>Represents communication details including address, voice, fax, and digital channels.</xs:documentation>
 							</xs:annotation>
-							<xs:complexType>
-								<xs:complexContent>
-									<xs:extension base="CommunicationType"/>
-								</xs:complexContent>
-							</xs:complexType>
 						</xs:element>
-						<xs:element name="AccountRole" minOccurs="0" maxOccurs="unbounded">
+						<xs:element name="AccountRole" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>Customer contact can perform multiple roles that have different codes.</xs:documentation>
 							</xs:annotation>
@@ -749,17 +738,17 @@ Y = Yes; process bills of exchange</xs:documentation>
 											<xs:documentation>The amount of the last payment made by this customer.  </xs:documentation>
 										</xs:annotation>
 									</xs:element>
-									<xs:element name="EffectivePeriod" type="EffetiveDateTimeType" minOccurs="0" maxOccurs="unbounded"/>
 								</xs:sequence>
 							</xs:complexType>
 						</xs:element>
-						<xs:element name="AccountBankData" type="BankType" minOccurs="0"/>
+						<xs:element name="AccountBankData" type="AccountingCustomerBankType" minOccurs="0"/>
 						<xs:element name="LineTax" type="TaxType" minOccurs="0" maxOccurs="unbounded"/>
 						<xs:element name="PaymentTerms" type="PaymentTermType" minOccurs="0" maxOccurs="5">
 							<xs:annotation>
 								<xs:documentation>Identifies the payment term for customer</xs:documentation>
 							</xs:annotation>
 						</xs:element>
+						<xs:element name="EffectiveTimePeriod" type="EffetiveDateTimeType" minOccurs="0"/>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
@@ -910,6 +899,115 @@ Y = Yes; process bills of exchange</xs:documentation>
 				</xs:complexType>
 			</xs:element>
 			<xs:element name="Address" type="AddressType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AccountingCustomerContactType">
+		<xs:annotation>
+			<xs:documentation>Customer Contacts Type.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ContactId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contact Identifier. This is an uniquely identifier for Contacts related to the company.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EmailAddrs" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Alphanumeric text of Email Address. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="WebSiteDsc" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Alphanumeric text of Web Site, in case Contact has one. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Salutation" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Alphanumeric value of Salutation such as Mr, Ms, Mrs, Master, etc...</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ContactFullNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the Contact.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="GivenNm" minOccurs="0"/>
+			<xs:element ref="NickNm" minOccurs="0"/>
+			<xs:element ref="MiddleNm" minOccurs="0"/>
+			<xs:element ref="FamilyNm" minOccurs="0"/>
+			<xs:element ref="MaidenNm" minOccurs="0"/>
+			<xs:element ref="GenerationAffixCd" minOccurs="0"/>
+			<xs:element ref="QualificationAffixCd" minOccurs="0"/>
+			<xs:element name="JobTitle" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The title of the job the Contact currently has.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DepartmentNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Department in which the Contact works or represents.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="WorkTelephoneNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Business phone number.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MobileTelephoneNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Cell_Mobile_Phone_Number</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacsimileNbr" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Fax Number of the Contact.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OtherContactDetailTxt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Other details about the Contact.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="CustomerGrpType">
@@ -1102,13 +1200,12 @@ companies to use the same set of customers. </xs:documentation>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="Address" type="AddressType" minOccurs="0" maxOccurs="unbounded"/>
-			<xs:element name="Contact" type="CommunicationType" minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="Address" type="AddressType" minOccurs="0" maxOccurs="5"/>
+			<xs:element name="Contact" type="AccountingCustomerContactType" minOccurs="0" maxOccurs="5">
 				<xs:annotation>
 					<xs:documentation>Contact person or party name</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="EffectivePeriod" type="EffetiveDateTimeType" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="CustomerPartyType">
@@ -1155,7 +1252,6 @@ companies to use the same set of customers. </xs:documentation>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="EffectivePeriod" type="EffetiveDateTimeType" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="AccoutingCustomerAddressType">
@@ -1193,8 +1289,7 @@ companies to use the same set of customers. </xs:documentation>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="Address" type="CommunicationType" minOccurs="0"/>
-			<xs:element name="CustomerName" type="PersonNameType" minOccurs="0"/>
+			<xs:element name="Address" type="AddressType" minOccurs="0"/>
 			<xs:element name="Notes" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:documentation>Customer notes regarding the address.</xs:documentation>
@@ -1241,49 +1336,6 @@ companies to use the same set of customers. </xs:documentation>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
-					</xs:sequence>
-					<xs:attribute ref="typeCode"/>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="PostalCodes" minOccurs="0" maxOccurs="unbounded">
-				<xs:complexType>
-					<xs:sequence minOccurs="0">
-						<xs:element name="PostalCodeId" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Unique identifier postal code.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="36"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="PurposeCd" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Code of the purpose.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="10"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="PurposeDsc" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Description or name of the purpose.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="50"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="PostalCd" type="xs:string" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Postal code.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element ref="BannerCd" minOccurs="0"/>
 					</xs:sequence>
 					<xs:attribute ref="typeCode"/>
 				</xs:complexType>
@@ -1382,24 +1434,6 @@ companies to use the same set of customers. </xs:documentation>
 					<xs:attribute ref="typeCode"/>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="SelectedAddresses" minOccurs="0" maxOccurs="unbounded">
-				<xs:complexType>
-					<xs:sequence minOccurs="0">
-						<xs:element name="AddressId" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Unique identifier of the address.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="36"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element ref="BannerCd" minOccurs="0"/>
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="EffectivePeriod" type="EffetiveDateTimeType" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="SourceSystemType">
@@ -1425,6 +1459,174 @@ Examples are: Party, Party Site, Account, Contact, Role, etc.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
 		<xs:attribute ref="preferredInd"/>
+	</xs:complexType>
+	<xs:complexType name="AccountingCustomerBankType">
+		<xs:annotation>
+			<xs:documentation>Banktype will be used to store customer bank attributes such as bank codes, account numbers, bank routing numbers, bank adddress, region, branch information, account balance</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CompanyId" minOccurs="0"/>
+			<xs:element name="BankCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> A user-defined code representing a bank     account at a bank location. Also referred to as Cash Code</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BankAccntNbr" type="CodeWithDescription" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>The bank-assigned account number identification to be used for the cash code.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BankId" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains the ID number assigned to the bank by the Federal Reserve.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BankNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains the bank name.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BankTransactionCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The bank transaction code. Represents a type of cash payment, bill of exchange    payment, or bank service. Also refered to as Bank-Inst code</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BankTransactionCdType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates the type of bank transaction Type . C = Cash Payment Transaction.  D = Bill of Exchange Payment Transaction. B = Bank Service Transaction.        </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BankTransactionNbr" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Unique number used to identify bank transactions.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BankAccntType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates the type of bank account used to deposit electronic payments for the vendor. Valid values are: C = Current/Checking Account.  S = Savings Account. Blank = Electronic payment type not  selected.          </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BankTransactionType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates the type of bank transaction. type Valid values are:  CR = Bank Credit.            DR= Bank Debit.    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BankTransitNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A routing transit number is a nine-digit number used to identify a bank or financial institution when clearing funds for electronic transfers or processing checks in the United States.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BankEFTNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Branch electronic fund transfer user number.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BankFormCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Code used to drive the invoice number generation for transactions.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BankBranch" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Bank Branch information</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BankRegion" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Bank region information</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BankAddress" type="AddressType" minOccurs="0"/>
+			<xs:element name="AutomaticClearingHouseInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains the value that indicates if the bank account allows ACH payments to   
+be made. N = No ACH allowed  Y = ACH allowed</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BankCurrencyCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The currency of the bank account.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BankCurrencyExchangeRt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The exchange rate used to convert the transaction currency to the bank account currency.                   </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="18"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BankEntity" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The bank location where the bank account is located</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SendBankEntity" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains the ID assigned by the Federal Reserve to the bank that processes the ACH tape.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SendBankNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains the name of the sending DFI bank.     </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BankAccntStatus" type="StatusType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The status of the of the bank account. If the bank account is Inactive, new bank transactions cannot be entered for the bank account, but bank transactions already entered in the system can be processed and reconciled. Valid values
+are: A = Active. I = Inactive.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BankCodeInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates whether the cash code has been used. Valid values are:  Y = Yes. N = No.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BankClsCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Bank Class Code - The user class assigned to the cash code. Used to restrict access and use of the cash code to a specific group of
+users. If left blank, no access
+restrictions apply.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="IBANId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>International bank account number.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="EffetiveDateTimeType">
 		<xs:annotation>

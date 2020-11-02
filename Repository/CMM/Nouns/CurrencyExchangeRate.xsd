@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by jsoli17 (Albertsons) -->
+<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by Rosabel Macario (Safeway Philtech, Inc) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--10/07/2020 - Rosabel M - Added ConversionType and AverageBalanceStatus elements.-->
 	<!--07/21/2020 - Jayson S  - Initial Version-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:include schemaLocation="FinanceMaster.xsd"/>
@@ -38,6 +39,16 @@
 			<xs:element name="PublicationType" type="CodeWithDescription" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>The identification code of the rate type (such as “Monthly End Rate” defined within Configuration workbook within Rate Types)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ConversionType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This defines the type of rate conversion. Possible values could be Spot, Corporate, User, Fixed etc., If user wants to enter different daily rates for the same combination of from-currency, to-currency, and conversion date, different conversion rate types will be used.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AverageBalanceStatus" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This specifies whether the rate can be used for set of books for which average balancing is enabled. By default, the status code will always be C. Possible values are C, O, D. </xs:documentation>
 				</xs:annotation>
 			</xs:element>
 		</xs:sequence>

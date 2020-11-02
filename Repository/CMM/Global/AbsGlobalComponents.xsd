@@ -180,6 +180,50 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
+			<xs:element name="LatitudeDegree" nillable="true" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines the angular distance north or south from the equator of a point on the earth&apos;s surface, measured on the meridian of the point. Half of a pair of coordinates (the other being longitude).&#10;&#10;A latitude can have negative values.&#10;</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LongitudeDegree" nillable="true" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines the angular distance east or west on the earth&apos;s surface, measured by the angle contained between the meridian of a given point and a prime meridian.  Half of a pair of coordinates (the other being latitude) assigned via a point geocoding procedure.  &#10;&#10;Unlike latitude, which has the equator as a natural starting position, there is no natural starting position for longitude&#10;&#10;Longitude can have negative values.&#10;&#10;</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TimeZoneCd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Cd that defines the time zone in which the store facility is located.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PhoneNbr" minOccurs="0" maxOccurs="3">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FaxNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="AddressType" abstract="false" mixed="false">
@@ -394,6 +438,11 @@
 			<xs:documentation>Gneric structure to define differnt business keys in a document.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
+			<xs:element name="HierachyLevelNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This can be used when there are multi-level xref between source and target (ex: source vendor/sub_act to Supplier/Site)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="KeyFieldNm" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Name of the business key field like 'Purchase Order Nbr', 'Invoice Nbr'</xs:documentation>
@@ -1822,7 +1871,7 @@ It must be greater then the cash discount days.
 								<xs:documentation>Indicates the number of days the percentage cash discount is available.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="DicountType" type="xs:string" minOccurs="0">
+						<xs:element name="Discountype" type="xs:string" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>Indicates the type of cash discount</xs:documentation>
 							</xs:annotation>

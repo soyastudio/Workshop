@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by jsoli17 (Albertsons) -->
+<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
-	<!--05/15/2020 - Jayson S  - Initial Version-->
+	<!--v1.1: 10/16/2020 Rosable M - Update based on Customer balance Debit requirement-->
+	<!--v1.0: 05/15/2020 - Jayson S  - Initial Version-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:include schemaLocation="FinanceMaster.xsd"/>
 	<xs:complexType name="FundsTransferType">
@@ -10,19 +11,38 @@
 
 Another way to define it is a series of transactions, beginning with the originator's payment order, made for making payment to the beneficiary of the order. The term includes any payment order issued by the originator's bank or an intermediary bank intended to carry out the originator's payment order. A funds transfer is completed by acceptance by the beneficiary's bank of a payment order for the benefit of the beneficiary of the originator's payment order.</xs:documentation>
 		</xs:annotation>
-		<xs:sequence>
+		<xs:sequence maxOccurs="unbounded">
 			<xs:element name="FundTransferType" type="CodeWithDescription">
 				<xs:annotation>
 					<xs:documentation>Defines whether this fund transfer is a Credit Transfer, or a Debit Transfer</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element ref="GLPostingDt"/>
-			<xs:element ref="CompanyId"/>
+			<xs:element ref="GLPostingDt" minOccurs="0"/>
+			<xs:element ref="CompanyId" minOccurs="0"/>
 			<xs:element name="DistributionCompanyId" type="xs:int" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Identifies the AP company if the resource type = V.  
 Identifies the HR company if the resource type = E.  
 It is blank for type A, P or Q resources</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FundTransferTransactionDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date of this fund transfer</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FundTransferTransactionID" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation source="http://www.openapplications.org/platform/1">Mostly used for transfers to another party, this is the unique and unambiguous identification of a payment transaction, as assigned by any of the parties on the initiating side, which will be passed on throughout the entire end-to-end chain.   </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FundTransferClassification" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Mostly used for transfers to antoher party, it defines what kind of Fund Transfer this is. Can be one of the following:
+Automated Clearing House (ACH) Transfer
+Bank Wire Transfer
+International Wire Transfer
+Commercial Money Transfer Service</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="AccountingUnit" type="AccountingUnitType" minOccurs="0"/>
@@ -85,25 +105,6 @@ It is blank for type A, P or Q resources</xs:documentation>
 					</xs:simpleContent>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="FundTransferTransactionDt" type="xs:date" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Date of this fund transfer</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="FundTransferTransactionID" type="xs:int" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation source="http://www.openapplications.org/platform/1">Mostly used for transfers to another party, this is the unique and unambiguous identification of a payment transaction, as assigned by any of the parties on the initiating side, which will be passed on throughout the entire end-to-end chain.   </xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="FundTransferClassification" type="CodeWithDescription" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Mostly used for transfers to antoher party, it defines what kind of Fund Transfer this is. Can be one of the following:
-Automated Clearing House (ACH) Transfer
-Bank Wire Transfer
-International Wire Transfer
-Commercial Money Transfer Service</xs:documentation>
-				</xs:annotation>
-			</xs:element>
 			<xs:element name="FundTransferPurpose" type="CodeWithDescription" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation source="http://www.openapplications.org/platform/1">Mostly applicable to fund transfers to another party, defines the underlying reason for the payment transaction, e.g. a charity payment, or a commerical agreement between the creditor and the debitor. Provided by the code contained.</xs:documentation>
@@ -155,17 +156,17 @@ Commercial Money Transfer Service</xs:documentation>
 				</xs:annotation>
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="HashTotalCnt" minOccurs="0">
+						<xs:element name="HashTotalCnt" type="xs:integer" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>numerical sum of the Bank Transit Number for all detail records.  Used to indicate if data is missing from the file transfer</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="TotalDebitAmt" type="xs:decimal" minOccurs="0">
+						<xs:element name="TotalAmt" type="xs:decimal" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>Total Debit Amount for all detail records</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="TotalRecordCnt" type="xs:int" minOccurs="0">
+						<xs:element name="TotalRecordCnt" type="xs:integer" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>Total number of Detail Records</xs:documentation>
 							</xs:annotation>
@@ -177,6 +178,11 @@ Commercial Money Transfer Service</xs:documentation>
 						</xs:element>
 					</xs:sequence>
 				</xs:complexType>
+			</xs:element>
+			<xs:element name="RecordType" type="CodeWithName" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains value of record idenfier. Eg. For BOFA, file header is set as 1, batch header is 5, detail is 6. </xs:documentation>
+				</xs:annotation>
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>

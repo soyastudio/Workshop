@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 sp1 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<!--!=============================================================================================-->
 	<!--!-->
@@ -14,6 +14,7 @@
 	<!--V1.1 - 8/14/2020 - Alex Nunes - Removed unecessary data elements on this lightweight interface.-->
 	<!--V1.2 - 9/9/2020 - Alex Nunes - Reduced even further the number of elements needed on this cross-reference data.-->
 	<!--V1.3 - 9/29/2020 - Alex Nunes - Modified Promotion start and end element names to 'TS' since both elements have dateTime type defined on Promotion BOD.-->
+	<!--V1.4 - 10/26/2020 - Alex Nunes - Added additional primary key components based Vendor Offer / ROG.-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:element name="Promotion">
 		<xs:annotation>
@@ -26,25 +27,52 @@
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element ref="ROGCd"/>
-			<xs:element name="LinkPLUNbr">
-				<xs:annotation>
-					<xs:documentation>This is the link number assigned for the electronic coupon. If non-zero, CPN_PLU must be zero.  The CMS application responsible for pricing electronic club card promotions currently has a pool of 5 digit link numbers attached to it for identifying promotions. The starting digit of all the links is 8. This is currently done to identify the electronic promotion links from paper coupon PLUs and grocery lookup codes at Point of Sales.  In order to increase the number of available links, so that business will have the flexibility to price significantly more promotions in coming years, the 5 digit link is being expanded to 12 digits starting with 248. </xs:documentation>
-				</xs:annotation>
-				<xs:simpleType>
-					<xs:restriction base="xs:decimal">
-						<xs:totalDigits value="12"/>
-						<xs:fractionDigits value="0"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
 			<xs:element name="PromotionId" type="xs:integer" nillable="false">
 				<xs:annotation>
 					<xs:documentation>A Promotion is an instance of a vehicle, which is attached to a specific time and a geographic location. A Promotion may span many Divisions and Zones. Examples are: Eastern Divisions July Savings Guide, Eastern Divisions Week 30 Weekly Flyer, Northern California Divisions Week 20 Weekly Flyer Promotions are defined on the promohdr table in the SPOT Informix database.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="DivisionalADSelectId" type="xs:integer" default="0" nillable="false">
+				<xs:annotation>
+					<xs:documentation>This is an internal identification Nbr used by the Merchandisers to separate ADs that run in the same period.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ADPLANSequenceNbr" type="xs:short" default="0" nillable="false">
+				<xs:annotation>
+					<xs:documentation>Adplan Sequence Nbr is used to uniquely identify items that have been inserted into ADPLAN. Each SPOT item in the PPTRANSL table is given a sequence Nbr of zero before it is processed by the SPOT/ADPLAN Bridge (PPD610). When PPD610 inserts the item into SSPENADI, the sequence iNbr s incremented for every SSPENADI row with the same ADPLAN key: ROG, ADSELECT, CORPITEMCD, and UNITTYPE. This enforces uniqueness in SSPENADI. The Adplan Sequence Nbr is updated after the row has been inserted into SSPENADI so that the Adplan keys in PPTRANSL and SSPENADI match.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PromotionItem">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="CorporateItemCd" nillable="false">
+							<xs:annotation>
+								<xs:documentation>This is the wholesale item Id, which is usually unique across the enterprise and quaranteed to be unique within a country. For Canada, the first 5 digits is the product class Cd (PRODCLASS) and the last 3 are system generated sequence Nbrs. For US, the first four digits are the SMIC Group and Category Cds and the last four digits are system generated sequence Nbrs.  A SSIMS generated Cd that identifies an item across divisions. A CIC always has 1 UPC, but may have more added to it. CIC is the main Nbr used in SIMS to work with items. More than one CIC may be assigned to an UPC.  The corpitemcd value can be changed. All SIMS tables that contain corpitemcd are re-Cdd. See program MED500, Tables SSITMCHG,SSITMCHH.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="8"/>
+									<xs:fractionDigits value="0"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ItemUnitTypeCd" nillable="false">
+							<xs:annotation>
+								<xs:documentation>Shows which of the Consumer, Multipack, or Case UPCs is used to make up the right 5 digitis of the UPC. One of these must be chosen.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="1"/>
+									<xs:fractionDigits value="0"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
 			<xs:element name="VendorOffer" maxOccurs="unbounded">
 				<xs:annotation>
-					<xs:documentation>Vendor original Offers captured in NOPA/eDeals</xs:documentation>
+					<xs:documentation>Vendor offers.</xs:documentation>
 				</xs:annotation>
 				<xs:complexType>
 					<xs:sequence>
@@ -58,19 +86,67 @@
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
+						<xs:element name="VendorOfferStartTs" type="xs:dateTime" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Effective date and time of when the Vendor offer starts.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="VendorOfferEndTs" type="xs:dateTime" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Effective date and time of when the Vendor offer ends.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PromotionPerformance" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="PerformanceCd1" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is one of up to four Performance Cds that can be assigned to an item on promotion.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="2"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="PerformanceCd2" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the second of up to four Performance Cds that can be assigned to an item on promotion.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="2"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="PerformanceCd3" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the third of up to four Performance Cds that can be assigned to an item on promotion.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="2"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="PerformanceCd4" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the fourth of up to four Performance Cds that can be assigned to an item on promotion.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="2"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="PerformanceStartDt" type="xs:date" minOccurs="0"/>
+									<xs:element name="PerformanceEndDt" type="xs:date" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
 					</xs:sequence>
 					<xs:attribute ref="preferredInd"/>
 				</xs:complexType>
-			</xs:element>
-			<xs:element name="PromotionStartTs" type="xs:dateTime" nillable="false">
-				<xs:annotation>
-					<xs:documentation>Effective date and time when the promotion starts for a ROG.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="PromotionEndTs" type="xs:dateTime" nillable="false">
-				<xs:annotation>
-					<xs:documentation>Effective date and time when the promotion ends for a ROG.</xs:documentation>
-				</xs:annotation>
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>

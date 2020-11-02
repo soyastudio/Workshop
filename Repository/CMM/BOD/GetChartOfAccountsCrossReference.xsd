@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/ChartOfAccountsCrossReference.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/EmployeeExpenseMaster.xsd"/>
+	<xs:element name="GetChartOfAccountsCrossReference" type="GetChartOfAccountsCrossReferenceType">
+		<xs:annotation>
+			<xs:documentation>Global Chart Of Accounts will be used as a cross reference for chart of account data between systems. Note that the master data for chart of accounts will be contained in GLMaster BOD.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetChartOfAccountsCrossReferenceType">
+		<xs:annotation>
+			<xs:documentation>Chart Of Accounts cross reference will be used to map source and target chart of account data between systems. Note that the master data for chart of accounts will be contained in GLMaster BOD.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ChartOfAccountsCrossReference" type="Abs:ChartOfAccountsCrossReferenceType"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

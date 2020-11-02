@@ -12,16 +12,13 @@
 - soya.framework.tools.xmlbeans.XlsxMappingAnnotator:
     sourceFiles:
       - BusinessObjects/DeliverySlot/requirement/input.json
-    mappingFile: BusinessObjects/DeliverySlot/requirement/DeliverySlot_OSMS_TO_EDIS_Canonical_Mapping_v1.2.2.xlsx
+    mappingFile: BusinessObjects/DeliverySlot/requirement/DeliverySlot_OSMS_TO_EDIS_Canonical_Mapping_v1.2.3.xlsx
     mappingSheet: "Mapping Source to Canonical"
 
 ## Fix unknown mappings: target paths, source paths and mapping rules...
 - soya.framework.tools.xmlbeans.UnknownMappingFixAnnotator:
 
 ## Generate assignments:
-## Apply auto loops annotation:
-- soya.framework.tools.xmlbeans.LoopAutoAnnotator:
-
 - soya.framework.tools.xmlbeans.MappingAnnotator:
     globalVariables:
       - name: VERSION_ID
@@ -35,23 +32,35 @@
 
 
 # Renderers:
-## Print XPaths Mappings:
+## Print XML construct tree as Avro:
+- soya.framework.tools.xmlbeans.AvroSchemaRenderer:
+    name: AvroSchema
+
+## Print node tree in json, indexed by xpath:
+- soya.framework.tools.xmlbeans.XmlSchemaTreeRenderer:
+    name: XmlSchemaTree
+
+## Print XPath Mappings:
 - soya.framework.tools.xmlbeans.XPathMappingsRenderer:
     name: XPathMappings
     printUnmapped: true
 
-## Print XPaths Assignments:
+## Analyze Loops:
+- soya.framework.tools.xmlbeans.LoopAnalyzeRenderer:
+    name: LoopAnalyzer
+
+## Print Loops:
+- soya.framework.tools.xmlbeans.XPathAutoAnnotateRenderer:
+    name: XPathAutoAnnotate
+
+## Print XPath Assignments:
 - soya.framework.tools.xmlbeans.XPathAssignmentsRenderer:
     name: XPathAssignments
-    printUnmapped: true
+    printUnmapped: false
 
 ## Print Sample XML:
 - soya.framework.tools.xmlbeans.SampleXmlRenderer:
     name: SampleXml
-
-## Print node tree in json, indexed by xpath:
-- soya.framework.tools.xmlbeans.JsonMappingRenderer:
-    name: JsonMapping
 
 ## Print Base Annotation, eg. Unknown mappings:
 - soya.framework.tools.xmlbeans.BaseAnnotationRenderer:

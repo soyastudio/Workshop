@@ -4,7 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public abstract class MappingFeatureSupport implements MappingFeature {
 
@@ -26,13 +27,16 @@ public abstract class MappingFeatureSupport implements MappingFeature {
         LinkedHashSet<Mapper> list = new LinkedHashSet<>();
         base.getMappings().entrySet().forEach(e -> {
             Mapper mapping = e.getValue().getAnnotation(MAPPING, Mapper.class);
-            if (mapping != null && mapping.sourcePath != null && mapping.sourcePath.contains("[*]/")) {
+            if (mapping != null && mapping.sourcePath != null
+                    && (mapping.sourcePath.endsWith("[*]") || mapping.sourcePath.contains("[*]/"))) {
 
                 XmlSchemaBase.MappingNode node = findParent(e.getValue());
                 if (node != null) {
                     String sourcePath = mapping.sourcePath;
                     if (sourcePaths.get(sourcePath) != null) {
-                        sourcePath = sourcePath.substring(0, sourcePath.lastIndexOf("[*]/") + 3);
+                        if (!sourcePath.endsWith("[*]")) {
+                            sourcePath = sourcePath.substring(0, sourcePath.lastIndexOf("[*]/") + 3);
+                        }
                         list.add(new Mapper(sourcePath, node.getPath()));
                     }
 

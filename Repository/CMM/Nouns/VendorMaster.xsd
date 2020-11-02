@@ -8,6 +8,8 @@
 -->
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V2.7 Patrick Oliver 10/28/20:  Updated VendorSiteData with following: Added qualifier attribute to AltVendorId; Added VendorSitePurposes (PurchasingSiteInd, PrimaryPaySite , SourcingSite, ProcurementSite and PrimarySiteInd); Added VendorSiteContact which contains SiteAddress, AddressTypeCd, SiteContactId & ContactTypeCd-->
+	<!--V2.6 Patrick Oliver 10/22/20: Added VendorSiteData to Corporate/Outlet level which contains: AltVendorId,  VendorSiteId, VendorSiteNm, PrimaryVendorSiteInd, PrimaryPayVendorSiteInd-->
 	<!--V2.5 Alex Nunes 8/5/20 - AccountingTaxId from string 10 to string 20 (Outlet level) -->
 	<!--V2.4 Alex Nunes 7/23/20 - Added contact structure in Vendor Outlet -->
 	<!--V2.3 Patrick Oliver 06/22/20 - Updated lengths of VendorId, VendorSubAccntId,  ApVendorNbr, PayVendorId, CustomerId, BackdoorVendorSubAccountId, BrokerVendorNbr, and BrokerSubAccnt to allow processing of AP Vendor maintenance files -->
@@ -277,6 +279,11 @@
 						<xs:maxLength value="8"/>
 					</xs:restriction>
 				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorSiteData" type="VendorSiteType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Used to support information about supplier site level attributes.</xs:documentation>
+				</xs:annotation>
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>

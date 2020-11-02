@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--Patrick Oliver 10/20/20: Added AltAccountId to GLBalanceType; changed AccountId to optional in GLBalanceType and GLTransactionType-->
+	<!--Patrick Oliver 10/13/20: Added to GLMasterType GLCombinationId, Entity, LineOfBusiness, Site, CostCenter, ProductTypeGroup, CustomerGroup, CashflowMovement, InterCompanyCd, AccountTypeCd-->
 	<!--Patrick Oliver 7/22/20 - Updated VendorId to string(20)-->
 	<!--7/30/19 - Patrick  - Changed ARCode to CodeWithDescription in Receivable Type -->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
@@ -1425,7 +1427,17 @@ options defined in the Detail Accounts</xs:documentation>
 						<xs:element name="Account" maxOccurs="unbounded">
 							<xs:complexType>
 								<xs:sequence>
-									<xs:element ref="AccountId"/>
+									<xs:element ref="AccountId" minOccurs="0"/>
+									<xs:element name="AltAccountId" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Can be account ID but in string format.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="25"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
 									<xs:element ref="SubAccountId" minOccurs="0"/>
 									<xs:element ref="ChartOfAccountNm"/>
 									<xs:element ref="AccountNm" minOccurs="0"/>
@@ -1546,10 +1558,11 @@ options defined in the Detail Accounts</xs:documentation>
 				</xs:complexType>
 			</xs:element>
 			<xs:element name="Ledger" type="CodeWithDescription" minOccurs="0"/>
-			<xs:element name="GLCombinationId" minOccurs="0">
+			<xs:element name="GLCombinationId" type="xs:string" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Concatination  of Chart of Accounts segment Fields</xs:documentation>
 				</xs:annotation>
+				
 			</xs:element>
 			<xs:element name="Entity" type="CodeWithDescription" minOccurs="0">
 				<xs:annotation>
@@ -1601,6 +1614,16 @@ options defined in the Detail Accounts</xs:documentation>
 			<xs:element ref="VariableLevelNbr" minOccurs="0"/>
 			<xs:element ref="ChartOfAccountNm" minOccurs="0"/>
 			<xs:element ref="AccountId" minOccurs="0"/>
+			<xs:element name="AltAccountId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Can be account ID but in string format.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="25"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element ref="SubAccountId" minOccurs="0"/>
 			<xs:element ref="AccountNm" minOccurs="0"/>
 			<xs:element ref="AccountDsc" minOccurs="0"/>
@@ -1617,7 +1640,94 @@ options defined in the Detail Accounts</xs:documentation>
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="GLMasterUpdate" type="LastUpdateType" minOccurs="0"/>
+			<xs:element name="GLCombinationId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Concatination  of Chart of Accounts segment Fields</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Entity" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Companies with EIN's allows for flexibility of hundreds if not thousands of legal entities and room for special purposes.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LineOfBusiness" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Represents the type of business based on the organizational structure, revenue channels and manufacturing. Used for high level management view of the organization that changes frequently</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Site" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Represents physical space, captures a physical space at a facility or location. Allows for Hierarchy structure to capture multiple sites that roll up to facilities</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CostCenter" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A function that is responsible for the costs that it incurs related to its normal business operations</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ProductTypeGroup" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Groupings of product types is based on a consolidated version of the organization's products that is needed for management reporting within distribution centers and manufacturing plants.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CustomerGroup" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Groupings of customers is based on a consolidated version of the organization's customers that is needed for management reporting.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CashflowMovement" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Cash flows is based on the organization's cash flow and rollforward classifications with linkages to select balance sheet account activity.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InterCompanyCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Eliminate transactions occurring between its subsidiaries </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AccountTypeCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Type of UserAccount.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="GLHierarchyType">
+		<xs:annotation>
+			<xs:documentation>Complex type to allow relationship between various GL nodes that might be represented in tree version. Allows for identification of a parent value and the corresponding child values</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="GLParentVal" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Parent segment value in the hierarchy.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="CodeWithDescription"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GLChildVal" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Child segment value in the hierarchy.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="CodeWithDescription"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="typeCode">
+			<xs:annotation>
+				<xs:documentation>Value defining hierarchy </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="depthLevelNbr" type="xs:integer">
+			<xs:annotation>
+				<xs:documentation>Allows to define the level of depth of where the hierarchy is at</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 	</xs:complexType>
 	<xs:element name="GLPostingDt" type="xs:date">
 		<xs:annotation>
@@ -1669,7 +1779,7 @@ options defined in the Detail Accounts</xs:documentation>
 			<xs:element ref="AccountingUnitId"/>
 			<xs:element ref="AccountingUnitNm" minOccurs="0"/>
 			<xs:element ref="VariableLevelNbr"/>
-			<xs:element ref="AccountId"/>
+			<xs:element ref="AccountId" minOccurs="0"/>
 			<xs:element name="AltAccountId" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Can be account ID but in string format.</xs:documentation>
@@ -3426,22 +3536,22 @@ M = Mixed</xs:documentation>
 					<xs:sequence>
 						<xs:element name="CheckingAccountBalance" type="AmountType" minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>Customer account balance</xs:documentation>
+								<xs:documentation>Customer check account balance</xs:documentation>
 							</xs:annotation>
 						</xs:element>
 						<xs:element name="SavingsAccountBalance" type="AmountType" minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>Customer account balance</xs:documentation>
+								<xs:documentation>Customer saving account balance</xs:documentation>
 							</xs:annotation>
 						</xs:element>
 						<xs:element name="CurrentBalance" type="AmountType" minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>BalThe current reconciled balance of the bank account.  </xs:documentation>
+								<xs:documentation>The current  balance of the bank account.  </xs:documentation>
 							</xs:annotation>
 						</xs:element>
 						<xs:element name="ReconciledBalance" type="AmountType" minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>BalThe current reconciled balance of the bank account.  </xs:documentation>
+								<xs:documentation>lThe current reconciled balance of the bank account.  </xs:documentation>
 							</xs:annotation>
 						</xs:element>
 					</xs:sequence>
@@ -3643,4 +3753,7 @@ restrictions apply.</xs:documentation>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
+	<xs:complexType name="AccountingOrganizationType">
+		<xs:sequence/>
+	</xs:complexType>
 </xs:schema>

@@ -8,6 +8,7 @@
 -->
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V3.1 Patrick Oliver 10/20/20: Added AltAccountId to header and detail; Added DepartmentId & SectionCd to InvoiceDetail; Added AltInvoiceId,  BusinessUnitId,  InstallmentNbr to header; Added VendorSiteData to header level which contains: AltVendorId,  VendorSiteId, VendorSiteNm, PrimaryVendorSiteInd, PrimaryPayVendorSiteInd  -->
 	<!--V3.0: Patrick Oliver 10/05/20: Updated ApprovalOperatorCd to string (20) and LeadItemDescription to string (250)-->
 	<!--V2.9 Patrick Oliver 09/09/20: Updated CustomerParty to include AccountClassId and AccountTypeCd. Added to Invoice Header: LifecycleCategoryStatusCd, OfferNbr, ItemsSumAmt, OverToleranceInd, FlatCd-->
 	<!--V2.8 V2.8 Patrick Oliver 09/01/20:  Added to InvoiceHeader:  DivisionAccountUnitCd, MinBillStartDt,  MaxBillStartDt, LeadCorpItemCode,  LeadItemDesc, RecordAuditData. Added new 'InvoiceDetailItem' segment to model that will be used to roll up item totals for CABS invoice processing systems. The 'InvoiceDetailItem' will contain attributes CIC, UPC, Whse, & total amounts.  Note this will be used by CABS different than 'InvoiceDetail' which will be used by CABS to roll up totals by Account-Store. -->
@@ -55,6 +56,16 @@
 					<xs:sequence minOccurs="0">
 						<xs:element ref="AccountingUnitId" minOccurs="0"/>
 						<xs:element ref="AccountId" minOccurs="0"/>
+						<xs:element name="AltAccountId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Can be account ID but in string format.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="25"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
 						<xs:element ref="SubAccountId" minOccurs="0"/>
 					</xs:sequence>
 				</xs:complexType>
@@ -296,6 +307,21 @@ construction, and so on.</xs:documentation>
 					<xs:documentation>Line Amt discounted</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="DepartmentId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines cd for store departments based on its function.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SectionCd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines the Cd that uniquely identified the  grouping of products or services within a department.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="InvoiceDetailItemType">
@@ -524,6 +550,11 @@ The summary amounts in the Header include the Line level amounts and Header leve
 						<xs:element name="Address" type="AddressType" minOccurs="0"/>
 					</xs:sequence>
 				</xs:complexType>
+			</xs:element>
+			<xs:element name="VendorSiteData" type="InvoiceVendorSiteType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Used to support information about supplier site level attributes.</xs:documentation>
+				</xs:annotation>
 			</xs:element>
 			<xs:element name="CustomerParty" minOccurs="0">
 				<xs:annotation>
@@ -958,6 +989,21 @@ The summary amounts in the Header include the Line level amounts and Header leve
 					<xs:documentation>A system-generated unique identifier that is used instead of the natural key.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="AltInvoiceId" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Used for system generated invoice IDs </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BusinessUnitId" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Corresponds to the business unit identifier </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InstallmentNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Installement number</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="InvoiceCreateFacilityType">
@@ -1065,6 +1111,16 @@ The summary amounts in the Header include the Line level amounts and Header leve
 				</xs:simpleType>
 			</xs:element>
 			<xs:element ref="AccountId" minOccurs="0"/>
+			<xs:element name="AltAccountId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Can be account ID but in string format.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="25"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element ref="SubAccountId" minOccurs="0"/>
 			<xs:element name="CancelSeqNbr" minOccurs="0">
 				<xs:annotation>
@@ -2247,5 +2303,53 @@ indicates whether the available discount was lost. Valid values are: N = No. Def
 			</xs:element>
 		</xs:sequence>
 		<xs:attribute ref="typeCode"/>
+	</xs:complexType>
+	<xs:complexType name="InvoiceVendorSiteType">
+		<xs:annotation>
+			<xs:documentation>Used to support information about supplier site level attributes.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="AltVendorId" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>System generated Supplier unique identifier</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VendorSite" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="VendorSiteId" type="xs:integer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Supplier site unique identifier. Used for processing controls for transactions (processing rules, payment terms, etc.) </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="VendorSiteNm" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Site.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PrimaryVendorSiteInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates if this is primary site</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PrimaryPayVendorSiteInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Primary Pay site flag in Supplier site (Y or blank)</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
 	</xs:complexType>
 </xs:schema>

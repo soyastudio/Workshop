@@ -8,6 +8,7 @@
 -->
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.2 Patrick Oliver 10/20/20: Added AltAccountId; changd AccountId to optional-->
 	<!--V1.1 Patrick Oliver 09/02/20: Added to ReceiveDeliveryDetail: ItemTypeCd, VendorProductNbr, LineLocationCd, LineLocationAddress, AccountingUnit, ProcessLevelId,  UnitOfMeasurement attributes typeCode/UOMNbr,  AdjustmentQuantity,  BackOrderCancelInd, .ReceiveInspectionInd,  DetailBalanceInd,  LineStatus,  BuyerMessageInd, SequenceNbr, UpdateDtTm, SuffixNbr, MatchClsCd, MatchKeyNbr, OpenMatchQuantity, MatchSequenceNbr, LineTax , FullyDeliverInd, CatchWtCost-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:include schemaLocation="../Nouns/PurchaseOrder.xsd"/>
@@ -401,7 +402,17 @@ modification to an offered or existing promotion</xs:documentation>
 											<xs:element name="Account" maxOccurs="unbounded">
 												<xs:complexType>
 													<xs:sequence>
-														<xs:element ref="AccountId"/>
+														<xs:element ref="AccountId" minOccurs="0"/>
+														<xs:element name="AltAccountId" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>Can be account ID but in string format.</xs:documentation>
+															</xs:annotation>
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:maxLength value="25"/>
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:element>
 														<xs:element ref="SubAccountId" minOccurs="0"/>
 														<xs:element ref="ChartOfAccountNm"/>
 														<xs:element ref="AccountNm" minOccurs="0"/>

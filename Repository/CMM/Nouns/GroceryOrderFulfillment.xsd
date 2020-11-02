@@ -161,10 +161,10 @@ Ex: distance covered to pick all the items from different ailes in a facility.</
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="WeightUOM" type="UOMType" minOccurs="0"/>
-			<xs:element ref="StorageUnityType" minOccurs="0"/>
 			<xs:element name="StorageUnitData" minOccurs="0">
 				<xs:complexType>
 					<xs:sequence minOccurs="0" maxOccurs="unbounded">
+						<xs:element name="ActivityStorageUnityType" type="StorageUnitType" minOccurs="0"/>
 						<xs:element ref="StorageUnitId" minOccurs="0"/>
 						<xs:element name="StorageUnitWt" minOccurs="0">
 							<xs:annotation>
@@ -329,28 +329,31 @@ Ex: distance covered to pick all the items from different ailes in a facility.</
 			<xs:documentation>Various location point and point description data in a facility. Ex: Item picking locations like Ailes, or staging location or drop off loation or customer pickup location.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="LocationTypeCd" minOccurs="0">
+			<xs:element name="LocationType" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
-					<xs:documentation>Type of the location. Ex Aisle, Section, Drop location</xs:documentation>
+					<xs:documentation>Type of the location. Ex Aisle, Section, Bay, Side..etc</xs:documentation>
 				</xs:annotation>
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="30"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
-			<xs:element name="LocationSubTypeCd" type="xs:string" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Subtype with in a type of location.
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="CodeWithName">
+							<xs:sequence>
+								<xs:element name="LocationSubTypeCd" type="CodeWithName" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Subtype with in a type of location.
 Ex: Aisle with in a section.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="LocationId" minOccurs="0">
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="20"/>
-					</xs:restriction>
-				</xs:simpleType>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="LocationId" minOccurs="0">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="20"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
 			</xs:element>
 			<xs:element name="LocationPointNm" minOccurs="0">
 				<xs:simpleType>
@@ -487,7 +490,7 @@ Ex: Aisle with in a section.</xs:documentation>
 			</xs:element>
 			<xs:element name="StorageUnitSubType" type="CodeWithDescription" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>sub type of storage unit. like types of bins</xs:documentation>
+					<xs:documentation>sub type of storage unit. like types of bins ex Frozen, Chilled, Dry</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="StorageUnitCapacity" minOccurs="0">
@@ -557,6 +560,7 @@ Employees can be assigned at assignment level or an event level.</xs:documentati
 							<xs:complexType>
 								<xs:sequence>
 									<xs:element name="AssignmentEventType" type="CodeWithDescription" minOccurs="0"/>
+									<xs:element name="AssignmentEventSubType" type="CodeWithDescription" minOccurs="0"/>
 									<xs:element name="AssignmentEventId" type="xs:long" minOccurs="0"/>
 									<xs:element ref="FacilityEmployee" minOccurs="0"/>
 									<xs:element name="AssignmentEventStatus" type="StatusType" minOccurs="0"/>
@@ -625,15 +629,29 @@ PS=Pallet Select)</xs:documentation>
 													</xs:annotation>
 												</xs:element>
 												<xs:element name="OrderedItem" type="GroceryItemType" minOccurs="0"/>
-												<xs:element name="SubstitutionItem" type="GroceryItemType" minOccurs="0"/>
-												<xs:element name="SubstituteItemInd" type="xs:boolean" minOccurs="0"/>
-												<xs:element name="SubstitutionType" minOccurs="0">
+												<xs:element name="SubstitutionAllowedInd" type="xs:boolean" minOccurs="0">
 													<xs:annotation>
-														<xs:documentation>Substituted item type.</xs:documentation>
+														<xs:documentation>Indicates if the substitution is allowed for the ordered item.</xs:documentation>
 													</xs:annotation>
+												</xs:element>
+												<xs:element name="FulfilledItem" minOccurs="0">
 													<xs:complexType>
 														<xs:complexContent>
-															<xs:extension base="CodeWithDescription"/>
+															<xs:extension base="GroceryItemType">
+																<xs:sequence>
+																	<xs:element name="SubstituteItemInd" type="xs:boolean" minOccurs="0"/>
+																	<xs:element name="SubstitutionType" minOccurs="0">
+																		<xs:annotation>
+																			<xs:documentation>Substituted item type.</xs:documentation>
+																		</xs:annotation>
+																		<xs:complexType>
+																			<xs:complexContent>
+																				<xs:extension base="CodeWithDescription"/>
+																			</xs:complexContent>
+																		</xs:complexType>
+																	</xs:element>
+																</xs:sequence>
+															</xs:extension>
 														</xs:complexContent>
 													</xs:complexType>
 												</xs:element>

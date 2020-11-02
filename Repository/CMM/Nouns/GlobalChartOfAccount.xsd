@@ -8,28 +8,24 @@
 -->
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.1 Patrick Oliver - Added AccountTypeCd, InterCompanyCd , AltAccountId to ChartOfAccount segment-->
 	<!--V1.0  Patrick Oliver 08/28/20: Initial Version-->
 	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:complexType name="GlobalChartOfAccountType">
 		<xs:annotation>
-			<xs:documentation>Chart Of Accounts represents the accounting structure of a business.   Each account represents a financial aspect of a business, such as its Accounts Payable, or the value of its inventory, or its office supply expenses. The purpose of the GlobalChartOfAccounts is to enable legacy applications to cross reference  specific Chart Of Accounts information from Oracle's business application module.  </xs:documentation>
+			<xs:documentation>Global Chart Of Accounts will be used as a cross reference for chart of account data between systems. Note that the master data for chart of accounts will be contained in GLMaster BOD.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="LegacyChartOfAccount">
+			<xs:element name="GlobalChartOfAccountSource">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="LegacyStructureCd" minOccurs="0">
+						<xs:element name="SourceSystem" type="CodeWithName" minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>Identifies if processing accounting or merchandising chart of accounts (Lawson, MARS) </xs:documentation>
+								<xs:documentation>Contains source system ID, name (Lawson, SIMS, etc.)</xs:documentation>
 							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="50"/>
-								</xs:restriction>
-							</xs:simpleType>
 						</xs:element>
-						<xs:element name="LegacySegmentCd" type="CodeWithDescription" minOccurs="0">
+						<xs:element name="SourceSegmentCd" type="CodeWithDescription" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>Identifies the segment number for legacy chart of account elemnet (Segment1 = Company, Segment2 = Facility, Segment3 = Section, etc.) </xs:documentation>
 							</xs:annotation>
@@ -41,11 +37,6 @@
 									<xs:maxLength value="3"/>
 								</xs:restriction>
 							</xs:simpleType>
-						</xs:element>
-						<xs:element name="GLEntityID" type="IDType" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>A G/L entity is the smallest organizational unit for which individual financial statements must be drawn up according </xs:documentation>
-							</xs:annotation>
 						</xs:element>
 						<xs:element name="CostCenterID" type="IDType" minOccurs="0">
 							<xs:annotation>
@@ -73,7 +64,11 @@
 								<xs:documentation>Type of the facility like, DC,  warehouse, Retail Store, Office building, manufacturing plant..etc.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="DepartmentId" minOccurs="0"/>
+						<xs:element name="DepartmentId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Defines cd for store departments based on its function.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
 						<xs:element name="SectionCd" nillable="false" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>Defines the Cd that uniquely identified the  grouping of products or services within a department.</xs:documentation>
@@ -140,10 +135,15 @@
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="ChartOfAccount">
+			<xs:element name="GlobalChartOfAccountTarget">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="SegmentCd" type="CodeWithDescription" minOccurs="0">
+						<xs:element name="TargetSystem" type="CodeWithName" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Identifies if processing accounting or merchandising chart of accounts (Lawson, MARS) </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="TargetSegmentCd" type="CodeWithDescription" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>Identifies the segment number for chart of account element (Segment1 = Entity, Segment2 = Line of Business, Segmen3 = Site, Segment4 = Cost Center, etc.)</xs:documentation>
 							</xs:annotation>
@@ -182,6 +182,26 @@
 							<xs:annotation>
 								<xs:documentation>Cash flows is based on the organization's cash flow and rollforward classifications with linkages to select balance sheet account activity.</xs:documentation>
 							</xs:annotation>
+						</xs:element>
+						<xs:element name="InterCompanyCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Eliminate transactions occurring between its subsidiaries </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="AccountTypeCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Type of UserAccount.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="AltAccountId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Can be account ID but in string format.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="25"/>
+								</xs:restriction>
+							</xs:simpleType>
 						</xs:element>
 						<xs:element name="FusionValueCd" type="CodeWithDescription" minOccurs="0">
 							<xs:annotation>

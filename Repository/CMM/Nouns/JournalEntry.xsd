@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by jsoli17 (Albertsons) -->
+<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by Rosabel Macario (Safeway Philtech, Inc) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
-	<!--05/11/2020 - Jayson S  - Initial Draft-->
+	<!--v1.1: Oct 9, 2020 - Rosabel M - Add new element JournalEntryFileType-->
+	<!--v1.0: 05/11/2020 - Jayson S  - Initial Draft-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:include schemaLocation="FinanceMaster.xsd"/>
 	<xs:complexType name="JournalEntryType">
@@ -243,6 +244,11 @@ It is blank for type A, P or Q resources</xs:documentation>
 			<xs:element name="BankType" type="BankType" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Used to capture bank details normally found for FSM type JEs.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="JournalEntryFileType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if the Journal Entry is Accrual or Deferral</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 		</xs:sequence>
