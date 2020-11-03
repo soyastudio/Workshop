@@ -76,6 +76,8 @@ graph LR
     
 ### 3. Consume Message
 ```
+    java -cp edis-kafka-0.0.2-SNAPSHOT-jar-with-dependencies.jar message.Consumer OSMS_Slots_C02.slots.slots latest DeliverySlot-SRC.text
+    
     java -cp edis-kafka-0.0.2-SNAPSHOT-jar-with-dependencies.jar message.Consumer ESED_C01_DeliverySlot latest DeliverySlot.text
  
 ```
