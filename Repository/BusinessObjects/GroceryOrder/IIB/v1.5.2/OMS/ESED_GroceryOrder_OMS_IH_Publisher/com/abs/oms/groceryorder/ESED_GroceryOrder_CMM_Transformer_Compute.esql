@@ -5,6 +5,7 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 	-- Declare UDPs
 	DECLARE VERSION_ID EXTERNAL CHARACTER '1.5.1.057';
 	DECLARE SYSTEM_ENVIRONMENT_CODE EXTERNAL CHARACTER 'PROD';
+	DECLARE LOG_MSG EXTERNAL CHARACTER 'Y';
 
 	-- Declare Namespace
 	DECLARE Abs NAMESPACE 'https://collab.safeway.com/it/architecture/info/default.aspx';
@@ -661,9 +662,6 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ExtendedUnitPriceAmt
 							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:ExtendedUnitPriceAmt = CAST(_orderLine.itemPrice.extendedPrice AS DECIMAL(14, 4));
 
-							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/PriceEffectiveStartDtTm
-							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:PriceEffectiveStartDtTm = _orderLine.itemPrice.startDate;
-
 							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/PriceEffectiveEndDtTm
 							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:PriceEffectiveEndDtTm = _orderLine.itemPrice.endDate;
 
@@ -737,11 +735,11 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 											-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/CustomerRewards/RewardsProgramNm
 											SET CustomerRewards_1.(XMLNSC.Field)Abs:RewardsProgramNm = _point.programName;
 
-											-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/CustomerRewards/PointsEarnedQty
-											SET CustomerRewards_1.(XMLNSC.Field)Abs:PointsEarnedQty = _point.earn;
+											-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/CustomerRewards/EarnedQty
+											SET CustomerRewards_1.(XMLNSC.Field)Abs:EarnedQty = _point.earn;
 
-											-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/CustomerRewards/PointsUsedQty
-											SET CustomerRewards_1.(XMLNSC.Field)Abs:PointsUsedQty = _point.burn;
+											-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/CustomerRewards/UsedQty
+											SET CustomerRewards_1.(XMLNSC.Field)Abs:UsedQty = _point.burn;
 
 									MOVE _point NEXTSIBLING;
 									END WHILE points_loop;
@@ -785,16 +783,8 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 											SET UPC_.(XMLNSC.Field)Abs:UPCNbr = _fulfilled_upc.upcId;
 
 
-										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item/SystemSpecificItemId
-										SET Item_.(XMLNSC.Field)Abs:SystemSpecificItemId = _fulfilled_upc.itemPrice.itemId;
-
-
 										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item/InternalItemId
 										SET Item_.(XMLNSC.Field)Abs:InternalItemId = _fulfilled_upc.itemPrice.itemCode;
-
-
-										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item/BaseProductNbr
-										SET Item_.(XMLNSC.Field)Abs:BaseProductNbr = _fulfilled_upc.itemPrice.itemId;
 
 									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/SubstitutedItemInd
 									SET DeliveredItem_.(XMLNSC.Field)Abs:SubstitutedItemInd = _fulfilled_upc.isSubstituted;
@@ -816,9 +806,6 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 
 									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/ExtendedUnitPriceAmt
 									SET DeliveredItem_.(XMLNSC.Field)Abs:ExtendedUnitPriceAmt = _fulfilled_upc.itemPrice.extendedPrice;
-
-									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/PriceEffectiveStartDtTm
-									SET DeliveredItem_.(XMLNSC.Field)Abs:PriceEffectiveStartDtTm = _fulfilled_upc.itemPrice.startDate;
 
 									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/PriceEffectiveEndDtTm
 									SET DeliveredItem_.(XMLNSC.Field)Abs:PriceEffectiveEndDtTm = _fulfilled_upc.itemPrice.endDate;
@@ -882,11 +869,11 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 													-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerOffers/CustomerRewards/RewardsProgramNm
 													SET CustomerRewards_1.(XMLNSC.Field)Abs:RewardsProgramNm = CustomerRewards_1.programName;
 
-													-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerOffers/CustomerRewards/PointsEarnedQty
-													SET CustomerRewards_1.(XMLNSC.Field)Abs:PointsEarnedQty = CustomerRewards_1.earn;
+													-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerOffers/CustomerRewards/EarnedQty
+													SET CustomerRewards_1.(XMLNSC.Field)Abs:EarnedQty = CustomerRewards_1.earn;
 
-													-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerOffers/CustomerRewards/PointsUsedQty
-													SET CustomerRewards_1.(XMLNSC.Field)Abs:PointsUsedQty = CustomerRewards_1.burn;
+													-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerOffers/CustomerRewards/UsedQty
+													SET CustomerRewards_1.(XMLNSC.Field)Abs:UsedQty = CustomerRewards_1.burn;
 
 											MOVE _delivered_item_savings_point NEXTSIBLING;
 											END WHILE delivered_item_savings_points_loop;
@@ -1177,6 +1164,10 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 					MOVE _storeInfo NEXTSIBLING;
 					END WHILE store_info;
 
+			IF LOG_MSG = 'Y' THEN
+				PROPAGATE TO TERMINAL 'out' DELETE NONE ;
+				SET Environment.Variables.MISC_DATA = 1;
+			END IF;
 
 		END;
 
