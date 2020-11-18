@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
-<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--Rosabel Macario 11/13/20: Added EncryptedBankTransit to BankType.-->
 	<!--Patrick Oliver 10/20/20: Added AltAccountId to GLBalanceType; changed AccountId to optional in GLBalanceType and GLTransactionType-->
 	<!--Patrick Oliver 10/13/20: Added to GLMasterType GLCombinationId, Entity, LineOfBusiness, Site, CostCenter, ProductTypeGroup, CustomerGroup, CashflowMovement, InterCompanyCd, AccountTypeCd-->
 	<!--Patrick Oliver 7/22/20 - Updated VendorId to string(20)-->
@@ -1562,7 +1563,6 @@ options defined in the Detail Accounts</xs:documentation>
 				<xs:annotation>
 					<xs:documentation>Concatination  of Chart of Accounts segment Fields</xs:documentation>
 				</xs:annotation>
-				
 			</xs:element>
 			<xs:element name="Entity" type="CodeWithDescription" minOccurs="0">
 				<xs:annotation>
@@ -1690,6 +1690,8 @@ options defined in the Detail Accounts</xs:documentation>
 					<xs:documentation>Type of UserAccount.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="EffectiveTimePeriod" type="EffectiveDateTimeType" minOccurs="0"/>
+			<xs:element name="AuditData" type="AuditDataType" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="GLHierarchyType">
@@ -1703,7 +1705,13 @@ options defined in the Detail Accounts</xs:documentation>
 				</xs:annotation>
 				<xs:complexType>
 					<xs:complexContent>
-						<xs:extension base="CodeWithDescription"/>
+						<xs:extension base="CodeWithDescription">
+							<xs:attribute name="typeCode">
+								<xs:annotation>
+									<xs:documentation>Value defining hierarchy</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
 					</xs:complexContent>
 				</xs:complexType>
 			</xs:element>
@@ -1811,7 +1819,12 @@ options defined in the Detail Accounts</xs:documentation>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="TransactionSource" type="Abs:CodeWithDescription" minOccurs="0"/>
+			<xs:element name="TransactionSource" type="Abs:CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Source of the JE transaction: 
+AR, AP, FSM or Manual</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="TransactionStatus" type="Abs:CodeWithDescription" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>This field displays the status of the transaction.     
@@ -2052,7 +2065,7 @@ Management system. All transactions are posted to an account category within an 
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="JournalEntryReferenceTxt" minOccurs="0"/>
+			<xs:element name="JournalEntryReferenceTxt" type="xs:string" minOccurs="0"/>
 			<xs:element name="JournalEntryReversalPeriodNbr" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
@@ -3521,6 +3534,11 @@ M = Mixed</xs:documentation>
 					<xs:documentation>A routing transit number is a nine-digit number used to identify a bank or financial institution when clearing funds for electronic transfers or processing checks in the United States.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="EncryptedBankTransit" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>An encrypted BankTransitNbr. Used to identify a bank or financial institution when clearing fund for electronic transfers or processing checks in the United States.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="BankEFTNbr" type="xs:integer" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Branch electronic fund transfer user number.</xs:documentation>
@@ -3691,9 +3709,14 @@ restrictions apply.</xs:documentation>
 					<xs:documentation>Check number</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="CheckDate" type="xs:date" minOccurs="0">
+			<xs:element name="CheckDt" type="xs:date" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Check Date</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VoidDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Void Date</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="CheckAmt" type="AmountType" minOccurs="0">
@@ -3753,7 +3776,4 @@ restrictions apply.</xs:documentation>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	<xs:complexType name="AccountingOrganizationType">
-		<xs:sequence/>
-	</xs:complexType>
 </xs:schema>

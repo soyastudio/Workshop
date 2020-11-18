@@ -64,6 +64,7 @@ public class RepositoryConfiguration {
 
                 } catch (XmlException e) {
                     System.out.println("==================== failure: " + f);
+                    // e.printStackTrace();
 
                 } catch (IOException e) {
                     e.printStackTrace();

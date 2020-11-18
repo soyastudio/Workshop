@@ -902,6 +902,224 @@ Low</xs:documentation>
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
+	<xs:complexType name="DigitalAddressType1.1">
+		<xs:annotation>
+			<xs:documentation>Contains digital address like email id, facebook id, instagram id, linkedin URL and the type of address like id, URL etc.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<!--SM 16-Apr: As defined below it makes digitial address to have at least one value / entry. Is this intentional?-->
+			<xs:element name="AddressType" type="CodeWithName" minOccurs="0"/>
+			<xs:element name="DigitalAddress" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="500"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EmailStatus" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="EmailStatusCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Code of the email status</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="EmailStatusDsc" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Description of the email status</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="EmailStatusVal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Phone status value.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ResponseTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Phone status response text.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="200"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ReferenceId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Reference Id</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="200"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="Sources" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="BannerCd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Banner code.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="StoreNbr" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Store number.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="SourceNm" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Source name.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Codes" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Cd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Code.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="CodeDsc" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Code text or description.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="200"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+					<xs:attribute ref="typeCode"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="EmailPurpose" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="PurposeCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Code of the purpose.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PurposeDsc" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Description of the purpose.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="EffectivePeriod" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="FirstEffectiveDt" type="xs:date" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The first Dt on which a condition or a version of an object is, was, or will be in effect.  In order to simplify joins that must match a transaction record to reference data with a Dt filter, First Effective Dt should never contain null values.  When the First Effective Dt is unknown, it should be set to a default of 01/01/0001 or the lowest Dt value supported by the DBMS.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="FirstEffectiveTm" type="xs:time" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The first time on which a condition or a version of an object is, was, or will be in effect. When the First Effective time is unknown, it should be set to a default of 00:00:00 or the lowest time value supported by the DBMS.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="LastEffectiveDt" type="xs:date" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The last Dt on which a condition or a version of an object was, or will be in effect.  In order to simplify joins that must match a transaction record to reference data with a Dt filter, Last Effective Dt should never contain null values.  When the Last Effective Dt is unknown, it should be set to a default of 12/31/9999 or the highest Dt value supported by the DBMS.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="LastEffectiveTm" type="xs:time" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The last time on which a condition or a version of an object is, was, or will be in effect. When the First Effective time is unknown, it should be set to a default of 23:59:59 or the lowest time value supported by the DBMS.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="DurationNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Number that represents the duration.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DurationUnitDsc" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Duration unit. D for Days, W for weeks.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="InclusiveInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates whether or not the dates and times are inclusive or not.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+					<xs:attribute ref="typeCode"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
 	<xs:complexType name="DigitalAddressType">
 		<xs:annotation>
 			<xs:documentation>Contains digital address like email id, facebook id, instagram id, linkedin URL and the type of address like id, URL etc.</xs:documentation>

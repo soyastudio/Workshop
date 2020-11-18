@@ -1,1 +1,311 @@
-<?xml version="1.0" encoding="UTF-8"?><!--   Schema Owner: 	Safeway Inc   Date Created:      07 May 2020   Author:		Patrick Oliver   Description: Contains commonly used Safeway Purchase order schema.   Name: /SFWY/Nouns/SwyPurchaseOrder.xsd--><!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) --><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">	<!--V1.0  Patrick Oliver 6/2/20 - Initial Draft-->	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>	<xs:complexType name="BankStatementAccountsVendor">		<xs:annotation>			<xs:documentation>Contains vendor information related to Bank Statements</xs:documentation>		</xs:annotation>		<xs:sequence>			<xs:element ref="VendorId" minOccurs="0"/>			<xs:element name="VendorSubAccountId" minOccurs="0">				<xs:simpleType>					<xs:restriction base="xs:string">						<xs:maxLength value="20"/>					</xs:restriction>				</xs:simpleType>			</xs:element>			<xs:element ref="VendorGrp" minOccurs="0"/>			<xs:element ref="VendorClass" minOccurs="0"/>			<xs:element ref="VendorClassDsc" minOccurs="0"/>			<xs:element name="VendorNm" type="xs:string" minOccurs="0"/>			<xs:element name="VendorContact" minOccurs="0" maxOccurs="2">				<xs:complexType>					<xs:sequence>						<xs:element name="ContactNm" minOccurs="0">							<xs:simpleType>								<xs:restriction base="xs:string">									<xs:maxLength value="50"/>								</xs:restriction>							</xs:simpleType>						</xs:element>						<xs:element name="PhoneNbr" minOccurs="0">							<xs:simpleType>								<xs:restriction base="xs:string">									<xs:maxLength value="20"/>								</xs:restriction>							</xs:simpleType>						</xs:element>						<xs:element name="EmailAddresstxt" minOccurs="0">							<xs:simpleType>								<xs:restriction base="xs:string">									<xs:maxLength value="100"/>								</xs:restriction>							</xs:simpleType>						</xs:element>					</xs:sequence>				</xs:complexType>			</xs:element>			<xs:element name="Address" type="AddressType" minOccurs="0"/>		</xs:sequence>	</xs:complexType>	<xs:complexType name="BankStatementAccountsType">		<xs:annotation>			<xs:documentation>Bank Statements type will be used to process data sent to banks for vendor payments and bank confirmations that vendors have been paid</xs:documentation>		</xs:annotation>		<xs:sequence>			<xs:element name="CompanyId" minOccurs="0">				<xs:simpleType>					<xs:restriction base="xs:string">						<xs:maxLength value="20"/>					</xs:restriction>				</xs:simpleType>			</xs:element>			<xs:element name="CompanyNm" minOccurs="0">				<xs:simpleType>					<xs:restriction base="xs:string">						<xs:maxLength value="50"/>					</xs:restriction>				</xs:simpleType>			</xs:element>			<xs:element name="BankStatmentSource" type="CodeWithDescription" minOccurs="0">				<xs:annotation>					<xs:documentation>This can be used to for the source file ID types (CIBC,  Maryland, BofA, etc.)</xs:documentation>				</xs:annotation>			</xs:element>			<xs:element name="CorpBankAccnt" type="BankType" minOccurs="0"/>			<xs:element name="BankStatementDt" type="xs:date" minOccurs="0">				<xs:annotation>					<xs:documentation>Date used to store the file date</xs:documentation>				</xs:annotation>			</xs:element>			<xs:element name="BankStatementTs" type="xs:dateTime" minOccurs="0">				<xs:annotation>					<xs:documentation>Date/Time used to store the file date</xs:documentation>				</xs:annotation>			</xs:element>			<xs:element name="RecordType" type="CodeWithDescription" minOccurs="0" maxOccurs="5">				<xs:annotation>					<xs:documentation>Indicates the type of record </xs:documentation>				</xs:annotation>			</xs:element>			<xs:element name="SeqNbr" type="CodeWithDescription" minOccurs="0"/>			<xs:element name="OriginId" type="CodeWithDescription" minOccurs="0">				<xs:annotation>					<xs:documentation>The orgin ID associated with the bank</xs:documentation>				</xs:annotation>			</xs:element>			<xs:element name="OriginNbr" type="CodeWithDescription" minOccurs="0">				<xs:annotation>					<xs:documentation>The origin number associated with the bank</xs:documentation>				</xs:annotation>			</xs:element>			<xs:element name="BatchNbr" type="CodeWithDescription" minOccurs="0">				<xs:annotation>					<xs:documentation>The batch number associated with the bank statement.</xs:documentation>				</xs:annotation>			</xs:element>			<xs:element name="BankStatementAccountsLine" minOccurs="0" maxOccurs="unbounded">				<xs:complexType>					<xs:sequence>						<xs:element name="GLCompanyId" minOccurs="0">							<xs:annotation>								<xs:documentation> The general ledger company associated with this distribution</xs:documentation>							</xs:annotation>						</xs:element>						<xs:element name="BankAccntLineData" type="BankType" minOccurs="0"/>						<xs:element name="BankPaidDt" type="xs:date" minOccurs="0"/>						<xs:element name="CheckData" type="CheckType" minOccurs="0"/>						<xs:element name="Vendor" type="BankStatementAccountsVendor" minOccurs="0"/>						<xs:element name="Customer" minOccurs="0">							<xs:annotation>								<xs:documentation>Customer number and customerId info. </xs:documentation>							</xs:annotation>							<xs:complexType>								<xs:sequence>									<xs:element name="CustomerNbr">										<xs:annotation>											<xs:documentation>Required. Customer number info. </xs:documentation>										</xs:annotation>										<xs:simpleType>											<xs:restriction base="xs:string">												<xs:maxLength value="20"/>											</xs:restriction>										</xs:simpleType>									</xs:element>									<xs:element name="CustomerId" minOccurs="0">										<xs:annotation>											<xs:documentation>Ac Customer Id Used for Drill access from the AR systemto the BR system.</xs:documentation>										</xs:annotation>										<xs:simpleType>											<xs:restriction base="xs:string">												<xs:maxLength value="10"/>											</xs:restriction>										</xs:simpleType>									</xs:element>									<xs:element name="CustomerFacilityNm" type="xs:string" minOccurs="0"/>									<xs:element name="CustomerContact" type="PersonNameType" minOccurs="0" maxOccurs="2"/>									<xs:element name="CustomerAddress" type="AddressType" minOccurs="0"/>								</xs:sequence>							</xs:complexType>						</xs:element>						<xs:element name="LineRecordType" type="CodeWithDescription" minOccurs="0" maxOccurs="5">							<xs:annotation>								<xs:documentation>Indicates the type of record</xs:documentation>							</xs:annotation>						</xs:element>						<xs:element name="LineSeqNbr" type="CodeWithDescription" minOccurs="0"/>						<xs:element name="LineOriginId" type="CodeWithDescription" minOccurs="0"/>						<xs:element name="LineRecordId" type="CodeWithDescription" minOccurs="0"/>						<xs:element name="LineBatchNbr" type="CodeWithDescription" minOccurs="0"/>						<xs:element name="AccountLineTotals" minOccurs="0">							<xs:complexType>								<xs:sequence>									<xs:element name="TotalVoidedAmt" type="AmountType" minOccurs="0">										<xs:annotation>											<xs:documentation>Accumulated amount for the non voided records</xs:documentation>										</xs:annotation>									</xs:element>									<xs:element name="TotalNonVoidedAmt" type="AmountType" minOccurs="0">										<xs:annotation>											<xs:documentation>Accumulated amount for the voided records</xs:documentation>										</xs:annotation>									</xs:element>									<xs:element name="TotalIssueAmt" type="AmountType" minOccurs="0"/>									<xs:element name="TotalHashAmt" type="AmountType" minOccurs="0"/>									<xs:element name="TotalVoidedCnt" type="CodeWithDescription" minOccurs="0">										<xs:annotation>											<xs:documentation>Accumulated count for the non voided records</xs:documentation>										</xs:annotation>									</xs:element>									<xs:element name="TotalNonVoidedCnt" type="CodeWithDescription" minOccurs="0">										<xs:annotation>											<xs:documentation>Accumulated count for the voided records</xs:documentation>										</xs:annotation>									</xs:element>									<xs:element name="TotalEntryCnt" type="CodeWithDescription" minOccurs="0"/>									<xs:element name="TotalBatchCnt" type="CodeWithDescription" minOccurs="0"/>									<xs:element name="TotalBlockCnt" type="CodeWithDescription" minOccurs="0"/>									<xs:element name="TotalRecordInd" type="CodeWithDescription" minOccurs="0"/>									<xs:element name="LastEffectiveDt" type="xs:date" minOccurs="0"/>								</xs:sequence>							</xs:complexType>						</xs:element>					</xs:sequence>				</xs:complexType>			</xs:element>		</xs:sequence>	</xs:complexType></xs:schema>
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Schema Owner: 	Safeway Inc
+   Date Created:      07 May 2020
+   Author:		Patrick Oliver
+   Description: Contains commonly used Safeway Purchase order schema.
+   Name: /SFWY/Nouns/SwyPurchaseOrder.xsd
+-->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.2 Rosabel Macario 11/05/2020 - Added tag to resolve dateTimeStamp issue-->
+	<!--V1.1 Patrick Oliver 10/20/20: Added complex type VendorSiteData (AlVendorId, VendorSiteId,  VendorSiteCd, VendorSitePurpose)-->
+	<!--V1.0  Patrick Oliver 6/2/20 - Initial Draft-->
+	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:complexType name="BankStatementAccountsType">
+		<xs:annotation>
+			<xs:documentation>Bank Statements type will be used to process data sent to banks for vendor payments and bank confirmations that vendors have been paid</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="CompanyId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CompanyNm" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BankStatmentSource" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This can be used to for the source file ID types (CIBC,  Maryland, BofA, etc.)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CorpBankAccnt" type="BankType" minOccurs="0"/>
+			<xs:element name="BankStatementDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date used to store the file date</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BankStatementTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date/Time used to store the file date</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RecordType" type="CodeWithDescription" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>Indicates the type of record </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SeqNbr" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="OriginId" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The orgin ID associated with the bank</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OriginNbr" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The origin number associated with the bank</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BatchNbr" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The batch number associated with the bank statement.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BankStatementAccountsLine" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="GLCompanyId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation> The general ledger company associated with this distribution</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="BankAccntLineData" type="BankType" minOccurs="0"/>
+						<xs:element name="BankPaidDt" type="xs:date" minOccurs="0"/>
+						<xs:element name="CheckData" type="CheckType" minOccurs="0"/>
+						<xs:element name="Vendor" type="BankStatementAccountsVendor" minOccurs="0"/>
+						<xs:element name="Customer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Customer number and customerId info. </xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="CustomerNbr">
+										<xs:annotation>
+											<xs:documentation>Required. Customer number info. </xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="20"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="CustomerId" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Ac Customer Id Used for Drill access from the AR system
+to the BR system.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="CustomerFacilityNm" type="xs:string" minOccurs="0"/>
+									<xs:element name="CustomerContact" type="PersonNameType" minOccurs="0" maxOccurs="2"/>
+									<xs:element name="CustomerAddress" type="AddressType" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="LineRecordType" type="CodeWithDescription" minOccurs="0" maxOccurs="5">
+							<xs:annotation>
+								<xs:documentation>Indicates the type of record</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="LineSeqNbr" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="LineOriginId" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="LineRecordId" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="LineBatchNbr" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="AccountLineTotals" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="TotalVoidedAmt" type="AmountType" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Accumulated amount for the non voided records</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="TotalNonVoidedAmt" type="AmountType" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Accumulated amount for the voided records</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="TotalIssueAmt" type="AmountType" minOccurs="0"/>
+									<xs:element name="TotalHashAmt" type="AmountType" minOccurs="0"/>
+									<xs:element name="TotalVoidedCnt" type="CodeWithDescription" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Accumulated count for the non voided records</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="TotalNonVoidedCnt" type="CodeWithDescription" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Accumulated count for the voided records</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="TotalEntryCnt" type="CodeWithDescription" minOccurs="0"/>
+									<xs:element name="TotalBatchCnt" type="CodeWithDescription" minOccurs="0"/>
+									<xs:element name="TotalBlockCnt" type="CodeWithDescription" minOccurs="0"/>
+									<xs:element name="TotalRecordInd" type="CodeWithDescription" minOccurs="0"/>
+									<xs:element name="LastEffectiveDt" type="xs:date" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="VendorSiteData" type="BankStatementAccountsVendorSite" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Used to support information about supplier site level attributes.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="BankStatementAccountsVendor">
+		<xs:annotation>
+			<xs:documentation>Contains vendor information related to Bank Statements</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="VendorId" minOccurs="0"/>
+			<xs:element name="VendorSubAccountId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="VendorGrp" minOccurs="0"/>
+			<xs:element ref="VendorClass" minOccurs="0"/>
+			<xs:element ref="VendorClassDsc" minOccurs="0"/>
+			<xs:element name="VendorNm" type="xs:string" minOccurs="0"/>
+			<xs:element name="VendorContact" minOccurs="0" maxOccurs="2">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ContactNm" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PhoneNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="EmailAddresstxt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Address" type="AddressType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="BankStatementAccountsVendorSite">
+		<xs:annotation>
+			<xs:documentation>Used to support information about supplier site level attributes.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="AltVendorId" minOccurs="0" maxOccurs="5">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:integer">
+							<xs:attribute name="typeCode">
+								<xs:annotation>
+									<xs:documentation>This can be used to distinguish if this is a system generated vendorId value or xref vendorId value</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="VendorSite" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="VendorSiteId" type="xs:integer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Supplier site unique identifier. Used for processing controls for transactions (processing rules, payment terms, etc.) </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="VendorSiteCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Site code name</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="VendorSitePurpose" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Different indicators for the site. Note that a site can have multiple purposes </xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="PrimarySiteInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicates if this is primary site (Y or blank)</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="PrimaryPaySiteInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Primary Pay site flag in Supplier site (Y or blank)</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="SourcingSiteInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Sourcing site flag (Y or blank)</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="PurchasingSiteInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Purchasing site flag (Y or blank)</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ProcurementSiteInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Procurement site flag (Y or blank)</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

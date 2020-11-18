@@ -7,7 +7,9 @@
    Name: /SFWY/Nouns/SwyPurchaseOrder.xsd
 -->
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.3 Patrick Oliver: Added complex types EffectiveDateTimeType and AuditDataType-->
+	<!--V1.2 Rosabel Macario 11/05/2020 - Added tag to resolve dateTimeStamp issue-->
 	<!--V1.1 Patrick Oliver - Added AccountTypeCd, InterCompanyCd , AltAccountId,  GLCombinationId to ChartOfAccount segment-->
 	<!--V1.0  Patrick Oliver 08/28/20: Initial Version-->
 	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
@@ -208,8 +210,174 @@
 								<xs:documentation>Concatination  of Chart of Accounts segment Fields</xs:documentation>
 							</xs:annotation>
 						</xs:element>
+						<xs:element name="EffectiveTimePeriod" type="EffetiveDateTimeType" minOccurs="0"/>
+						<xs:element name="AuditData" type="TargetAuditDataType" minOccurs="0"/>
 					</xs:sequence>
 				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EffetiveDateTimeType">
+		<xs:annotation>
+			<xs:documentation>Common type for Customer effective date and time.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0">
+			<xs:element ref="FirstEffectiveDt" minOccurs="0"/>
+			<xs:element ref="FirstEffectiveTm" minOccurs="0"/>
+			<xs:element ref="LastEffectiveDt" minOccurs="0"/>
+			<xs:element ref="LastEffectiveTm" minOccurs="0"/>
+			<xs:element name="DurationNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Number that represents the duration.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DurationUnitDsc" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Duration unit. D for Days, W for weeks.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InclusiveInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates whether or not the dates and times are inclusive or not.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute ref="typeCode"/>
+	</xs:complexType>
+	<xs:complexType name="TargetAuditDataType">
+		<xs:annotation>
+			<xs:documentation>Represents common/generic audit trail data. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="SourceNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Description of the source or system of record.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CreateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Time stamp of when message was created at source.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LastUpdateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time stamp of when message was last modified at source.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CreateClientId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Id of the client that created the message at source.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CreateUserId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Id of the client that created the message at source.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LastUpdateClientId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Id of the client that last modified the message at source.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LastUpdateUserId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>User Id of who last modified the message at source.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CreateHostNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the host where the message was initially created.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LastUpdateHostNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the host where the message was last modified.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SequenceNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Sequence number of the last event related to the message.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AggregateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and Time stamp of the aggregate when it was updated.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AggregateRevisionNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Number of the aggregate revision. Used for conflict resolution.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PayloadVersionNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Payload version number.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>

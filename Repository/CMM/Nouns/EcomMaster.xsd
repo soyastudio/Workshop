@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
-<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<!--V1.0  02142020  Sai Nuthakki   Initial Version-->
 	<!--V1.1  06092020  Sai Nuthakki   Added ShoppingCartType-->
 	<!--V1.2  08032020 Sai Nuthakki Added Business EventType-->
+	<!--V1.3 11052020  Rosabel Macario - Added tag to resolve dateTimeStamp issue-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:complexType name="ShoppingCartType">
 		<xs:annotation>
@@ -216,6 +217,13 @@ ex: delivery truck nbr</xs:documentation>
 							<xs:sequence>
 								<xs:element name="EventStartTs" type="xs:dateTime" minOccurs="0"/>
 								<xs:element name="EventEndTs" type="xs:dateTime" minOccurs="0"/>
+								<xs:element name="TimeZoneCd" minOccurs="0">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="50"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
 							</xs:sequence>
 						</xs:extension>
 					</xs:complexContent>

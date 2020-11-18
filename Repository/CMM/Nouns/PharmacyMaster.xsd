@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
-<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:complexType name="PatientType">
 		<xs:annotation>
@@ -725,6 +725,7 @@
 		<xs:sequence>
 			<xs:element ref="NationalDrugCd" minOccurs="0"/>
 			<xs:element ref="NDCPackSizeCd" minOccurs="0"/>
+			<xs:element name="NDCPackSizeDsc" type="xs:string" minOccurs="0"/>
 			<xs:element name="NDCBarCd" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>10-digit NDC/DIN matching the barcode for this drug.</xs:documentation>
@@ -749,6 +750,16 @@
 			<xs:element name="RxInternalDrugCd" nillable="true" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>User defined code/name for a drug within a pharmacy.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ProcurementItemNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Drug item number used in procurement for drug reorders.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
@@ -814,6 +825,23 @@
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
 									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DrugChemicalNm" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Chemical name of the drug.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="BrandNm" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
@@ -1578,7 +1606,17 @@ Dispensing Sites (NPDS) in the United States.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element name="HostSystemType" type="CodeWithDescription" minOccurs="0"/>
-			<xs:element name="HostDrugMaster" type="DrugType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="HostDrugMaster" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="DrugType">
+							<xs:sequence>
+								<xs:element name="HostDrugAuditData" type="RecordAuditData" minOccurs="0"/>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="CompoundDrugType">

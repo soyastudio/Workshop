@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" xmlns:ns1="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" xmlns:ns1="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<xs:include schemaLocation="../Global/AbsGlobalComponents.xsd"/>
 	<!--V 1.1  Alex Nunes  11/20/2018 Change DivisionType AccountingUnitNm MaxLength to 15 and LevelDsc to 50-->
 	<!--V 1.2  Alex Nunes  5/24/2011 Change CompanyType PayGrp from Length 4 to Maxlength 4. Added Paygrp as global element.-->
 	<!--V 1.2 Alex Nunes 10/16/2019 Change FicilitySubTypeCd to String maxlength 1.-->
 	<!--V 1.3 Alex Nunes 8/20/2020 Change AccountingUnitTxt and LevelDsc for Facility and Dept data from fixed length to maxlength  .-->
 	<!--V 1.4 Alex Nunes 8/25/2020 Change LevelDsc and DepartmentNm for Facility and Section data from fixed length to maxlength  .-->
+	<!--V1.5 Patrick Oliver 11/13/20: Added EffectiveDateTime Type and AuditDataType-->
 	<xs:group name="AccountingOrganization">
 		<xs:annotation>
 			<xs:documentation>Component to represent the accounting or financial view of organization entities - Company, GLEntity etc. - grouped together.</xs:documentation>
@@ -34,6 +35,128 @@ Synonyms are Business Unit, Fund, G/L Company, Joint Venture, Non-Profit Associa
 			</xs:element>
 		</xs:sequence>
 	</xs:group>
+	<xs:complexType name="AuditDataType">
+		<xs:annotation>
+			<xs:documentation>This type represents auditing data related to the message from source.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0">
+			<xs:element name="SourceNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Description of the source or system of record.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CreateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Time stamp of when message was created at source.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LastUpdateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time stamp of when message was last modified at source.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CreateClientId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Id of the client that created the message at source.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CreateUserId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Id of the client that created the message at source.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LastUpdateClientId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Id of the client that last modified the message at source.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LastUpdateUserId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>User Id of who last modified the message at source.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CreateHostNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the host where the message was initially created.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LastUpdateHostNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the host where the message was last modified.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SequenceNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Sequence number of the last event related to the message.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AggregateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and Time stamp of the aggregate when it was updated.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AggregateRevisionNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Number of the aggregate revision. Used for conflict resolution.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PayloadVersionNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Payload version number.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
 	<xs:element name="BannerCd">
 		<xs:annotation>
 			<xs:documentation>Identifier for a banner</xs:documentation>
@@ -66,17 +189,27 @@ Synonyms are Business Unit, Fund, G/L Company, Joint Venture, Non-Profit Associa
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="ParentBannerCd" minOccurs="0">
+			<xs:element name="ParentBannerCd" type="xs:string" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>some of the banners are grouped under a parent banner like Safeway or Albertsons.</xs:documentation>
+					<xs:documentation>Tihis can contain banners by division as some of the banners are grouped under a parent banner like Safeway or Albertsons.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ParentBannerNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Parent banner name</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="30"/>
+						<xs:maxLength value="50"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="DigitalAddress" type="ns1:DigitalAddressType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="PremiumConventionalCd" type="ns1:CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Code to indicate if banner is a   Conventional ('C') or Premium ('P') banner</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DigitalAddress" type="ns1:DigitalAddressType1.1" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="CompanyType">
@@ -522,6 +655,48 @@ Examples are - Parent, Lawson.</xs:documentation>
 				<xs:attribute ref="preferredInd"/>
 			</xs:extension>
 		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="EffectiveDateTimeType">
+		<xs:annotation>
+			<xs:documentation>Common type for COA effective date and time.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0">
+			<xs:element ref="FirstEffectiveDt" minOccurs="0"/>
+			<xs:element ref="FirstEffectiveTm" minOccurs="0"/>
+			<xs:element ref="LastEffectiveDt" minOccurs="0"/>
+			<xs:element ref="LastEffectiveTm" minOccurs="0"/>
+			<xs:element name="DurationNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Number that represents the duration.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DurationUnitDsc" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Duration unit. D for Days, W for weeks.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InclusiveInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates whether or not the dates and times are inclusive or not.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute ref="typeCode"/>
 	</xs:complexType>
 	<xs:complexType name="FacilityDepartmentSectionType">
 		<xs:annotation>
@@ -4177,4 +4352,362 @@ An employee can work from multiple facilities within a given time period. For ex
 			<xs:element ref="LocationID" minOccurs="0"/>
 		</xs:sequence>
 	</xs:group>
+	<xs:complexType name="VendorSiteType">
+		<xs:annotation>
+			<xs:documentation>Used to support information about supplier site level attributes.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="AltVendorId" minOccurs="0" maxOccurs="5">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:integer">
+							<xs:attribute name="typeCode">
+								<xs:annotation>
+									<xs:documentation>This can be used to distinguish if this is a system generated vendorId value or xref vendorId value</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="IncomeCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A user-defined code representing a type of income withholding. Used to track reportable vendor income for reporting or withholding.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorSite" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="VendorSiteId" type="xs:integer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Supplier site unique identifier. Used for processing controls for transactions (processing rules, payment terms, etc.) </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="VendorSiteCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Site code name</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="VendorSitePurpose" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Different indicators for the site. Note that a site can have multiple purposes </xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="PaySiteInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicates if this is primary site (Y or blank)</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="PrimaryPaySiteInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Primary Pay site flag in Supplier site (Y or blank)</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="SourcingSiteInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Sourcing site flag (Y or blank)</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="PurchasingSiteInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Purchasing site flag (Y or blank)</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ProcurementCardSiteInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Procurement site flag (Y or blank)</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="VendorSiteContact" type="VendorSiteContactType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Vendor Site address data as well as contact information. Note that Vendor site will have only one address but can have mulitple types of address codes and can have multiple contacts per address. </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="VendorSitePaymentTerms" type="PaymentTermType" minOccurs="0"/>
+						<xs:element name="ProcurementBusinessUnitNm" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Business units can be things like 'USA', 'USA Expense', etc. </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="250"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="VendorSiteContactType">
+		<xs:annotation>
+			<xs:documentation>This associative object is required to allow for multiple addresses and contacts for Vendor sites to be held. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="AddressTypeCd" nillable="false" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>Address Purpose for site (Ordering, RemitTo, Bidding)  </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="VendorSiteAddressCodeType">
+							<xs:sequence>
+								<xs:element name="RemitToInd" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Indicates whether purpose Remit To is allowed for this address.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="1"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="OrderingInd" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Indicates whether purpose Ordering is allowed for this address.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="1"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="QuoteBiddingInd" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Indicates whether purpose RFQ or Bidding is allowed for this address.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="1"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="SiteAddress" minOccurs="0">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="AddressType">
+							<xs:sequence>
+								<xs:element name="SiteContact" minOccurs="0" maxOccurs="unbounded">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="ContactTypeCd" type="VendorSiteContactCodeType" minOccurs="0"/>
+											<xs:element name="SiteContactId" type="VendorSiteContactAddrsType" minOccurs="0"/>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="VendorSiteAddressCodeType">
+		<xs:annotation>
+			<xs:documentation>Type necessary to differentiate addresses. Whenever an address is linked to a contact, it is necessary to specify an Address Type. This allows for multiple addresses to be held. This reference data will be initially populated in PDS.</xs:documentation>
+		</xs:annotation>
+	</xs:complexType>
+	<xs:complexType name="VendorSiteContactCodeType">
+		<xs:annotation>
+			<xs:documentation>Type necesserary to differentiate contacts. Whenever an address is linked to a contact, it is necessary to specify a Contact Type. This allows for multiple addresses to be held. This reference data will be initially populated in PDS.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ContactTypeCd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Alphanumeric code for different types of Contacts.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ContactTypeDsc" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Description of Contact Type.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="55"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="VendorSiteContactAddrsType">
+		<xs:annotation>
+			<xs:documentation>Contact information that pertains to a Vendor. Whenever an address is linked to a contact, it is necessary to specify a Contact. This allows for multiple addresses to be held. This reference data will be initially populated in PDS.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ContactId" type="xs:ID" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contact Identifier. This is an uniquely identifier for Contacts related to the company.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EmailAddrs" nillable="true" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Alphanumeric text of Email Address. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="125"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="WebSite" nillable="true" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Alphanumeric text of Web Site, in case Contact has one. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Salutation" nillable="true" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Alphanumeric value of Salutation such as Mr, Ms, Mrs, Master, etc...</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ContactNm" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the Contact. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="JobTitle" nillable="true" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The title of the job the Contact currently has.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Department" nillable="true" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Department in which the Contact works or represents.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="32"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="WorkPhoneNbr" nillable="true" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Land line business phone number.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CellMobilePhoneNbr" nillable="true" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Cellular/Mobile phone number.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FaxNbr" nillable="true" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Fax Number of the Contact.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OtherContactDetails" type="xs:string" nillable="true" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Other details about the Contact.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LabelResponseCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>User defined field for label assignment to contacts.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ContactLevelNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>System generated assignment that can be  over-ridden at input.  To distinguish and prioritize contacts.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CurrentAddressInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if this is the current vendor address.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
 </xs:schema>

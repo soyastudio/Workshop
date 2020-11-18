@@ -6,8 +6,17 @@
    Description: Contains commonly used Safeway Purchase order schema.
    Name: /SFWY/Nouns/SwyPurchaseOrder.xsd
 -->
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by  (Albertsons) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.3 Rosabel Macario 11/04/2020 - Added tag to resolve dateTimeStamp issue-->
+	<!--V1.2 Patrick Oliver 10/30/20: In detail changed TransactionAmt to DebitAmt
+In detail added CreditAmt
+Moved TotalDebitAmt from detail to header
+Moved TotalCreditAmt to header
+Moved TotalPastDueAmt to header
+Moved TotalOpenItemsAmt to header
+Added TotalPaymentAmt to header
+Added PaymentTermCd to header-->
 	<!--V1.1 Patrick Oliver 09/08/2020: Added GLCombinationId, Ledger, Entity, LineOfBusiness, Site, CostCenter, ProductTypeGroup, CustomerGroup, CashflowMovement, InterCompanyCd-->
 	<!--V1.0  Patrick Oliver 09/10/2020: Initial Draft-->
 	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
@@ -33,10 +42,15 @@
 					<xs:documentation>This can be used to distincuish the different invoice statement types (ex: Accounts Payable) </xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="StatementCycleInd" type="CodeWithDescription" minOccurs="0">
+			<xs:element name="StatementCycleInd" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Used to group customers w/ like statement cycles for statement processing.</xs:documentation>
 				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="CodeWithDescription"/>
+					</xs:complexContent>
+				</xs:complexType>
 			</xs:element>
 			<xs:element name="StatementDeliveryMethod" type="CodeWithDescription" minOccurs="0">
 				<xs:annotation>
@@ -122,7 +136,7 @@ blank or
 				</xs:complexType>
 			</xs:element>
 			<xs:element name="CustomerAddress" type="AddressType" minOccurs="0" maxOccurs="2"/>
-			<xs:element name="CustomerMajorClassId" minOccurs="0">
+			<xs:element name="CustomerMajorClassNm" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>The major class assigned to this customer.         </xs:documentation>
 				</xs:annotation>
@@ -132,7 +146,7 @@ blank or
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="CustomerMinorClassId" minOccurs="0">
+			<xs:element name="CustomerMinorClassNm" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>The minor class assigned to this customer.         </xs:documentation>
 				</xs:annotation>
@@ -178,6 +192,66 @@ blank or
 						<xs:totalDigits value="6"/>
 					</xs:restriction>
 				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TotalDebitAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Total Debit amount</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="18"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TotalCreditAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Total Credit amount</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="18"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TotalPastDueAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Total Past Due due in last statement</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="18"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TotalOpenItemsAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Total Open Items which is total past due plus Total Current Due</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="18"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TotalPaymentAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Total payment amount</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="18"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PaymentTermCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates the Cd type of payment terms.</xs:documentation>
+				</xs:annotation>
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
@@ -251,28 +325,6 @@ blank or
 last time statement was generated for a customer</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="TransactionAmt" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Transaction Amount</xs:documentation>
-				</xs:annotation>
-				<xs:simpleType>
-					<xs:restriction base="xs:decimal">
-						<xs:totalDigits value="18"/>
-						<xs:fractionDigits value="2"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
-			<xs:element name="OpenAmt" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Open Amount</xs:documentation>
-				</xs:annotation>
-				<xs:simpleType>
-					<xs:restriction base="xs:decimal">
-						<xs:totalDigits value="18"/>
-						<xs:fractionDigits value="2"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
 			<xs:element name="TransactionUserTxt" minOccurs="0" maxOccurs="4">
 				<xs:annotation>
 					<xs:documentation>Transaction User fields. These character fields are used in  record selection and record sorting.</xs:documentation>
@@ -285,9 +337,9 @@ last time statement was generated for a customer</xs:documentation>
 					</xs:simpleContent>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="TotalDebitAmt" minOccurs="0">
+			<xs:element name="DebitAmt" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Total Debits amount</xs:documentation>
+					<xs:documentation>Transaction debit amount</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
@@ -296,9 +348,9 @@ last time statement was generated for a customer</xs:documentation>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="TotalCreditAmt" minOccurs="0">
+			<xs:element name="CreditAmt" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Total Credits amount</xs:documentation>
+					<xs:documentation>Transaction credit amount</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
@@ -307,9 +359,9 @@ last time statement was generated for a customer</xs:documentation>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="TotalPastDueAmt" minOccurs="0">
+			<xs:element name="PastDueAmt" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Total Past Due due in last statement</xs:documentation>
+					<xs:documentation>Past due amount</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
@@ -318,9 +370,9 @@ last time statement was generated for a customer</xs:documentation>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="TotalOpenItemsAmt" minOccurs="0">
+			<xs:element name="OpenAmt" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Total Open Items which is total past due plus Total Current Due</xs:documentation>
+					<xs:documentation>Open Amount</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">

@@ -6,8 +6,11 @@
    Description: Albertsons Shipment Business Object
    Name: /SFWY/Nouns/SwyShipment.xsd
 -->
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
-<xs:schema xmlns:oa="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<!-- edited with XMLSpy v2020 rel. 2 sp1 (x64) (http://www.altova.com) by  (Albertsons) -->
+<xs:schema xmlns:oa="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" 
+vc:minVersion="1.1"
+elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.5 Alex Nunes 11/3/2020 added Distribution Center "abbreviated" name.-->
 	<!--V1.4 Alex Nunes 8/18/2020 added OrderDetailId at the ShipmentDetail level.-->
 	<!--V1.3 Alex Nunes 8/14/2020 added Corp / Div / facility in the header for wholesale rollup stores. Removed DeailLineNbr and OrderProcessingDt elements.-->
 	<!--V1.2 Sai Nuthakki 8/7/2020 added line nbr and pallet tracking nbr in shipment detail.-->
@@ -153,6 +156,17 @@ specific shipment.</xs:documentation>
 						<xs:element ref="CorporationId" minOccurs="0"/>
 						<xs:element ref="DivisionId" minOccurs="0"/>
 						<xs:element ref="DistributionCenterId" minOccurs="0"/>
+						<xs:element name="DistributionCenterShortNm" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Four-character code and alpha abbreviation of appropriate
+distribution center (warehouse).</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
 						<xs:element ref="WarehouseId" minOccurs="0"/>
 						<xs:element name="ShipFromFacilityId" minOccurs="0">
 							<xs:simpleType>
@@ -215,6 +229,17 @@ specific shipment.</xs:documentation>
 						<xs:element ref="CorporationId" minOccurs="0"/>
 						<xs:element ref="DivisionId" minOccurs="0"/>
 						<xs:element ref="DistributionCenterId" minOccurs="0"/>
+						<xs:element name="DistributionCenterShortNm" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Four-character code and alpha abbreviation of appropriate
+distribution center (warehouse).</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
 						<xs:element ref="WarehouseId" minOccurs="0"/>
 						<xs:element name="ShipToFacilityId" minOccurs="0">
 							<xs:simpleType>

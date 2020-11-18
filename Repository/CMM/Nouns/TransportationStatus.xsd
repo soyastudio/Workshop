@@ -1,1 +1,378 @@
-<?xml version="1.0" encoding="UTF-8"?><!--   Schema Owner: 	Safeway Inc   Date Created:     30 August 2017   Author:		Alex Nunes   Description: Albertsons TransportationStatus Business Object   Name: /SFWY/Nouns/SwyShipment.xsd--><!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) --><xs:schema xmlns:oa="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">	<!--!=============================================================================================-->	<!--!-->	<!--!-->	<!--!      TransportationStatus: -->	<!--!                                     Noun that represents Albertsons transportation carrier shipment status business object.             -->	<!--!-->	<!--!=============================================================================================-->	<!--7/22/2020 - Alex Nunes - Initial version.-->	<!--V1.0 7/30/2020 - Alex Nunes - Changed EmployeeId definition and TrailerOrdinalCnt annotation has been added. -->	<!--V1.1 8/20/2020 - Alex Nunes - Modified to accommodate other business areas (generic). -->	<!--V1.2 8/26/2020 - Alex Nunes - Modified to be compatible with EDI 214 standard. -->	<!--V1.3 8/27/2020 - Alex Nunes - Order data is now under stops. All elements related to Order were removed since they are present in EDM.-->	<!--V1.4 9/15/2020 - Alex Nunes - Added new elements at the header level as per SME: Route group, Comments and planned and dispatched dates..-->	<!--V1.5 9/24/2020 - Alex Nunes - Added Alternate Facility Id to stop data.-->	<!--V1.6 10/2/2020 - Alex Nunes - Added estimated mileage to stop data. -->	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>	<xs:element name="TransportationStatus" type="TransportationStatusType">		<xs:annotation>			<xs:documentation>root</xs:documentation>		</xs:annotation>	</xs:element>	<xs:complexType name="TransportationStatusType">		<xs:annotation>			<xs:documentation>Albertsons transportation carrier shipment status business object.</xs:documentation>		</xs:annotation>		<xs:sequence>			<xs:element name="TransportationTypeCd">				<xs:annotation>					<xs:documentation>Defines the type of tranportation data. Values: 'SC' Supply Chain, 'EC' eCommerce.</xs:documentation>				</xs:annotation>				<xs:simpleType>					<xs:restriction base="xs:string">						<xs:maxLength value="2"/>					</xs:restriction>				</xs:simpleType>			</xs:element>			<xs:element name="ShipmentOrigin" type="ShipmentOriginType">				<xs:annotation>					<xs:documentation>Header data to identify details of a trip.</xs:documentation>				</xs:annotation>			</xs:element>			<xs:element name="ShipmentStops" type="ShipmentStopsType" maxOccurs="unbounded">				<xs:annotation>					<xs:documentation>Stop data for a particular trip.</xs:documentation>				</xs:annotation>			</xs:element>			<xs:element name="ResourceData" type="TripResourceType" minOccurs="0" maxOccurs="unbounded">				<xs:annotation>					<xs:documentation>The type of resources utilized on for the trip.</xs:documentation>				</xs:annotation>			</xs:element>			<xs:element name="ShipmentStatus" type="ShipmentStatusType" minOccurs="0" maxOccurs="unbounded"/>		</xs:sequence>	</xs:complexType>	<xs:complexType name="ShipmentOriginType">		<xs:annotation>			<xs:documentation>Header information on transportation</xs:documentation>		</xs:annotation>		<xs:sequence>			<xs:element name="OriginLocationData">				<xs:complexType>					<xs:sequence>						<xs:element name="FacilityTypeCd">							<xs:annotation>								<xs:documentation>Defines what type of facility the trip is originating from. Values: 'DC', 'STORE','WH','BH'.</xs:documentation>							</xs:annotation>							<xs:simpleType>								<xs:restriction base="xs:string"/>							</xs:simpleType>						</xs:element>						<xs:element ref="DistributionCenterId" minOccurs="0"/>						<xs:element ref="RetailStoreId" minOccurs="0"/>						<xs:element ref="WarehouseId" minOccurs="0"/>						<xs:element name="SiteId" minOccurs="0">							<xs:annotation>								<xs:documentation>Site identification. This is an application specific. In case of transportation is normmally mapped to Distribution Center Id.</xs:documentation>							</xs:annotation>							<xs:simpleType>								<xs:restriction base="xs:string">									<xs:maxLength value="10"/>								</xs:restriction>							</xs:simpleType>						</xs:element>						<xs:element ref="Address" minOccurs="0"/>						<xs:element name="AltFacilityId" minOccurs="0">							<xs:annotation>								<xs:documentation>Alternate Facility identifier.</xs:documentation>							</xs:annotation>							<xs:simpleType>								<xs:restriction base="xs:string">									<xs:maxLength value="30"/>								</xs:restriction>							</xs:simpleType>						</xs:element>					</xs:sequence>				</xs:complexType>			</xs:element>			<xs:element name="CreateTs" type="DateTimeType">				<xs:annotation>					<xs:documentation>Time stamp of when the trip was created or when the trip was dispatched. Time zone will need to be added (enriched) derived from the SiteId (not the stop location).</xs:documentation>				</xs:annotation>			</xs:element>			<xs:element name="TripId" minOccurs="0">				<xs:annotation>					<xs:documentation>Unique identification for the transportation trip.</xs:documentation>				</xs:annotation>				<xs:simpleType>					<xs:restriction base="xs:string">						<xs:maxLength value="10"/>					</xs:restriction>				</xs:simpleType>			</xs:element>			<xs:element name="EventStatus" type="CodeWithDescription" minOccurs="0">				<xs:annotation>					<xs:documentation>This can be trip dispatch, completion, or cancellation.</xs:documentation>				</xs:annotation>			</xs:element>			<xs:element name="RouteId" minOccurs="0">				<xs:annotation>					<xs:documentation>Unique identifier generated by transportaion system for the shipment delivery route of a particular site.</xs:documentation>				</xs:annotation>				<xs:simpleType>					<xs:restriction base="xs:string">						<xs:maxLength value="20"/>					</xs:restriction>				</xs:simpleType>			</xs:element>			<xs:element name="Carrier" type="CarrierEquipment" minOccurs="0">				<xs:annotation>					<xs:documentation>Idenitfies the party that serves as the carrier of the goods or services for the shipment.</xs:documentation>				</xs:annotation>			</xs:element>			<xs:element name="OrgMasterNameType" type="OrgMasterNameType" minOccurs="0" maxOccurs="unbounded"/>			<xs:element name="PlannedDispatchTs" type="DateTimeType" minOccurs="0">				<xs:annotation>					<xs:documentation>Planned date and time of dispatch.</xs:documentation>				</xs:annotation>			</xs:element>			<xs:element name="DispatchTs" type="DateTimeType" minOccurs="0">				<xs:annotation>					<xs:documentation>Actual date and time of dispatch.</xs:documentation>				</xs:annotation>			</xs:element>			<xs:element name="DispatchCommentTxt" minOccurs="0">				<xs:annotation>					<xs:documentation>Free formatted comments on the trip dispatch.</xs:documentation>				</xs:annotation>				<xs:simpleType>					<xs:restriction base="xs:string">						<xs:maxLength value="100"/>					</xs:restriction>				</xs:simpleType>			</xs:element>			<xs:element name="RouteGroup" type="CodeWithDescription" minOccurs="0">				<xs:annotation>					<xs:documentation>Group of goods to be delievered. Ex: FRZ for Frozen, FMT for Frozen Meat.</xs:documentation>				</xs:annotation>			</xs:element>		</xs:sequence>	</xs:complexType>	<xs:complexType name="ShipmentOrderType">		<xs:annotation>			<xs:documentation>Trip detail information on orders. It can be Store orders, eCommerce orders.</xs:documentation>		</xs:annotation>		<xs:sequence>			<xs:element name="OrderNbr" type="xs:integer" minOccurs="0">				<xs:annotation>					<xs:documentation>An Id created by the authoring system that uniquely represents a store order document.</xs:documentation>				</xs:annotation>			</xs:element>			<xs:element name="OrderTrailerOrdinalNbr" minOccurs="0">				<xs:annotation>					<xs:documentation>Tells us which trailer the order is in.</xs:documentation>				</xs:annotation>				<xs:simpleType>					<xs:restriction base="xs:int">						<xs:totalDigits value="2"/>					</xs:restriction>				</xs:simpleType>			</xs:element>		</xs:sequence>	</xs:complexType>	<xs:complexType name="ShipmentStopsType">		<xs:annotation>			<xs:documentation>Trip detail information on trip transportation stops.</xs:documentation>		</xs:annotation>		<xs:sequence>			<xs:element name="RouteStopId">				<xs:annotation>					<xs:documentation>Order of stop based on the route's store stops.</xs:documentation>				</xs:annotation>				<xs:simpleType>					<xs:restriction base="xs:integer"/>				</xs:simpleType>			</xs:element>			<xs:element name="StopType" type="CodeWithDescription">				<xs:annotation>					<xs:documentation>The type of stop. Ex: 'DC Return', 'Store Delivery'. </xs:documentation>				</xs:annotation>			</xs:element>			<xs:element name="StopLocation">				<xs:complexType>					<xs:sequence>						<xs:element name="FacilityTypeCd">							<xs:annotation>								<xs:documentation>Defines what type of facility the trip is going to. Values: 'DC', 'STORE','WH','BH'. 'RC'.</xs:documentation>							</xs:annotation>							<xs:simpleType>								<xs:restriction base="xs:string"/>							</xs:simpleType>						</xs:element>						<xs:element ref="RetailStoreId" minOccurs="0"/>						<xs:element ref="DistributionCenterId" minOccurs="0"/>						<xs:element ref="LocationID" minOccurs="0"/>						<xs:element ref="Address" minOccurs="0"/>						<xs:element name="AltFacilityId" minOccurs="0">							<xs:annotation>								<xs:documentation>Alternate Facility identifier.</xs:documentation>							</xs:annotation>							<xs:simpleType>								<xs:restriction base="xs:string">									<xs:maxLength value="30"/>								</xs:restriction>							</xs:simpleType>						</xs:element>					</xs:sequence>				</xs:complexType>			</xs:element>			<xs:element name="ShipmentDetail" type="ShipmentOrderType" minOccurs="0" maxOccurs="unbounded">				<xs:annotation>					<xs:documentation>Order details of the trip. Possible values can be Store orders, eComm orders.</xs:documentation>				</xs:annotation>			</xs:element>			<xs:element name="CustomerId" type="IDType" minOccurs="0">				<xs:annotation>					<xs:documentation>Retail Customer unique identifier.</xs:documentation>				</xs:annotation>			</xs:element>			<xs:element name="EstimatedArriveTs" type="DateTimeType" minOccurs="0">				<xs:annotation>					<xs:documentation>Planned date and time of arrival. Add the time zone based on the SiteId's TZ.</xs:documentation>				</xs:annotation>			</xs:element>			<xs:element name="EstimatedDepartureTs" type="DateTimeType" minOccurs="0">				<xs:annotation>					<xs:documentation>Planned date and time of departure.</xs:documentation>				</xs:annotation>			</xs:element>			<xs:element name="ActualArriveTs" type="DateTimeType" minOccurs="0">				<xs:annotation>					<xs:documentation>Actual date and time of arrival.</xs:documentation>				</xs:annotation>			</xs:element>			<xs:element name="ActualDepartureTs" type="DateTimeType" minOccurs="0">				<xs:annotation>					<xs:documentation>Actual date and time of departure.</xs:documentation>				</xs:annotation>			</xs:element>			<xs:element name="EstimatedMileageQty" minOccurs="0">				<xs:annotation>					<xs:documentation>Total mileage that is the expected distance travelled to get to a stop at the time of routing. There are ocassions where this could be a)There is a new site that was not included with the last mileage calculation batch. b) The order delivery router accepted the estimate warning without manually adding some distances or forcing that site to calculate distance before completing the route.</xs:documentation>				</xs:annotation>				<xs:simpleType>					<xs:restriction base="xs:decimal">						<xs:totalDigits value="18"/>						<xs:fractionDigits value="8"/>					</xs:restriction>				</xs:simpleType>			</xs:element>			<xs:element name="EventData" type="TripEventType" minOccurs="0" maxOccurs="unbounded">				<xs:annotation>					<xs:documentation>Events related to a trip such as dock setup.</xs:documentation>				</xs:annotation>			</xs:element>		</xs:sequence>	</xs:complexType>	<xs:complexType name="ShipmentStatusType">		<xs:annotation>			<xs:documentation>Trip detail information on trip transportation stops.</xs:documentation>		</xs:annotation>		<xs:sequence minOccurs="0">			<xs:element name="StatusTs" type="DateTimeType" minOccurs="0">				<xs:annotation>					<xs:documentation>Timestamp of when the status was created.</xs:documentation>				</xs:annotation>			</xs:element>			<xs:element name="EventStatus" type="CodeWithDescription" minOccurs="0">				<xs:annotation>					<xs:documentation>This can be trip dispatch, completion, or cancellation.</xs:documentation>				</xs:annotation>			</xs:element>		</xs:sequence>	</xs:complexType>	<xs:complexType name="TripResourceType">		<xs:annotation>			<xs:documentation>Trip detail information on Resources.</xs:documentation>		</xs:annotation>		<xs:sequence>			<xs:element name="ResourceType" type="CodeWithDescription" minOccurs="0">				<xs:annotation>					<xs:documentation>Type of resource. Ex: Driver, Trailer, Tractor.</xs:documentation>				</xs:annotation>			</xs:element>			<xs:element name="ResourceSubType" type="CodeWithDescription" minOccurs="0">				<xs:annotation>					<xs:documentation>SubType of resource.</xs:documentation>				</xs:annotation>			</xs:element>			<xs:element name="TrailerOrdinalNbr" minOccurs="0">				<xs:annotation>					<xs:documentation>Trailer Ordinal is the sequence number of this trailer attached to the tractor (1 is over the king-pin, 2 or 3 will be towed pup trailers). </xs:documentation>				</xs:annotation>				<xs:simpleType>					<xs:restriction base="xs:int">						<xs:totalDigits value="2"/>					</xs:restriction>				</xs:simpleType>			</xs:element>			<xs:element name="EmployeeId" minOccurs="0">				<xs:annotation>					<xs:documentation>Unique identifer of employee.</xs:documentation>				</xs:annotation>				<xs:simpleType>					<xs:restriction base="xs:string">						<xs:maxLength value="50"/>					</xs:restriction>				</xs:simpleType>			</xs:element>			<xs:element name="ResourceCd" type="CodeWithDescription" minOccurs="0">				<xs:annotation>					<xs:documentation>Resource code.</xs:documentation>				</xs:annotation>			</xs:element>		</xs:sequence>	</xs:complexType>	<xs:complexType name="TripEventType">		<xs:annotation>			<xs:documentation>Trip detail information on Events.</xs:documentation>		</xs:annotation>		<xs:sequence>			<xs:element name="EventType" type="CodeWithDescription" minOccurs="0">				<xs:annotation>					<xs:documentation>The type of the event. Ex: Dock Setup.</xs:documentation>				</xs:annotation>			</xs:element>			<xs:element name="DurationUnitValue" minOccurs="0">				<xs:simpleType>					<xs:restriction base="xs:decimal">						<xs:totalDigits value="14"/>						<xs:fractionDigits value="4"/>					</xs:restriction>				</xs:simpleType>			</xs:element>			<xs:element name="DurationQty" minOccurs="0">				<xs:simpleType>					<xs:restriction base="xs:decimal">						<xs:totalDigits value="14"/>						<xs:fractionDigits value="4"/>					</xs:restriction>				</xs:simpleType>			</xs:element>		</xs:sequence>	</xs:complexType></xs:schema>
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Schema Owner: 	Safeway Inc
+   Date Created:     30 August 2017
+   Author:		Alex Nunes
+   Description: Albertsons TransportationStatus Business Object
+   Name: /SFWY/Nouns/SwyShipment.xsd
+-->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
+<xs:schema xmlns:oa="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" 
+vc:minVersion="1.1"
+elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--!=============================================================================================-->
+	<!--!-->
+	<!--!-->
+	<!--!      TransportationStatus: -->
+	<!--!                                     Noun that represents Albertsons transportation carrier shipment status business object.             -->
+	<!--!-->
+	<!--!=============================================================================================-->
+	<!--7/22/2020 - Alex Nunes - Initial version.-->
+	<!--V1.0 7/30/2020 - Alex Nunes - Changed EmployeeId definition and TrailerOrdinalCnt annotation has been added. -->
+	<!--V1.1 8/20/2020 - Alex Nunes - Modified to accommodate other business areas (generic). -->
+	<!--V1.2 8/26/2020 - Alex Nunes - Modified to be compatible with EDI 214 standard. -->
+	<!--V1.3 8/27/2020 - Alex Nunes - Order data is now under stops. All elements related to Order were removed since they are present in EDM.-->
+	<!--V1.4 9/15/2020 - Alex Nunes - Added new elements at the header level as per SME: Route group, Comments and planned and dispatched dates..-->
+	<!--V1.5 9/24/2020 - Alex Nunes - Added Alternate Facility Id to stop data.-->
+	<!--V1.6 10/2/2020 - Alex Nunes - Added estimated mileage to stop data. -->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="TransportationStatus" type="TransportationStatusType">
+		<xs:annotation>
+			<xs:documentation>root</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="TransportationStatusType">
+		<xs:annotation>
+			<xs:documentation>Albertsons transportation carrier shipment status business object.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="TransportationTypeCd">
+				<xs:annotation>
+					<xs:documentation>Defines the type of tranportation data. Values: 'SC' Supply Chain, 'EC' eCommerce.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ShipmentOrigin" type="ShipmentOriginType">
+				<xs:annotation>
+					<xs:documentation>Header data to identify details of a trip.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ShipmentStops" type="ShipmentStopsType" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Stop data for a particular trip.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ResourceData" type="TripResourceType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>The type of resources utilized on for the trip.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ShipmentStatus" type="ShipmentStatusType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ShipmentOriginType">
+		<xs:annotation>
+			<xs:documentation>Header information on transportation</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="OriginLocationData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="FacilityTypeCd">
+							<xs:annotation>
+								<xs:documentation>Defines what type of facility the trip is originating from. Values: 'DC', 'STORE','WH','BH'.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string"/>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element ref="DistributionCenterId" minOccurs="0"/>
+						<xs:element ref="RetailStoreId" minOccurs="0"/>
+						<xs:element ref="WarehouseId" minOccurs="0"/>
+						<xs:element name="SiteId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Site identification. This is an application specific. In case of transportation is normmally mapped to Distribution Center Id.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element ref="Address" minOccurs="0"/>
+						<xs:element name="AltFacilityId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Alternate Facility identifier.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CreateTs" type="DateTimeType">
+				<xs:annotation>
+					<xs:documentation>Time stamp of when the trip was created or when the trip was dispatched. Time zone will need to be added (enriched) derived from the SiteId (not the stop location).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TripId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Unique identification for the transportation trip.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EventStatus" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This can be trip dispatch, completion, or cancellation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RouteId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Unique identifier generated by transportaion system for the shipment delivery route of a particular site.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Carrier" type="CarrierEquipment" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Idenitfies the party that serves as the carrier of the goods or services for the shipment.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrgMasterNameType" type="OrgMasterNameType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="PlannedDispatchTs" type="DateTimeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Planned date and time of dispatch.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DispatchTs" type="DateTimeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Actual date and time of dispatch.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DispatchCommentTxt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Free formatted comments on the trip dispatch.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RouteGroup" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Group of goods to be delievered. Ex: FRZ for Frozen, FMT for Frozen Meat.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ShipmentOrderType">
+		<xs:annotation>
+			<xs:documentation>Trip detail information on orders. It can be Store orders, eCommerce orders.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="OrderNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>An Id created by the authoring system that uniquely represents a store order document.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrderTrailerOrdinalNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Tells us which trailer the order is in.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:int">
+						<xs:totalDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ShipmentStopsType">
+		<xs:annotation>
+			<xs:documentation>Trip detail information on trip transportation stops.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="RouteStopId">
+				<xs:annotation>
+					<xs:documentation>Order of stop based on the route's store stops.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="StopType" type="CodeWithDescription">
+				<xs:annotation>
+					<xs:documentation>The type of stop. Ex: 'DC Return', 'Store Delivery'. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StopLocation">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="FacilityTypeCd">
+							<xs:annotation>
+								<xs:documentation>Defines what type of facility the trip is going to. Values: 'DC', 'STORE','WH','BH'. 'RC'.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string"/>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element ref="RetailStoreId" minOccurs="0"/>
+						<xs:element ref="DistributionCenterId" minOccurs="0"/>
+						<xs:element ref="LocationID" minOccurs="0"/>
+						<xs:element ref="Address" minOccurs="0"/>
+						<xs:element name="AltFacilityId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Alternate Facility identifier.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ShipmentDetail" type="ShipmentOrderType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Order details of the trip. Possible values can be Store orders, eComm orders.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CustomerId" type="IDType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Retail Customer unique identifier.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EstimatedArriveTs" type="DateTimeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Planned date and time of arrival. Add the time zone based on the SiteId's TZ.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EstimatedDepartureTs" type="DateTimeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Planned date and time of departure.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ActualArriveTs" type="DateTimeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Actual date and time of arrival.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ActualDepartureTs" type="DateTimeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Actual date and time of departure.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EstimatedMileageQty" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Total mileage that is the expected distance travelled to get to a stop at the time of routing. There are ocassions where this could be a)There is a new site that was not included with the last mileage calculation batch. b) The order delivery router accepted the estimate warning without manually adding some distances or forcing that site to calculate distance before completing the route.
+
+</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="18"/>
+						<xs:fractionDigits value="8"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EventData" type="TripEventType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Events related to a trip such as dock setup.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ShipmentStatusType">
+		<xs:annotation>
+			<xs:documentation>Trip detail information on trip transportation stops.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0">
+			<xs:element name="StatusTs" type="DateTimeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Timestamp of when the status was created.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EventStatus" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This can be trip dispatch, completion, or cancellation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TripResourceType">
+		<xs:annotation>
+			<xs:documentation>Trip detail information on Resources.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ResourceType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Type of resource. Ex: Driver, Trailer, Tractor.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ResourceSubType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>SubType of resource.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TrailerOrdinalNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Trailer Ordinal is the sequence number of this trailer attached to the tractor (1 is over the king-pin, 2 or 3 will be towed pup trailers). </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:int">
+						<xs:totalDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EmployeeId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Unique identifer of employee.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ResourceCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Resource code.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TripEventType">
+		<xs:annotation>
+			<xs:documentation>Trip detail information on Events.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="EventType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The type of the event. Ex: Dock Setup.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DurationUnitValue" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DurationQty" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

@@ -7,7 +7,8 @@
    Name: /SFWY/Nouns/SwyPurchaseOrder.xsd
 -->
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.8 Rosabel Macario 11/04/2020 - Added tag to resolve dateTimeStamp issue-->
 	<!--V1.7 Added AltAccountId to InvoiceEntryDetail-->
 	<!--V1.6 Patrick Oliver 10/05/20: Added WarehouseId. Update AccountingOfficeId to string. Changed CustomerNbr (string 20) to CustomerAccountNbr( string 50)-->
 	<!--V1.5 Patrick Oliver 09/10/20: : InvoiceEntry Header: Changed Status to InvoiceEntryStatus; added InvoiceEntryAllowances, MinBillStartDt, MaxBillStartDt, LeadCorporateItemCd,  LeadItemDescription, RecordAuditData, OverToleranceStatusCd, OverToleranceInd. FlatCd, RecordType. InvoiceDetail: added CorporateItemCd, UPCID, ItemPackDetails. Added new segment InvoiceEntryDetailItem which will be used to roll up item totals for CABS invoice processing and contains attributes CIC, UPC, Whse, & total amounts.-->
@@ -604,6 +605,7 @@ invoice, debit memo or credit memo.</xs:documentation>
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
 						<xs:totalDigits value="6"/>
+						<xs:fractionDigits value="0"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>

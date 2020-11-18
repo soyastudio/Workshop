@@ -13,6 +13,7 @@ import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import soya.framework.tools.aes.AES;
 import soya.framework.tools.workbench.configuration.BusinessObjectSchemaCache;
 import soya.framework.tools.workbench.configuration.RepositoryConfiguration;
 import soya.framework.tools.workbench.kafka.KafkaAdminService;
@@ -152,6 +153,24 @@ public class WorkshopResource {
         JsonObject jsonObject = JsonParser.parseString(data).getAsJsonObject();
         String result = Mustache.compiler().compile(WorkshopRepository.getResourceAsString(template)).execute(JsonUtils.toMap(jsonObject));
 
+        return Response.ok(result).build();
+    }
+
+    @POST
+    @Path("/aes/encrypt")
+    @Consumes({MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response encrypt(@HeaderParam("key") String key, String data) {
+        String result = AES.encrypt(data, key);
+        return Response.ok(result).build();
+    }
+
+    @POST
+    @Path("/aes/decrypt")
+    @Consumes({MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response decrypt(@HeaderParam("key") String key, String data) {
+        String result = AES.decrypt(data, key);
         return Response.ok(result).build();
     }
 

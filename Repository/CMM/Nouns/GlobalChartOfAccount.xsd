@@ -7,7 +7,9 @@
    Name: /SFWY/Nouns/SwyPurchaseOrder.xsd
 -->
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.3 - Patrick Oliver 11/10/20: Added AuditData and EffectiveTimePeriod-->
+	<!--V1.2 Rosabel Macario 11/04/2020 - Added tag to resolve dateTimeStamp issue-->
 	<!--V1.1 Patrick Oliver - Added AccountTypeCd, InterCompanyCd , AltAccountId to ChartOfAccount segment-->
 	<!--V1.0  Patrick Oliver 08/28/20: Initial Version-->
 	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
@@ -208,6 +210,8 @@
 								<xs:documentation>Fusion value will contain  concatenated legacy values</xs:documentation>
 							</xs:annotation>
 						</xs:element>
+						<xs:element name="EffectiveTimePeriod" type="EffectiveDateTimeType" minOccurs="0"/>
+						<xs:element name="AuditData" type="AuditDataType" minOccurs="0" maxOccurs="unbounded"/>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>

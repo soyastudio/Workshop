@@ -7,7 +7,9 @@
    Name: /SFWY/Nouns/SwyPurchaseOrder.xsd
 -->
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.2 - Patrick Oliver- Added EmployeeNm; Change CollectorCd to CollectorNm; Removed Amounts section from BOD; Moved TaxExemptionCd to AccountProfile; removed LineTax-->
+	<!--V1.1 Rosabel Macario 11/05/2020 - Added tag to resolve dateTimeStamp issue-->
 	<!--V1.0  Patrick Oliver 7/13/20 - Initial Draft-->
 	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
@@ -212,7 +214,7 @@ Y = Yes; process bills of exchange</xs:documentation>
 								</xs:sequence>
 							</xs:complexType>
 						</xs:element>
-						<xs:element name="AccountRelationship" minOccurs="0">
+						<xs:element name="AccountRelationship" minOccurs="0" maxOccurs="unbounded">
 							<xs:complexType>
 								<xs:sequence>
 									<xs:element name="RelationshipNbr" type="xs:integer" minOccurs="0">
@@ -418,7 +420,7 @@ Y = Yes; process bills of exchange</xs:documentation>
 								</xs:sequence>
 							</xs:complexType>
 						</xs:element>
-						<xs:element name="AccountProfile" minOccurs="0">
+						<xs:element name="AccountProfile" minOccurs="0" maxOccurs="unbounded">
 							<xs:annotation>
 								<xs:documentation>Represensts the customer account profile</xs:documentation>
 							</xs:annotation>
@@ -521,10 +523,25 @@ Y = Yes; process bills of exchange</xs:documentation>
 											<xs:documentation>tThe credit analyst code assigned to this customer.</xs:documentation>
 										</xs:annotation>
 									</xs:element>
-									<xs:element name="CollectorCd" type="CodeWithDescription" minOccurs="0">
+									<xs:element name="CollectorNm" minOccurs="0">
 										<xs:annotation>
 											<xs:documentation>Collector name</xs:documentation>
 										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="250"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="EmployeeNm" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Employee name</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="250"/>
+											</xs:restriction>
+										</xs:simpleType>
 									</xs:element>
 									<xs:element name="SalesRepresentativeCd" type="CodeWithDescription" minOccurs="0">
 										<xs:annotation>
@@ -567,6 +584,11 @@ Y = Yes; process bills of exchange</xs:documentation>
 												</xs:extension>
 											</xs:complexContent>
 										</xs:complexType>
+									</xs:element>
+									<xs:element name="TaxExemptionCd" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Tax exemption code</xs:documentation>
+										</xs:annotation>
 									</xs:element>
 									<xs:element name="Overrides" minOccurs="0">
 										<xs:annotation>
@@ -700,49 +722,7 @@ Y = Yes; process bills of exchange</xs:documentation>
 								</xs:sequence>
 							</xs:complexType>
 						</xs:element>
-						<xs:element name="AccountAmounts" minOccurs="0">
-							<xs:complexType>
-								<xs:sequence>
-									<xs:element name="CurrentBalanceAmt" type="AmountType" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>This is the current, non Bill of      Exchange balance for this customer,  cumulative for all companies utilizing this customer, in customer group currency.</xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="DraftBalanceAmt" type="AmountType" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>This is the current Bill of Exchange balance for this customer, cumulative                        for all companies utilizing this          customer, in customer group  currency.</xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="MinimumReceiptAmt" type="AmountType" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Minimum receipt amount for automatic receipts.</xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="MinDunningAmt" type="AmountType" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Minimum amount for the customer account or site to send dunning letter.</xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="MinBalanceOverdueAmt" type="AmountType" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Minimum balance required for late charge calculation.</xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="MinStatementAmt" type="AmountType" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Minimum statement amount for the customer account or site to send statements.</xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="LastPymtAmt" type="AmountType" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>The amount of the last payment made by this customer.  </xs:documentation>
-										</xs:annotation>
-									</xs:element>
-								</xs:sequence>
-							</xs:complexType>
-						</xs:element>
 						<xs:element name="AccountBankData" type="AccountingCustomerBankType" minOccurs="0"/>
-						<xs:element name="LineTax" type="TaxType" minOccurs="0" maxOccurs="unbounded"/>
 						<xs:element name="PaymentTerms" type="PaymentTermType" minOccurs="0" maxOccurs="5">
 							<xs:annotation>
 								<xs:documentation>Identifies the payment term for customer</xs:documentation>
@@ -1458,7 +1438,6 @@ companies to use the same set of customers. </xs:documentation>
 Examples are: Party, Party Site, Account, Contact, Role, etc.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
-		<xs:attribute ref="preferredInd"/>
 	</xs:complexType>
 	<xs:complexType name="AccountingCustomerBankType">
 		<xs:annotation>
