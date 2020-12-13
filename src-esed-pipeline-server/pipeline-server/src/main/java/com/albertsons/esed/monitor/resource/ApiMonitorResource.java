@@ -1,6 +1,6 @@
 package com.albertsons.esed.monitor.resource;
 
-import com.albertsons.esed.monitor.service.PipelineService;
+import com.albertsons.esed.monitor.server.PipelineService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

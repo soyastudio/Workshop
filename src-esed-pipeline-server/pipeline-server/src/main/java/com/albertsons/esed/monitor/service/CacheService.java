@@ -1,9 +1,6 @@
 package com.albertsons.esed.monitor.service;
 
-import com.albertsons.esed.monitor.server.Callback;
-import com.albertsons.esed.monitor.server.Pipeline;
-import com.albertsons.esed.monitor.server.PipelineServer;
-import com.albertsons.esed.monitor.server.ServiceEventListener;
+import com.albertsons.esed.monitor.server.*;
 import com.google.common.eventbus.Subscribe;
 import com.google.gson.*;
 import org.slf4j.Logger;
@@ -17,7 +14,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Service
+//@Service
 public class CacheService implements ServiceEventListener<CacheEvent> {
     static Logger logger = LoggerFactory.getLogger(CacheService.class);
 
@@ -44,7 +41,7 @@ public class CacheService implements ServiceEventListener<CacheEvent> {
             @Override
             public void run() {
                 caches.values().forEach(e -> {
-                    if (e.changed) {
+                    if (e.changed && !e.locked) {
                         PipelineServer.getInstance().publish(CacheEvent.syncEvent(e.name));
                     }
                 });
@@ -64,8 +61,10 @@ public class CacheService implements ServiceEventListener<CacheEvent> {
     }
 
     private void processReloadEvent(CacheEvent.ReloadEvent event) {
-        logger.info("processing reload for cache {}...", event.getName());
+        logger.info("Reloading cache {}...", event.getName());
+
         DefaultCache cache = caches.get(event.getName());
+        cache.locked = true;
 
         DataAccessEvent.SelectEvent selectEvent = DataAccessEvent.selectEvent(event, cache.selectQuery);
         PipelineServer.getInstance().publish(selectEvent, new Callback<DataAccessEvent.SelectEvent>() {
@@ -83,7 +82,6 @@ public class CacheService implements ServiceEventListener<CacheEvent> {
 
         List<String> keys = new ArrayList<>();
         List<String> statements = new ArrayList<>();
-
 
         DefaultCache cache = caches.get(event.getName());
         cache.store.values().forEach(e -> {
@@ -106,7 +104,19 @@ public class CacheService implements ServiceEventListener<CacheEvent> {
             }
         });
 
-        System.out.println("====================== cache changed: " + keys.size() + " total: " + statements.size() + " " + cache.size());
+        System.out.println("========================= cache size: " + cache.size() + " changed: " + statements.size());
+
+        PipelineServer.getInstance().publish(DataAccessEvent.updateEvent(event, statements.toArray(new String[statements.size()])), new Callback<DataAccessEvent.UpdateEvent>() {
+            @Override
+            public void onCompleted(DataAccessEvent.UpdateEvent event) {
+                PipelineServer.getInstance().publish(CacheEvent.reloadEvent(cache.name));
+            }
+        }, new ExceptionHandler() {
+            @Override
+            public void onException(Exception e) {
+                cache.locked = false;
+            }
+        });
 
     }
 
@@ -165,6 +175,7 @@ public class CacheService implements ServiceEventListener<CacheEvent> {
 
         private ConcurrentHashMap<String, Wrapper> store = new ConcurrentHashMap<>();
         private boolean changed;
+        private boolean locked;
 
         DefaultCache(String name, String[] columns, String keyColumn, String selectQuery, String insertQuery, String updateQuery, String deleteQuery) {
             this.name = name;
@@ -174,48 +185,58 @@ public class CacheService implements ServiceEventListener<CacheEvent> {
             this.insertQuery = insertQuery;
             this.updateQuery = updateQuery;
             this.deleteQuery = deleteQuery;
+            this.changed = true;
+        }
 
+        @Override
+        public String getName() {
+            return name;
         }
 
         @Override
         public synchronized void reload(JsonArray jsonArray) {
             store.clear();
-
             jsonArray.forEach(e -> {
                 JsonObject o = e.getAsJsonObject();
                 Wrapper w = new Wrapper(keyColumn, o);
                 w.oldValue = o;
-
                 store.put(w.getKey(), w);
             });
 
             this.changed = false;
+            this.locked = false;
 
+        }
+
+        @Override
+        public boolean contains(JsonObject value) {
+            try {
+                Wrapper w = new Wrapper(keyColumn, value);
+                return store.contains(w.getKey());
+
+            } catch (Exception e) {
+                return false;
+            }
         }
 
         @Override
         public synchronized void put(JsonObject value) {
             Wrapper wrapper = new Wrapper(keyColumn, value);
-            if (store.contains(wrapper.getKey())) {
-                Wrapper item = store.get(wrapper.getKey());
+
+            Wrapper item = store.get(wrapper.getKey());
+            if(item != null) {
                 item.oldValue = item.value;
                 item.value = value;
+                if(item.isChanged()) {
+                    changed = true;
+                    System.out.println("---------------- changed: " + wrapper.getKey());
+                }
 
             } else {
                 store.put(wrapper.getKey(), wrapper);
+                changed = true;
 
-            }
-
-            Wrapper w = store.get(wrapper.getKey());
-            if (w.isNew() || w.isChanged() || w.isRemoved()) {
-                this.changed = true;
-
-                if(w.isNew()) {
-                    System.out.println("------------------ new: " + w.getKey());
-
-                } else if (w.isChanged()) {
-                    System.out.println("------------------ changed: " + w.getKey());
-                }
+                System.out.println("---------------- new: " + wrapper.getKey());
             }
         }
 
@@ -240,6 +261,7 @@ public class CacheService implements ServiceEventListener<CacheEvent> {
     }
 
     static class Wrapper {
+
         private final String key;
         private JsonObject value;
         private JsonObject oldValue;
@@ -248,6 +270,7 @@ public class CacheService implements ServiceEventListener<CacheEvent> {
             if (value != null && value.get(keyColumn) != null && value.get(keyColumn).isJsonPrimitive()) {
                 this.key = value.get(keyColumn).getAsString();
                 this.value = value;
+                this.oldValue = null;
 
             } else {
                 throw new IllegalArgumentException();
@@ -275,9 +298,12 @@ public class CacheService implements ServiceEventListener<CacheEvent> {
         }
 
         public boolean isChanged() {
-            return value != null && oldValue != null && !value.equals(oldValue);
-        }
+            if(value == null || oldValue ==null) {
+                return false;
+            }
 
+            return value.equals(oldValue);
+        }
     }
 
 }

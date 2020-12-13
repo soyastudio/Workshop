@@ -1,18 +1,18 @@
-package com.albertsons.esed.monitor.service;
+package com.albertsons.esed.monitor.server;
 
-import com.albertsons.esed.monitor.server.*;
+import com.albertsons.esed.monitor.service.ApiInvocationService;
+import com.albertsons.esed.monitor.service.DataAccessService;
 import com.google.common.eventbus.Subscribe;
 import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 
-@Service
+//@Service
 public class PipelineService implements ServiceEventListener<PipelineEvent> {
     static Logger logger = LoggerFactory.getLogger(PipelineService.class);
 
@@ -20,16 +20,7 @@ public class PipelineService implements ServiceEventListener<PipelineEvent> {
     private PipelineContext pipelineContext;
 
     @Autowired
-    private Scheduler scheduler;
-
-    @Autowired
     private ExecutorService executorService;
-
-    @Autowired
-    private ApiInvocationService invoker;
-
-    @Autowired
-    private DataAccessService das;
 
     private Map<String, Pipeline> pipelines = new ConcurrentHashMap<>();
 
@@ -62,29 +53,8 @@ public class PipelineService implements ServiceEventListener<PipelineEvent> {
                         new Timer().schedule(new TimerTask() {
                             @Override
                             public void run() {
-                                long delay = pipeline.getBod().getDelay();
-                                if (delay <= 0) {
-                                    delay = new Random().nextInt(30000);
-                                }
-
-                                JobDetail job = JobBuilder.newJob(PipelineExecutionJob.class)
-                                        .withIdentity(pipeline.getBod().getName(), "pipeline-execution")
-                                        .build();
-                                job.getJobDataMap().put("PIPELINE", pipeline.getBod().getName());
-
-                                Trigger scanTrigger = TriggerBuilder.newTrigger().withIdentity(pipeline.getBod().getName(), "pipeline-execution")
-                                        .startAt(new Date(System.currentTimeMillis() + delay))
-                                        .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                                                .withIntervalInSeconds(Integer.parseInt(pipeline.getBod().getCalendar()))
-                                                .repeatForever())
-                                        .build();
-
-                                try {
-                                    scheduler.scheduleJob(job, scanTrigger);
-
-                                } catch (SchedulerException e) {
-                                    throw new RuntimeException(e);
-                                }
+                                PipelineServer.getInstance().publish(ScheduleEvent
+                                        .pipelineScheduleEvent(event, "pipeline-execution", pipeline.getName(), pipeline.getBod().getDelay(), pipeline.getBod().getCalendar()));
 
                             }
                         }, new Random().nextInt(30000));

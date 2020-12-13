@@ -4,7 +4,7 @@ import com.albertsons.esed.monitor.server.Callback;
 import com.albertsons.esed.monitor.server.PipelineExecutionEvent;
 import com.albertsons.esed.monitor.server.PipelineProcessorSupport;
 import com.albertsons.esed.monitor.server.PipelineServer;
-import com.albertsons.esed.monitor.service.HttpEvent;
+import com.albertsons.esed.monitor.service.HttpCallEvent;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -36,14 +36,14 @@ public class TransportationApiScanProcessor extends PipelineProcessorSupport {
 
         jsonObject.add("Parameters", params);
 
-        HttpEvent httpEvent = HttpEvent.builder().url("https://svcin.prospero.com/api/ExportRequest")
-                .method(HttpEvent.HttpMethod.POST)
+        HttpCallEvent httpCallEvent = HttpCallEvent.builder().url("https://svcin.prospero.com/api/ExportRequest")
+                .method(HttpCallEvent.HttpMethod.POST)
                 .payload(gson.toJson(jsonObject))
                 .create();
 
-        PipelineServer.getInstance().publish(httpEvent, new Callback<HttpEvent>() {
+        PipelineServer.getInstance().publish(httpCallEvent, new Callback<HttpCallEvent>() {
             @Override
-            public void onCompleted(HttpEvent event) {
+            public void onCompleted(HttpCallEvent event) {
 
             }
         }, null);

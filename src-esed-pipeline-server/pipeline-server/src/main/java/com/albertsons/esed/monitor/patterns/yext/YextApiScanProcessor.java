@@ -7,7 +7,7 @@ import com.albertsons.esed.monitor.server.PipelineServer;
 import com.albertsons.esed.monitor.service.Cache;
 import com.albertsons.esed.monitor.service.CacheEvent;
 import com.albertsons.esed.monitor.service.CacheService;
-import com.albertsons.esed.monitor.service.HttpEvent;
+import com.albertsons.esed.monitor.service.HttpCallEvent;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
@@ -57,14 +57,16 @@ public class YextApiScanProcessor extends PipelineProcessorSupport {
     @Override
     public void process(PipelineExecutionEvent event) {
         logger.info("scanning yext api for {}... ", bod);
+
         while (cache.isChanged()) {
             if (System.currentTimeMillis() - event.getCreatedTime() > timeout) {
                 event.close(new TimeoutException("Timeout in processing pipeline: " + event.getPipeline()));
                 return;
             }
 
+            logger.info("Cache '{}' is busy", cache.getName());
             try {
-                Thread.sleep(100l);
+                Thread.sleep(300l);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -81,7 +83,7 @@ public class YextApiScanProcessor extends PipelineProcessorSupport {
                     int offset = 50 * count;
                     String url = baseUrl.replace("{{OFFSET}}", "" + offset);
 
-                    HttpEvent.Builder builder = HttpEvent.builder()
+                    HttpCallEvent.Builder builder = HttpCallEvent.builder()
                             .parent(event)
                             .url(url)
                             .filter(api.filter);
@@ -92,14 +94,14 @@ public class YextApiScanProcessor extends PipelineProcessorSupport {
                         }
                     }
 
-                    HttpEvent httpEvent = builder.create();
+                    HttpCallEvent httpCallEvent = builder.create();
 
                     pipelineContext.getService(ExecutorService.class).execute(new Runnable() {
                         @Override
                         public void run() {
-                            PipelineServer.getInstance().publish(httpEvent, new Callback<HttpEvent>() {
+                            PipelineServer.getInstance().publish(httpCallEvent, new Callback<HttpCallEvent>() {
                                 @Override
-                                public void onCompleted(HttpEvent event) {
+                                public void onCompleted(HttpCallEvent event) {
 
                                     String value = event.getValue();
                                     JsonArray results = parse(value);

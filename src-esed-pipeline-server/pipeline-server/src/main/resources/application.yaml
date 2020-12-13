@@ -12,6 +12,18 @@ spring:
       idleTimeout: 10000
       maximumPoolSize: 30
 
+kafka:
+  producer:
+    bootstrap-servers: localhost:9092
+    key-serializer: org.apache.kafka.common.serialization.StringSerializer
+    value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+  consumer:
+    bootstrap-servers: localhost:9092
+    group-id: admin_group
+    auto-offset-reset: earliest
+    key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
+
 spring.quartz.properties:
   org.quartz.threadPool.threadCount: 15
 

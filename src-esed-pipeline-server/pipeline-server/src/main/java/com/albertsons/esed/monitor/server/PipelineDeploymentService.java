@@ -12,7 +12,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Service
+//@Service
 public class PipelineDeploymentService implements ServiceEventListener<PipelineDeploymentEvent> {
     static Logger logger = LoggerFactory.getLogger(PipelineDeploymentService.class);
 

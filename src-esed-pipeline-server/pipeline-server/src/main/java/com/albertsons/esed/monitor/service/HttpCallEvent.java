@@ -6,7 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 
-public class HttpEvent extends ServiceEvent<String> {
+public class HttpCallEvent extends ServiceEvent<String> {
 
     private final String url;
     private HttpMethod httpMethod = HttpMethod.GET;
@@ -16,7 +16,7 @@ public class HttpEvent extends ServiceEvent<String> {
     private String filter;
     private Shifter[] shifters;
 
-    protected HttpEvent(ServiceEvent<?> parent, String url) {
+    protected HttpCallEvent(ServiceEvent<?> parent, String url) {
         super(parent);
         this.url = url;
     }
@@ -84,12 +84,12 @@ public class HttpEvent extends ServiceEvent<String> {
             return this;
         }
 
-        public HttpEvent create() {
+        public HttpCallEvent create() {
             if (url == null) {
                 throw new IllegalArgumentException("url is not set");
             }
 
-            HttpEvent event = new HttpEvent(parent, url);
+            HttpCallEvent event = new HttpCallEvent(parent, url);
             event.httpMethod = httpMethod;
 
             event.payload = payload;

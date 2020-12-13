@@ -15,8 +15,8 @@ import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-@Service
-public class HttpInvocationService implements ServiceEventListener<HttpEvent> {
+//@Service
+public class HttpCallService implements ServiceEventListener<HttpCallEvent> {
 
     private OkHttpClient httpClient;
     private Gson gson;
@@ -34,23 +34,23 @@ public class HttpInvocationService implements ServiceEventListener<HttpEvent> {
     }
 
     @Subscribe
-    public void onEvent(HttpEvent event) {
-        if (HttpEvent.HttpMethod.GET.equals(event.getHttpMethod())) {
+    public void onEvent(HttpCallEvent event) {
+        if (HttpCallEvent.HttpMethod.GET.equals(event.getHttpMethod())) {
             processGetEvent(event);
 
-        } else if (HttpEvent.HttpMethod.POST.equals(event.getHttpMethod())) {
+        } else if (HttpCallEvent.HttpMethod.POST.equals(event.getHttpMethod())) {
             processPostEvent(event);
 
-        } else if (HttpEvent.HttpMethod.PUT.equals(event.getHttpMethod())) {
+        } else if (HttpCallEvent.HttpMethod.PUT.equals(event.getHttpMethod())) {
             processPutEvent(event);
 
-        } else if (HttpEvent.HttpMethod.DELETE.equals(event.getHttpMethod())) {
+        } else if (HttpCallEvent.HttpMethod.DELETE.equals(event.getHttpMethod())) {
             processDeleteEvent(event);
 
         }
     }
 
-    private void processGetEvent(HttpEvent event) {
+    private void processGetEvent(HttpCallEvent event) {
         Request request = new Request.Builder()
                 .url(event.getUrl())
                 .build();
@@ -72,7 +72,7 @@ public class HttpInvocationService implements ServiceEventListener<HttpEvent> {
         });
     }
 
-    private void processPostEvent(HttpEvent event) {
+    private void processPostEvent(HttpCallEvent event) {
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         RequestBody body = RequestBody.create(event.getPayload(), JSON);
 
@@ -99,15 +99,15 @@ public class HttpInvocationService implements ServiceEventListener<HttpEvent> {
         });
     }
 
-    private void processPutEvent(HttpEvent event) {
+    private void processPutEvent(HttpCallEvent event) {
 
     }
 
-    private void processDeleteEvent(HttpEvent event) {
+    private void processDeleteEvent(HttpCallEvent event) {
 
     }
 
-    private void postProcess(Response response, HttpEvent event) throws IOException {
+    private void postProcess(Response response, HttpCallEvent event) throws IOException {
         String json = response.body().string();
         if(event.getFilter() != null && event.getShifters().length == 0) {
             event.close(json);
@@ -140,7 +140,7 @@ public class HttpInvocationService implements ServiceEventListener<HttpEvent> {
         }
     }
 
-    private String shift(JsonElement json, HttpEvent.Shifter[] shifters) {
+    private String shift(JsonElement json, HttpCallEvent.Shifter[] shifters) {
         if(shifters.length == 0) {
             return gson.toJson(json);
 
@@ -159,14 +159,14 @@ public class HttpInvocationService implements ServiceEventListener<HttpEvent> {
         }
     }
 
-    private JsonArray shift(JsonArray array, HttpEvent.Shifter[] shifters) {
+    private JsonArray shift(JsonArray array, HttpCallEvent.Shifter[] shifters) {
 
         JsonArray result = new JsonArray();
         for (int i = 0; i < array.size(); i++) {
             JsonObject source = array.get(i).getAsJsonObject();
             JsonObject target = new JsonObject();
 
-            for (HttpEvent.Shifter shifter : shifters) {
+            for (HttpCallEvent.Shifter shifter : shifters) {
                 String to = shifter.getTo();
                 String from = shifter.getFrom();
                 String exp = shifter.getExpression();
@@ -184,10 +184,10 @@ public class HttpInvocationService implements ServiceEventListener<HttpEvent> {
         return result;
     }
 
-    private JsonObject shift(JsonObject src, HttpEvent.Shifter[] shifters) {
+    private JsonObject shift(JsonObject src, HttpCallEvent.Shifter[] shifters) {
         JsonObject target = new JsonObject();
 
-        for (HttpEvent.Shifter shifter : shifters) {
+        for (HttpCallEvent.Shifter shifter : shifters) {
             String to = shifter.getTo();
             String from = shifter.getFrom();
             String exp = shifter.getExpression();

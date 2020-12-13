@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
-@Service
+//@Service
 public class DataAccessService implements ServiceEventListener<DataAccessEvent> {
     static Logger logger = LoggerFactory.getLogger(DataAccessService.class);
 

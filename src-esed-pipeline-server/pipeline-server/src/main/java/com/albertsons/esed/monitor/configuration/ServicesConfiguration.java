@@ -1,8 +1,7 @@
 package com.albertsons.esed.monitor.configuration;
 
-import com.albertsons.esed.monitor.server.PipelineContext;
-import com.albertsons.esed.monitor.server.PipelineDeploymentService;
-import com.albertsons.esed.monitor.server.PipelineServer;
+import com.albertsons.esed.monitor.server.*;
+import com.albertsons.esed.monitor.service.*;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.http.ssl.SSLContextBuilder;
@@ -124,6 +123,42 @@ public class ServicesConfiguration {
             }
         };
         return pipelineContext;
+    }
+
+    // Services:
+    @Bean
+    ScheduleService schedulerService() {
+        return new ScheduleService();
+    }
+
+    @Bean
+    PipelineDeploymentService pipelineDeploymentService() {
+        return new PipelineDeploymentService();
+    }
+
+    @Bean
+    PipelineService pipelineService() {
+        return new PipelineService();
+    }
+
+    @Bean
+    CacheService cacheService() {
+        return new CacheService();
+    }
+
+    @Bean
+    DataAccessService dataAccessService() {
+        return new DataAccessService();
+    }
+
+    @Bean
+    HttpCallService httpCallService() {
+        return new HttpCallService();
+    }
+
+    //@Bean
+    KafkaService kafkaService() {
+        return new KafkaService();
     }
 
 }
