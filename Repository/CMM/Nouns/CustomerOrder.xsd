@@ -6,12 +6,14 @@
    Dsc: contains commonly used Albertson's Purchase order schema.
    Name: /ABS_CMM_Platform/Nouns/StoreOrder.xsd
 -->
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<!-- V1.2 7/10/2020 - Alex Nunes - Add elements to support UWARE DSD Order. Change to optional total count elements.-->
 	<!-- V1.3 8/11/2020 - Alex Nunes - Add annotation for CustomerPurchaseOrderNbr wholesale related change. -->
 	<!--V1.4 11/05/2020 - Rosabel Macario - Added tag to resolve dateTimeStamp issue-->
+	<!--V1.5 11/18/2020 - Alex Nunes - Data Type mismatches for wholesale DSD JIRA: - EBC-12858-->
+	<!--V1.6 11/20/2020  - Alex Nunes - Added Potential Suppliers at the header level.-->
 	<xs:element name="CustomerOrder" type="CustomerOrderType">
 		<xs:annotation>
 			<xs:documentation>root</xs:documentation>
@@ -80,10 +82,15 @@ It is sometimes referred to as Division Item Code.
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="UnitOfMeasurement" type="xs:string" default="" minOccurs="0">
+			<xs:element name="UnitOfMeasurement" default="" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Ex: Cases, Each</xs:documentation>
 				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
 			</xs:element>
 			<xs:element name="AltOrderQty" minOccurs="0">
 				<xs:annotation>
@@ -233,7 +240,7 @@ warehouse unit (usually case) at date of delivery.
 						<xs:element name="Amt" default="0" minOccurs="0">
 							<xs:simpleType>
 								<xs:restriction base="xs:decimal">
-									<xs:totalDigits value="9"/>
+									<xs:totalDigits value="14"/>
 									<xs:fractionDigits value="4"/>
 								</xs:restriction>
 							</xs:simpleType>
@@ -244,7 +251,7 @@ warehouse unit (usually case) at date of delivery.
 							</xs:annotation>
 							<xs:simpleType>
 								<xs:restriction base="xs:decimal">
-									<xs:totalDigits value="9"/>
+									<xs:totalDigits value="12"/>
 									<xs:fractionDigits value="2"/>
 								</xs:restriction>
 							</xs:simpleType>
@@ -530,10 +537,15 @@ Tax.
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="CustomerOrderMessageType" type="Abs:MessageType"/>
-			<xs:element name="CustomerOrderNbr" type="xs:integer">
+			<xs:element name="CustomerOrderNbr">
 				<xs:annotation>
 					<xs:documentation>An Id created by the authoring system that uniquely represents a Customer order document.</xs:documentation>
 				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
 			</xs:element>
 			<xs:element name="CustomerOrderDt" type="xs:dateTime">
 				<xs:annotation>
@@ -777,6 +789,46 @@ values 'Y'/'N'
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
+			<xs:element name="PotentialSupplier" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Potential suppliers from which an order can be sourced from. The potential supplier could be a warehouse, plant or dsd vendor.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="SupplierType" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Type of hte supplier, warehouse, DSD, plant.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="VendorId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="VendorSubAccountNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="BackdoorVendorSubAccountId" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field is used for the BDR (Back Door Receiving) system, to identify a unique vend_num, vend_sub_acnt, markon type, terms id, and usage type to the store level BDR system.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element ref="ManufacturingPlantId" minOccurs="0"/>
+						<xs:element ref="WarehouseId" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
 			<xs:element name="CustomerOrderCreateDt" type="xs:dateTime" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Date on which the Order has been created in the source system.</xs:documentation>
@@ -936,7 +988,7 @@ This indicator will only effect orders, receivings, receiving adjustments and in
 							</xs:annotation>
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
-									<xs:maxLength value="40"/>
+									<xs:maxLength value="50"/>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>

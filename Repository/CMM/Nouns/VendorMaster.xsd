@@ -6,8 +6,10 @@
    Dsc: contains commonly used Albertson's Purchase order schema.
    Name: /ABS_CMM_Platform/Nouns/PurchaseOrder.xsd
 -->
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
+<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by Rosabel Macario (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V2.9 Rosabel Macario 12/18/2020: Added VendorTypeCd. -->
+	<!--V2.8 Rosabel Macario 12/15/2020: Added VendorEmpMaintInd.-->
 	<!--V2.7 Patrick Oliver 10/28/20:  Updated VendorSiteData with following: Added qualifier attribute to AltVendorId; Added VendorSitePurposes (PurchasingSiteInd, PrimaryPaySite , SourcingSite, ProcurementSite and PrimarySiteInd); Added VendorSiteContact which contains SiteAddress, ,RemiToInd, OrderingInd, QuoteBiddingInd, SiteContactId & ContactTypeCd-->
 	<!--V2.6 Patrick Oliver 10/22/20: Added VendorSiteData to Corporate/Outlet level which contains: AltVendorId,  VendorSiteId, VendorSiteNm, PrimaryVendorSiteInd, PrimaryPayVendorSiteInd-->
 	<!--V2.5 Alex Nunes 8/5/20 - AccountingTaxId from string 10 to string 20 (Outlet level) -->
@@ -88,6 +90,16 @@
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
 						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorTypeCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Vendor type. Sample value 'Supplier'</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -283,6 +295,11 @@
 			<xs:element name="VendorSiteData" type="VendorSiteType" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Used to support information about supplier site level attributes.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VendorEmpMaintInd" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Vendor employee maintenance indicator. Use to hold/control updates from HR application to the Accounting System. Value True/Yes - Ignore updates; False/No - Implement updates.  </xs:documentation>
 				</xs:annotation>
 			</xs:element>
 		</xs:sequence>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.8 Patrick Oliver 12/10/20: Updated LeadVendorInd to PrimaryVendorInd in ItemPriceAreaVendorType -->
 	<!--V1,7 Alex Nunes 8/10/2002 - Modified SizeRangeDsc from 200 to 300 string in CIG type.-->
 	<!--V1.6 Patrick Oliver 7/22/20 - Updated VendorId & VendorSubAccountNbr to string(20)-->
 	<!--Alex Nunes 6/4/2020 Renamed Digital Promotion Group type to Common Item Group type.-->
@@ -1515,6 +1516,16 @@ N New item</xs:documentation>
 							<xs:annotation>
 								<xs:documentation>type of shelf package in which an item is sold (box, can, bottle, etc.). This is also used to show the type of material of which a container is made (glass, plastic, aluminum, etc.).</xs:documentation>
 							</xs:annotation>
+						</xs:element>
+						<xs:element name="ShelfPackageDsc" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>gives description of how many retail shelf units in a warehouse pack.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
 						</xs:element>
 					</xs:sequence>
 				</xs:complexType>
@@ -4056,7 +4067,12 @@ L = Limit Quantity Pricing – if customer purchases an amount under the limit (
 					</xs:simpleContent>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="LeadVendorInd" type="xs:string" minOccurs="0"/>
+			<xs:element name="PrimaryVendorInd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This flags who is the primary distributor for a Direct Store  
+Delivery Item in a ROG and Price Area.                        </xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="VendorContact" minOccurs="0" maxOccurs="2">
 				<xs:complexType>
 					<xs:sequence>

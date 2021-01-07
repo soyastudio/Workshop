@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 rel. 2 sp1 (x64) (http://www.altova.com) by  (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<!--!=============================================================================================-->
 	<!--!-->
@@ -16,6 +16,7 @@
 	<!--V1.3 - 9/29/2020 - Alex Nunes - Modified Promotion start and end element names to 'TS' since both elements have dateTime type defined on Promotion BOD.-->
 	<!--V1.4 - 10/26/2020 - Alex Nunes - Added additional primary key components based Vendor Offer / ROG.-->
 	<!--V1.5 - 11/04/2020 - Rosabel Macario - Added tag to resolve dateTimeStamp issue-->
+	<!--V1.6 - 11/18/2020 - Alex Nunes - Added integrate change indicator. Determines the state of the association between the promotion and the allowance.-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:element name="Promotion">
 		<xs:annotation>
@@ -96,6 +97,20 @@
 							<xs:annotation>
 								<xs:documentation>Effective date and time of when the Vendor offer ends.</xs:documentation>
 							</xs:annotation>
+						</xs:element>
+						<xs:element name="IntegrateChangeCd" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates the type of linkage between the promotion and the allocance.              Values are:'                       I' – Insert – allowance is newly linked to a promotion
+U – Update – change made to linked allowance. It could be because a secondary allowance became primary allowance of a promotion when previous primary allowance was unlinked
+D – Delete – allowance is unlinked from a promotion
+A – Archive – this record in PPAPPROF is marked to be archived (purged). you don’t need to use this flag and can ignore. This record will be automatically purged later.
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
 						</xs:element>
 						<xs:element name="PromotionPerformance" minOccurs="0">
 							<xs:complexType>

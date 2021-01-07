@@ -6,8 +6,11 @@
    Description: Contains commonly used Safeway Purchase order schema.
    Name: /SFWY/Nouns/SwyPurchaseOrder.xsd
 -->
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.5 Rosabel Macario 12/17/20: Added CustomerRelatedAccountId in AccountingCustomer. -->
+	<!--V1.4 Patrick Oliver 12/03/20: Changed AccountRelationship to unbounded and AccountProfile to bounded; Updated CollectorNm to CollectorCd; Added BrankBranchId-->
+	<!--V1.3: Patrick Oliver 11/23/20: Changed PartySiteId to CustomerSiteId; Added CustomerSiteNbr; Added CustomerAccountNbr to complex type CustomerPartySite; Added CustomerAccountId; Changed CustomerSrcNbr to PartyId; Changed CustomerSiteNbr to unbounded-->
 	<!--V1.2 - Patrick Oliver- Added EmployeeNm; Change CollectorCd to CollectorNm; Removed Amounts section from BOD; Moved TaxExemptionCd to AccountProfile; removed LineTax-->
 	<!--V1.1 Rosabel Macario 11/05/2020 - Added tag to resolve dateTimeStamp issue-->
 	<!--V1.0  Patrick Oliver 7/13/20 - Initial Draft-->
@@ -19,7 +22,7 @@
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element ref="CompanyId" minOccurs="0"/>
-			<xs:element name="CustomerSource" type="SourceSystemType" maxOccurs="unbounded"/>
+			<xs:element name="CustomerSource" type="SourceSystemType" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="CustomerGroup" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Legacy application customer groups.</xs:documentation>
@@ -139,15 +142,31 @@ Y = Yes; process bills of exchange</xs:documentation>
 						<xs:element name="CustomerAccount" minOccurs="0">
 							<xs:complexType>
 								<xs:sequence>
-									<xs:element ref="CustomerAccountNbr" minOccurs="0"/>
-									<xs:element name="CustomerSrcNbr" minOccurs="0">
+									<xs:element name="CustomerAccountId" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>System generated account key</xs:documentation>
+										</xs:annotation>
 										<xs:simpleType>
 											<xs:restriction base="xs:string">
 												<xs:maxLength value="50"/>
 											</xs:restriction>
 										</xs:simpleType>
 									</xs:element>
-									<xs:element name="CustomerSiteNbr" minOccurs="0">
+									<xs:element ref="CustomerAccountNbr" minOccurs="0"/>
+									<xs:element name="PartyId" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Business identifier field for party.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="CustomerSiteNbr" minOccurs="0" maxOccurs="unbounded">
+										<xs:annotation>
+											<xs:documentation>Business key for party site</xs:documentation>
+										</xs:annotation>
 										<xs:simpleType>
 											<xs:restriction base="xs:string">
 												<xs:maxLength value="50"/>
@@ -254,6 +273,16 @@ Y = Yes; process bills of exchange</xs:documentation>
 										<xs:simpleType>
 											<xs:restriction base="xs:string">
 												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="CustomerRelatedAccountId" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Related account ID of customer.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
 											</xs:restriction>
 										</xs:simpleType>
 									</xs:element>
@@ -420,9 +449,9 @@ Y = Yes; process bills of exchange</xs:documentation>
 								</xs:sequence>
 							</xs:complexType>
 						</xs:element>
-						<xs:element name="AccountProfile" minOccurs="0" maxOccurs="unbounded">
+						<xs:element name="AccountProfile" minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>Represensts the customer account profile</xs:documentation>
+								<xs:documentation>Represensts the customer account profile. </xs:documentation>
 							</xs:annotation>
 							<xs:complexType>
 								<xs:sequence>
@@ -523,15 +552,10 @@ Y = Yes; process bills of exchange</xs:documentation>
 											<xs:documentation>tThe credit analyst code assigned to this customer.</xs:documentation>
 										</xs:annotation>
 									</xs:element>
-									<xs:element name="CollectorNm" minOccurs="0">
+									<xs:element name="CollectorCd" type="CodeWithDescription" minOccurs="0">
 										<xs:annotation>
 											<xs:documentation>Collector name</xs:documentation>
 										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:maxLength value="250"/>
-											</xs:restriction>
-										</xs:simpleType>
 									</xs:element>
 									<xs:element name="EmployeeNm" minOccurs="0">
 										<xs:annotation>
@@ -728,10 +752,11 @@ Y = Yes; process bills of exchange</xs:documentation>
 								<xs:documentation>Identifies the payment term for customer</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="EffectiveTimePeriod" type="EffetiveDateTimeType" minOccurs="0"/>
+						<xs:element name="EffectiveTimePeriod" type="EffetiveDateTimeType" minOccurs="0" maxOccurs="unbounded"/>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
+			<xs:element name="AuditData" type="RecordAuditData" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="CorpCardType">
@@ -1115,9 +1140,19 @@ companies to use the same set of customers. </xs:documentation>
 			<xs:documentation>Object used to identify various paty sites</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="PartySiteId" minOccurs="0">
+			<xs:element name="CustomerSiteId" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Generic identifier field for party site. </xs:documentation>
+					<xs:documentation>System generated key for party site. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CustomerSiteNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Business key for party site</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
@@ -1186,6 +1221,9 @@ companies to use the same set of customers. </xs:documentation>
 					<xs:documentation>Contact person or party name</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element ref="CustomerAccountNbr" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element ref="FirstEffectiveDt" minOccurs="0"/>
+			<xs:element ref="LastEffectiveDt" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="CustomerPartyType">
@@ -1195,7 +1233,7 @@ companies to use the same set of customers. </xs:documentation>
 		<xs:sequence>
 			<xs:element name="PartyId" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Generic identifier field for party. A party can have multiple types of identifiers that can be qualified by Type.</xs:documentation>
+					<xs:documentation>System generated identifier field for party. A party can have multiple types of identifiers that can be qualified by Type.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
@@ -1232,6 +1270,8 @@ companies to use the same set of customers. </xs:documentation>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
+			<xs:element ref="FirstEffectiveDt" minOccurs="0"/>
+			<xs:element ref="LastEffectiveDt" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="AccoutingCustomerAddressType">
@@ -1510,10 +1550,20 @@ Examples are: Party, Party Site, Account, Contact, Role, etc.</xs:documentation>
 					<xs:documentation>Code used to drive the invoice number generation for transactions.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="BankBranch" type="CodeWithDescription" minOccurs="0">
+			<xs:element name="BankBranchCd" type="CodeWithDescription" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Bank Branch information</xs:documentation>
+					<xs:documentation>Bank Branch code</xs:documentation>
 				</xs:annotation>
+			</xs:element>
+			<xs:element name="BankBranchId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Bank Branch ID</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
 			</xs:element>
 			<xs:element name="BankRegion" type="CodeWithDescription" minOccurs="0">
 				<xs:annotation>

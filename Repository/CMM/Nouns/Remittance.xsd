@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
+<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by Rosabel Macario (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
-	<!--V1.9 Patrick Oliver 11/11/20: Added: complex types VendorSiteData and ChartofAccounts; added CompanyNm, VoidDt, BankNm, LedgerAmt, LedgerDiscountAmt, InvoiceInstallmentAmt, InvoicePreparedAmt, PreDiscountAmt, PostDiscountAmt, ForeignExchngGainLossAmt, DiscountInstallmentAmt-->
+	<!--V2.1 Rosabel Macario: Added PayCompanyNm.-->
+	<!--V2.0 Patrick Oliver: Added BusinessUnitId and BuinessUnitNm; Rename to InvoiceBaseAmt (previous InvoicePrepareAmt), InvoiceRevalueAmt (previous InvoiceInstallmentAmt); Remove ForeignExchLossAmt, DiscountInstallementAmt, LedgerAmt; Re-name Pre and Post discount amount fields; Added InvoicePymtStatusCd-->
+	<!--V1.9 Patrick Oliver 11/11/20: Added: complex types VendorSiteData and ChartofAccountData; added CompanyNm, VoidDt, BankNm, LedgerPymtAmt, LedgerDiscountAmt, InvoiceInstallmentAmt, InvoicePreparedAmt, PreDiscountAmt, PostDiscountAmt, ForeignExchngGainLossAmt, DiscountInstallmentAmt-->
 	<!--V1.8 Rosabel Macario 11/04/2020 - Added tag to resolve dateTimeStamp issue-->
 	<!--V1.7 Patrick Oliver 10/20/20: Added AltAccountId-->
 	<!--V1.6 Patrick Oliver 10/6/20: Added RemittanceSource, RemittanceCommentsTxt, AppliedTypeCd-->
@@ -25,6 +27,8 @@
 		<xs:sequence>
 			<xs:element ref="CompanyId"/>
 			<xs:element ref="CompanyNm" minOccurs="0"/>
+			<xs:element ref="BusinessUnitId" minOccurs="0"/>
+			<xs:element ref="BusinessUnitNm" minOccurs="0"/>
 			<xs:element ref="CorporationId" minOccurs="0"/>
 			<xs:element name="DivisionAccountUnitCd" minOccurs="0">
 				<xs:annotation>
@@ -115,6 +119,16 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
+			<xs:element name="PayCompanyNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The company name associated with the pay vendor. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element name="InvoiceDueDt" type="DateType" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>The invoice due date. AP150 and AP151 use this date to determine whether to  schedule the invoice payment and whether to take a discount, if applicable.</xs:documentation>
@@ -152,6 +166,16 @@
 				</xs:simpleType>
 			</xs:element>
 			<xs:element ref="ProcessGrp" minOccurs="0"/>
+			<xs:element name="InvoiceBaseAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The amount of the entered invoice in the company base currency</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InvoiceRevalueAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The amount of the invoice for non base currency invoices where amount may be updated whern currency revaluation takes place to account for exchage rate</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="BasePymtAmt" type="AmountType" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>The amount of the invoice payment in the company base currency. This amount is calculated using the currency exchange rate in effect when the invoice payment was created.</xs:documentation>
@@ -197,6 +221,11 @@
 					<xs:documentation>The portion of the invoice amount classified as reportable income.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="GainLossBaseAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The currency gain or loss amount in company base currency. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="GainLossAmt" type="AmountType" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>The currency gain or loss amount. This amount is calculated when the invoice is revalued to account for currency exchange rate fluctuations.</xs:documentation>
@@ -209,7 +238,7 @@
 			</xs:element>
 			<xs:element name="AvailDiscountAmt" type="AmountType" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>The amount of the available discount for the invoice payment in the company base currency.</xs:documentation>
+					<xs:documentation>The amount of the available discount for the invoice payment in the company base currency. </xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="CurrencyAvailDiscountAmt" type="AmountType" minOccurs="0">
@@ -217,44 +246,24 @@
 					<xs:documentation>The amount of the available discount for the invoice payment in the currency of the invoice.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="LedgerAmt" type="AmountType" minOccurs="0">
+			<xs:element name="PreDiscountBaseAmt" type="AmountType" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Ledger amount and currency used for accounting and reporting in a ledger.</xs:documentation>
+					<xs:documentation>The pre discount amount for the invoice payment in the company base currencey </xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="LedgerDiscountAmt" type="AmountType" minOccurs="0">
+			<xs:element name="PreDiscountRevalueAmt" type="AmountType" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Ledger discount amount and currency used for accounting and reporting in a ledger.</xs:documentation>
+					<xs:documentation>The pre discount amount for the invoice payment for non base currency invoices where amount may be updated whern currency revaluation takes place to account for exchage rate</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="InvoiceInstallmentAmt" type="AmountType" minOccurs="0">
+			<xs:element name="PosDiscountBaseAmt" type="AmountType" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Amount to pay for invoice in payment batch in the currency of the invoice.</xs:documentation>
+					<xs:documentation>The post discount amount for the invoice payment in the company base currencey</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="InvoicePreparedAmt" type="AmountType" minOccurs="0">
+			<xs:element name="PostDiscountRevalueAmt" type="AmountType" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Amount for which invoice is prepared</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="PreDiscountAmt" type="AmountType" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>The discount amount previously taken</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="PostDiscountAmt" type="AmountType" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>The post discount amount paid</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="DiscountInstallmentAmt" type="AmountType" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>The discount amount taken in installments.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="ForeignExchngGainLossAmt" type="AmountType" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>The foreighn exchnage currency gain or loss amount. This amount is calculated when the invoice is revalued to account for currency exchange rate fluctuations.</xs:documentation>
+					<xs:documentation>The pre discount amount for the invoice payment for non base currency invoices where amount may be updated whern currency revaluation takes place to account for exchage rate</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="LastCurrencyRevalueDt" type="DateType" minOccurs="0">
@@ -266,7 +275,7 @@ revaluation that resulted in the
 			</xs:element>
 			<xs:element name="DiscountData" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Information abount the posting of dicount amounts.</xs:documentation>
+					<xs:documentation>Information abount the posting of discount amounts. (*Note: this can be used for  legacy account data)</xs:documentation>
 				</xs:annotation>
 				<xs:complexType>
 					<xs:sequence minOccurs="0">
@@ -324,8 +333,23 @@ revaluation that resulted in the
 			</xs:element>
 			<xs:element name="RecordStatusCd" type="CodeWithDescription" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>The record status. Valid values are: 0 = Unreleased 1 = Released 2 = Selected for Payment 3 = Paid with a System Cash Payment 4 = Paid with a Manual Payment 5 = Paid with a Bill of Exchange Payment 7 = Unreleased Manual Payment 8 = Canceled (bill of exchange) 9 = Historical Note: All void status invoice payment records should have a historical status.</xs:documentation>
+					<xs:documentation>The payment record status. Valid values are 1 = Negotiable,  2 = Voided 3 = Cleared</xs:documentation>
 				</xs:annotation>
+			</xs:element>
+			<xs:element name="InvoicePymtStatusCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Payment status of an invoice. Values 1 = Paid  2 = Partially Paid 3 =	Unpaid </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BankStatusCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The reconciliation status of the payment record associated with the invoice payment.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
 			</xs:element>
 			<xs:element name="PymtNbr" minOccurs="0">
 				<xs:annotation>
@@ -463,16 +487,6 @@ revaluation that resulted in the
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
 						<xs:maxLength value="4"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
-			<xs:element name="BankStatusCd" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>The reconciliation status of the payment record associated with the invoice payment.</xs:documentation>
-				</xs:annotation>
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="12"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -642,12 +656,13 @@ combination. Valid values are: 01 = Standard Check.
 					<xs:documentation>Used to support information about supplier site level attributes.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="ChartOfAccount" minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="ChartOfAccountData" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
-					<xs:documentation>Chart of account segments </xs:documentation>
+					<xs:documentation>Chart of account data segments </xs:documentation>
 				</xs:annotation>
 				<xs:complexType>
 					<xs:sequence>
+						<xs:element ref="GLCombinationId" minOccurs="0"/>
 						<xs:element name="Entity" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>Companies with EIN's allows for flexibility of hundreds if not thousands of legal entities and room for special purposes.</xs:documentation>

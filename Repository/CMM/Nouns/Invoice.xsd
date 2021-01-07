@@ -6,9 +6,10 @@
    Description: contains commonly used Safeway Purchase order schema.
    Name: /SFWY/Nouns/SwyPurchaseOrder.xsd
 -->
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
-	<!--V3.2 Patrick Oliver: Increased length of PymtCd-->
+	<!--V3.3 Patrick Oliver 12/10/20: Updated GLCompanyId to string data type;  Added BuinessUnitNm-->
+	<!--V3.2 Patrick Oliver 11/18/20: Added complex type ChartofAccountData; Increased length of PymtCd; Added AssetSerialNbr, AssetInd, ReceiptCd-->
 	<!--V3.1 Rosabel Macario 11/04/2020 - Added tag to resolve dateTimeStamp issue-->
 	<!--V3.1 Patrick Oliver 10/20/20: Added: VendorSiteData (Oracle Vendor/supplier data), AltAccountId, DepartmentId, SectionCd, AltInvoiceId,  BusinessUnitId,  InstallmentNbr. Updated length for CompanyId-->
 	<!--V3.0: Patrick Oliver 10/05/20: Updated ApprovalOperatorCd to string (20) and LeadItemDescription to string (250)-->
@@ -45,30 +46,25 @@
 			<xs:documentation>Contains detail line information from invoice doc</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="GLCompanyId" type="xs:integer" minOccurs="0">
+			<xs:element name="GLCompanyId" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation> The general ledger company associated with this distribution</xs:documentation>
 				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
 			</xs:element>
 			<xs:element name="InvoiceNbr" type="xs:string"/>
 			<xs:element name="AccountingData" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Accounting data related with the invoice distribution.</xs:documentation>
+					<xs:documentation>Accounting data related with the invoice distribution. (*Note this can be used for legacy account data )</xs:documentation>
 				</xs:annotation>
 				<xs:complexType>
 					<xs:sequence minOccurs="0">
 						<xs:element ref="AccountingUnitId" minOccurs="0"/>
 						<xs:element ref="AccountId" minOccurs="0"/>
-						<xs:element name="AltAccountId" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Can be account ID but in string format.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="25"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
 						<xs:element ref="SubAccountId" minOccurs="0"/>
 					</xs:sequence>
 				</xs:complexType>
@@ -80,7 +76,7 @@
 			</xs:element>
 			<xs:element name="DistributionCompanyId" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>CompanThe company the expense will be posted to. Must be a valid record in the        General Ledger Company file.</xs:documentation>
+					<xs:documentation>The company the expense will be posted to. Must be a valid record in the        General Ledger Company file.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
@@ -105,6 +101,21 @@
 						<xs:maxLength value="200"/>
 					</xs:restriction>
 				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AssetSerialNbr" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is also referred to as 'Asset Tag Number'. The Tag numbers are concatenation of the facility number and asset’s serial number. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AssetCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>indicates whether an asset (A) or asset repair (R) record exists for the distribution. If it is blank then it means there’s no asset information for the distribution.. </xs:documentation>
+				</xs:annotation>
 			</xs:element>
 			<xs:element name="ManufacturerItemID" type="xs:string" default="" minOccurs="0">
 				<xs:annotation>
@@ -297,7 +308,7 @@
 					<xs:documentation>GL Code</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="DistribActivity" type="CodeWithDescription" minOccurs="0">
+			<xs:element name="DistribActivityCd" type="CodeWithDescription" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>The activity assigned to the
 distribution, if applicable. Used to group expense distribution amounts to
@@ -334,6 +345,93 @@ construction, and so on.</xs:documentation>
 				<xs:annotation>
 					<xs:documentation>Used to support information about supplier site level attributes.</xs:documentation>
 				</xs:annotation>
+			</xs:element>
+			<xs:element name="ChartOfAccountData" minOccurs="0" maxOccurs="2">
+				<xs:annotation>
+					<xs:documentation>Chart of account data segments </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="GLCombinationId" minOccurs="0"/>
+						<xs:element name="Entity" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Companies with EIN's allows for flexibility of hundreds if not thousands of legal entities and room for special purposes.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:complexContent>
+									<xs:extension base="CodeWithDescription"/>
+								</xs:complexContent>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="LineOfBusiness" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Represents the type of business based on the organizational structure, revenue channels and manufacturing. Used for high level management view of the organization that changes frequently</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:complexContent>
+									<xs:extension base="CodeWithDescription"/>
+								</xs:complexContent>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Account" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Represents the natural account for transaction classifications </xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="AltAccountId" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This can be used to store the account ID in string format.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="25"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element ref="AccountNm" minOccurs="0"/>
+									<xs:element ref="AccountDsc" minOccurs="0"/>
+									<xs:element name="AccountTypeCd" type="CodeWithDescription" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Type of UserAccount.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Site" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Represents physical space, captures a physical space at a facility or location. Allows for Hierarchy structure to capture multiple sites that roll up to facilities</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CostCenter" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>A function that is responsible for the costs that it incurs related to its normal business operations</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ProductTypeGroup" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Groupings of product types is based on a consolidated version of the organization's products that is needed for management reporting within distribution centers and manufacturing plants.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CustomerGroup" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Groupings of customers is based on a consolidated version of the organization's customers that is needed for management reporting.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CashflowMovement" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Cash flows is based on the organization's cash flow and rollforward classifications with linkages to select balance sheet account activity.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="InterCompanyCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Eliminate transactions occurring between its subsidiaries </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+					<xs:attribute ref="typeCode"/>
+				</xs:complexType>
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
@@ -1007,16 +1105,27 @@ The summary amounts in the Header include the Line level amounts and Header leve
 					<xs:documentation>Used for system generated invoice IDs </xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="BusinessUnitId" type="xs:integer" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Corresponds to the business unit identifier </xs:documentation>
-				</xs:annotation>
-			</xs:element>
 			<xs:element name="InstallmentNbr" type="xs:integer" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Installement number</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="ReceiptCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Returns the Invoice or Receipt Number and Returns the Receipt Adjustment is Hardcoded as No</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BusinessUnitId" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Corresponds to the business unit identifier </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="BusinessUnitNm" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="InvoiceCreateFacilityType">
@@ -1633,7 +1742,7 @@ payments that require enclosures when  you run AP150 (Cash Requirements). Valid 
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="1"/>
+						<xs:maxLength value="50"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>

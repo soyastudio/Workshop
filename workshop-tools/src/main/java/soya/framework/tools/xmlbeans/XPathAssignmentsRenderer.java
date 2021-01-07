@@ -2,11 +2,13 @@ package soya.framework.tools.xmlbeans;
 
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class XPathAssignmentsRenderer extends XPathRenderer {
 
     private String inputRoot = "$";
+    private List<?> loops;
 
     private transient Map<String, Object> constructions = new LinkedHashMap<>();
 

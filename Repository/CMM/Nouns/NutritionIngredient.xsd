@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" id="fsxml" vc:minVersion="1.1">
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<!--5/8/2020 - Alex Nunes - Jira change EBC-10803 Added few data ements.-->
 	<!--V1.2 - 11/04/2020 - Rosabel Macario - Added tag to resolve dateTimeStamp issue-->
+	<!--V1.3 - 11/18/2020 - Alex Nunes - Removed CorporateItemCd from this Noun. It belongs to Finished Product Noun. -->
 	<xs:complexType name="NutritionIngredientType">
 		<xs:annotation>
 			<xs:documentation>Complex Type for Nutrition Ingredient</xs:documentation>
@@ -119,7 +120,6 @@ quantities of the ingredients in the product formula.</xs:documentation>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
-						<xs:element ref="CorporateItemCd" minOccurs="0"/>
 						<xs:element name="CalculationInd" default="0" minOccurs="0" altova:Ordinal="2">
 							<xs:annotation>
 								<xs:documentation>Determines when item is to be calculated. 

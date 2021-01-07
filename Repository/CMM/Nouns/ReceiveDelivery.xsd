@@ -6,8 +6,11 @@
    Dsc: contains commonly used Albertson's Purchase order schema.
    Name: /ABS_CMM_Platform/Nouns/PurchaseOrder.xsd
 -->
-<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by  (Albertsons) -->
+<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by Rosabel Macario (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.6 Rosabel Macario 12/21/20: Updated InvoiceNbr maxlen from 10 to 50 same as what is in Invoice noun. -->
+	<!--V1.5 Rosabel Macario 12/15/20: Added MatchQuantity and MatchUnitCostAmt and removed OpenToMatchQuantity. -->
+	<!--V1.4 Patrick Oliver 12/11/20: Added BusinessUnitId and BuinessUnitNm-->
 	<!--V1.3 Rosabel Macario 11/04/2020 - Added tag to resolve dateTimeStamp issue-->
 	<!--V1.2 Patrick Oliver 10/20/20: Added AltAccountId; changd AccountId to optional-->
 	<!--V1.1 Patrick Oliver 09/02/20: Added to ReceiveDeliveryDetail: ItemTypeCd, VendorProductNbr, LineLocationCd, LineLocationAddress, AccountingUnit, ProcessLevelId,  UnitOfMeasurement attributes typeCode/UOMNbr,  AdjustmentQuantity,  BackOrderCancelInd, .ReceiveInspectionInd,  DetailBalanceInd,  LineStatus,  BuyerMessageInd, SequenceNbr, UpdateDtTm, SuffixNbr, MatchClsCd, MatchKeyNbr, OpenMatchQuantity, MatchSequenceNbr, LineTax , FullyDeliverInd, CatchWtCost-->
@@ -72,9 +75,9 @@
 										</xs:restriction>
 									</xs:simpleType>
 								</xs:element>
-								<xs:element name="OpenMatchQuantity" minOccurs="0">
+								<xs:element name="MatchedQuantity" minOccurs="0">
 									<xs:annotation>
-										<xs:documentation>This is the open to match quantity in VPRI UOM.  </xs:documentation>
+										<xs:documentation>This is the quantity that matched between the invoiced quantity and the received quantity. Sample, if the invoiced qty is 10 and the received quantity is 9, then the match quantity is 9. The 10th item does not have a match in the receive qty. </xs:documentation>
 									</xs:annotation>
 									<xs:simpleType>
 										<xs:restriction base="xs:decimal">
@@ -274,6 +277,18 @@ then we have a warehouse Pack = 12 and a VEND-CONV-FCTR = 6.
 								<xs:element name="VendorUnitCostAmt" default="0" minOccurs="0">
 									<xs:annotation>
 										<xs:documentation>This is the base cost charged by a vendor for the product for a vendor unit. It does not include allowances or discounts. VEND-CONV-FCTR is  used to convert the cost from a vendor pack to a warehouse pack.       
+</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:decimal">
+											<xs:totalDigits value="14"/>
+											<xs:fractionDigits value="4"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="MatchedUnitCostAmt" default="0" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>This is the amount that matches between the invoiced cost and the unit price. Sample - invoiced cost is 20.0 while the unit price is 19.0. The matched unit cost amount is 19.0.   
 </xs:documentation>
 									</xs:annotation>
 									<xs:simpleType>
@@ -664,6 +679,8 @@ N = No</xs:documentation>
 	<xs:complexType name="AbsReceiveDeliveryHeaderType">
 		<xs:sequence>
 			<xs:element ref="CompanyId" minOccurs="0"/>
+			<xs:element ref="BusinessUnitId" minOccurs="0"/>
+			<xs:element ref="BusinessUnitNm" minOccurs="0"/>
 			<xs:element ref="CorporationId"/>
 			<xs:element ref="DivisionId"/>
 			<xs:element ref="WarehouseId" minOccurs="0"/>
@@ -703,7 +720,7 @@ Values: Original, Adjustment</xs:documentation>
 						<xs:element name="InvoiceNbr" minOccurs="0">
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
-									<xs:maxLength value="10"/>
+									<xs:maxLength value="50"/>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>

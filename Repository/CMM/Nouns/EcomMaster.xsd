@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<!--V1.0  02142020  Sai Nuthakki   Initial Version-->
 	<!--V1.1  06092020  Sai Nuthakki   Added ShoppingCartType-->
@@ -133,6 +133,23 @@ Ex Customer Order Nbr</xs:documentation>
 									<xs:maxLength value="100"/>
 								</xs:restriction>
 							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AltTransaction" minOccurs="0" maxOccurs="5">
+							<xs:annotation>
+								<xs:documentation>Alternate transaction Ids linked to the business event, like fulfillment order id.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="AltTransactionId" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="100"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AltTransactionType" type="CodeWithDescription" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
 						</xs:element>
 					</xs:sequence>
 				</xs:complexType>

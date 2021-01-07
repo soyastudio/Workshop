@@ -6,16 +6,15 @@
    Dsc: contains commonly used Albertson's Shipment Schedule schema.
    Name: /ABS_CMM_Platform/Nouns/ShipmentSchedule.xsd
 -->
-<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
-<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" 
-vc:minVersion="1.1"
-elementFormDefault="qualified" attributeFormDefault="unqualified">
+<!-- edited with XMLSpy v2020 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<!--V1.0-Jayson Soliman - Initial Version-->
 	<!--V1.1 - Jayson Soliman - 09/14/18  - Replace Transmission Delay and transmission Day types with schedule detail type-->
 	<!--V1.2 - Jayson Soliman - 9/17/18 - Make ScheduleGroupCd non mandatory for supplier type schedules.-->
 	<!--V1.3 - Jayson Soliman - 9/19/18 - Add EffectiveScheduleId and change DPATSGroupType to ScheduleGroupType-->
 	<!--V1.4 - Jayson Soliman - 2/1/2019 - Modify schedule type to fit allow multiple day schedules and add daily override route.-->
 	<!--V1.4 - Jayson Soliman - 2/15/2019 - Remove ScheduleReference generic type and fixed missing data types-->
+		<!--V1.6 - Alex Nunes - 12/10/2020 - Added Vendor keys to shippingFacility complex type - DSD schedules-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:element name="ShipmentSchedule" type="ShipmentScheduleType">
 		<xs:annotation>
@@ -82,6 +81,30 @@ shipping columns assigned.   </xs:documentation>
 			<xs:element ref="DistributionCenterId" minOccurs="0"/>
 			<xs:element ref="WarehouseId" minOccurs="0"/>
 			<xs:element ref="ManufacturingPlantId" minOccurs="0"/>
+			<xs:element name="VendorId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorSubAccountNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BackdoorVendorSubAccountId" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field is used for the BDR (Back Door Receiving) system, to identify a unique vend_num, vend_sub_acnt, markon type, terms id, and usage type to the store level BDR system.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element name="DistrictId" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:string">

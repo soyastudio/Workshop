@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by  (Albertsons) -->
+<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by Rosabel Macario (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.3 12/23/20: Rosabel Macario - Changed PayrollTransactionDt, PayrollTransactionAmt as Optional. Added ReconTransactionDt and ReconSequenceNbr. -->
+	<!--V1.2 12/11/20:  Patrick Oliver  - Changed PayrollTransactionAmt to complex type; added PaymentAmt to PayrollReconciliation-->
 	<!--v1.1 11/03/2020 - Rosabel M - Add tag to resolve issue on dateTimeStamp-->
 	<!--v1.0 05/15/2020 - Jayson S  - Initial Version-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
@@ -14,8 +16,8 @@ There are times that instead of a payroll file, a reconciliation file is sent to
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element ref="PayrollTransactionNbr"/>
-			<xs:element ref="PayrollTransactionDt"/>
-			<xs:element ref="PayrollTransactionAmt"/>
+			<xs:element ref="PayrollTransactionDt" minOccurs="0"/>
+			<xs:element ref="PayrollTransactionAmt" minOccurs="0"/>
 			<xs:element ref="PayrollPaymentNbr" minOccurs="0"/>
 			<xs:element name="PayGroupCd" type="xs:string" minOccurs="0">
 				<xs:annotation>
@@ -142,7 +144,7 @@ Withholding Tax, etc</xs:documentation>
 </xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="PayrollReconciliation" minOccurs="0">
+			<xs:element name="PayrollReconciliation" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:documentation>Done when a check is voided. 
 
@@ -164,6 +166,16 @@ Some scenarios are:
 </xs:documentation>
 							</xs:annotation>
 						</xs:element>
+						<xs:element name="ReconTransactionDt" type="xs:date" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Reconciliation transaction date. This is the date when the recon is issued.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ReconSequenceNbr" type="xs:integer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Sequence number incremented for reconciliation transactions.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
 						<xs:element name="RecordType" type="CodeWithDescription" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>Used for Reconcilation purposes. Usually the value is 3 - Voided</xs:documentation>
@@ -175,6 +187,11 @@ Some scenarios are:
 PAY - Payment, 
 bill of exchange payment, or bank service.
 </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PaymentAmt" type="AmountType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The payment asscoiated to each reconciliation</xs:documentation>
 							</xs:annotation>
 						</xs:element>
 					</xs:sequence>

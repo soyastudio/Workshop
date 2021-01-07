@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.4 Alex Nunes 12/8/2020 - Removed: Property/CommercialData/MerchantPasswordTxt Added: FacilityId -->
 	<!--V1.3 Rosabel Macario 11/04/2020 - Added tag to resolve dateTimeStamp issue-->
 	<!--V1.2 Patrick Oliver - Updated MgmtFeeVendorId to string(20)-->
 	<!--V1.0  Alex Nunes 9/9/2019 Initial version -->
@@ -25,6 +26,31 @@
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
 						<xs:maxLength value="12"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FacilityID" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A four character code that is used with corporation
+ and division to uniquely identify a facility. A facility may "belong" to
+ only one corporation and one division. A building may house one or more
+facilities. There are two categories for facilities:
+ 1) Operating facility
+ - actively supports the business of the Company
+ - is a distinct business operation within a building
+  - examples: office, processing plant, retail store, truck service
+ shop, or warehouse building  (A warehouse facility includes all warehouse departments that exist within a single building.)
+ - each type of division/business has a different set of possible types of operating facilities: i.e.,
+ - Retail: retail outlets and offices.
+- Wholesale: warehouse facilities, truck service shop, and offices.
+- Processing/Manufacturing: processing plants and offices.
+ 2) Non-operating Facility                                                     
+ - not currently being operated by the Company.
+ - facilities </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -1315,11 +1341,6 @@
 									<xs:maxLength value="6"/>
 								</xs:restriction>
 							</xs:simpleType>
-						</xs:element>
-						<xs:element name="MerchantPasswordTxt" type="xs:token" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Merchant password. We need to encrypt this field.</xs:documentation>
-							</xs:annotation>
 						</xs:element>
 						<xs:element name="ReceiptTypeCd" minOccurs="0">
 							<xs:annotation>

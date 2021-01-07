@@ -6,9 +6,10 @@
    Description: Contains commonly used Safeway Purchase order schema.
    Name: /SFWY/Nouns/SwyPurchaseOrder.xsd
 -->
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
-	<!--V1.3 Patrick Oliver: Added complex types EffectiveDateTimeType and AuditDataType-->
+	<!--V1.4 Patrick Oliver: Added RestCd to COA source; Renamed GLCombinationId to LegacyFusionCd in COA source; Removed GLCombinationId from COA target-->
+	<!--V1.3 Patrick Oliver 11/20/20: Added complex types EffectiveDateTimeType and AuditDataType; added MappingNm to top level-->
 	<!--V1.2 Rosabel Macario 11/05/2020 - Added tag to resolve dateTimeStamp issue-->
 	<!--V1.1 Patrick Oliver - Added AccountTypeCd, InterCompanyCd , AltAccountId,  GLCombinationId to ChartOfAccount segment-->
 	<!--V1.0  Patrick Oliver 08/28/20: Initial Version-->
@@ -19,6 +20,16 @@
 			<xs:documentation>Chart Of Accounts cross reference will be used to map source and target chart of account data between systems. Note that the master data for chart of accounts will be contained in GLMaster BOD.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
+			<xs:element name="MappingNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This can be used to specify the type of mapping for COA (Enitty1, Entity2, LOB1, LOB2, etc.) </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element name="ChartOfAccountsSource">
 				<xs:complexType>
 					<xs:sequence>
@@ -129,10 +140,25 @@
 							</xs:complexType>
 						</xs:element>
 						<xs:element ref="OldAccountId" minOccurs="0"/>
-						<xs:element name="GLCombinationId" minOccurs="0">
+						<xs:element name="RestCd" minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>Concatination  of Chart of Accounts segment Fields</xs:documentation>
+								<xs:documentation>This is used as additional padding to source segments for conversion </xs:documentation>
 							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LegacyFusionCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Concatination of legacy chart of Accounts segment Fields</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="250"/>
+								</xs:restriction>
+							</xs:simpleType>
 						</xs:element>
 					</xs:sequence>
 				</xs:complexType>
@@ -204,11 +230,6 @@
 									<xs:maxLength value="25"/>
 								</xs:restriction>
 							</xs:simpleType>
-						</xs:element>
-						<xs:element name="GLCombinationId" type="xs:string" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Concatination  of Chart of Accounts segment Fields</xs:documentation>
-							</xs:annotation>
 						</xs:element>
 						<xs:element name="EffectiveTimePeriod" type="EffetiveDateTimeType" minOccurs="0"/>
 						<xs:element name="AuditData" type="TargetAuditDataType" minOccurs="0"/>

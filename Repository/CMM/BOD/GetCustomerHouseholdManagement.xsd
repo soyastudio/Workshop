@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
+<xs:schema xmlns="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://www.openapplications.org/oagis/9" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.0 Patrick Oliver 11/30/2020 - Initial Draft-->
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/CustomerHouseholdManagement.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="GetCustomerHouseholdManagement" type="GetCustomerHouseholdManagement">
+		<xs:annotation>
+			<xs:documentation>Customer Household Management object will show retail customer household data. The household  data is used by customer service applications to link and unlink customers from households. The data will include household IDs, customer IDs, head of household indicators, account statues, and effective time periods. Note that a Household ID can have multiple member retail customers but a retail customer can only be active to one and only Household ID at any given point in time.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetCustomerHouseholdManagement">
+		<xs:annotation>
+			<xs:documentation>Customer Household Management object will show retail customer household data. The household  data is used by customer service applications to link and unlink customers from households. The data will include household IDs, customer IDs, head of household indicators, account statues, and effective time periods. Note that a Household ID can have multiple member retail customers but a retail customer can only be active to one and only Household ID at any given point in time.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CustomerHouseholdManagement" type="Abs:CustomerHouseholdManagementType"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

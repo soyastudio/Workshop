@@ -6,7 +6,7 @@
    Description: Contains commonly used Safeway Inventory schema.
    Name: /SFWY/Nouns/Inventory.xsd
 -->
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<!--!=============================================================================================-->
@@ -19,6 +19,7 @@
 	<!--7/30/2020 - Alex Nunes - Renamed CountArea to CountAreaCorporateItemCd, added ScanTS and ExportTs-->
 	<!--8/12/2020 - Alex Nunes - BOD Renamed or Splitted from Retail Store Inventory.-->
 	<!--11/04/2020 - Rosabel Macario - Added tag to resolve dateTimeStamp issue-->
+	<!--V1.2 - 11/17/2020 - Alex Nunes - Renamed Section to Department. SectionCd to DepartmentId and SectionNm to DepartmentNm.-->
 	<xs:element name="RetailItemFanicialInventory" type="RetailItemFinancialInventoryType">
 		<xs:annotation>
 			<xs:documentation>Standard Albertsons companies schema for Retail Item Financial Inventory. Fresh or perishable items Financial inventory data required for accounting purposes. </xs:documentation>
@@ -45,19 +46,10 @@
 								<xs:documentation>Indicates Perpetual or Periodic inventory. The periodic and perpetual inventory systems are different methods used to track the quantity of goods on hand.The periodic system relies upon an occasional physical count of the inventory to determine the ending inventory balance and the cost of goods sold, while the perpetual system keeps continual track of inventory balances. Valid values 'PP' for Perpetual Inventory and 'PR' for periodic inventory. PS - for Presentation stock like LADs and MEDs.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="SectionCd" nillable="false" minOccurs="0">
+						<xs:element ref="DepartmentId" minOccurs="0"/>
+						<xs:element name="DepartmentNm" nillable="true" minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>Defines the Cd that uniquely identified the  grouping of products or services within a department.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="20"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="SectionNm" nillable="true" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Defines the name of the section.</xs:documentation>
+								<xs:documentation>Defines the name of the Department</xs:documentation>
 							</xs:annotation>
 							<xs:simpleType>
 								<xs:restriction base="xs:string">

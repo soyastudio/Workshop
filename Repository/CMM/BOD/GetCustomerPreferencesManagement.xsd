@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
+<xs:schema xmlns="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://www.openapplications.org/oagis/9" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.0 Patrick Oliver 12/02/2020 - Initial Version-->
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/CustomerPreferencesManagement.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="GetCustomerPreferencesManagement" type="GetCustomerPreferencesManagement">
+		<xs:annotation>
+			<xs:documentation>Root. Customer Preferences Management object will show a retail customer’s generic preferences and the subscriptions (subjects) that a customer can subscribe to (opt in and/or out) of receiving for a specific communication channel (email address). </xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetCustomerPreferencesManagement">
+		<xs:annotation>
+			<xs:documentation>Customer Preferences Management object will show a retail customer’s generic preferences and the subscriptions (subjects) that a customer can subscribe to (opt in and/or out) of receiving for a specific communication channel (email address). </xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CustomerPreferencesManagementData" type="Abs:CustomerPreferencesManagementType"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>
