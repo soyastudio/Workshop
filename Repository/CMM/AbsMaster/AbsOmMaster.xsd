@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by Rosabel Macario (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" xmlns:ns1="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<xs:include schemaLocation="../Global/AbsGlobalComponents.xsd"/>
@@ -654,7 +654,7 @@ Examples are - Parent, Lawson.</xs:documentation>
 			<xs:documentation>Defines various departments in a facility.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="DepartmentId" minOccurs="0"/>
+			<xs:element ref="ns1:DepartmentId" minOccurs="0"/>
 			<xs:element name="DepartmentNm" nillable="true" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
@@ -4431,7 +4431,7 @@ An employee can work from multiple facilities within a given time period. For ex
 					</xs:complexContent>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="SiteAddress" minOccurs="0">
+			<xs:element name="SiteAddress" minOccurs="0" maxOccurs="5">
 				<xs:complexType>
 					<xs:complexContent>
 						<xs:extension base="AddressType">

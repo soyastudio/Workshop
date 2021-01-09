@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V 1.7 - 1/7/2021 - Alex Nunes - Jira EBC-13448: Change requested by CABS, Vendor Number and WHSE Id must be optional. DealVendorId in DealVendorType section and WarehouseId in VendorDealDetailType section.-->
 	<!--V1.6 11/05/2020 Rosabel Macario - Added tag to resolve dateTimeStamp issue-->
 	<!--V1.5 9/15/2020 Alex Nunes - Added AP Vendor Account Number element as per Jira EBC-12226 -->
 	<!--09/28/20 Patrick Oliver - Fixed mispelling for VendorDealSourceType-->
@@ -20,7 +21,7 @@
 			<xs:documentation>Vendor data from eDeals / NOPA. Basically it has all vendor data coming from eDelas and some of hte attributes may be different from vendor master data in SSIMS.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="DealVendorId">
+			<xs:element name="DealVendorId" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Vendor Number supplied by eDeals.  If this is a DSD vendor with Cost Area, we respect the vendor number.  If not, we find all vendors associated with the offer's items.</xs:documentation>
 				</xs:annotation>
@@ -175,7 +176,7 @@ If the log number can’t be seen in PACS, Safeway won’t be able to bill the v
 					<xs:documentation>Location where the deal is offered</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="DealVendor" type="DealVendorType">
+			<xs:element name="DealVendor" type="DealVendorType" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Vendor who offeres the deal on the items he supplies to Albertsons companies.</xs:documentation>
 				</xs:annotation>
@@ -589,8 +590,8 @@ Valid values for deal rejected/inactivated at header level:
 					<xs:documentation>Unique identifier of the detail line within a vendor deal.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element ref="WarehouseId"/>
 			<xs:element ref="CorporateItemCd"/>
+			<xs:element ref="WarehouseId" minOccurs="0"/>
 			<xs:element name="ConsumerUPC" type="UPC" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Retail scan upc at POS</xs:documentation>

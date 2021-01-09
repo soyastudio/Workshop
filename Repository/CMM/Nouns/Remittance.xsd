@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by Rosabel Macario (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<!--V2.1 Rosabel Macario: Added PayCompanyNm.-->
 	<!--V2.0 Patrick Oliver: Added BusinessUnitId and BuinessUnitNm; Rename to InvoiceBaseAmt (previous InvoicePrepareAmt), InvoiceRevalueAmt (previous InvoiceInstallmentAmt); Remove ForeignExchLossAmt, DiscountInstallementAmt, LedgerAmt; Re-name Pre and Post discount amount fields; Added InvoicePymtStatusCd-->
@@ -438,13 +438,7 @@ revaluation that resulted in the
 				</xs:simpleType>
 			</xs:element>
 			<xs:element ref="VendorGrp" minOccurs="0"/>
-			<xs:element name="Paygrp" minOccurs="0">
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="4"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
+			<xs:element ref="Paygrp" minOccurs="0"/>
 			<xs:element name="WithholdingAccrualCd" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>The withholding code assigned to the invoice payment. Used to default a general ledger withholding accrual account to the invoice. Must be a valid record in the Income Withholding Code file.</xs:documentation>

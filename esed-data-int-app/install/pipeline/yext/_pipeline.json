@@ -1,0 +1,117 @@
+[
+  {
+    "bod": {
+      "name": "yext-pharmacy-hours",
+      "pattern": "com.albertsons.edis.pipeline.yext.YextApiScanComponent",
+      "calendar": "0 0/5 * * * ?",
+      "delay": 15000
+    },
+    "sourceTable": {
+      "schema": "RDS_SRCYEXT",
+      "table": "pharmacyhours",
+      "columns": [
+        "pstoreid",
+        "address",
+        "hours",
+        "holidayhours"
+      ],
+      "primaryKey": "pstoreid",
+      "insert": "INSERT INTO RDS_SRCYEXT.pharmacyhours (pstoreid, address, hours, holidayhours, last_updt_ts, process_ind) VALUES (:pstoreid, :address, :hours, :holidayhours, CURRENT_TIMESTAMP, 'N')",
+      "update": "UPDATE RDS_SRCYEXT.pharmacyhours SET address = :address, hours = :hours, holidayhours = :holidayhours, last_updt_ts = CURRENT_TIMESTAMP, process_ind = 'N' WHERE pstoreid = :pstoreid"
+    },
+    "api": {
+      "type": "paginate(OFFSET, 50, 50)",
+      "url": "http://liveapi.yext.com/v2/accounts/me/locations?fields=id,address,hours,holidayHours&filters=[%7B%22name%22:%7B%22contains%22:[Pharmacy%22]%7D%7D]&api_key=6b8751105c4d898887200455f653d101&v=20191031&limit=50&offset={{OFFSET}}",
+      "jsonPath": "$.response.locations.[*]",
+      "filter": "$.response.locations.[*]",
+      "shifters": [
+        {
+          "type": "String",
+          "from": "id",
+          "to": "pstoreid",
+          "expression": "truncat(0, 4).shift_right(-).fill_left(4, 0)"
+        },
+        {
+          "type": "String",
+          "from": "address",
+          "to": "address"
+        },
+        {
+          "type": "String",
+          "from": "hours",
+          "to": "hours"
+        },
+        {
+          "type": "String",
+          "from": "holidayHours",
+          "to": "holidayhours",
+          "expression": "from_json()"
+        }
+      ]
+    }
+  },
+  {
+    "bod": {
+      "name": "yext-store-hours",
+      "pattern": "com.albertsons.edis.pipeline.yext.YextApiScanComponent",
+      "calendar": "300",
+      "delay": 5000
+    },
+    "sourceTable": {
+      "schema": "RDS_SRCYEXT",
+      "table": "storehours",
+      "columns": [
+        "storeid",
+        "latitude",
+        "longitude",
+        "hours",
+        "holidayhours",
+        "store_url"
+      ],
+      "primaryKey": "storeid",
+      "insert": "INSERT INTO RDS_SRCYEXT.storehours (storeid, latitude, longitude, hours, holidayhours, store_url, last_updt_ts, process_ind) VALUES (:storeid, :latitude, :longitude, :hours, :holidayhours, :store_url, CURRENT_TIMESTAMP, 'N')",
+      "update": "UPDATE RDS_SRCYEXT.storehours SET latitude = :latitude, longitude = :longitude, hours = :hours, holidayhours = :holidayhours, store_url = :store_url, last_updt_ts = CURRENT_TIMESTAMP, process_ind = 'N' WHERE pstoreid = :pstoreid"
+    },
+    "api": {
+      "type": "paginate(OFFSET, 50, 75)",
+      "url": "http://liveapi.yext.com/v2/accounts/me/locations?fields=id,yextDisplayLat,yextDisplayLng,hours,holidayHours,custom16236&api_key=6b8751105c4d898887200455f653d101&v=20191031&limit=50&offset={{OFFSET}}",
+      "jsonPath": "$.response.locations.[*]",
+      "filter": "$.response.locations.[?(@.id=~/[0-9]{1,4}/)]",
+      "shifters": [
+        {
+          "type": "String",
+          "from": "id",
+          "to": "storeid",
+          "expression": "fill_left(4, 0)"
+        },
+        {
+          "type": "Number",
+          "from": "yextDisplayLat",
+          "to": "latitude"
+        },
+        {
+          "type": "Number",
+          "from": "yextDisplayLng",
+          "to": "longitude"
+        },
+        {
+          "type": "String",
+          "from": "hours",
+          "to": "hours"
+        },
+        {
+          "type": "String",
+          "from": "holidayHours",
+          "to": "holidayhours",
+          "expression": "from_json()"
+        },
+        {
+          "type": "String",
+          "from": "customFields",
+          "to": "store_url",
+          "expression": "jsonpath($.16236)"
+        }
+      ]
+    }
+  }
+]

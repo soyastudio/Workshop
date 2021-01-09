@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by Rosabel Macario (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--Rosabel Macario 01/07/2021: Added PayeeTaxpayerNbr in CheckType as per requirement in Escheatment. -->
 	<!--Rosabel Macario 12/23/2020: Updated PayrollTranscationNbr from xs:long to xs:string.-->
 	<!--Rosabel Macario 12/04/2020: Updated GLTransactionType elements - set CompanyId and CompanyNm as Optional-->
 	<!--Rosabel Macario 12/02/2020: Added LineOfBusiness in GLTransactionType. -->
@@ -3825,6 +3826,16 @@ restrictions apply.</xs:documentation>
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="PayeeAddress" type="AddressType" minOccurs="0" maxOccurs="5"/>
+			<xs:element name="PayeeTaxPayerNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Payee Tax Payer Number</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element name="SerialNbr" type="xs:integer" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Check serial number</xs:documentation>

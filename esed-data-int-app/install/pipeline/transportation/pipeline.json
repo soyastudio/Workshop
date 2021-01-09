@@ -1,0 +1,15 @@
+{
+  "bod": {
+    "name": "Transportation",
+    "pattern": "com.albertsons.edis.pipeline.transportation.TransportationComponent",
+    "calendar": "15",
+    "delay": 15000
+  },
+  "select": "SELECT DISTINCT DC_ROUTE_PARAM1, DC_ROUTE_PARAM2, LST_UPD_TS from RDS_SRCEXE.DC_CAMS_CTL where DC_ROUTE_PARAM1 IS NOT NULL and DC_ROUTE_PARAM2 IS NOT NULL and DC_ROUTE_PROVIDER = 'DXCM'",
+  "update": "UPDATE RDS_SRCEXE.DC_CAMS_CTL SET LST_UPD_TS = CURRENT_TIMESTAMP WHERE DC_ROUTE_PARAM1 = ? AND DC_ROUTE_PARAM2 = ?",
+  "url": "https://svcin.prospero.com/api/ExportRequest",
+  "period": 15,
+  "days": 2,
+  "connectionFactoryJndiName": "esedXAQCFinrtlcustldapihprq",
+  "destinationJndiName": "esedinrtlcustldapihprqQueue"
+}

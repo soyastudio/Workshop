@@ -32,10 +32,15 @@ It is blank for type A, P or Q resources</xs:documentation>
 					<xs:documentation>Date of this fund transfer</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="FundTransferTransactionID" type="xs:int" minOccurs="0">
+			<xs:element name="FundTransferTransactionID" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation source="http://www.openapplications.org/platform/1">Mostly used for transfers to another party, this is the unique and unambiguous identification of a payment transaction, as assigned by any of the parties on the initiating side, which will be passed on throughout the entire end-to-end chain.   </xs:documentation>
 				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="30"/>
+					</xs:restriction>
+				</xs:simpleType>
 			</xs:element>
 			<xs:element name="FundTransferClassification" type="CodeWithDescription" minOccurs="0">
 				<xs:annotation>

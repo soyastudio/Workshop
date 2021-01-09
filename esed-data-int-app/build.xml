@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<project name="Esed Pipeline Server" default="install" basedir=".">
+    <!-- Sets variables which can later be used. -->
+    <!-- The value of a property is accessed via ${} -->
+    <property name="install.dir" location="./install"/>
+    <property name="bin.dir" location="${install.dir}/bin"/>
+    <property name="pipeline.dir" location="${install.dir}/pipeline"/>
+
+    <target name="build">
+        <mkdir dir="${install.dir}"/>
+
+        <exec dir="." executable="cmd">
+            <arg line="/c mvn clean install"/>
+        </exec>
+    </target>
+
+    <target name="clean">
+        <delete>
+            <fileset dir="${install.dir}" includes="**/*.jar"/>
+        </delete>
+    </target>
+
+    <target name="install" depends="build">
+        <delete>
+            <fileset dir="${bin.dir}" includes="**/*.jar"/>
+        </delete>
+        <copy todir="${bin.dir}">
+            <fileset dir="./esed-data-int-boot/target" includes="*.jar"/>
+        </copy>
+
+        <delete>
+            <fileset dir="${pipeline.dir}" includes="**/*.jar"/>
+        </delete>
+
+        <mkdir dir="${pipeline.dir}/transportation/lib"/>
+        <copy todir="${pipeline.dir}/transportation/lib">
+            <fileset dir="./esed-data-int-pipeline-transportation/target" includes="*.jar"/>
+        </copy>
+
+        <mkdir dir="${pipeline.dir}/yext/lib"/>
+        <copy todir="${pipeline.dir}/yext/lib">
+            <fileset dir="./esed-data-int-pipeline-yext/target" includes="*.jar"/>
+        </copy>
+
+        <mkdir dir="${pipeline.dir}/camel/lib"/>
+        <copy todir="${pipeline.dir}/camel/lib">
+            <fileset dir="./esed-data-int-pipeline-camel/target" includes="*.jar"/>
+        </copy>
+    </target>
+
+</project>

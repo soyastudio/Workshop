@@ -1,0 +1,36 @@
+server:
+  port: 7979
+
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@dgv0143ec:20001/ESEDDEV1_BATCH.oradb.albertsons.com
+    username: ESD0ED
+    password: ENC(OcjaVVHi6pcVfSJMaFw5uD2p5hgsG0A7)
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    hikari:
+      minIdle: 10
+      idleTimeout: 10000
+      maximumPoolSize: 30
+
+spring.quartz.properties:
+  org.quartz.threadPool.threadCount: 15
+
+jasypt:
+  encryptor:
+    bean: encryptor
+    config-file: conf/jasypt.properties
+
+java:
+  naming:
+    factory:
+      initial: com.sun.jndi.fscontext.RefFSContextFactory
+    provider:
+      url: file:/var/mqm/JNDI-Directory
+
+edis:
+  server:
+    name: esed-data-int-app
+    home: Application/esed-data-int-app
+    conf: Application/esed-data-int-app/conf
+    pipeline: Application/esed-data-int-app/pipeline
+
