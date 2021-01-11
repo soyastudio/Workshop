@@ -1,6 +1,7 @@
 package com.albertsons.edis.springboot.resource;
 
 import com.albertsons.edis.PipelineProcessService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,7 @@ import javax.ws.rs.core.Response;
 
 @Component
 @Path("/pipeline")
+@Api(value = "Pipeline Service", hidden = false)
 public class PipelineResource {
 
     @Autowired

@@ -56,6 +56,7 @@ public class URLPipelineDeployer implements PipelineDeployer {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
+                logger.info("Scanning for deployment...");
                 String[] paths = home.list();
                 for (String path : paths) {
                     if (deployable(path)) {

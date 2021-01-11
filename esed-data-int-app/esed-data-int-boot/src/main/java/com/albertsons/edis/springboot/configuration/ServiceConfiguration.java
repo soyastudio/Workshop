@@ -32,6 +32,7 @@ import java.util.concurrent.Executors;
 @Configuration
 public class ServiceConfiguration {
     private Environment environment;
+
     private File serverHome;
 
     @Autowired
@@ -108,7 +109,6 @@ public class ServiceConfiguration {
         return Executors.newFixedThreadPool(50);
     }
 
-
     @Bean
     PipelineScheduler pipelineScheduler(Scheduler scheduler) {
         final String groupName = "PIPELINE_PROCESSOR";
@@ -168,37 +168,6 @@ public class ServiceConfiguration {
     }
 
     @Bean
-    PlatformTransactionManager txManager(DataSource dataSource) {
-        return new DataSourceTransactionManager(dataSource);
-    }
-
-    @Bean
-    DataSource dataSource() {
-
-        HikariConfig dataSourceConfig = new HikariConfig();
-        dataSourceConfig.setDriverClassName(environment.getRequiredProperty("spring.datasource.driver-class-name"));
-        dataSourceConfig.setJdbcUrl(environment.getRequiredProperty("spring.datasource.url"));
-        dataSourceConfig.setUsername(environment.getRequiredProperty("spring.datasource.username"));
-        dataSourceConfig.setPassword(
-                environment.getRequiredProperty("spring.datasource.password"));
-        dataSourceConfig.setMaximumPoolSize(Integer.parseInt(environment.getRequiredProperty("spring.datasource.hikari.maximumPoolSize")));
-        dataSourceConfig.setMinimumIdle(Integer.parseInt(environment.getRequiredProperty("spring.datasource.hikari.minIdle")));
-        dataSourceConfig.setIdleTimeout(Long.parseLong(environment.getRequiredProperty("spring.datasource.hikari.idleTimeout")));
-
-        dataSourceConfig.addDataSourceProperty("poolName", "ESED");
-        dataSourceConfig.addDataSourceProperty("cachePrepStmts", "true");
-        dataSourceConfig.addDataSourceProperty("prepStmtCacheSize", "250");
-        dataSourceConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-
-        return new HikariDataSource(dataSourceConfig);
-    }
-
-    @Bean
-    DataAccessService dataAccessService(DataSource dataSource) {
-        return new DataAccessServiceImpl(dataSource);
-    }
-
-    @Bean
     PipelineContext pipelineContext(ApplicationContext applicationContext) {
         return applicationContext::getBean;
     }
@@ -227,24 +196,5 @@ public class ServiceConfiguration {
     PipelineProcessService pipelineProcessorManager(PipelineDeployer deployer, ExecutorService executorService, ExceptionHandlingService exceptionHandlingService) {
         return new PipelineProcessorManager(deployer, executorService, exceptionHandlingService);
     }
-
-    @Bean
-    JndiTemplate jndiTemplate(Environment environment) {
-        Properties properties = new Properties();
-        properties.setProperty("java.naming.factory.initial", environment.getProperty("java.naming.factory.initial"));
-        properties.setProperty("java.naming.provider.url", environment.getProperty("java.naming.provider.url"));
-        return new JndiTemplate(properties);
-    }
-
-    @Bean
-    JmsMessagePublishService messagePublishService(JndiTemplate jndiTemplate) {
-        return new MessagePublishServiceImpl(jndiTemplate);
-    }
-
-    @Bean
-    ServiceDispatcher serviceDispatcher() {
-        return new ServiceDelegateDispatcher();
-    }
-
 
 }

@@ -1,4 +1,4 @@
-package com.albertsons.edis.tools.aes;
+package com.albertsons.edis.tools.util;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;

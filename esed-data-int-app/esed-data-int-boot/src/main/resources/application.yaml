@@ -2,15 +2,31 @@ server:
   port: 7979
 
 spring:
-  datasource:
-    url: jdbc:oracle:thin:@dgv0143ec:20001/ESEDDEV1_BATCH.oradb.albertsons.com
-    username: ESD0ED
-    password: ENC(OcjaVVHi6pcVfSJMaFw5uD2p5hgsG0A7)
-    driver-class-name: oracle.jdbc.driver.OracleDriver
-    hikari:
-      minIdle: 10
-      idleTimeout: 10000
-      maximumPoolSize: 30
+  jersey:
+    type: servlet
+    load-on-startup: 1
+
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: admin_group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
+
+#   datasource:
+#     url: jdbc:oracle:thin:@dgv0143ec:20001/ESEDDEV1_BATCH.oradb.albertsons.com
+#     username: ESD0ED
+#     password: ENC(OcjaVVHi6pcVfSJMaFw5uD2p5hgsG0A7)
+#     driver-class-name: oracle.jdbc.driver.OracleDriver
+#     hikari:
+#       minIdle: 10
+#       idleTimeout: 10000
+#       maximumPoolSize: 30
 
 spring.quartz.properties:
   org.quartz.threadPool.threadCount: 15

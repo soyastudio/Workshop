@@ -1,6 +1,7 @@
 package com.albertsons.edis.springboot.resource;
 
 import com.albertsons.edis.ServiceDispatcher;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,7 @@ import javax.ws.rs.core.Response;
 
 @Component
 @Path("/dispatcher")
+@Api(value = "Dispatch Service", hidden = false)
 public class ServiceDispatchResource {
 
     @Autowired
@@ -22,6 +24,7 @@ public class ServiceDispatchResource {
     @Path("/list")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response list() {
+        System.out.println("---------------- ");
         return Response.ok().build();
     }
 

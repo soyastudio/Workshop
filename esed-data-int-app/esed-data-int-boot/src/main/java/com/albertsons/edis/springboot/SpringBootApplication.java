@@ -21,7 +21,7 @@ public class SpringBootApplication {
         ApplicationContext applicationContext = event.getApplicationContext();
         String[] names = applicationContext.getBeanDefinitionNames();
         for(String name: names) {
-            System.out.println("-------- " + name + ": " + applicationContext.getBean(name).getClass());
+            // System.out.println("-------- " + name + ": " + applicationContext.getBean(name).getClass());
         }
     }
 
