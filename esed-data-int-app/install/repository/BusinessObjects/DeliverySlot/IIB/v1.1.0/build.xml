@@ -1,0 +1,206 @@
+<?xml version="1.0"?>
+<project name="IIB Build" default="build" basedir=".">
+    <property file="build.properties"/>
+
+    <property name="template.dir" location="templates"/>
+    <property name="iib.workspace.home" value="${user.home}/IBM/IIBT10/workspace"/>
+
+    <property name="src.dir" location="src"/>
+    <property name="bin.dir" location="bin"/>
+    <property name="build.dir" location="build"/>
+
+    <available property="availableInWorkspace" file="${iib.workspace.home}/${bo.iib.flow.application}"/>
+
+    <target name="build">
+        <echo message="========== IIB BUILD =========="/>
+        <antcall target="iib-init"/>
+    </target>
+
+    <target name="iib-init">
+        <!-- SRC -->
+        <delete dir="${src.dir}"/>
+        <mkdir dir="${src.dir}"/>
+        <mkdir dir="${src.dir}/${bo.iib.flow.application}"/>
+        <copy todir="${src.dir}/${bo.iib.flow.application}">
+            <fileset dir="${template.dir}/iib/src/main" includes=".project, application.descriptor"/>
+        </copy>
+        <replace file="${src.dir}/${bo.iib.flow.application}/.project">
+            <replacefilter token="{{IIB_FLOW_APPLICATION}}" value="${bo.iib.flow.application}"/>
+        </replace>
+
+        <mkdir dir="${src.dir}/${bo.iib.flow.application}/${bo.iib.flow.broker.uri}"/>
+        <copy todir="${src.dir}/${bo.iib.flow.application}/${bo.iib.flow.broker.uri}">
+            <fileset dir="${template.dir}/iib/src/main" excludes=".project, application.descriptor"/>
+        </copy>
+        
+        <!-- ESQL -->
+        <replace file="${src.dir}/${bo.iib.flow.application}/${bo.iib.flow.broker.uri}/TEMPLATE_FLOW_COMPUTE.esql">
+            <replacefilter token="{{IIB_FLOW}}" value="${bo.iib.flow.name}"/>
+            <replacefilter token="{{IIB_BROKER_SCHEMA}}" value="${bo.iib.flow.broker.schema}"/>
+        </replace>
+        <move file="${src.dir}/${bo.iib.flow.application}/${bo.iib.flow.broker.uri}/TEMPLATE_FLOW_COMPUTE.esql" tofile="${src.dir}/${bo.iib.flow.application}/${bo.iib.flow.broker.uri}/${bo.iib.flow.name}_COMPUTE.esql"/>
+        <!-- SUBFLOW -->
+        <replace file="${src.dir}/${bo.iib.flow.application}/${bo.iib.flow.broker.uri}/TEMPLATE_FLOW_SF.subflow">
+            <replacefilter token="{{IIB_FLOW_APPLICATION}}" value="${bo.iib.flow.application}"/>
+            <replacefilter token="{{IIB_FLOW}}" value="${bo.iib.flow.name}"/>
+            <replacefilter token="{{IIB_BROKER_SCHEMA}}" value="${bo.iib.flow.broker.uri}"/>
+            <replacefilter token="{{IIB_BROKER_NAME}}" value="${bo.iib.flow.broker.name}"/>
+            <replacefilter token="{{IIB_BROKER_PACKAGE}}" value="${bo.iib.flow.broker.schema}"/>
+        </replace>
+        <move file="${src.dir}/${bo.iib.flow.application}/${bo.iib.flow.broker.uri}/TEMPLATE_FLOW_SF.subflow" tofile="${src.dir}/${bo.iib.flow.application}/${bo.iib.flow.broker.uri}/${bo.iib.flow.name}_SF.subflow"/>
+        <!-- TEST FLOW -->
+        <replace file="${src.dir}/${bo.iib.flow.application}/${bo.iib.flow.broker.uri}/TEMPLATE_FLOW_TEST.msgflow">
+            <replacefilter token="{{IIB_FLOW_APPLICATION}}" value="${bo.iib.flow.application}"/>
+            <replacefilter token="{{IIB_FLOW}}" value="${bo.iib.flow.name}"/>
+            <replacefilter token="{{IIB_BROKER_SCHEMA}}" value="${bo.iib.flow.broker.uri}"/>
+            <replacefilter token="{{IIB_BROKER_NAME}}" value="${bo.iib.flow.broker.name}"/>
+            <replacefilter token="{{MESSAGE_DOMAIN}}" value="${bo.iib.flow.message.domain}"/>
+        </replace>
+        <move file="${src.dir}/${bo.iib.flow.application}/${bo.iib.flow.broker.uri}/TEMPLATE_FLOW_TEST.msgflow" tofile="${src.dir}/${bo.iib.flow.application}/${bo.iib.flow.broker.uri}/${bo.iib.flow.name}_TEST.msgflow"/>
+
+
+        <!-- BUILD -->
+        <delete dir="${build.dir}"/>
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${build.dir}/bin"/>
+        <copy todir="${build.dir}">
+            <fileset dir="${template.dir}/iib/build" includes="**/*.*"/>
+        </copy>
+        <replace file="${build.dir}/.project">
+            <replacefilter token="{{IIB_FLOW_APPLICATION}}" value="${bo.iib.flow.application}"/>
+        </replace>
+        <replace file="${build.dir}/build.xml">
+            <replacefilter token="{{IIB_FLOW_APPLICATION}}" value="${bo.iib.flow.application}"/>
+
+        </replace>
+
+        <replace file="${build.dir}/bin/BuildConfig.txt">
+            <replacefilter token="{{IIB_FLOW_APPLICATION}}" value="${bo.iib.flow.application}"/>
+        </replace>
+
+        <replace file="${build.dir}/bin/Barfile.properties">
+            <replacefilter token="{{IIB_FLOW_PROPERTY_BASE}}" value="${bo.iib.flow.property.base}"/>
+            <replacefilter token="{{IIB_FLOW_APPLICATION}}" value="${bo.iib.flow.application}"/>
+            <replacefilter token="{{IIB_FLOW}}" value="${bo.iib.flow.name}"/>
+            <replacefilter token="{{IIB_BROKER_SCHEMA}}" value="${bo.iib.flow.broker.uri}"/>
+            <replacefilter token="{{IIB_BROKER_NAME}}" value="${bo.iib.flow.broker.name}"/>
+            <replacefilter token="{{IIB_BROKER_PACKAGE}}" value="${bo.iib.flow.broker.schema}"/>
+            <replacefilter token="{{IIB_FLOW_BO_NAME}}" value="${bo.iib.flow.bo.name}"/>
+            <replacefilter token="{{IIB_FLOW_SOURCE_NAME}}" value="${bo.iib.flow.source.name}"/>
+            <replacefilter token="{{IIB_FLOW_COMPONENT_NAME}}" value="${bo.iib.flow.component.name}"/>
+            <replacefilter token="{{IIB_FLOW_KAFKA_PRODUCER_TOPIC_NAME}}" value="${bo.iib.flow.kafka.producer.topic.name}"/>
+            <replacefilter token="{{IIB_FLOW_KAFKA_PRODUCER_CLIENT_ID}}" value="${bo.iib.flow.kafka.producer.client.id}"/>
+        </replace>
+
+        <!-- deploy config files -->
+        <replace file="${build.dir}/deploy/TEMPLATE_FLOW.DV.override.properties">
+            <replacefilter token="{{IIB_FLOW_PROPERTY_BASE}}" value="${bo.iib.flow.property.base}"/>
+            <replacefilter token="{{IIB_FLOW_APPLICATION}}" value="${bo.iib.flow.application}"/>
+            <replacefilter token="{{IIB_FLOW}}" value="${bo.iib.flow.name}"/>
+            <replacefilter token="{{IIB_BROKER_SCHEMA}}" value="${bo.iib.flow.broker.uri}"/>
+            <replacefilter token="{{IIB_BROKER_NAME}}" value="${bo.iib.flow.broker.name}"/>
+            <replacefilter token="{{IIB_BROKER_PACKAGE}}" value="${bo.iib.flow.broker.schema}"/>
+            <replacefilter token="{{IIB_FLOW_BO_NAME}}" value="${bo.iib.flow.bo.name}"/>
+            <replacefilter token="{{IIB_FLOW_SOURCE_NAME}}" value="${bo.iib.flow.source.name}"/>
+            <replacefilter token="{{IIB_FLOW_COMPONENT_NAME}}" value="${bo.iib.flow.component.name}"/>
+        </replace>
+        <move file="${build.dir}/deploy/TEMPLATE_FLOW.DV.override.properties" tofile="${build.dir}/deploy/${bo.iib.flow.name}.DV.override.properties"/>
+
+        <replace file="${build.dir}/deploy/TEMPLATE_FLOW.QA.override.properties">
+            <replacefilter token="{{IIB_FLOW_PROPERTY_BASE}}" value="${bo.iib.flow.property.base}"/>
+            <replacefilter token="{{IIB_FLOW_APPLICATION}}" value="${bo.iib.flow.application}"/>
+            <replacefilter token="{{IIB_FLOW}}" value="${bo.iib.flow.name}"/>
+            <replacefilter token="{{IIB_BROKER_SCHEMA}}" value="${bo.iib.flow.broker.uri}"/>
+            <replacefilter token="{{IIB_BROKER_NAME}}" value="${bo.iib.flow.broker.name}"/>
+            <replacefilter token="{{IIB_BROKER_PACKAGE}}" value="${bo.iib.flow.broker.schema}"/>
+            <replacefilter token="{{IIB_FLOW_BO_NAME}}" value="${bo.iib.flow.bo.name}"/>
+            <replacefilter token="{{IIB_FLOW_SOURCE_NAME}}" value="${bo.iib.flow.source.name}"/>
+            <replacefilter token="{{IIB_FLOW_COMPONENT_NAME}}" value="${bo.iib.flow.component.name}"/>
+        </replace>
+        <move file="${build.dir}/deploy/TEMPLATE_FLOW.QA.override.properties" tofile="${build.dir}/deploy/${bo.iib.flow.name}.QA.override.properties"/>
+
+        <replace file="${build.dir}/deploy/TEMPLATE_FLOW.UAT1.override.properties">
+            <replacefilter token="{{IIB_FLOW_PROPERTY_BASE}}" value="${bo.iib.flow.property.base}"/>
+            <replacefilter token="{{IIB_FLOW_APPLICATION}}" value="${bo.iib.flow.application}"/>
+            <replacefilter token="{{IIB_FLOW}}" value="${bo.iib.flow.name}"/>
+            <replacefilter token="{{IIB_BROKER_SCHEMA}}" value="${bo.iib.flow.broker.uri}"/>
+            <replacefilter token="{{IIB_BROKER_NAME}}" value="${bo.iib.flow.broker.name}"/>
+            <replacefilter token="{{IIB_BROKER_PACKAGE}}" value="${bo.iib.flow.broker.schema}"/>
+            <replacefilter token="{{IIB_FLOW_BO_NAME}}" value="${bo.iib.flow.bo.name}"/>
+            <replacefilter token="{{IIB_FLOW_SOURCE_NAME}}" value="${bo.iib.flow.source.name}"/>
+            <replacefilter token="{{IIB_FLOW_COMPONENT_NAME}}" value="${bo.iib.flow.component.name}"/>
+        </replace>
+        <move file="${build.dir}/deploy/TEMPLATE_FLOW.UAT1.override.properties" tofile="${build.dir}/deploy/${bo.iib.flow.name}.UAT1.override.properties"/>
+        
+        <replace file="${build.dir}/deploy/TEMPLATE_FLOW.UAT2.override.properties">
+            <replacefilter token="{{IIB_FLOW_PROPERTY_BASE}}" value="${bo.iib.flow.property.base}"/>
+            <replacefilter token="{{IIB_FLOW_APPLICATION}}" value="${bo.iib.flow.application}"/>
+            <replacefilter token="{{IIB_FLOW}}" value="${bo.iib.flow.name}"/>
+            <replacefilter token="{{IIB_BROKER_SCHEMA}}" value="${bo.iib.flow.broker.uri}"/>
+            <replacefilter token="{{IIB_BROKER_NAME}}" value="${bo.iib.flow.broker.name}"/>
+            <replacefilter token="{{IIB_BROKER_PACKAGE}}" value="${bo.iib.flow.broker.schema}"/>
+            <replacefilter token="{{IIB_FLOW_BO_NAME}}" value="${bo.iib.flow.bo.name}"/>
+            <replacefilter token="{{IIB_FLOW_SOURCE_NAME}}" value="${bo.iib.flow.source.name}"/>
+            <replacefilter token="{{IIB_FLOW_COMPONENT_NAME}}" value="${bo.iib.flow.component.name}"/>
+        </replace>
+        <move file="${build.dir}/deploy/TEMPLATE_FLOW.UAT2.override.properties" tofile="${build.dir}/deploy/${bo.iib.flow.name}.UAT2.override.properties"/>
+
+        <replace file="${build.dir}/deploy/TEMPLATE_FLOW.UAT3.override.properties">
+            <replacefilter token="{{IIB_FLOW_PROPERTY_BASE}}" value="${bo.iib.flow.property.base}"/>
+            <replacefilter token="{{IIB_FLOW_APPLICATION}}" value="${bo.iib.flow.application}"/>
+            <replacefilter token="{{IIB_FLOW}}" value="${bo.iib.flow.name}"/>
+            <replacefilter token="{{IIB_BROKER_SCHEMA}}" value="${bo.iib.flow.broker.uri}"/>
+            <replacefilter token="{{IIB_BROKER_NAME}}" value="${bo.iib.flow.broker.name}"/>
+            <replacefilter token="{{IIB_BROKER_PACKAGE}}" value="${bo.iib.flow.broker.schema}"/>
+            <replacefilter token="{{IIB_FLOW_BO_NAME}}" value="${bo.iib.flow.bo.name}"/>
+            <replacefilter token="{{IIB_FLOW_SOURCE_NAME}}" value="${bo.iib.flow.source.name}"/>
+            <replacefilter token="{{IIB_FLOW_COMPONENT_NAME}}" value="${bo.iib.flow.component.name}"/>
+        </replace>
+        <move file="${build.dir}/deploy/TEMPLATE_FLOW.UAT3.override.properties" tofile="${build.dir}/deploy/${bo.iib.flow.name}.UAT3.override.properties"/>
+
+        <replace file="${build.dir}/deploy/TEMPLATE_FLOW.UAT4.override.properties">
+            <replacefilter token="{{IIB_FLOW_PROPERTY_BASE}}" value="${bo.iib.flow.property.base}"/>
+            <replacefilter token="{{IIB_FLOW_APPLICATION}}" value="${bo.iib.flow.application}"/>
+            <replacefilter token="{{IIB_FLOW}}" value="${bo.iib.flow.name}"/>
+            <replacefilter token="{{IIB_BROKER_SCHEMA}}" value="${bo.iib.flow.broker.uri}"/>
+            <replacefilter token="{{IIB_BROKER_NAME}}" value="${bo.iib.flow.broker.name}"/>
+            <replacefilter token="{{IIB_BROKER_PACKAGE}}" value="${bo.iib.flow.broker.schema}"/>
+            <replacefilter token="{{IIB_FLOW_BO_NAME}}" value="${bo.iib.flow.bo.name}"/>
+            <replacefilter token="{{IIB_FLOW_SOURCE_NAME}}" value="${bo.iib.flow.source.name}"/>
+            <replacefilter token="{{IIB_FLOW_COMPONENT_NAME}}" value="${bo.iib.flow.component.name}"/>
+        </replace>
+        <move file="${build.dir}/deploy/TEMPLATE_FLOW.UAT4.override.properties" tofile="${build.dir}/deploy/${bo.iib.flow.name}.UAT4.override.properties"/>
+
+        <replace file="${build.dir}/deploy/TEMPLATE_FLOW.PR.override.properties">
+            <replacefilter token="{{IIB_FLOW_PROPERTY_BASE}}" value="${bo.iib.flow.property.base}"/>
+            <replacefilter token="{{IIB_FLOW_APPLICATION}}" value="${bo.iib.flow.application}"/>
+            <replacefilter token="{{IIB_FLOW}}" value="${bo.iib.flow.name}"/>
+            <replacefilter token="{{IIB_BROKER_SCHEMA}}" value="${bo.iib.flow.broker.uri}"/>
+            <replacefilter token="{{IIB_BROKER_NAME}}" value="${bo.iib.flow.broker.name}"/>
+            <replacefilter token="{{IIB_BROKER_PACKAGE}}" value="${bo.iib.flow.broker.schema}"/>
+            <replacefilter token="{{IIB_FLOW_BO_NAME}}" value="${bo.iib.flow.bo.name}"/>
+            <replacefilter token="{{IIB_FLOW_SOURCE_NAME}}" value="${bo.iib.flow.source.name}"/>
+            <replacefilter token="{{IIB_FLOW_COMPONENT_NAME}}" value="${bo.iib.flow.component.name}"/>
+        </replace>
+        <move file="${build.dir}/deploy/TEMPLATE_FLOW.PR.override.properties" tofile="${build.dir}/deploy/${bo.iib.flow.name}.PR.override.properties"/>
+
+        <delete dir="templates"/>
+        <antcall target="iib-export"/>
+    </target>
+
+    <target name="iib-import">
+        <mkdir dir="${iib.workspace.home}/${bo.iib.flow.application}"/>
+        <copy todir="${iib.workspace.home}/${bo.iib.flow.application}">
+            <fileset dir="./iib" includes="**/*.*"/>
+        </copy>
+    </target>
+
+    <target name="iib-export">
+        <echo message="Initialize project in IIB Toolkit workspace"/>
+        <mkdir dir="${iib.workspace.home}/${bo.iib.flow.application}"/>
+        <copy todir="${iib.workspace.home}/${bo.iib.flow.application}">
+            <fileset dir="." includes="**/*.*"/>
+        </copy>
+    </target>
+
+</project>

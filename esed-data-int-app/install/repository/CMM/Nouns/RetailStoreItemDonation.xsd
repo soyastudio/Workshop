@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.2 Rosabel Macario 11/04/2020 - Added tag to resolve dateTimeStamp issue-->
+	<!--V1.1 Patrick Oliver 7/22/20 - Updated VendorId & VendorSubAccntId to string(20)-->
+	<!--V 1.0 Alex Nunes 8/12/2019 Initial version.-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="RetailStoreItemDonation" type="RetailStoreItemDonationType">
+		<xs:annotation>
+			<xs:documentation>Root element.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="RetailStoreItemDonationDetailType">
+		<xs:annotation>
+			<xs:documentation>Detail level. Product information pertaining to a donation.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="WarehouseId" minOccurs="0"/>
+			<xs:element name="VendorId" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Vendor Identifier.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorSubAccntId" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Vendor Sub Account Id</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SectionCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Retail section code of an item.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="CorporateItemCd" minOccurs="0"/>
+			<xs:element name="DonateQty" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Item quantity donated.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="UPC" type="UPC" minOccurs="0"/>
+			<xs:element name="UPCComponents" type="UPCComponentsType" minOccurs="0"/>
+			<xs:element name="ItemDescription" type="xs:string" minOccurs="0"/>
+			<xs:element ref="Status" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RetailStoreItemDonationHeaderType">
+		<xs:annotation>
+			<xs:documentation>Header lebel. Information that applies to the entire donation, summary amounts and header information.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporationId"/>
+			<xs:element ref="DivisionId"/>
+			<xs:element name="FacilityID" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>A four character code that is used with corporation
+ and division to uniquely identify a facility. A facility may "belong" to
+ only one corporation and one division. A building may house one or more
+facilities. There are two categories for facilities:
+ 1) Operating facility
+ - actively supports the business of the Company
+ - is a distinct business operation within a building
+  - examples: office, processing plant, retail store, truck service
+ shop, or warehouse building  (A warehouse facility includes all warehouse departments that exist within a single building.)
+ - each type of division/business has a different set of possible types of operating facilities: i.e.,
+ - Retail: retail outlets and offices.
+- Wholesale: warehouse facilities, truck service shop, and offices.
+- Processing/Manufacturing: processing plants and offices.
+ 2) Non-operating Facility                                                     
+ - not currently being operated by the Company.
+ - facilities </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TransactionTs" type="xs:dateTime">
+				<xs:annotation>
+					<xs:documentation>Donation timestamp.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DonationNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Unique donation identifier.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="24"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Charity" type="BeneficiaryType"/>
+			<xs:element name="AcceptingNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of whomever is accepting the donations.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="60"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ItemTotalNbr">
+				<xs:annotation>
+					<xs:documentation>Total number of items donated.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="10"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ItemTotalQty">
+				<xs:annotation>
+					<xs:documentation>Total quantity of items donated.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AuditData" type="RecordAuditData"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RetailStoreItemDonationType">
+		<xs:annotation>
+			<xs:documentation>Publishes enterprise retail donated items per retail facility.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DonationHeader" type="RetailStoreItemDonationHeaderType"/>
+			<xs:element name="DonationDetail" type="RetailStoreItemDonationDetailType" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

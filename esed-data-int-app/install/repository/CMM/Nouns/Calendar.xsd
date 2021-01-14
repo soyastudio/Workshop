@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.0  Alex Nunes 10/23/2019 Initial version -->
+	<!--V1.1  Alex Nunes 7/21/2020 Removal of period from Gregorian calendar, Holiday cardinality. -->
+	<!--V1.2 Rosabel Macario 11/05/2020 - Added tag to resolve dateTimeStamp issue-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
+	<xs:element name="Calendar" type="CalendarType">
+		<xs:annotation>
+			<xs:documentation>root element.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="CalendarDt" type="DateBaseType">
+		<xs:annotation>
+			<xs:documentation>Calendar date. This is a required element which is also the key of this BOD.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="CalendarType">
+		<xs:annotation>
+			<xs:documentation>Calendar type represents all corporate, fiscal and payroll holiday days. It provides reference data for downstream systems.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CalendarDt"/>
+			<xs:element name="JulianDt" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Julian representation of the date.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GregorianCalendar" type="GregorianCalendarType" minOccurs="0"/>
+			<xs:element name="FiscalCalendar" type="FiscalCalendarType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="FiscalCalendarType">
+		<xs:annotation>
+			<xs:documentation>This type represents the calendar data that company uses for financial reporting and budgeting.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0">
+			<xs:element name="DateDsc" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date description.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="30"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Year" type="YearType" minOccurs="0"/>
+			<xs:element name="Quarter" minOccurs="0">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="QuarterType"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Period" minOccurs="0">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="PeriodType"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Week" minOccurs="0">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="WeekType"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Day" type="DayType" minOccurs="0"/>
+			<xs:element name="CompanyHolidayInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Holiday indicator. Values 'H' for holiday.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PriorYearCalendarDt" type="DateBaseType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date of prior year calendar.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute ref="typeCode"/>
+	</xs:complexType>
+	<xs:complexType name="GregorianCalendarType">
+		<xs:annotation>
+			<xs:documentation>This type represents the calendar data used in the business operations sech as retail, supply chain and other business operations.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0">
+			<xs:element name="DateDsc" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date description.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="30"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Year" type="YearType" minOccurs="0"/>
+			<xs:element name="Quarter" type="QuarterType" minOccurs="0"/>
+			<xs:element name="Month" type="MonthType" minOccurs="0"/>
+			<xs:element name="Week" type="WeekType" minOccurs="0"/>
+			<xs:element name="Day" type="DayType" minOccurs="0"/>
+			<xs:element name="Holiday" type="HolidayType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute ref="typeCode"/>
+	</xs:complexType>
+	<xs:complexType name="HolidayType">
+		<xs:annotation>
+			<xs:documentation>All localized holidays are represented in this type per region.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0">
+			<xs:element name="HolidayId" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="City" type="CodeWithDescription" nillable="true" minOccurs="0"/>
+			<xs:element name="County" type="CodeWithDescription" nillable="true" minOccurs="0"/>
+			<xs:element name="State" type="CodeWithDescription" nillable="true" minOccurs="0"/>
+			<xs:element name="Country" type="CodeWithDescription" nillable="true" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute ref="typeCode"/>
+	</xs:complexType>
+	<xs:complexType name="DayType">
+		<xs:sequence minOccurs="0">
+			<xs:element name="DayWeekNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field represents the day number within the week.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DayShortNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Short name for the day.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="15"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DayMonthNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field represents the day number within the month.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DayYearNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field represents the day number within the year.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WeekType">
+		<xs:sequence minOccurs="0">
+			<xs:element name="WeekNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Week number.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WeekDsc" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Week description.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="30"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="WeekDayNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the weekday.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="12"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="WeekDayShortNm" type="DateBaseType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Short name of the weekday. Ex: MON, TUE.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WeekOfPeriodNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Week number within a period.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WeekStartDt" type="DateBaseType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Week start date.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WeekEndDt" type="DateBaseType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Week end date.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MonthType">
+		<xs:sequence minOccurs="0">
+			<xs:element name="MonthYearNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Number of the month within the year 1-12.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MonthNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the month.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="12"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MonthShortNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Short name of the month, Ex: JAN, FEB.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MonthNmFirstLetterTxt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Initial letter of the month name.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PeriodType">
+		<xs:sequence minOccurs="0">
+			<xs:element name="PeriodNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Period number.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PeriodNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name or description of the period.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="30"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PeriodOfQuarterNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Period number within a quarter.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PeriodStartDt" type="DateBaseType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Period start date,</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PeriodEndDt" type="DateBaseType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Period end date.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="QuarterType">
+		<xs:sequence minOccurs="0">
+			<xs:element name="QuarterNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Quarter number.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="QuarterNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name or description of the quarter.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="QuarterStartDt" type="DateBaseType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Quarter start date.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="QuarterEndDt" type="DateBaseType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Quarter end date.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="YearType">
+		<xs:sequence>
+			<xs:element name="YearNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Year number. Ex: 2019</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="YearNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name or description of the year.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="YearWeekTxt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Year and Week number. Ex: 201910</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="6"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="YearStartDt" type="DateBaseType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Year start date.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="YearEndDt" type="DateBaseType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Year end date.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

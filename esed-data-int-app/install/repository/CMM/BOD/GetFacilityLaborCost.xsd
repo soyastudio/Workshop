@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<xs:schema xmlns="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://www.openapplications.org/oagis/9" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" 
+vc:minVersion="1.1"
+elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.0    Sai Nuthakki     07/06/2020     Initial Version-->
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/LaborCost.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="GetFacilityLaborCost">
+		<xs:annotation>
+			<xs:documentation>Business object to define the cost of labor in a facility and day by labor activity type. It contains labor cost by schedules hrs group by Detpt and Job Cd or Actual cost grouped by dept, job cd.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="GetFacilityLaborCostType">
+					<xs:attribute name="VersionId" type="xs:string" use="optional">
+						<xs:annotation>
+							<xs:documentation>Version Id for the BOD instance</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="ReleaseId" type="xs:string" use="optional">
+						<xs:annotation>
+							<xs:documentation>ReleaseId for the BOD instance</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="SystemEnvironmentCd" type="xs:string" use="optional" default="Production">
+						<xs:annotation>
+							<xs:documentation>Prod, Test, QA</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="GetFacilityLaborCostType">
+		<xs:annotation>
+			<xs:documentation>Business object to define the cost of labor in a facility and day by labor activity type. It contains labor cost by schedules hrs group by Detpt and Job Cd or Actual cost grouped by dept, job cd.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="LaborCostData" type="Abs:LaborCostType"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

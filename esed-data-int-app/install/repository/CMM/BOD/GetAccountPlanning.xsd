@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx"
+xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" 
+vc:minVersion="1.1" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/AccountPlanning.xsd"/>
+	<xs:element name="GetAccountPlanning" type="GetAccountPlanningType">
+		<xs:annotation>
+			<xs:documentation>Account Planning object will be used to capture annual plans (Corporate, Retail, Manufacturing, Supply Chain, Ecommerce) which cover all lines of financial data used to measure financial performance. In addition, the Account Planning object will capture projections that contain the sales, costs, and expense lines found on a profit and loss statements for retail stores and departments.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetAccountPlanningType">
+		<xs:annotation>
+			<xs:documentation>Account Planning object will be used to capture annual plans (Corporate, Retail, Manufacturing, Supply Chain, Ecommerce) which cover all lines of financial data used to measure financial performance. In addition, the Account Planning object will capture projections that contain the sales, costs, and expense lines found on a profit and loss statements for retail stores and departments.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AccountPlanningData" type="Abs:AccountPlanningType"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

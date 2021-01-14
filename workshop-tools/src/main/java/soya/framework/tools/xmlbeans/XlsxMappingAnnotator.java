@@ -22,6 +22,7 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
 
     private String mappingFile;
     private String mappingSheet;
+
     private List<String> sourceSheet;
 
     private List<String> excludes;
@@ -37,6 +38,7 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
     }
 
     public void annotate(XmlSchemaBase base) {
+
         if (sourceFiles != null) {
             sourceFiles.forEach(sf -> {
                 try {
@@ -140,7 +142,11 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
 
                 String targetPath = isEmpty(targetCell) ? null : targetCell.getStringCellValue().trim();
                 String mappingRule = isEmpty(ruleCell) ? null : ruleCell.getStringCellValue().trim();
+
                 String sourcePath = isEmpty(sourceCell) ? null : sourceCell.getStringCellValue().trim();
+                if(sourcePath != null && !sourcePath.contains("/") && sourcePath.contains(".")) {
+                    sourcePath = sourcePath.replaceAll("\\.", "/");
+                }
 
                 // check unknown mapping:
                 UnknownMapping unknownMapping = checkUnknown(targetPath, mappingRule, sourcePath, base);

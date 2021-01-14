@@ -4,15 +4,20 @@ import com.albertsons.edis.Delegate;
 import com.albertsons.edis.DelegateParameter;
 import com.albertsons.edis.ServiceDelegate;
 import com.albertsons.edis.ServiceDispatcher;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ServiceDelegateDispatcher implements ServiceDispatcher {
+public class ServiceDelegateDispatcher implements ServiceDispatcher, ServiceDispatcher.ServiceRegistry {
+
+    private static Map<String, String[]> services = new LinkedHashMap<>();
     private static Map<ServiceKey, Operation> operationMap = new ConcurrentHashMap<>();
 
     private Registry registry;
@@ -25,22 +30,54 @@ public class ServiceDelegateDispatcher implements ServiceDispatcher {
         this.registry = registry;
     }
 
-    @Override
-    public ServiceCallResult dispatch(ServiceCall call) {
-        return call.invoke();
-    }
 
     @Override
     public void register(Object... delegates) {
-        for (Object o : delegates) {
-            operationMap.putAll(registry.register(o));
-        }
 
+        for (Object o : delegates) {
+            Map<ServiceKey, Operation> map = registry.register(o);
+
+            String service = null;
+            List<String> operations = new ArrayList<>();
+            for (ServiceKey key : map.keySet()) {
+                if (service == null) {
+                    service = key.serviceName;
+                }
+                operations.add(key.operationName);
+            }
+
+            Collections.sort(operations);
+            services.put(service, operations.toArray(new String[operations.size()]));
+            operationMap.putAll(map);
+        }
     }
 
     @Override
-    public ServiceCall newServiceCall(String servcieName, String operationName) {
-        return new DefaultServiceCall(servcieName, operationName);
+    public String[] getServices() {
+        List<String> list = new ArrayList<>(services.keySet());
+        Collections.sort(list);
+        return list.toArray(new String[list.size()]);
+    }
+
+    @Override
+    public String[] getOperations(String serviceName) {
+        return services.get(serviceName);
+    }
+
+    @Override
+    public ServiceCall newServiceCall(String serviceName, String operationName) {
+        return new DefaultServiceCall(serviceName, operationName);
+    }
+
+    @Override
+    public Object dispatch(String service, String operation, String json) throws Exception {
+        ServiceCallResult result = newServiceCall(service, operation).fromJson(json).invoke();
+        if (result.isSuccess()) {
+            return result.getResult();
+
+        } else {
+            throw (Exception) result.getException();
+        }
     }
 
     static class DefaultServiceCall implements ServiceCall {
@@ -50,9 +87,10 @@ public class ServiceDelegateDispatcher implements ServiceDispatcher {
 
         DefaultServiceCall(String serviceName, String operationName) {
             this.serviceKey = new ServiceKey(serviceName, operationName);
-            if(!operationMap.containsKey(serviceKey)) {
+            if (!operationMap.containsKey(serviceKey)) {
                 throw new IllegalArgumentException("Cannot find service operation!");
             }
+
             this.operation = operationMap.get(serviceKey);
             this.params = new Object[operation.paramTypes.size()];
         }
@@ -63,17 +101,33 @@ public class ServiceDelegateDispatcher implements ServiceDispatcher {
         }
 
         @Override
+        public ServiceCall fromJson(String json) {
+            if (json != null) {
+                Gson gson = new Gson();
+                JsonElement jsonElement = JsonParser.parseString(json);
+                if (jsonElement.isJsonArray()) {
+                    JsonArray array = jsonElement.getAsJsonArray();
+                    Class<?>[] types = operation.paramTypes.values().toArray(new Class[operation.paramTypes.size()]);
+                    int i = 0;
+                    for(Class<?> type: types) {
+                        params[i] = gson.fromJson(array.get(i), type);
+                        i ++;
+                    }
+                }
+
+            }
+            return this;
+        }
+
+        @Override
         public ServiceCallResult invoke() {
             try {
                 Object result = operation.invoke(params);
+                return DefaultServiceCallResult.successResult(result);
 
-                return new DefaultServiceCallResult(result);
+            } catch (InvocationTargetException | IllegalAccessException e) {
+                return DefaultServiceCallResult.failureResult(e);
 
-            } catch (InvocationTargetException e) {
-                return new DefaultServiceCallResult(e.getTargetException());
-
-            } catch (IllegalAccessException e) {
-                return new DefaultServiceCallResult(e);
             }
         }
     }
@@ -82,13 +136,20 @@ public class ServiceDelegateDispatcher implements ServiceDispatcher {
         private Object result;
         private Throwable exception;
 
-        DefaultServiceCallResult(Object result) {
-            this.result = result;
+        private DefaultServiceCallResult() {}
+
+        static DefaultServiceCallResult failureResult(Exception exception) {
+            DefaultServiceCallResult result = new DefaultServiceCallResult();
+            result.exception = exception;
+            return result;
         }
 
-        DefaultServiceCallResult(Throwable exception) {
-            this.exception = exception;
+        static DefaultServiceCallResult successResult(Object value) {
+            DefaultServiceCallResult result = new DefaultServiceCallResult();
+            result.result = value;
+            return result;
         }
+
 
         @Override
         public boolean isSuccess() {
@@ -101,8 +162,8 @@ public class ServiceDelegateDispatcher implements ServiceDispatcher {
         }
 
         @Override
-        public <T> T getResult(Class<T> type) {
-            return (T) result;
+        public Object getResult() {
+            return result;
         }
     }
 
@@ -120,6 +181,24 @@ public class ServiceDelegateDispatcher implements ServiceDispatcher {
             if (operationName == null || operationName.trim().length() == 0) {
                 throw new IllegalArgumentException("Operation name cannot be null or empty.");
             }
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            ServiceKey key = (ServiceKey) o;
+
+            if (!serviceName.equals(key.serviceName)) return false;
+            return operationName.equals(key.operationName);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = serviceName.hashCode();
+            result = 31 * result + operationName.hashCode();
+            return result;
         }
     }
 
@@ -148,12 +227,12 @@ public class ServiceDelegateDispatcher implements ServiceDispatcher {
         @Override
         public Map<ServiceKey, Operation> register(Object o) {
             Map<ServiceKey, Operation> map = new LinkedHashMap<>();
-            if(o instanceof ServiceDelegate) {
+            if (o instanceof ServiceDelegate) {
                 Class<?> c = o.getClass();
                 Class<?> api = findDelegateInterface(c);
                 String serviceName = c.getSimpleName();
                 Method[] methods = new Method[0];
-                if(api != null) {
+                if (api != null) {
                     methods = api.getDeclaredMethods();
                     serviceName = api.getSimpleName();
 
@@ -173,7 +252,7 @@ public class ServiceDelegateDispatcher implements ServiceDispatcher {
                         }
 
                         Class<?>[] types = method.getParameterTypes();
-                        for (int i = 0; i < types.length; i ++) {
+                        for (int i = 0; i < types.length; i++) {
                             operation.paramTypes.put("arg" + i, types[i]);
                         }
 
@@ -184,12 +263,12 @@ public class ServiceDelegateDispatcher implements ServiceDispatcher {
             } else {
 
             }
-            return  map;
+            return map;
         }
 
         private Class<?> findDelegateInterface(Class<?> c) {
-            for(Class<?> i: c.getInterfaces()) {
-                if(ServiceDelegate.class.isAssignableFrom(i) && !i.equals(ServiceDelegate.class)) {
+            for (Class<?> i : c.getInterfaces()) {
+                if (ServiceDelegate.class.isAssignableFrom(i) && !i.equals(ServiceDelegate.class)) {
                     return i;
                 }
             }
@@ -205,17 +284,14 @@ public class ServiceDelegateDispatcher implements ServiceDispatcher {
             Class<?> c = o.getClass();
             if (c.getAnnotation(Delegate.class) != null) {
                 String serviceName = c.getAnnotation(Delegate.class).value();
-                for (Method method : c.getDeclaredMethods()) {
-                    if (method.isAccessible()) {
-                        String operationName = method.getName();
-                        if (method.getAnnotation(Delegate.class) != null) {
-                            operationName = method.getAnnotation(Delegate.class).value();
-                        }
 
+                for (Method method : c.getDeclaredMethods()) {
+                    if (method.getAnnotation(Delegate.class) != null) {
+                        String operationName = method.getAnnotation(Delegate.class).value();
                         ServiceKey key = new ServiceKey(serviceName, operationName);
                         Operation operation = new Operation(method, o);
 
-                        if (operationMap.containsKey(key)) {
+                        if (map.containsKey(key)) {
                             throw new IllegalArgumentException("Service Operation already exists.");
                         }
 
@@ -237,13 +313,12 @@ public class ServiceDelegateDispatcher implements ServiceDispatcher {
                             operation.paramTypes.put(name, c);
                         }
 
-                        operationMap.put(key, operation);
+                        map.put(key, operation);
                     }
-
                 }
             }
 
-            return  map;
+            return map;
         }
     }
 

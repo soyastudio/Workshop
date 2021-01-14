@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by Rosabel Macario (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.3 12/23/20: Rosabel Macario - Changed PayrollTransactionDt, PayrollTransactionAmt as Optional. Added ReconTransactionDt and ReconSequenceNbr. -->
+	<!--V1.2 12/11/20:  Patrick Oliver  - Changed PayrollTransactionAmt to complex type; added PaymentAmt to PayrollReconciliation-->
+	<!--v1.1 11/03/2020 - Rosabel M - Add tag to resolve issue on dateTimeStamp-->
+	<!--v1.0 05/15/2020 - Jayson S  - Initial Version-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:include schemaLocation="FinanceMaster.xsd"/>
+	<xs:complexType name="EmployeePayrollType">
+		<xs:annotation>
+			<xs:documentation>Employee Payroll represents the daily checks issued to employees for salary payment. 
+
+There are times that instead of a payroll file, a reconciliation file is sent to process checks that were cancelled or voided.
+</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="PayrollTransactionNbr"/>
+			<xs:element ref="PayrollTransactionDt" minOccurs="0"/>
+			<xs:element ref="PayrollTransactionAmt" minOccurs="0"/>
+			<xs:element ref="PayrollPaymentNbr" minOccurs="0"/>
+			<xs:element name="PayGroupCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The pay group assigned to the company. A pay group is used for processing accounts payable payments. A pay group lets you create a single payment for a vendor to pay invoices received by all company process levels assigned to the pay group. Must be a valid record in the Pay Group file. The company must have the same base currency as the posting company assigned to the pay group.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PayrollPeriodNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>period where this payroll belongs to</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PayoutDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date of the actual payout.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PayrollDepartmentId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Payroll department defined in HR system like Peoplesoft</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PayrollRecordType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Represents what kind of record is being transmitted. can be one of 2 posisble scenarios: 
+1 - Detail record of the check
+2 - Summary record for all checks within a paygroup
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PayrollTransactionClassification" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Determines whether this transaction belongs to admin or retail. Possible values are: 
+APY - Admin belonging to paygroup 099
+RPY - Retail belonging to all other paygroups
+
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PayrollTransactionBatch" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains attributes that define the date, time, and source account number for this payroll. The source account number can change based on the employee's paygroup.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="BatchDt" type="xs:date" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Transaction Date. Current date of Check Reconciliation Run   
+</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="BatchTm" type="xs:time" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Transaction Time. Current time of Check Reconciliation Run    
+</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SourceBankAcctNbr" type="xs:long" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Bank account number where check is charged against.
+The Account number is specified per paygroup.
+Pay groups combine employees who share the same payroll characteristics.
+</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AENbr" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>AE Code is the Lawson Division
+Concatenation of constant "01" and the paygroup of the employee
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Payee" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains the information of the employee receiving the payroll.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="PayeeNm" type="PersonNameType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Name of the Employee. Usual format is FIRST NAME followed by LAST NAME
+</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Id" type="IDType" minOccurs="0"/>
+						<xs:element name="AlternateId" type="AlternateId" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Alternate identification of the Payee. This can be SSN, TIN, etc.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PayeeAddress" type="AddressBaseType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Payee street level address.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PayrollDeduction" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Contains deduction type and deduction amount. This is basically a collection of deductible amounts against an employee's paycheck such as Taxes, loan payments, etc. </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="DeductionType" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Defines the deduction type, can be:
+Withholding Tax, etc</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="DeductionAmt" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Amount to be deducted against the paycheck.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CheckVoidInd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>'V' if the net pay on the check is Zero. Otherwise, this is blank. 
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PayrollReconciliation" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Done when a check is voided. 
+
+Some scenarios are: 
+1. Employee might have left the company 
+2. Employee did not receive the check for reasons such as wrong address.
+3. There is a discrepancy in the amount that is to be paid to the employee versus the check that is supposed to be issued. </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="BankId" type="xs:int" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Bank location where the bank account is located. Source of payroll funds</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="BankAcctNbr" type="xs:long" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Designated new bank account number for source of funds for payroll. 
+</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ReconTransactionDt" type="xs:date" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Reconciliation transaction date. This is the date when the recon is issued.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ReconSequenceNbr" type="xs:integer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Sequence number incremented for reconciliation transactions.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="RecordType" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Used for Reconcilation purposes. Usually the value is 3 - Voided</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="BankInstitution" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Bank transaction code. Represents a type of cash. Examples:
+PAY - Payment, 
+bill of exchange payment, or bank service.
+</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PaymentAmt" type="AmountType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The payment asscoiated to each reconciliation</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

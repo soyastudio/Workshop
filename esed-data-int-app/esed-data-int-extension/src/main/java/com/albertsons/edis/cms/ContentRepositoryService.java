@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +30,15 @@ public class ContentRepositoryService {
     public ContentRepositoryService(File repositoryHome) {
         this.repositoryHome = repositoryHome;
         this.readers = new HashMap<>(defaultReaders);
+    }
+
+    public URL getRepositoryHome() {
+        try {
+            return repositoryHome.toURI().toURL();
+
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

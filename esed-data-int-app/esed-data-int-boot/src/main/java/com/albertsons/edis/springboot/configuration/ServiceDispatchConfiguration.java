@@ -20,23 +20,14 @@ public class ServiceDispatchConfiguration {
     @EventListener(classes = {ApplicationReadyEvent.class})
     public void onApplicationEvent(ApplicationReadyEvent event) {
         ApplicationContext applicationContext = event.getApplicationContext();
-        ServiceDispatcher serviceDispatcher = applicationContext.getBean(ServiceDispatcher.class);
 
-
+        ServiceDispatcher.ServiceRegistry registry = applicationContext.getBean(ServiceDispatcher.ServiceRegistry.class);
         String[] names = applicationContext.getBeanDefinitionNames();
         for(String name: names) {
             Object bean = applicationContext.getBean(name);
             if(bean.getClass().getAnnotation(Delegate.class) != null) {
-                System.out.println("-------- " + name + ": " + bean.getClass());
-                serviceDispatcher.register(bean);
+                registry.register(bean);
             }
-
-            if(bean instanceof ServiceDelegate) {
-
-                serviceDispatcher.register(bean);
-            }
-
-            //
         }
     }
 }

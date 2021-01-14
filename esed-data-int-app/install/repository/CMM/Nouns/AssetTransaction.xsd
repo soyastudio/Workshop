@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.2 Rosabel Macario 11/05/2020 - Added tag to resolve dateTimeStamp issue-->
+	<!--V1.1 Patrick Oliver 10/20/20: Added AltAccountId-->
+	<!--V1.0  Alex Nunes 7/18/2019 Initial version -->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
+	<xs:element name="AssetTransaction" type="AssetTransactionType">
+		<xs:annotation>
+			<xs:documentation>root element.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="AssetTransactionType">
+		<xs:annotation>
+			<xs:documentation>This type represents asset transactions that update the general ledger. A record is created or updated in this file each time an asset is added, transferred, disposed of, or retired, or when depreciation is calculated.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="AssetNbr"/>
+			<xs:element ref="CompanyId"/>
+			<xs:element ref="BookId"/>
+			<xs:element name="SequenceNbr">
+				<xs:annotation>
+					<xs:documentation>A unique number assigned to the asset transaction to keep records unique.
+</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="6"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LeaseCompanyId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The lessor company for a leased asset.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LeaseNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The lease number associated with a leased asset.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="19"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AssetGroupNbr">
+				<xs:annotation>
+					<xs:documentation>The asset group assigned to the associated asset record. Represents a parent number used for report grouping.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TransactionDt" type="xs:date">
+				<xs:annotation>
+					<xs:documentation>The date of the transaction. Used for posting the asset transaction to the general ledger.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ProcessDt" type="xs:date">
+				<xs:annotation>
+					<xs:documentation>This field displays the system date when record was created.
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReferenceNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The reference number associated with the transaction.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TransactionDsc" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A description of the asset transaction.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="30"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="StatusCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The status of the asset transaction.  Transactions must have a Released status before they can be posted to the general ledger.  Valid values are: M = Memo U = Unreleased R = Released H = Historical.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AccoutGrp" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AssetTypeCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field identifies the asset type.  Asset types are user-defined and represent a grouping of like assets.  Asset types are used to group assets into reporting classes and to default common asset definition data.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AssetSubTypeCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field identifies the asset subtype. An asset subtype represents a more detailed grouping of assets within an asset type. Asset subtypes are used to group assets into reporting classes and allow common asset definition data to default.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AccountTypeCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="AccountingUnitId" minOccurs="0"/>
+			<xs:element ref="AccountId" minOccurs="0"/>
+			<xs:element name="AltAccountId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Can be account ID but in string format.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="25"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="SubAccountId" minOccurs="0"/>
+			<xs:element name="AssetProcessCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field identifies the type of Asset Management process that caused this record to be created. Valid values are: ADD = Addition ADJ = Adjustment DPR = Depreciation DSP = Disposal TRF = Transfer RIN = Reinstate RAD = Readd.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ObjectId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A subsystem activity interface identification number. Used for Drill Around purposes.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="12"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ActivityDsc" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The activity assigned to the asset transaction.  Activities are the processes or procedures that produce work. Cost objects (products, services, customers, and so on) are the reasons for performing the activity. Activities and cost object activities are used synonymously in the Lawson Activity Management system.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="15"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="AccountCategory" minOccurs="0"/>
+			<xs:element ref="TransactionAmt"/>
+			<xs:element name="ProcessAssetNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field identifies the asset record that caused the transaction to be  created. This field contains the same value as the Asset field in this file, except in the case of a partial transfer.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ProcessSeqNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A system-generated number that is assigned to all asset transactions for a given process.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="6"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="GLObjectId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the object identifier. It is used to relate commitments or posted transactions back to the originating subsystems. Each subsystem record that is updated as a commitment or posted transaction is assigned an object identifier. The object identifier is maintained in the subsystem files and in the Activity Commitments Detail and Activity Transaction files. The object identifier is a unique key used to drill back from Activity Management to the subsystems.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="12"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AuditData" type="RecordAuditData"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

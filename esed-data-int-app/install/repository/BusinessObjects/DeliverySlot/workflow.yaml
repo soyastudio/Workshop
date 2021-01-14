@@ -1,0 +1,122 @@
+# Baseline:
+## Generate baseline from XSD
+- soya.framework.tools.xmlbeans.XmlSchemaBaseLoader:
+    schema: CMM/BOD/GetDeliverySlot.xsd
+
+# Annotations:
+## Application Definition:
+- soya.framework.tools.xmlbeans.ApplicationAnnotator:
+    uri: BusinessObjects/DeliverySlot/application.json
+
+## Apply basic annotation from xlsx mapping sheet:
+- soya.framework.tools.xmlbeans.XlsxMappingAnnotator:
+    sourceFiles:
+      - BusinessObjects/DeliverySlot/requirement/received-from-qa.json
+    mappingFile: BusinessObjects/DeliverySlot/requirement/DeliverySlot_OSMS_TO_EDIS_Canonical_Mapping_v1.2.3.xlsx
+    mappingSheet: "Mapping Source to Canonical"
+
+## Fix unknown mappings: target paths, source paths and mapping rules...
+- soya.framework.tools.xmlbeans.UnknownMappingFixAnnotator:
+
+## Generate assignments:
+- soya.framework.tools.xmlbeans.MappingAnnotator:
+    globalVariables:
+      - name: VERSION_ID
+        type: CHARACTER
+        defaultValue: "'1.2.2.023'"
+      - name: SYSTEM_ENVIRONMENT_CODE
+        type: CHARACTER
+        defaultValue: "'PROD'"
+
+    mappingFile: BusinessObjects/DeliverySlot/mappings.properties
+
+
+# Renderers:
+## Print XML construct tree as Avro:
+- soya.framework.tools.xmlbeans.AvroSchemaRenderer:
+    name: AvroSchema
+
+## Print node tree in json, indexed by xpath:
+- soya.framework.tools.xmlbeans.XmlSchemaTreeRenderer:
+    name: XmlSchemaTree
+
+## Print XPath Mappings:
+- soya.framework.tools.xmlbeans.XPathMappingsRenderer:
+    name: XPathMappings
+    printUnmapped: true
+
+## Analyze Loops:
+- soya.framework.tools.xmlbeans.LoopAnalyzeRenderer:
+    name: LoopAnalyzer
+
+## Print Loops:
+- soya.framework.tools.xmlbeans.XPathAutoAnnotateRenderer:
+    name: XPathAutoAnnotate
+
+## Print XPath Assignments:
+- soya.framework.tools.xmlbeans.XPathAssignmentsRenderer:
+    name: XPathAssignments
+    printUnmapped: false
+
+## Print Sample XML:
+- soya.framework.tools.xmlbeans.SampleXmlRenderer:
+    name: SampleXml
+
+## Print Base Annotation, eg. Unknown mappings:
+- soya.framework.tools.xmlbeans.BaseAnnotationRenderer:
+    name: UnknownMappings
+    annotation: UNKNOWN_MAPPINGS
+
+## Print XML construct tree:
+- soya.framework.tools.xmlbeans.XmlConstructTreeRenderer:
+    name: XmlConstructTree
+
+
+- soya.framework.tools.xmlbeans.LoopAnalyzeRenderer:
+    name: LoopAnalyze
+
+## Print ESQL
+- soya.framework.tools.xmlbeans.XmlConstructEsqlRenderer:
+    name: ESQL
+    brokerSchema: com.abs.osms.deliveryslot
+    moduleName: ESED_DELIVERYSLOT_OSMS_CMM_Compute
+    inputRootVariable: _inputRootNode
+    inputRootReference: InputRoot.JSON.Data
+
+## Print transformation output xml:
+- soya.framework.tools.xmlbeans.XmlMessageRenderer:
+    inputMessageFile: BusinessObjects/DeliverySlot/requirement/received-from-qa.json
+
+## Print Avro Schema
+- soya.framework.tools.xmlbeans.AvroSchemaRenderer:
+    name: AvroSchema
+
+## Print deployment artifacts:
+- soya.framework.tools.xmlbeans.OverridePropertiesRenderer:
+    name: OverrideBaseline
+    template: Templates/override.pr.mustache
+    excludes:
+      - com.abs.cmnflows.WebServiceResponseValidator
+      - com.abs.cmnflows.Audit_Middle
+      - com.abs.cmnflows.RetryValidate_Exception
+
+- soya.framework.tools.xmlbeans.OverridePropertiesRenderer:
+    name: OverrideDev
+    template: Templates/override.dv.mustache
+    excludes:
+      - com.abs.cmnflows.WebServiceResponseValidator
+      - com.abs.cmnflows.Audit_Middle
+      - com.abs.cmnflows.RetryValidate_Exception
+
+- soya.framework.tools.xmlbeans.OverridePropertiesRenderer:
+    name: OverrideQA
+    template: Templates/override.qa.mustache
+    excludes:
+      - com.abs.cmnflows.WebServiceResponseValidator
+      - com.abs.cmnflows.Audit_Middle
+      - com.abs.cmnflows.RetryValidate_Exception
+
+- soya.framework.tools.xmlbeans.OverridePropertiesRenderer:
+    name: IIBConsole
+    template: Templates/iib.mustache
+    includeEmpty: true

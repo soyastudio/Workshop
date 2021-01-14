@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
+<xs:schema xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://collab.safeway.com/it/architecture/AbsOmMaster" xmlns:ns2="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.5 Patrick Oliver 12/03/20: Added BannerDivisionCd to Banner segment ; removed GLCombinationId as this for GL bods only-->
+	<!--V1.4 Patrick Oliver 11/12/20: Added ParentEcomHierarchyCd, LicensorCd and AdditionalData to Site segement -->
+	<!--V1.3 Rosabel Macario 11/05/2020 - Added tag to resolve dateTimeStamp issue-->
+	<!--V1.2 Patrick Oliver 10/20/20: Added PremiumConventionalCd, AccountUnitTypeCd, ParentBannerNm, removed LineofBusiness, ProductTypeGroup, CostCenter-->
+	<!--V1.1 Patrick Oliver 09/08/2020: Added GLCombinationId, Ledger, ActiveLedgerDt, InactiveLedgerDt, Entity, LineOfBusiness, Site, CostCenter, ProductTypeGroup, CustomerGroup, CashflowMovement, InterCompanyCd, RealEstateId, AccountUnitTypeCd-->
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:complexType name="AccountingFacility">
+		<xs:annotation>
+			<xs:documentation>AccountingFacility business object captures store/facility organizational structure from the accounting point of view. It differs from Internal Org Master in terms of content and granularity. CostCenter</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Company" type="Abs:CompanyType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>An accounting Organization which consists of an entire company within some legal framework. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Division" type="Abs:DivisionType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Information related to the operating division. Ex Norcal with Div Id 25 </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OperatingArea" type="Abs:OperatingAreaType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Organization layer within the operating division. Generally it contains one or more operating districts.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ParentOperatingArea" type="Abs:OperatingAreaType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Sometimes retail facilities may have a different reporting structure, generally a division.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="District" type="Abs:DistrictType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A district is a group of facilities. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Banner" type="Abs:BannerType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines Banner and related information. Banner is the marketing identifer in a particular georgraphic area of the division or region.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityData" type="Abs:FacilityType">
+				<xs:annotation>
+					<xs:documentation>General information about the store/facility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Region" type="Abs:RegionType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Region is a group of Divisions within a Corporation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ROG" type="Abs:RetailOrderGroupType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Retail Ordering Group.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityDepartmentData" type="Abs:FacilityDepartmentType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Defines store departments based on its function.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityDepartmentSectionType" type="Abs:FacilityDepartmentSectionType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Defines various sections within a department of  a retail store facility.A store facility is physically divided into different departments and sections.Ex:Grocery department can have sections like Grocery main meal,Snacks,Family care grocery,Home care grocery,Soft Drinks,Candy,Meals ingredients.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Ledger" type="Abs:CodeWithDescription" minOccurs="0"/>
+			<xs:element name="ActiveLedgerDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="InactiveLedgerDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="Entity" type="Abs:CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Companies with EIN's allows for flexibility of hundreds if not thousands of legal entities and room for special purposes.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Site" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Represents physical space, captures a physical space at a facility or location. Allows for Hierarchy structure to capture multiple sites that roll up to facilities</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="Abs:CodeWithDescription">
+							<xs:sequence>
+								<xs:element name="ParentEcomHierarchyCd" type="Abs:CodeWithDescription" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Tihis will indicate if this site is classifed as part of Ecom operations hierarchy.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="LicensorCd" type="Abs:CodeWithDescription" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Used to indicate if this site pays royalties (ex; Starbucks, Tully’s, etc.)</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="AdditionalData" type="AdditionalDataType" minOccurs="0" maxOccurs="unbounded">
+									<xs:annotation>
+										<xs:documentation>This can be used for additional descriptive flex fields (additional attributes) for site segment</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CustomerGroup" type="Abs:CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Groupings of customers is based on a consolidated version of the organization's customers that is needed for management reporting.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CashflowMovement" type="Abs:CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Cash flows is based on the organization's cash flow and rollforward classifications with linkages to select balance sheet account activity.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InterCompanyCd" type="Abs:CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Used to eliminate transactions occurring between its subsidiaries </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RealEstateId" type="Abs:CodeWithDescription" minOccurs="0"/>
+			<xs:element name="AccountUnitTypeCd" type="Abs:CodeWithDescription" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AdditionalDataType">
+		<xs:sequence>
+			<xs:element name="SequenceNbr" type="xs:integer" minOccurs="0"/>
+			<xs:element name="ElementNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of descriptive flex field</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ElementValueTxt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>For string flex field values</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="500"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ElementValueNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>For number flex field values</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ElementValueDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="ElementValueDsc" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

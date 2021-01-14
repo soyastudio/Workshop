@@ -3,7 +3,7 @@ com.abs.cmnflows.WebServiceResponseValidator#ResponseValidator.connectDatasource
 com.abs.cmnflows.WebServiceResponseValidator#ResponseValidator.validateMaster
 
 com.abs.cmnflows.Audit_Validate_Input#APPLICATION_NAME = {{application.name}}
-com.abs.cmnflows.Audit_Validate_Input#APPLICATION_DESC = {{application.name}}
+com.abs.cmnflows.Audit_Validate_Input#APPLICATION_DESC = {{application.project}} for {{application.source}}
 com.abs.cmnflows.Audit_Validate_Input#BO_NAME = {{application.project}}
 com.abs.cmnflows.Audit_Validate_Input#COMPONENT_DESC = {{application.name}}
 com.abs.cmnflows.Audit_Validate_Input#COMPONENT_TYPE = PF
@@ -11,17 +11,17 @@ com.abs.cmnflows.Audit_Validate_Input#COMPONENT_INPUT_TYPE = KAFKA
 com.abs.cmnflows.Audit_Validate_Input#SOURCE_SYSTEM_NAME = {{application.source}}
 com.abs.cmnflows.Audit_Validate_Input#AUDIT_REQD = Y
 com.abs.cmnflows.Audit_Validate_Input#AUDIT_SRC_UNQ_ID = Y
-com.abs.cmnflows.Audit_Validate_Input#PATH_SRC_UNQ_ID = CURRENT_TIMESTAMP
+com.abs.cmnflows.Audit_Validate_Input#PATH_SRC_UNQ_ID = {{audit.inputMessageId}}
 com.abs.cmnflows.Audit_Validate_Input#AUDIT_TRGT_UNQ_ID = Y
-com.abs.cmnflows.Audit_Validate_Input#PATH_TRGT_UNQ_ID = InputRoot.JSON.Data.orderNumber
+com.abs.cmnflows.Audit_Validate_Input#PATH_TRGT_UNQ_ID = CURRENT_TIMESTAMP
 com.abs.cmnflows.Audit_Validate_Input#VALIDATION_REQD_SOURCE = N
 com.abs.cmnflows.Audit_Validate_Input#VALIDATION_REQD_TARGET = N
 com.abs.cmnflows.Audit_Validate_Input#STORE_SRC_MSG = Y
-com.abs.cmnflows.Audit_Validate_Input#STORE_TRGT_MSG = N
+com.abs.cmnflows.Audit_Validate_Input#STORE_TRGT_MSG = Y
 com.abs.cmnflows.Audit_Validate_Input#COMPONENT_INPUT_NAME = {{kafkaConsumer.topicName}}
 com.abs.cmnflows.Audit_Validate_Input#queueName = ESEDQA.AUDIT.MSG
 com.abs.cmnflows.Audit_Validate_Input#AUDIT_MDL_UNQ_ID = Y
-com.abs.cmnflows.Audit_Validate_Input#PATH_MDL_UNQ_ID = InputRoot.MQRFH2.psc.uniqId
+com.abs.cmnflows.Audit_Validate_Input#PATH_MDL_UNQ_ID = CURRENT_TIMESTAMP
 com.abs.cmnflows.Audit_Validate_Input#STORE_MDL_MSG = Y
 com.abs.cmnflows.Audit_Validate_Input#Input_Audit_Compute.dataSource
 com.abs.cmnflows.Audit_Validate_Input#Input_Audit_Compute.connectDatasourceBeforeFlowStarts
@@ -221,7 +221,7 @@ com.abs.cmnflows.ExceptionSubFlow#SendtoErrorQueue.GroupRequestTimeout
 {{application.brokerSchema}}.{{application.flow}}#startMode
 {{application.brokerSchema}}.{{application.flow}}#startInstancesWhenFlowStarts
 {{application.brokerSchema}}.{{application.flow}}#KafkaConsumer.topicName = {{kafkaConsumer.topicName}}
-{{application.brokerSchema}}.{{application.flow}}#KafkaConsumer.bootstrapServers = pgv013e8b.safeway.com:9093,pgv013e8d.safeway.com:9093,pgv013e8e.safeway.com:9093,pgv013e8f.safeway.com:9093,pgv013e90.safeway.com:9093,pgv013e91.safeway.com:9093
+{{application.brokerSchema}}.{{application.flow}}#KafkaConsumer.bootstrapServers = qgv013bb3.safeway.com:9093,qgv013bb7.safeway.com:9093,qgv013bb8.safeway.com:9093
 {{application.brokerSchema}}.{{application.flow}}#KafkaConsumer.groupId = {{application.identifier}}_consumer_group
 {{application.brokerSchema}}.{{application.flow}}#KafkaConsumer.initialOffset = latest
 {{application.brokerSchema}}.{{application.flow}}#KafkaConsumer.enableAutoCommit = true
@@ -237,7 +237,7 @@ com.abs.cmnflows.ExceptionSubFlow#SendtoErrorQueue.GroupRequestTimeout
 {{application.brokerSchema}}.{{application.flow}}#KafkaConsumer.componentLevel = flow
 {{application.brokerSchema}}.{{application.flow}}#KafkaConsumer.additionalInstances = 0
 {{application.brokerSchema}}.{{application.flow}}#KafkaProducer.topicName = {{kafkaProducer.topicName}}
-{{application.brokerSchema}}.{{application.flow}}#KafkaProducer.bootstrapServers = pgv013e8b.safeway.com:9093,pgv013e8d.safeway.com:9093,pgv013e8e.safeway.com:9093,pgv013e8f.safeway.com:9093,pgv013e90.safeway.com:9093,pgv013e91.safeway.com:9093
+{{application.brokerSchema}}.{{application.flow}}#KafkaProducer.bootstrapServers = qgv013bb3.safeway.com:9093,qgv013bb7.safeway.com:9093,qgv013bb8.safeway.com:9093
 {{application.brokerSchema}}.{{application.flow}}#KafkaProducer.clientId = {{application.identifier}}_producer
 {{application.brokerSchema}}.{{application.flow}}#KafkaProducer.useClientIdSuffix = true
 {{application.brokerSchema}}.{{application.flow}}#KafkaProducer.acks = 1

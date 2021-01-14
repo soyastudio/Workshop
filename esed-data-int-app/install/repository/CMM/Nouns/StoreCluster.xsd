@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- edited with XMLSpy v2014 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Safeway, Inc.) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:ns1="http://collab.safeway.com/it/architecture/AbsOmMaster" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" 
+vc:minVersion="1.1"
+elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.9.8">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="StoreCluster" type="StoreClusterType">
+		<xs:annotation>
+			<xs:documentation>Root element.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="StoreClusterType">
+		<xs:annotation>
+			<xs:documentation>A cluster of stores represents various ways by which STOREs with similar characteristics may be 
+clustered/grouped, and is typically used to facilitate the merchandising of STOREs with similar sales patterns.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="Abs:CorporationId"/>
+			<xs:element ref="Abs:DivisionId"/>
+			<xs:element name="DistrictId">
+				<xs:annotation>
+					<xs:documentation>A district is a group of facilities. A group of warehouse facilities may also be referred to as a distribution center.  </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="18"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="Abs:RetailStoreId"/>
+			<xs:element ref="FirstEffectiveDt"/>
+			<xs:element ref="LastEffectiveDt" minOccurs="0"/>
+			<xs:element name="AlternateStoreId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Alternate Store Id. It's an optinal attribute that can be used to capture non company's store identifiers.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StoreScoringData">
+				<xs:annotation>
+					<xs:documentation>Scoring based on multiple factors such as Product Mix, demand and demographic.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="TotalStorePointsQty">
+							<xs:annotation>
+								<xs:documentation>This score is used to determine which cluster the store should belong to. However, it's up to the Division discretion to ractify the cluster selection. </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="8"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ProductScoringData">
+							<xs:annotation>
+								<xs:documentation>Score related to Product sales /demand. Products tagged by Cluster types as well as Category (Organic, Natural).</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="ProductScorePtsQty">
+										<xs:annotation>
+											<xs:documentation>Total number of points assigned to the Store based on Product related data.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:decimal">
+												<xs:totalDigits value="8"/>
+												<xs:fractionDigits value="4"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ProductMixData" maxOccurs="10">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="StoreClusterCd" type="xs:string" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Code of the Store Cluster.</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="StoreClusterNm" type="xs:string">
+													<xs:annotation>
+														<xs:documentation>Name of the Store Cluster. Some values are premium, budget and mainstream.</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="ClusterProductPctVal">
+													<xs:annotation>
+														<xs:documentation>Percentage of products per cluster type. </xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:decimal">
+															<xs:totalDigits value="10"/>
+															<xs:fractionDigits value="6"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="DivisionIndexPtsQty">
+													<xs:annotation>
+														<xs:documentation>Index value relevant to the Division the store is in.</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:decimal">
+															<xs:totalDigits value="8"/>
+															<xs:fractionDigits value="4"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="ProductDemandData" maxOccurs="10">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="ProductCategoryCd" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Code of the Product category.</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="ProductCategoryDsc">
+													<xs:annotation>
+														<xs:documentation>Description of the category of a product. Ex: Natural, Organiic, etc...</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="ProductCategoryScorePtsQty">
+													<xs:annotation>
+														<xs:documentation>Points assigned to the Store based on their product category demand.</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:decimal">
+															<xs:totalDigits value="8"/>
+															<xs:fractionDigits value="4"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="DemographicScoringData">
+							<xs:annotation>
+								<xs:documentation>Data related to Income, Ethnic groups and product purchase patterns.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="DemographicScorePtsQty">
+										<xs:annotation>
+											<xs:documentation>Total points asigned based on demographic data.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:decimal">
+												<xs:totalDigits value="8"/>
+												<xs:fractionDigits value="4"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="IncomeData">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="HouseholdIncomeAvgAmt">
+													<xs:annotation>
+														<xs:documentation>Average income amount per Household. </xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:decimal">
+															<xs:fractionDigits value="2"/>
+															<xs:totalDigits value="10"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="HouseholdIndexPtsQty">
+													<xs:annotation>
+														<xs:documentation>Points assigned based on the index compared to the Division average.</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:decimal">
+															<xs:totalDigits value="8"/>
+															<xs:fractionDigits value="4"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="PerCapitaIncomeAvgAmt">
+													<xs:annotation>
+														<xs:documentation>Average income amount per capita.</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:decimal">
+															<xs:fractionDigits value="2"/>
+															<xs:totalDigits value="10"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="PerCapitaIndexPtsQty">
+													<xs:annotation>
+														<xs:documentation>Points assigned based on the index compared to the Division average.</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:decimal">
+															<xs:totalDigits value="8"/>
+															<xs:fractionDigits value="4"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="IncomeRangeData" maxOccurs="10">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="IncomeRangeCd" type="xs:string" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Code for the income range.</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="IncomeRangeDsc" type="xs:string">
+													<xs:annotation>
+														<xs:documentation>Description of the Income range. Ex: High Income ($100K+) % of HHs</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="IncomeHouseholdPctVal">
+													<xs:annotation>
+														<xs:documentation>Percentage of Households of the Store in the income range.</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:decimal">
+															<xs:totalDigits value="10"/>
+															<xs:fractionDigits value="6"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="IncomeDivisionIndexPtsQty">
+													<xs:annotation>
+														<xs:documentation>Points assigned based on the income range.</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:decimal">
+															<xs:totalDigits value="8"/>
+															<xs:fractionDigits value="4"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="EthnicData" maxOccurs="10">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="EthnicCd" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Code of the Ethnic group.</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="EthnicDsc">
+													<xs:annotation>
+														<xs:documentation>Description of the ethnic group.</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="EthnicPopulationPctVal">
+													<xs:annotation>
+														<xs:documentation>Percentage of population of the Store for this particular Ethnic group.</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:decimal">
+															<xs:totalDigits value="10"/>
+															<xs:fractionDigits value="6"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="EthnicDivisionIndexPtsQty">
+													<xs:annotation>
+														<xs:documentation>Points assigned based on the index compared to the Division average.</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:decimal">
+															<xs:totalDigits value="8"/>
+															<xs:fractionDigits value="4"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="MajorEthnicGrpInd" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Major ethnic group indicator. This indicates whether the store has enough of the population (e.g., Asian) in the trade area to warrant special merchandising.</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="StoreClusterCommentTxt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>General comments on store cluster.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="StoreKosherInd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Designation of Kosher foods and Jewish tradition – Identifies stores with large Kosher demand that warrant special merchandising.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

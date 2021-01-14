@@ -128,6 +128,7 @@ public class XmlConstructEsqlRenderer extends XmlConstructTree {
     }
 
     private void printConstruct(XmlSchemaBase.MappingNode node, StringBuilder builder, int indent) {
+
         Construct construct = node.getAnnotation(CONSTRUCT, Construct.class);
 
         if (construct.procedure != null) {
@@ -147,6 +148,7 @@ public class XmlConstructEsqlRenderer extends XmlConstructTree {
     }
 
     private void printLoop(WhileLoop loop, XmlSchemaBase.MappingNode node, StringBuilder builder, int indent) {
+
         constructions.put(loop.sourcePath, loop);
 
         loop.parent = findParent(loop.sourcePath);
@@ -172,11 +174,7 @@ public class XmlConstructEsqlRenderer extends XmlConstructTree {
         StringBuilderUtils.println(builder);
 
         for (XmlSchemaBase.MappingNode child : node.getChildren()) {
-
-            /*if (inLoop(child, loop)) {
-                printNode(child, builder, indent + offset);
-
-            }*/
+            printNode(child, builder, indent + offset);
         }
 
         if (node.getAnnotation(CONDITION) != null) {
@@ -192,8 +190,6 @@ public class XmlConstructEsqlRenderer extends XmlConstructTree {
 
     private void printConstructor(Constructor constructor, XmlSchemaBase.MappingNode node, StringBuilder builder, int indent) {
         constructions.put(constructor.sourcePath, constructor);
-
-        System.out.println("------------ print constructor: " + constructor.name);
     }
 
     private void printProcedureCall(Procedure procedure, XmlSchemaBase.MappingNode node, StringBuilder builder, int indent) {
@@ -285,8 +281,8 @@ public class XmlConstructEsqlRenderer extends XmlConstructTree {
         return construction;
     }
 
-
     private void printConstruction(Constructor construction, String suffix, XmlSchemaBase.MappingNode node, StringBuilder builder, int indent) {
+
         StringBuilderUtils.println("-- Construct " + node.getName() + " FROM " + construction.sourcePath + ":", builder, node.getLevel() + indent);
         StringBuilderUtils.println("DECLARE " + construction.variable + " REFERENCE TO " + inputRootVariable + "." + construction.sourcePath.replaceAll("/", ".") + ";", builder, node.getLevel() + indent);
         StringBuilderUtils.println(builder);
@@ -368,6 +364,7 @@ public class XmlConstructEsqlRenderer extends XmlConstructTree {
     private void printAssignment(XmlSchemaBase.MappingNode node, StringBuilder builder, int indent) {
         Mapping mapping = node.getAnnotation(MAPPING, Mapping.class);
         String assignment = getAssignment(mapping, inputRootVariable);
+
         if (assignment != null) {
 
             StringBuilderUtils.println("-- " + node.getPath(), builder, node.getLevel() + indent);
@@ -414,8 +411,8 @@ public class XmlConstructEsqlRenderer extends XmlConstructTree {
         String assignment = "'???'";
         if (mapping.assignment != null) {
             assignment = mapping.assignment;
-            if (assignment.contains(INPUT_ROOT)) {
-                assignment = assignment.replace(INPUT_ROOT, inputRootVariable + ".");
+            if (assignment.contains(INPUT_ROOT + ".")) {
+                assignment = assignment.replace(INPUT_ROOT + ".", inputRootVariable + ".");
             }
 
         } else if (mapping.sourcePath != null) {

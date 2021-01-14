@@ -1,0 +1,561 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.2 Rosabel Macario 11/04/2020 - Added tag to resolve dateTimeStamp issue-->
+	<!--V1.1 Patrick Oliver 7/22/20 - Updated VendorId to string(20)-->
+	<!--V1.0  08082019 Sai Nuthakki   Initial Version-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:complexType name="CustomerOrderSummaryType">
+		<xs:annotation>
+			<xs:documentation>Defines Market place customer order summary. Includes totals for all items with in a cart.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CustomerId" minOccurs="0"/>
+			<xs:element ref="OrderId" minOccurs="0"/>
+			<xs:element name="OrderStatus" type="StatusType" minOccurs="0"/>
+			<xs:element name="OrderDt" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="CustomerName" type="PersonNameType" minOccurs="0"/>
+			<xs:element name="CustomerContact" type="CommunicationType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="BillingNameType" type="PersonNameType" minOccurs="0"/>
+			<xs:element name="BillingAddress" type="AddressType" minOccurs="0"/>
+			<xs:element name="BillingVATId" type="xs:string" minOccurs="0"/>
+			<xs:element name="ShippingNameType" type="PersonNameType" minOccurs="0"/>
+			<xs:element name="ShippingAddress" type="AddressType" minOccurs="0"/>
+			<xs:element name="MarketPlaceStore" type="MarketPlaceStoreType" minOccurs="0"/>
+			<xs:element name="OrderCurrency" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="BaseCurrency" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="BaseGrandTotalAmt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BasePaidTotalAmt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="GrandTotalAmt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PaidTotalAmt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SubTotalAmt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RefundAmt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ShippingHandlingAmt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TaxAmt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ProductCategory" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="ReferenceOrder" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ReferenceOrderType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="ReferenceOrderNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Google express order or Magento order</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CommentTxt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MarketPlaceItemPrice">
+		<xs:sequence>
+			<xs:element name="ItemPrice" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CurrencyCd" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MarketPlaceItemTax">
+		<xs:sequence>
+			<xs:element name="TaxPct" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Tax percentage</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="6"/>
+						<xs:fractionDigits value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TaxAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Tax amount</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TaxCurrency" type="CodeWithDescription" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MarketPlaceItemDiscount">
+		<xs:sequence>
+			<xs:element name="DiscountPct" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Discount percentage</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="6"/>
+						<xs:fractionDigits value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DiscountAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Discount amount</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TaxCurrency" type="CodeWithDescription" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MarketPlaceTransactionType">
+		<xs:annotation>
+			<xs:documentation>Defines Market place customer purchase transaction that contains one or more items.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CustomerId" minOccurs="0"/>
+			<xs:element name="MarketPlaceStore" type="MarketPlaceStoreType" minOccurs="0"/>
+			<xs:element ref="OrderId" minOccurs="0"/>
+			<xs:element name="TransactionDt" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="TransactionTm" type="xs:string" minOccurs="0"/>
+			<xs:element name="TransactionID" type="IdWithNameType" minOccurs="0"/>
+			<xs:element name="ProductId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ProductType" type="IdWithNameType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>There are six different product types availabe. Simple, Configurable, Virtual, Grouped, Downloadable and Bundle.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ProductCategory" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="ProductSKU" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="UPCId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="14"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="GTIN" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="14"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="VendorSKU" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ProductNm" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ProductDsc" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="500"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ProductWt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="WeightUOM" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="OrderQty" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ShippedQty" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CanceledQty" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RefundQty" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ReturnedQty" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InvoicedQty" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="QuantityUOM" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="StoreItemPrice" type="MarketPlaceItemPrice" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Price of the Item in a particular Market place store.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BaseItemPrice" type="MarketPlaceItemPrice" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Base Price is the value in the default store currency. As Marketplace havingonly one store, base price and price are equal</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OriginalItemPrice" type="MarketPlaceItemPrice" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The Price of the product before any calculation in the current store</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BaseOriginalItemPrice" type="MarketPlaceItemPrice" minOccurs="0"/>
+			<xs:element name="StoreItemTax" type="MarketPlaceItemTax" minOccurs="0"/>
+			<xs:element name="BaseItemTax" type="MarketPlaceItemTax" minOccurs="0"/>
+			<xs:element name="InvoicedItemTax" type="MarketPlaceItemTax" minOccurs="0"/>
+			<xs:element name="InvoicedBaseItemTax" type="MarketPlaceItemTax" minOccurs="0"/>
+			<xs:element name="StoreItemDiscount" type="MarketPlaceItemDiscount" minOccurs="0"/>
+			<xs:element name="BaseItemDiscount" type="MarketPlaceItemDiscount" minOccurs="0"/>
+			<xs:element name="InvoicedItemDiscount" type="MarketPlaceItemDiscount" minOccurs="0"/>
+			<xs:element name="InvoicedBaseItemDiscount" type="MarketPlaceItemDiscount" minOccurs="0"/>
+			<xs:element name="RefundAmt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BaseRefundAmt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RowTotal" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="TotalAmt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="BaseTotalAmt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="InvoicedAmt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="BaseInvoicedAmt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="TotalQty" type="xs:string" minOccurs="0"/>
+						<xs:element name="TotalWt" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="TaxBeforeDiscount" type="MarketPlaceItemTax" minOccurs="0"/>
+			<xs:element name="BaseTaxBeforeDiscount" type="MarketPlaceItemTax" minOccurs="0"/>
+			<xs:element name="ItemPriceWithTax" type="MarketPlaceItemPrice" minOccurs="0"/>
+			<xs:element name="BaseItemPriceWithTax" type="MarketPlaceItemPrice" minOccurs="0"/>
+			<xs:element name="LockedToInvoiceInd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LockedToShipInd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OfferId" minOccurs="0" maxOccurs="unbounded">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Shipping" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="FreeShippingInd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="5"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LeadTm" type="xs:string" minOccurs="0"/>
+						<xs:element name="ShippingType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="ShippingLabelType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="ShippingFee" type="MarketPlaceItemPrice" minOccurs="0"/>
+						<xs:element name="ShippingTax" type="MarketPlaceItemTax" minOccurs="0"/>
+						<xs:element name="BaseShippingTax" type="MarketPlaceItemTax" minOccurs="0"/>
+						<xs:element name="TotalTax" type="MarketPlaceItemTax" minOccurs="0"/>
+						<xs:element name="CustomShippingTax" type="MarketPlaceItemTax" minOccurs="0"/>
+						<xs:element name="AppliedShippingTax" type="MarketPlaceItemTax" minOccurs="0"/>
+						<xs:element name="BaseCustomShippingTax" type="MarketPlaceItemTax" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="MarketPlaceHost" type="IdWithNameType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Third parties that hosts the market place like Mirkl.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MarketPlaceVendorType">
+		<xs:annotation>
+			<xs:documentation>Defines vendors participating in market place and selling their products. Market Place is online platfarm where vendors host their virtual shops and list the products they offer to sell.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="VendorId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorNm" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorContact" type="CommunicationType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="VendorURL" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorStatus" type="StatusType" minOccurs="0"/>
+			<xs:element name="FreeShippingInd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorShopClosePeriod" type="TimePeriodType" minOccurs="0"/>
+			<xs:element name="CommentTxt" minOccurs="0" maxOccurs="unbounded">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MarketPlaceCustomerType">
+		<xs:annotation>
+			<xs:documentation>Defines Market Place Cusomer master data.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CustomerId" minOccurs="0"/>
+			<xs:element name="CustomerName" type="PersonNameType" minOccurs="0"/>
+			<xs:element name="CustomerContact" type="CommunicationType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element ref="BirthDt" minOccurs="0"/>
+			<xs:element name="Gender" type="CodeWithName" minOccurs="0"/>
+			<xs:element name="BillingNameType" type="PersonNameType" minOccurs="0"/>
+			<xs:element name="BillingAddress" type="AddressType" minOccurs="0"/>
+			<xs:element name="BillingVATId" type="xs:string" minOccurs="0"/>
+			<xs:element name="ShippingNameType" type="PersonNameType" minOccurs="0"/>
+			<xs:element name="ShippingAddress" type="AddressType" minOccurs="0"/>
+			<xs:element name="VATNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Value added Tax Number</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CommentTxt" minOccurs="0" maxOccurs="unbounded">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="CustomerId">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="50"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="OrderId">
+		<xs:annotation>
+			<xs:documentation>Unique identifier for the customer order in a market place.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="20"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:complexType name="MarketPlaceStoreType">
+		<xs:sequence>
+			<xs:element name="MarketPlaceStoreId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MarketPlaceStoreNm" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

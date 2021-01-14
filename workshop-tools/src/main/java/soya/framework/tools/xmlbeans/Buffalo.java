@@ -25,12 +25,11 @@ public class Buffalo<T> {
 
     public static <B> Buffalo<B> fromYaml(String yaml, Class<B> baseType) {
         Buffalo<B> buffalo = new Buffalo<>();
-
         Yaml yml = new Yaml();
         Object object = yml.load(yaml);
+
         if (object instanceof Map) {
             Map<String, Object> configuration = (Map<String, Object>) object;
-
             configuration.entrySet().forEach(e -> {
                 String key = e.getKey();
                 Object value = e.getValue();

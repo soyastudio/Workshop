@@ -1,0 +1,292 @@
+BROKER SCHEMA com.abs.osms.deliveryslot
+
+CREATE COMPUTE MODULE ESED_DELIVERYSLOT_OSMS_CMM_Compute
+
+	-- Declare UDPs
+	DECLARE VERSION_ID EXTERNAL CHARACTER '1.1.1.012';
+	DECLARE SYSTEM_ENVIRONMENT_CODE EXTERNAL CHARACTER 'PROD';
+
+	-- Declare Namespace
+	DECLARE Abs NAMESPACE 'https://collab.safeway.com/it/architecture/info/default.aspx';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- Declare Input Message Root
+		DECLARE _inputRootNode REFERENCE TO InputRoot.JSON.Data;
+
+		-- Declare Output Message Root
+		CREATE LASTCHILD OF OutputRoot DOMAIN 'XMLNSC';
+
+		DECLARE xmlDocRoot REFERENCE TO OutputRoot.XMLNSC.GetDeliverySlot;
+		CREATE LASTCHILD OF OutputRoot.XMLNSC AS xmlDocRoot TYPE XMLNSC.Folder NAME 'GetDeliverySlot';
+		SET OutputRoot.XMLNSC.GetDeliverySlot.(XMLNSC.NamespaceDecl)xmlns:Abs=Abs;
+
+		-- GetDeliverySlot/DocumentData
+		DECLARE DocumentData_ REFERENCE TO xmlDocRoot;
+		CREATE LASTCHILD OF xmlDocRoot AS DocumentData_ TYPE XMLNSC.Folder NAME 'DocumentData';
+
+			-- GetDeliverySlot/DocumentData/Document
+			DECLARE Document_ REFERENCE TO DocumentData_;
+			CREATE LASTCHILD OF DocumentData_ AS Document_ TYPE XMLNSC.Folder NAME 'Document';
+
+				-- GetDeliverySlot/DocumentData/Document/@VersionId
+				SET Document_.(XMLNSC.Attribute)VersionId = VERSION_ID;
+
+				-- GetDeliverySlot/DocumentData/Document/@SystemEnvironmentCd
+				SET Document_.(XMLNSC.Attribute)SystemEnvironmentCd = SYSTEM_ENVIRONMENT_CODE;
+
+				-- GetDeliverySlot/DocumentData/Document/DocumentID
+				SET Document_.(XMLNSC.Field)Abs:DocumentID = 'DeliverySlot';
+
+				-- GetDeliverySlot/DocumentData/Document/AlternateDocumentID
+				SET Document_.(XMLNSC.Field)Abs:AlternateDocumentID = 'DeliverySlot_' || CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT 'YYYYMMddHHmmssSSSSSS');
+
+				-- GetDeliverySlot/DocumentData/Document/DocumentNm
+				SET Document_.(XMLNSC.Field)Abs:DocumentNm = 'DeliverySlot';
+
+				-- GetDeliverySlot/DocumentData/Document/CreationDt
+				SET Document_.(XMLNSC.Field)Abs:CreationDt = CURRENT_TIMESTAMP;
+
+				-- GetDeliverySlot/DocumentData/Document/Description
+				SET Document_.(XMLNSC.Field)Abs:Description = 'Time window slots for an online customer to place an order';
+
+				-- GetDeliverySlot/DocumentData/Document/SourceApplicationCd
+				SET Document_.(XMLNSC.Field)Abs:SourceApplicationCd = 'OSMS';
+
+				-- GetDeliverySlot/DocumentData/Document/TargetApplicationCd
+				SET Document_.(XMLNSC.Field)Abs:TargetApplicationCd = 'EDIS';
+
+				-- GetDeliverySlot/DocumentData/Document/InternalFileTransferInd
+				SET Document_.(XMLNSC.Field)Abs:InternalFileTransferInd = 'Y';
+
+				-- GetDeliverySlot/DocumentData/Document/DataClassification
+				DECLARE DataClassification_ REFERENCE TO Document_;
+				CREATE LASTCHILD OF Document_ AS DataClassification_ TYPE XMLNSC.Folder NAME 'Abs:DataClassification';
+
+					-- GetDeliverySlot/DocumentData/Document/DataClassification/DataClassificationLevel
+					DECLARE DataClassificationLevel_ REFERENCE TO DataClassification_;
+					CREATE LASTCHILD OF DataClassification_ AS DataClassificationLevel_ TYPE XMLNSC.Folder NAME 'Abs:DataClassificationLevel';
+
+						-- GetDeliverySlot/DocumentData/Document/DataClassification/DataClassificationLevel/Code
+						SET DataClassificationLevel_.(XMLNSC.Field)Abs:Code = 'Internal';
+
+					-- GetDeliverySlot/DocumentData/Document/DataClassification/BusinessSensitivityLevel
+					DECLARE BusinessSensitivityLevel_ REFERENCE TO DataClassification_;
+					CREATE LASTCHILD OF DataClassification_ AS BusinessSensitivityLevel_ TYPE XMLNSC.Folder NAME 'Abs:BusinessSensitivityLevel';
+
+						-- GetDeliverySlot/DocumentData/Document/DataClassification/BusinessSensitivityLevel/Code
+						SET BusinessSensitivityLevel_.(XMLNSC.Field)Abs:Code = 'Low';
+
+					-- GetDeliverySlot/DocumentData/Document/DataClassification/PHIdataInd
+					SET DataClassification_.(XMLNSC.Field)Abs:PHIdataInd = 'N';
+
+					-- GetDeliverySlot/DocumentData/Document/DataClassification/PCIdataInd
+					SET DataClassification_.(XMLNSC.Field)Abs:PCIdataInd = 'N';
+
+					-- GetDeliverySlot/DocumentData/Document/DataClassification/PIIdataInd
+					SET DataClassification_.(XMLNSC.Field)Abs:PIIdataInd = 'N';
+
+			-- GetDeliverySlot/DocumentData/DocumentAction
+			DECLARE DocumentAction_ REFERENCE TO DocumentData_;
+			CREATE LASTCHILD OF DocumentData_ AS DocumentAction_ TYPE XMLNSC.Folder NAME 'DocumentAction';
+
+				-- GetDeliverySlot/DocumentData/DocumentAction/ActionTypeCd
+				SET DocumentAction_.(XMLNSC.Field)Abs:ActionTypeCd = 'UPDATE';
+
+				-- GetDeliverySlot/DocumentData/DocumentAction/RecordTypeCd
+				SET DocumentAction_.(XMLNSC.Field)Abs:RecordTypeCd = 'CHANGE';
+
+		-- GetDeliverySlot/DeliverySlotData
+		DECLARE DeliverySlotData_ REFERENCE TO xmlDocRoot;
+		CREATE LASTCHILD OF xmlDocRoot AS DeliverySlotData_ TYPE XMLNSC.Folder NAME 'DeliverySlotData';
+
+			-- GetDeliverySlot/DeliverySlotData/DeliveryAreaType
+			DECLARE DeliveryAreaType_ REFERENCE TO DeliverySlotData_;
+			CREATE LASTCHILD OF DeliverySlotData_ AS DeliveryAreaType_ TYPE XMLNSC.Folder NAME 'Abs:DeliveryAreaType';
+
+				-- GetDeliverySlot/DeliverySlotData/DeliveryAreaType/DeliveryAreaValueTxt
+				SET DeliveryAreaType_.(XMLNSC.Field)Abs:DeliveryAreaValueTxt = _inputRootNode.storeId;
+
+			-- GetDeliverySlot/DeliverySlotData/SlotId
+			SET DeliverySlotData_.(XMLNSC.Field)Abs:SlotId = _inputRootNode.slotId;
+
+			-- GetDeliverySlot/DeliverySlotData/SlotWindow
+			DECLARE SlotWindow_ REFERENCE TO DeliverySlotData_;
+			CREATE LASTCHILD OF DeliverySlotData_ AS SlotWindow_ TYPE XMLNSC.Folder NAME 'Abs:SlotWindow';
+
+				-- GetDeliverySlot/DeliverySlotData/SlotWindow/StartTs
+				SET SlotWindow_.(XMLNSC.Field)Abs:StartTs = _inputRootNode.slotStartTS;
+
+				-- GetDeliverySlot/DeliverySlotData/SlotWindow/EndTs
+				SET SlotWindow_.(XMLNSC.Field)Abs:EndTs = _inputRootNode.slotEndTS;
+
+				-- GetDeliverySlot/DeliverySlotData/SlotWindow/ExpiryTs
+				SET SlotWindow_.(XMLNSC.Field)Abs:ExpiryTs = _inputRootNode.slotExpiryTS;
+
+				-- GetDeliverySlot/DeliverySlotData/SlotWindow/DayOfWeek
+				SET SlotWindow_.(XMLNSC.Field)Abs:DayOfWeek = _inputRootNode.dayOfWeek;
+
+			-- GetDeliverySlot/DeliverySlotData/SlotType
+			DECLARE SlotType_ REFERENCE TO DeliverySlotData_;
+			CREATE LASTCHILD OF DeliverySlotData_ AS SlotType_ TYPE XMLNSC.Folder NAME 'Abs:SlotType';
+
+				-- GetDeliverySlot/DeliverySlotData/SlotType/Code
+				SET SlotType_.(XMLNSC.Field)Abs:Code = _inputRootNode.slotType;
+
+			-- GetDeliverySlot/DeliverySlotData/SlotPlanType
+			DECLARE SlotPlanType_ REFERENCE TO DeliverySlotData_;
+			CREATE LASTCHILD OF DeliverySlotData_ AS SlotPlanType_ TYPE XMLNSC.Folder NAME 'Abs:SlotPlanType';
+
+				-- GetDeliverySlot/DeliverySlotData/SlotPlanType/Code
+				SET SlotPlanType_.(XMLNSC.Field)Abs:Code = _inputRootNode.slotPlan;
+
+			-- GetDeliverySlot/DeliverySlotData/MaxDeliveryCnt
+			SET DeliverySlotData_.(XMLNSC.Field)Abs:MaxDeliveryCnt = _inputRootNode.maxDeliveries;
+
+			-- GetDeliverySlot/DeliverySlotData/DeliveryServiceType
+			DECLARE DeliveryServiceType_ REFERENCE TO DeliverySlotData_;
+			CREATE LASTCHILD OF DeliverySlotData_ AS DeliveryServiceType_ TYPE XMLNSC.Folder NAME 'Abs:DeliveryServiceType';
+
+				-- GetDeliverySlot/DeliverySlotData/DeliveryServiceType/Code
+				SET DeliveryServiceType_.(XMLNSC.Field)Abs:Code = _inputRootNode.serviceType;
+
+			-- LOOP FROM deliveryType[*] TO GetDeliverySlot/DeliverySlotData/DeliveryReceiveType:
+			DECLARE _deliveryType REFERENCE TO _inputRootNode.deliveryType.Item;
+			deliveryType_loop : WHILE LASTMOVE(_deliveryType) DO
+
+				-- GetDeliverySlot/DeliverySlotData/DeliveryReceiveType
+				DECLARE DeliveryReceiveType_ REFERENCE TO DeliverySlotData_;
+				CREATE LASTCHILD OF DeliverySlotData_ AS DeliveryReceiveType_ TYPE XMLNSC.Folder NAME 'Abs:DeliveryReceiveType';
+
+					-- GetDeliverySlot/DeliverySlotData/DeliveryReceiveType/Code
+					SET DeliveryReceiveType_.(XMLNSC.Field)Abs:Code = _deliveryType;
+
+			MOVE _deliveryType NEXTSIBLING;
+			END WHILE deliveryType_loop;
+
+			-- GetDeliverySlot/DeliverySlotData/DeliveryChargeType
+
+			-- FROM b2bCharge:
+			DECLARE _b2bCharge REFERENCE TO _inputRootNode.b2bCharge;
+			DECLARE DeliveryChargeType_ REFERENCE TO DeliverySlotData_;
+			CREATE LASTCHILD OF DeliverySlotData_ AS DeliveryChargeType_ TYPE XMLNSC.Folder NAME 'Abs:DeliveryChargeType';
+				-- GetDeliverySlot/DeliverySlotData/DeliveryChargeType/CustomerType
+				DECLARE CustomerType_ REFERENCE TO DeliveryChargeType_;
+				CREATE LASTCHILD OF DeliveryChargeType_ AS CustomerType_ TYPE XMLNSC.Folder NAME 'Abs:CustomerType';
+
+					-- GetDeliverySlot/DeliverySlotData/DeliveryChargeType/CustomerType/Code
+					SET CustomerType_.(XMLNSC.Field)Abs:Code = _b2bCharge.userType;
+
+				-- GetDeliverySlot/DeliverySlotData/DeliveryChargeType/DeliveryChargeAmt
+				SET DeliveryChargeType_.(XMLNSC.Field)Abs:DeliveryChargeAmt = CAST(_b2bCharge.deliveryCharge AS DECIMAL(6, 2));
+
+				-- GetDeliverySlot/DeliverySlotData/DeliveryChargeType/DiscountedDeliveryChargeAmt
+				SET DeliveryChargeType_.(XMLNSC.Field)Abs:DiscountedDeliveryChargeAmt = CAST(_b2bCharge.reducedDeliveryCharge AS DECIMAL(6, 2));
+
+				-- GetDeliverySlot/DeliverySlotData/DeliveryChargeType/ItemDeliveryChargeAmt
+				SET DeliveryChargeType_.(XMLNSC.Field)Abs:ItemDeliveryChargeAmt = _b2bCharge.deliveryChargeUPC;
+
+				-- GetDeliverySlot/DeliverySlotData/DeliveryChargeType/ItemDiscountedDeliveryChargeAmt
+				SET DeliveryChargeType_.(XMLNSC.Field)Abs:ItemDiscountedDeliveryChargeAmt = _b2bCharge.reducedDeliveryChargeUPC;
+
+				-- GetDeliverySlot/DeliverySlotData/DeliveryChargeType/BasketSizeCnt
+				SET DeliveryChargeType_.(XMLNSC.Field)Abs:BasketSizeCnt = _b2bCharge.minimumBasketSize;
+
+				-- GetDeliverySlot/DeliverySlotData/DeliveryChargeType/AlertBasketSizeCnt
+				SET DeliveryChargeType_.(XMLNSC.Field)Abs:AlertBasketSizeCnt = _b2bCharge.alertBasketSize;
+
+
+			-- FROM b2cCharge:
+			DECLARE _b2cCharge REFERENCE TO _inputRootNode.b2cCharge;
+			DECLARE DeliveryChargeType_1 REFERENCE TO DeliverySlotData_;
+			CREATE LASTCHILD OF DeliverySlotData_ AS DeliveryChargeType_1 TYPE XMLNSC.Folder NAME 'Abs:DeliveryChargeType';
+				-- GetDeliverySlot/DeliverySlotData/DeliveryChargeType/CustomerType
+				DECLARE CustomerType_1 REFERENCE TO DeliveryChargeType_;
+				CREATE LASTCHILD OF DeliveryChargeType_1 AS CustomerType_1 TYPE XMLNSC.Folder NAME 'Abs:CustomerType';
+
+					-- GetDeliverySlot/DeliverySlotData/DeliveryChargeType/CustomerType/Code
+					SET CustomerType_1.(XMLNSC.Field)Abs:Code = _b2cCharge.userType;
+
+				-- GetDeliverySlot/DeliverySlotData/DeliveryChargeType/DeliveryChargeAmt
+				SET DeliveryChargeType_1.(XMLNSC.Field)Abs:DeliveryChargeAmt = CAST(_b2cCharge.deliveryCharge AS DECIMAL(6, 2));
+
+				-- GetDeliverySlot/DeliverySlotData/DeliveryChargeType/DiscountedDeliveryChargeAmt
+				SET DeliveryChargeType_1.(XMLNSC.Field)Abs:DiscountedDeliveryChargeAmt = CAST(_b2cCharge.reducedDeliveryCharge AS DECIMAL(6, 2));
+
+				-- GetDeliverySlot/DeliverySlotData/DeliveryChargeType/ItemDeliveryChargeAmt
+				SET DeliveryChargeType_1.(XMLNSC.Field)Abs:ItemDeliveryChargeAmt = _b2cCharge.deliveryChargeUPC;
+
+				-- GetDeliverySlot/DeliverySlotData/DeliveryChargeType/ItemDiscountedDeliveryChargeAmt
+				SET DeliveryChargeType_1.(XMLNSC.Field)Abs:ItemDiscountedDeliveryChargeAmt = _b2cCharge.reducedDeliveryChargeUPC;
+
+				-- GetDeliverySlot/DeliverySlotData/DeliveryChargeType/BasketSizeCnt
+				SET DeliveryChargeType_1.(XMLNSC.Field)Abs:BasketSizeCnt = _b2cCharge.minimumBasketSize;
+
+				-- GetDeliverySlot/DeliverySlotData/DeliveryChargeType/AlertBasketSizeCnt
+				SET DeliveryChargeType_1.(XMLNSC.Field)Abs:AlertBasketSizeCnt = _b2cCharge.alertBasketSize;
+
+
+			-- GetDeliverySlot/DeliverySlotData/ReservedInd
+			SET DeliverySlotData_.(XMLNSC.Field)Abs:ReservedInd = _inputRootNode.reservedByCurrentUser;
+
+			-- LOOP FROM bookings[*] TO GetDeliverySlot/DeliverySlotData/SlotBookingType:
+			DECLARE _bookings REFERENCE TO _inputRootNode.bookings.Item;
+			bookings_loop : WHILE LASTMOVE(_bookings) DO
+
+				-- GetDeliverySlot/DeliverySlotData/SlotBookingType
+				DECLARE SlotBookingType_ REFERENCE TO DeliverySlotData_;
+				CREATE LASTCHILD OF DeliverySlotData_ AS SlotBookingType_ TYPE XMLNSC.Folder NAME 'Abs:SlotBookingType';
+
+					-- GetDeliverySlot/DeliverySlotData/SlotBookingType/Customer
+					DECLARE Customer_ REFERENCE TO SlotBookingType_;
+					CREATE LASTCHILD OF SlotBookingType_ AS Customer_ TYPE XMLNSC.Folder NAME 'Abs:Customer';
+
+						-- GetDeliverySlot/DeliverySlotData/SlotBookingType/Customer/GUID
+						SET Customer_.(XMLNSC.Field)Abs:GUID = _bookings.userGuid;
+
+					-- GetDeliverySlot/DeliverySlotData/SlotBookingType/CartNbr
+					SET SlotBookingType_.(XMLNSC.Field)Abs:CartNbr = _bookings.cartId;
+
+					-- GetDeliverySlot/DeliverySlotData/SlotBookingType/ExpiryTs
+					SET SlotBookingType_.(XMLNSC.Field)Abs:ExpiryTs = _bookings.expiryTime;
+
+					-- GetDeliverySlot/DeliverySlotData/SlotBookingType/BookingNbr
+					SET SlotBookingType_.(XMLNSC.Field)Abs:BookingNbr = _bookings.orderId;
+
+					-- GetDeliverySlot/DeliverySlotData/SlotBookingType/VersionNbr
+					SET SlotBookingType_.(XMLNSC.Field)Abs:VersionNbr = _bookings.versionNumber;
+
+					-- GetDeliverySlot/DeliverySlotData/SlotBookingType/OrderId
+					SET SlotBookingType_.(XMLNSC.Field)Abs:OrderId = _bookings.orderId;
+
+					-- GetDeliverySlot/DeliverySlotData/SlotBookingType/DeliveryServiceType
+					DECLARE DeliveryServiceType_1 REFERENCE TO SlotBookingType_;
+					CREATE LASTCHILD OF SlotBookingType_ AS DeliveryServiceType_1 TYPE XMLNSC.Folder NAME 'Abs:DeliveryServiceType';
+
+						-- GetDeliverySlot/DeliverySlotData/SlotBookingType/DeliveryServiceType/Code
+						SET DeliveryServiceType_1.(XMLNSC.Field)Abs:Code = _bookings.deliveryType;
+
+					-- GetDeliverySlot/DeliverySlotData/SlotBookingType/BookingCategoryType
+					DECLARE BookingCategoryType_ REFERENCE TO SlotBookingType_;
+					CREATE LASTCHILD OF SlotBookingType_ AS BookingCategoryType_ TYPE XMLNSC.Folder NAME 'Abs:BookingCategoryType';
+
+						-- GetDeliverySlot/DeliverySlotData/SlotBookingType/BookingCategoryType/Code
+						SET BookingCategoryType_.(XMLNSC.Field)Abs:Code = _bookings.bookingCategory;
+
+			MOVE _bookings NEXTSIBLING;
+			END WHILE bookings_loop;
+
+			-- GetDeliverySlot/DeliverySlotData/Auditdata
+			DECLARE Auditdata_ REFERENCE TO DeliverySlotData_;
+			CREATE LASTCHILD OF DeliverySlotData_ AS Auditdata_ TYPE XMLNSC.Folder NAME 'Abs:Auditdata';
+
+				-- GetDeliverySlot/DeliverySlotData/Auditdata/CreateDtTm
+				SET Auditdata_.(XMLNSC.Field)Abs:CreateDtTm = _inputRootNode.createdDate;
+
+				-- GetDeliverySlot/DeliverySlotData/Auditdata/UpdateDtTm
+				SET Auditdata_.(XMLNSC.Field)Abs:UpdateDtTm = _inputRootNode.lastModifiedDate;
+
+		RETURN TRUE;
+	END;
+
+END MODULE;

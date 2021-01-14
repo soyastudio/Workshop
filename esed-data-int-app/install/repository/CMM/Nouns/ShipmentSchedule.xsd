@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Schema Owner: 	Safeway Inc
+   Date Created:      11 Jan 2017
+   Author:		Sai Nuthakki
+   Dsc: contains commonly used Albertson's Shipment Schedule schema.
+   Name: /ABS_CMM_Platform/Nouns/ShipmentSchedule.xsd
+-->
+<!-- edited with XMLSpy v2020 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.0-Jayson Soliman - Initial Version-->
+	<!--V1.1 - Jayson Soliman - 09/14/18  - Replace Transmission Delay and transmission Day types with schedule detail type-->
+	<!--V1.2 - Jayson Soliman - 9/17/18 - Make ScheduleGroupCd non mandatory for supplier type schedules.-->
+	<!--V1.3 - Jayson Soliman - 9/19/18 - Add EffectiveScheduleId and change DPATSGroupType to ScheduleGroupType-->
+	<!--V1.4 - Jayson Soliman - 2/1/2019 - Modify schedule type to fit allow multiple day schedules and add daily override route.-->
+	<!--V1.4 - Jayson Soliman - 2/15/2019 - Remove ScheduleReference generic type and fixed missing data types-->
+		<!--V1.6 - Alex Nunes - 12/10/2020 - Added Vendor keys to shippingFacility complex type - DSD schedules-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="ShipmentSchedule" type="ShipmentScheduleType">
+		<xs:annotation>
+			<xs:documentation>contains the store data  transmission schedules.        
+For each schedule   (described by a DPATS Group and Schedule        
+ID),   there is a single row for every  transmission a store        
+sends that week.   Transmissions for store orders and direct        
+deliveries  will have the delivery,   picking  and  shipping        
+columns assigned.   Transmissions  which just  contain  data        
+collected by the store will not have delivery,   picking and        
+shipping columns assigned.   </xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="DestinationFacilityType">
+		<xs:annotation>
+			<xs:documentation>Defines the destination store for this shipment schedule</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporationId" minOccurs="0"/>
+			<xs:element ref="DivisionId" minOccurs="0"/>
+			<xs:element ref="RetailStoreId" minOccurs="0"/>
+			<xs:element name="Customer" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="CustomerId" type="xs:string" minOccurs="0"/>
+						<xs:element name="CustomerAccountId" type="xs:string" minOccurs="0"/>
+						<xs:element name="CustomerSubAccountId" type="xs:string" minOccurs="0"/>
+						<xs:element name="CustomerNm" type="xs:string" minOccurs="0"/>
+						<xs:element name="CustomerGroupId" type="xs:positiveInteger" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="DestinationFacilityAddress" type="AddressType" minOccurs="0"/>
+			<xs:element name="DistrictId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="ROGCd" minOccurs="0"/>
+			<xs:element name="CustomerType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines the type of customer for this shipment schedule. Valid values are: 
+1.	STORE
+2.	WAREHOUSE
+3.	WHOLESALER
+4.	ECOMM
+5.	PLANT
+6.	BACKSTAGE
+7.	CHARITY
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ShippingFacilityType">
+		<xs:annotation>
+			<xs:documentation>Defines the shipping warehouse for this shipment schedule</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporationId" minOccurs="0"/>
+			<xs:element ref="DivisionId" minOccurs="0"/>
+			<xs:element ref="DistributionCenterId" minOccurs="0"/>
+			<xs:element ref="WarehouseId" minOccurs="0"/>
+			<xs:element ref="ManufacturingPlantId" minOccurs="0"/>
+			<xs:element name="VendorId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorSubAccountNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BackdoorVendorSubAccountId" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field is used for the BDR (Back Door Receiving) system, to identify a unique vend_num, vend_sub_acnt, markon type, terms id, and usage type to the store level BDR system.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DistrictId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ShippingFacilityNm" type="xs:string" minOccurs="0"/>
+			<xs:element name="ShippingFacilityAddress" type="AddressType" minOccurs="0"/>
+			<xs:element name="WarehouseAltId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Alternate identifier for a warehouse like old warehouse id.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:int">
+						<xs:totalDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DistributionCenterAltId" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Alternate identifier for a DC like old DC id.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WarehouseDepartmentCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Department Code is a standard 3 character code that is used with corporation code, division code and facility code to uniquely identify a department. A department is a distinct part of a facility's operation, or an administrative unit of a facility. For more information on departments, refer to the Organization Master User Manual.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SupplierType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines the kind of supplier for this shipment schedule. Valid values are 
+1.	WAREHOUSE
+2.	VENDOR
+3.	PLANT
+4.	STORE
+5.	UNKNOWN</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SupplierGroupType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>supplier group is assigned when multiple suppliers are invlived in shecdules.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ScheduleGroupType">
+		<xs:annotation>
+			<xs:documentation>Defines the different schedule groups in the DPATS system. Also contains timezone information</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ScheduleGroupCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The  DPATS  System maintains  a  shipping  and  transmission     
+schedule for each DPATS Group.   The schedule information is     
+maintained  for  each  individual store.   The  DPATS  Group     
+groups facilities  so that separate security may be assigned     
+for  each.   A  person responsible for maintaining the DPATS     
+schedule will be responsible for one  or  more DPATS Groups.     
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TimeZoneCd" type="xs:string" minOccurs="0"/>
+			<xs:element name="TimeZoneDesc" type="xs:string" minOccurs="0"/>
+			<xs:element name="StandardTimeZoneCd" type="xs:string" minOccurs="0"/>
+			<xs:element name="SequenceNbr" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ShipmentScheduleType">
+		<xs:annotation>
+			<xs:documentation>Main element for the Shipment Schedule BOD</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DestinationFacility" type="DestinationFacilityType" minOccurs="0"/>
+			<xs:element name="ShippingFacility" type="ShippingFacilityType"/>
+			<xs:element name="ScheduleGroup" type="ScheduleGroupType"/>
+			<xs:element name="Schedule" type="ScheduleType"/>
+			<xs:element name="TransferDay" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The day of the week on which this transmission is scheduled.   
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TransferTime" type="xs:time" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Time when order is transmitted by the customer on cutoff date</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DataBatch" type="DataBatchType" minOccurs="0"/>
+			<xs:element name="PollTime" type="xs:time" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The time the store is to transmit the data to the host
+computer.                                             
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DataTypeCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A two digit identifier used to group General Ledger accounts           
+created for a specific purpose.                                        
+------------------------------------------------------------           
+Business Defintions for specific table(s) and/or file(s)               
+------------------------------------------------------------           
+*** DPATS Transmission Schedule Table (DTSHED table):                  
+The type of data to be transmitted.                                    
+This corresponds to a warehouse.     </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PrimaryBatchIndicator" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This indicates if items stored in a particular warehouse are primarily ordered by the associated data batch in a certain ROG.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PlanRouteNbr" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A grouping code for trucking used in determining the    
+trucking order group (TOG) for the truck's PC system.   
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RestrictedOrderDayIndicator" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates a day when stores are allowed to order slow    
+moving or restricted items.  The warehouse uses this     
+indicator to help schedule their labour for slow moving  
+products.        </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FirmOrderDay" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Day of the week when Firm Orders will be sent to the    
+Tandem.                                                 
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AvailableOffsetDayCount" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The number of days to be added to the 'EXPRESS order pick date' (the    
+date that an order will be picked at a warehouse:                       
+EXSCHSTA.DATE_SCHED_PICK) to calculate the 'order available for sale'   
+(the date that an order will be available for the store for sale).      </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EffectiveDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="ScheduleGracePeriod" type="GracePeriodType" minOccurs="0"/>
+			<xs:element ref="OrderScheduleType" minOccurs="0"/>
+			<xs:element name="RouteTypeCode" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A 1 DIGIT CODE TO IDENTIFY THE ROUTE TYPE</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RouteCode" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The route code is the order the stores are picked and is different by store.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ScheduleTypeTxt" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Tells whether the schedule is a customer or supploer (retail or warehouse)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="GracePeriodType">
+		<xs:annotation>
+			<xs:documentation>Defines the grace period set for this schedule.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="OnTimeLateHr" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This defines the boundary of the 'ONTIME' grace period on the LATE side of the scheduled cutoff time. It is the number of hours added to the scheduled store transmission cutoff time to create a 'grace' period within which transmissions are considered ONTIME. If the store transmits the databatch after this ontime grace period, but before the 'actual' late grace period cutoff time, it is considered LATE.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LateHr" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This defines the boundary of the 'LATE' grace period on the LATE side of the scheduled cutoff time. This is the number of hours added to the scheduled store transmission cutoff time to create a 'grace' period within which store transmissions are too far from the cutoff time to be considered ontime, so are considered LATE. If the store transmits the databatch after this late grace period, it is considered UNSCHEDULED, unless it is EARLY for another scheduled cutoff time close to this time.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EarlyHr" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This defines the boundary of the actual 'EARLY' grace period on the EARLY side of the scheduled cutoff time. This is the number of hours subtracted from the scheduled transmission cutoff time to create a 'grace' period within which store transmissions are too far from the cutoff time to be considered ontime, so are considered EARLY. If the store transmits the databatch before this early grace period, it is considered UNSCHEDULED, unless it is LATE for another scheduled cutoff time close to this time.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OnTimeEarlyHr" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This defines the boundary of the 'ONTIME' grace period on the EARLY side of the scheduled cutoff time. It is the number of hours subtracted from the scheduled transmission cutoff time to create a 'grace' period within which transmissions are considered ONTIME. If the store transmits the databatch before this ontime grace period cutoff time, but after the 'actual' early grace period cutoff time, it is considered EARLY.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ScheduleType">
+		<xs:annotation>
+			<xs:documentation>Contains the schedule details such as schedule id, schedule level cutoff time as well as day-level overrides such as route code overrides</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ScheduleId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is  a key used to identify  a particular DPATS Schedule    
+within a DPATS Group.    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EffectiveScheduleId" type="xs:string" minOccurs="0"/>
+			<xs:element name="ScheduleDesc" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the description of the schedule.  </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="LastEffectiveDt" minOccurs="0"/>
+			<xs:element name="LastUpdateDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field marks an effective date for the information on the row.       
+                                                                         
+The meaning varies for some tables. For instance, in some history tables 
+it is the first date. In others its the last date. For specific tables,  
+please see remarks.                                                      
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LastFMTxt" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The last file maintenance performed on this row of data.     </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CutoffTime" type="xs:time" minOccurs="0"/>
+			<xs:element name="OffsetDayCnt" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Days required for the item to be available in the Store Shelf from the Process Day (in other words offset from the Process Day). </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ScheduleDetail" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Process" type="ScheduleDetailType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Defines the schedule when shipments will be processed</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Shipment" type="ScheduleDetailType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Schedule for the Shipment</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Delivery" type="ScheduleDetailType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Defines schedule for the deliveries. </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="OffsetValue" type="ScheduleDetailType" minOccurs="0"/>
+						<xs:element name="RestrictedOrder" type="ScheduleDetailType" minOccurs="0"/>
+						<xs:element name="OverrideRoute" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Contains override route codes when route for the day is different than the given default route</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:complexContent>
+									<xs:extension base="ScheduleDetailType">
+										<xs:sequence>
+											<xs:element name="OverrideRouteCode" type="xs:string" minOccurs="0">
+												<xs:annotation>
+													<xs:documentation>This contains the route code when the default route code needs to be changed for the day.</xs:documentation>
+												</xs:annotation>
+											</xs:element>
+										</xs:sequence>
+									</xs:extension>
+								</xs:complexContent>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DataBatchType">
+		<xs:annotation>
+			<xs:documentation>Contains the data batch for this schedule</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DataBatchId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This identifies a particular type of transmission sent from a store      
+(destination facility) to the host. The first two characters of the      
+data batch specify the data category; ie. order, firm order, markdown,   
+inventory, etc. The second two characters specify the data type; ie.     
+grocery, tobacco, etc.                                                   
+------------------------------------------------------------             
+Business Definitions for specific table(s) and/or file(s)                
+------------------------------------------------------------             
+*** Batch Control Table (EXBATCTL table): The data batch is the          
+type associated with an item. ie: Databatch 0101 = GROCERY ORDER         </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FileVersionText" type="xs:string" minOccurs="0"/>
+			<xs:element name="MaxOrderLimitNbr" type="xs:int" minOccurs="0"/>
+			<xs:element name="MinOrderLimitNbr" type="xs:int" minOccurs="0"/>
+			<xs:element name="DataBatchDescription" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ScheduleDetailType">
+		<xs:annotation>
+			<xs:documentation>Defines the different schedules in week number and day</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="WeekDayNm" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains the day at which this schedule detail falls on. Can be any day of the week (SUNDAY, MONDAY, TUESDAY, WEDNESDAY, etc)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WeekDayNbr" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Can be any number within a 2-week period (1-14)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ScheduledDt" type="xs:dateTime" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

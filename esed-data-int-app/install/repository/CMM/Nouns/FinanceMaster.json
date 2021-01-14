@@ -1,0 +1,5251 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"$id": "http://example.com/FinanceMaster.json",
+	"title": "FinanaceMaster",
+	"additionalProperties": false,
+	"$ref": "../AbsMaster/AbsOmMaster.json",
+	"definitions": {
+		".Abs:ARCustomerGroupId": {
+			"type": [
+				"object",
+				"string",
+				"number",
+				"boolean"
+			],
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"$": {
+					"type": "string",
+					"maxLength": 20
+				}
+			},
+			"additionalProperties": false
+		},
+		".Abs:ARCustomerNbr": {
+			"type": [
+				"object",
+				"string",
+				"number",
+				"boolean"
+			],
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"$": {
+					"type": "string",
+					"maxLength": 50
+				}
+			},
+			"additionalProperties": false
+		},
+		".Abs:AccountCategory": {
+			"$ref": "#/definitions/Abs:CodeWithDescription",
+			"description": "Account categories are groupings of costs, revenues, or a combination of                       both used for reporting and inquiries\nfor activities in the Activity\nManagement system. All transactions are posted to an account category within an activity. \nValid account category types are:\nCost, revenue, accrual,  pass thru"
+		},
+		".Abs:AccountDsc": {
+			"type": [
+				"object",
+				"string",
+				"number",
+				"boolean"
+			],
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"$": {
+					"type": "string",
+					"maxLength": 50
+				}
+			},
+			"additionalProperties": false
+		},
+		".Abs:AccountId": {
+			"description": "This field along with the accounting unit and subaccount make up the location (account) where amounts and other  account information is stored. ",
+			"type": [
+				"object",
+				"string",
+				"number",
+				"boolean"
+			],
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"$": {
+					"type": "number"
+				}
+			},
+			"additionalProperties": false
+		},
+		".Abs:AccountNm": {
+			"type": [
+				"object",
+				"string",
+				"number",
+				"boolean"
+			],
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"$": {
+					"type": "string",
+					"maxLength": 50
+				}
+			},
+			"additionalProperties": false
+		},
+		".Abs:AccountReceivableCd": {
+			"description": "The default accounts receivable code  for the company level.",
+			"type": [
+				"object",
+				"string",
+				"number",
+				"boolean"
+			],
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"$": {
+					"type": "string",
+					"maxLength": 20
+				}
+			},
+			"additionalProperties": false
+		},
+		".Abs:AccountingPeriodNbr": {
+			"type": [
+				"object",
+				"string",
+				"number",
+				"boolean"
+			],
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"$": {
+					"$ref": "#/definitions/xs:integer"
+				}
+			},
+			"additionalProperties": false
+		},
+		".Abs:AccountingUnitId": {
+			"description": "The accounting unit is a  shorthand notation representing the variable level number.",
+			"type": [
+				"object",
+				"string",
+				"number",
+				"boolean"
+			],
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"$": {
+					"type": "string",
+					"maxLength": 20
+				}
+			},
+			"additionalProperties": false
+		},
+		".Abs:AccountingUnitNm": {
+			"type": [
+				"object",
+				"string",
+				"number",
+				"boolean"
+			],
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"$": {
+					"type": "string",
+					"maxLength": 100
+				}
+			},
+			"additionalProperties": false
+		},
+		".Abs:BookId": {
+			"description": "A user-defined book identification name. Books are used by assets for calculating depreciation, replacement cost, and insurance values, and for reporting.",
+			"type": [
+				"object",
+				"string",
+				"number",
+				"boolean"
+			],
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"$": {
+					"type": "string",
+					"maxLength": 10
+				}
+			},
+			"additionalProperties": false
+		},
+		".Abs:ChartOfAccountNm": {
+			"type": [
+				"object",
+				"string",
+				"number",
+				"boolean"
+			],
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"$": {
+					"type": "string",
+					"maxLength": 50
+				}
+			},
+			"additionalProperties": false
+		},
+		".Abs:ChartOfAccountSection": {
+			"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:CodeWithDescription",
+			"description": "The chart section.  \n1 = Balance Sheet\n2 = Income Statement"
+		},
+		".Abs:Company": {
+			"$ref": "#/definitions/Abs:CompanyType",
+			"description": "An accounting Organization which consists of an entire company within some legal framework. "
+		},
+		".Abs:CompanyId": {
+			"description": "The number that identifies a company. A company represents a business or legal  entity of an organization.",
+			"type": [
+				"object",
+				"string",
+				"number",
+				"boolean"
+			],
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"$": {
+					"type": "string",
+					"maxLength": 10
+				}
+			},
+			"additionalProperties": false
+		},
+		".Abs:CompanyNm": {
+			"description": "This is the company name or description.",
+			"type": [
+				"object",
+				"string",
+				"number",
+				"boolean"
+			],
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"$": {
+					"type": "string",
+					"maxLength": 50
+				}
+			},
+			"additionalProperties": false
+		},
+		".Abs:CrossReferenceTransaction": {
+			"type": "object",
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"Abs:ARCustomerNbr": {
+					"$ref": "#/definitions/.Abs:ARCustomerNbr"
+				},
+				"Abs:CompanyId": {
+					"$ref": "#/definitions/.Abs:CompanyId"
+				},
+				"Abs:CrossReferenceAmt": {
+					"$ref": "#/definitions/Abs:AmountType"
+				},
+				"Abs:CrossReferenceNbr": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 50
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:TransactionType": {
+					"$ref": "#/definitions/.Abs:TransactionType"
+				}
+			},
+			"additionalProperties": false
+		},
+		".Abs:CurrencyCd": {
+			"description": "This is the company base currency code.",
+			"type": [
+				"object",
+				"string",
+				"number",
+				"boolean"
+			],
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"$": {
+					"type": "string",
+					"maxLength": 20
+				}
+			},
+			"additionalProperties": false
+		},
+		".Abs:CurrencyExchangeRate": {
+			"description": "The exchange rate at the time of hte transaction.",
+			"type": [
+				"object",
+				"string",
+				"number",
+				"boolean"
+			],
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"$": {
+					"$ref": "#/definitions/Abs:CurrencyExchangeRateType"
+				}
+			},
+			"additionalProperties": false
+		},
+		".Abs:GLPostingDt": {
+			"type": [
+				"object",
+				"string",
+				"number",
+				"boolean"
+			],
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"$": {
+					"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:DateType"
+				}
+			},
+			"additionalProperties": false
+		},
+		".Abs:IncomeCd": {
+			"description": "A user-defined code representing a type of income withholding. Used to track reportable vendor income for reporting or withholding.",
+			"type": [
+				"object",
+				"string",
+				"number",
+				"boolean"
+			],
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"$": {
+					"type": "string",
+					"maxLength": 4
+				}
+			},
+			"additionalProperties": false
+		},
+		".Abs:ProcessGrp": {
+			"description": "A user-defined process group used to separate vendors into different cash payment processing groups. Process groups enable concurrent processing within a cash payment cycle.",
+			"type": [
+				"object",
+				"string",
+				"number",
+				"boolean"
+			],
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"$": {
+					"type": "string",
+					"maxLength": 4
+				}
+			},
+			"additionalProperties": false
+		},
+		".Abs:ProcessLevelId": {
+			"$ref": "../Global/AbsGlobalFields.json#/definitions/xs:positiveInteger",
+			"description": "This field contains the process level, which is the reporting hierarchy below company."
+		},
+		".Abs:ScheduleTypeCd": {
+			"$ref": "#/definitions/Abs:CodeType",
+			"description": "Is a code or identifier that describes the specific schedule for an employee or worker."
+		},
+		".Abs:SubAccountId": {
+			"description": "This field along with the accounting unit and account make up the location (account) where amounts and other  account information is stored. ",
+			"type": [
+				"object",
+				"string",
+				"number",
+				"boolean"
+			],
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"$": {
+					"type": "number"
+				}
+			},
+			"additionalProperties": false
+		},
+		".Abs:SubSystemRecordId": {
+			"description": "Contains the object ID sequence number. \n Ensures that the subsystem transaction  \n is sent to the Lawson General Ledger\nsystem.   ",
+			"type": [
+				"object",
+				"string",
+				"number",
+				"boolean"
+			],
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"$": {
+					"type": "number"
+				}
+			},
+			"additionalProperties": false
+		},
+		".Abs:SummaryAccountId": {
+			"type": [
+				"object",
+				"string",
+				"number",
+				"boolean"
+			],
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"$": {
+					"type": "number"
+				}
+			},
+			"additionalProperties": false
+		},
+		".Abs:SummaryAccountNm": {
+			"type": [
+				"object",
+				"string",
+				"number",
+				"boolean"
+			],
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"$": {
+					"type": "string",
+					"maxLength": 50
+				}
+			},
+			"additionalProperties": false
+		},
+		".Abs:TransactionAmt": {
+			"$ref": "#/definitions/Abs:AmountType"
+		},
+		".Abs:TransactionType": {
+			"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:CodeWithDescription",
+			"description": "Indicates the type of accounting transaction.\nValid Values are \nC = Credit Memo\nD = Debit Memo\nI = Invoice\nM = Mixed"
+		},
+		".Abs:VariableLevelNbr": {
+			"description": "The variable level number is tied directly to the accounting unit.\nIt is used to indicate an accounting unit's position within the company hierarchy, establishing its consolidation relationship with other units.",
+			"type": [
+				"object",
+				"string",
+				"number",
+				"boolean"
+			],
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"$": {
+					"type": "string",
+					"maxLength": 30
+				}
+			},
+			"additionalProperties": false
+		},
+		".Abs:VendorClass": {
+			"description": "A user-defined code representing a subset of vendors within a vendor group.",
+			"type": [
+				"object",
+				"string",
+				"number",
+				"boolean"
+			],
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"$": {
+					"type": "string",
+					"maxLength": 3
+				}
+			},
+			"additionalProperties": false
+		},
+		".Abs:VendorClassDsc": {
+			"description": "The description of the vendor class.",
+			"type": [
+				"object",
+				"string",
+				"number",
+				"boolean"
+			],
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"$": {
+					"type": "string",
+					"maxLength": 30
+				}
+			},
+			"additionalProperties": false
+		},
+		".Abs:VendorGrp": {
+			"description": "The vendor group represents a group of vendors that can be shared by one or more accounts payable company.",
+			"type": [
+				"object",
+				"string",
+				"number",
+				"boolean"
+			],
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"$": {
+					"type": "string",
+					"maxLength": 4
+				}
+			},
+			"additionalProperties": false
+		},
+		".Abs:VendorGrpDsc": {
+			"$ref": "#/definitions/xs:anyType",
+			"description": "The name or description of the vendor group."
+		},
+		".Abs:VendorId": {
+			"description": "Identification number assigned to the vendor.",
+			"type": [
+				"object",
+				"string",
+				"number",
+				"boolean"
+			],
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"$": {
+					"type": "string",
+					"maxLength": 9
+				}
+			},
+			"additionalProperties": false
+		},
+		".Abs:VendorLocationCd": {
+			"description": "A user-defined code representing an alternate remittance or purchasing location for the vendor.",
+			"type": [
+				"object",
+				"string",
+				"number",
+				"boolean"
+			],
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"$": {
+					"type": "string",
+					"maxLength": 4
+				}
+			},
+			"additionalProperties": false
+		},
+		".Abs:VendorNm": {
+			"description": "The vendor name or description.",
+			"type": [
+				"object",
+				"string",
+				"number",
+				"boolean"
+			],
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"$": {
+					"type": "string",
+					"maxLength": 30
+				}
+			},
+			"additionalProperties": false
+		},
+		"Abs:APCompanyType": {
+			"description": "Accounts Payable company type represents a physical location, processing center, or other entity for your business.",
+			"type": "object",
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"Abs:AdvanceExpenseInd": {
+					"description": "Indicates how the Lawson Accounts Payable system processes employee advances and expenses entered in the Lawson Employee Advance and Expense system. If the company has the Open option selected, specific matching is not performed. All open items for the employee are considered during reconciliation. If the company has the Matching option selected, each open employee advance is matched to its corresponding open expense. Valid values are: O = Open.  M = Matching.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:ApprovalCriteriaInd": {
+					"description": "Indicates whether approval criteria is  defined for the company. If Yes, an associated record exists for the company in the Invoice Approval file. Valid values are: N = No. Y = Yes.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:AutoBatchInd": {
+					"description": "Indicates whether the system automatically assigns numbers to batches in AP25.1 (Batch Control). Used only if the company has Yes selected in the Batch Release Option field. Valid values are: N = No. Y = Yes.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"$ref": "#/definitions/xs:string"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:AutoVoucherInd": {
+					"description": "Indicates whether the system automatically assigns voucher numbers to invoices during entry. Used only if the company has Yes selected in both the Invoice Approval and the Numeric Voucher Numbering fields. Valid values are:  Y = Yes.  N = No.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:BaseCurrencyCd": {
+					"description": "The base currency defined for the company in the Lawson General Ledger system.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 5
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:BatchControlInd": {
+					"description": "Indicates whether the company uses batch control, which indicates whether entry totals must match control totals before a batch can be released. Used only if the company has Yes selected in the Batch Release Option field. Valid values are: Y = Yes. N = No.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"$ref": "#/definitions/xs:string"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:BatchOptionInd": {
+					"description": "Indicates whether the company batch option to enter and releases invoices. If this field is No, the company must have Yes selected in the Invoice Approval field. If the company has Yes selected in both the Batch Release and Invoice Approval fields, the company assigns vouchers to invoices but still enters and releases invoices in batches. Valid values are: N = No. Y = Yes.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"$ref": "#/definitions/xs:string"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:CashCd": {
+					"description": "The cash code assigned to the company. Represents a bank account. Must be a valid record in the Cash Code file. Valid relationship records must exist between the cash code and both the company and the posting company assigned o the company's pay group in the Company-Cash Code Relationship file. If  left blank, the cash code  the company's pay group defaults on invoices entered for the company.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 4
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:CompanyId": {
+					"$ref": "#/definitions/.Abs:CompanyId"
+				},
+				"Abs:CompanyNm": {
+					"$ref": "#/definitions/.Abs:CompanyNm"
+				},
+				"Abs:CreateTRDistribInd": {
+					"description": "BLANK. Inquire about!!!",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:DecimalPositionNbr": {
+					"description": "The number of decimal positions defined for the company base currency.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "integer"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:DefaultReferenceTxt": {
+					"description": "Distribution Reference company. Used to default a value in the reference field on distributions during invoice entry. Valid values are: I = Invoice. P = Purchase Order. V = Voucher.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:DiscountCalcDateInd": {
+					"description": "Indicates which date to use when calculating discounts. You can use the invoice date, receipt date, or the date the invoice was received. alid values are: I = Invoice date. R = Receipt date. D = Receipt of invoice date. E = Earliest Receipt Date. S = Ship to Arrive Date",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:DiscountCd": {
+					"description": "The discount code assigned to the company. Represents a general ledger discount account. A unique entry in this field creates a record in the Discount Code file.\n\n",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 10
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:DiscountTaxRecoveryInd": {
+					"description": "If discounts are to be taken for the company exclusive of tax, this field  indicates whether tax recovery is  required when discounts are taken. Valid  values are: N = No. Y = Yes.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:DistribCd": {
+					"description": "A user-defined code used to automatically create expense distributions or expense distribution \"shells\" for invoices or to split an invoice distribution into multiple distributions.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 9
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:DupVoucherInd": {
+					"description": "Indicates whether duplicate voucher numbers are allowed within the company. Used only if the company has Yes selected in the Invoice Approval field. Valid values are: Y = Yes.  N = No.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:FloatDaysNbr": {
+					"description": "This is a number of days to add to best terms calculation if the vendor will allow a specific number of days for payment to reach them and still receive the discount.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "integer"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:IncomeAccrualCd": {
+					"description": "The income withholding code assigned to the company. Represents the general ledger income withholding account for the  company. Used to track reportable withholding for vendors. A unique entry in this field creates a record in the Income Withholding Code file.\n\n",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 10
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:IncomeWithholdingPct": {
+					"description": "The reportable income withholding rate for the company. The system applies this rate to payments for vendors marked for income withholding.\n\n",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "number",
+							"maximum": 5
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:InvoiceAccrualCd": {
+					"description": "The invoice accrual code assigned to the company. Represents the default general ledger accrual account for the company. A unique entry in this field creates a record in the Invoice Accrual Code file.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 4
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:InvoiceApprovalInd": {
+					"description": "Indicates whether the company uses the invoice registration entry option (the assignment of an authority code and a voucher to an invoice). If this field is No, the company must have Yes selected in the Batch Release field. If the company has Yes selected in both the Invoice Approval and Batch Release fields, the company assigns vouchers to invoices but enters and releases invoices in batches. Valid values are: N = No. Y = Yes.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:InvoiceAuditInd": {
+					"description": "Indicates whether the system creates audit records when released invoices are changed. Valid values are: Y = Yes. N = No.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:InvoiceOutBalanceInd": {
+					"description": "Indicates whether out of balance  invoices can be released. Valid values  N = No. Y = Yes.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:LastArchiveDt": {
+					"description": "The date of the last archival.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"$ref": "#/definitions/xs:date"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:LastBatchNbr": {
+					"description": "The last batch number used by the company. Used only if the company has Yes selected in the Automatic Batch Numbering field.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "integer"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:LastVoucherNbr": {
+					"description": "The last voucher number assigned by the company. Used only if the company has Yes selected in both the Invoice Approval and Numeric Voucher Numbers fields. The system assigns voucher numbers beginning with the next sequential number. If left blank, the system assigns voucher numbers beginning with 1.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "integer"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:NumericVoucherInd": {
+					"description": "Indicates whether voucher values will be numeric. Used only if the company has Yes selected in the Invoice Approval field. Valid values are:  Y = Yes.   N = No.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:Paygrp": {
+					"$ref": "#/definitions/.Abs:Paygrp"
+				},
+				"Abs:PostingOptionInd": {
+					"description": "The posting option for the company. Determines the volume of invoice expense distribution information that AP175 (Invoice Distribution Closing) transfers to the general ledger. Valid values are: S = Summary. D = Detail.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:PurgeInd": {
+					"description": "Indicates the status of the company. Used to determine whether the company and associated data can be deleted from the Lawson Accounts Payable system by AP305 (AP Company Purge). Valid values are: A = Active. D = Delete.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:VendorGrp": {
+					"$ref": "#/definitions/.Abs:VendorGrp"
+				},
+				"Abs:VoucherRequiredInd": {
+					"description": "Indicates whether to recalculate the  terms during matching. N = No Y = Yes",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:WkflDstAdjInd": {
+					"description": "BLANK. Inquire about!!!",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:WorkflowInd": {
+					"description": "Indicates whether the company uses Workflow. If Yes, invoices that meet or exceed approval criteria defined for the company are routed to a workflow system for approval. Valid values are: N = No. Y = Yes.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				}
+			},
+			"required": [
+				"Abs:CompanyId",
+				"Abs:CompanyNm",
+				"Abs:Paygrp",
+				"Abs:VendorGrp"
+			],
+			"additionalProperties": false
+		},
+		"Abs:ARCompanyType": {
+			"description": "Defines the accounts receivable company. A\ncompany record contains the highest set of processing rules that are used for that company. Prior to adding a company to AR, the company must be a\nvalid company in GL or GL Interface system.",
+			"type": "object",
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"Abs:ARCompany": {
+					"$ref": "#/definitions/Abs:CompanyType"
+				},
+				"Abs:ARCustomerGroupId": {
+					"$ref": "#/definitions/.Abs:ARCustomerGroupId"
+				},
+				"Abs:AccountReceivableCd": {
+					"$ref": "#/definitions/.Abs:AccountReceivableCd"
+				},
+				"Abs:ChargeBackNbr": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "number"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:CompanyAddress": {
+					"$ref": "#/definitions/Abs:AddressType"
+				},
+				"Abs:InvoiceBatchInd": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 5
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:InvoiceBatchNbr": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "number"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:InvoiceBatchTotalInd": {
+					"description": "This option allows system batch totals\n to be force balanced to header totals\n prior to release. Valid values are:\n N = No total balancing required\n Y = Total balancing required",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 5
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:PrePaymentCd": {
+					"description": "Prepayment code. This is the default\n code to be used for a check entered as a\n prepayment. This will be the offset\n instead of RNA to cash.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 20
+						}
+					},
+					"additionalProperties": false
+				}
+			},
+			"additionalProperties": false
+		},
+		"Abs:ARCustomerGroupType": {
+			"type": "object",
+			"properties": {
+				"#": {
+					"type": "string"
+				}
+			},
+			"additionalProperties": false
+		},
+		"Abs:ARCustomerType": {
+			"description": "Defines Accounts Receivable Customer.",
+			"type": "object",
+			"properties": {
+				"#": {
+					"type": "string"
+				}
+			},
+			"additionalProperties": false
+		},
+		"Abs:AccountingUnitType": {
+			"description": "The accounting unit is a shorthand notation representing the              variable level number within a company.\n",
+			"type": "object",
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"Abs:AccountGenerateInd": {
+					"description": "Indicates if an account is\n automatically generated against a group\n of accounting units.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 5
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:AccountingUnitId": {
+					"$ref": "#/definitions/.Abs:AccountingUnitId"
+				},
+				"Abs:AccountingUnitNm": {
+					"$ref": "#/definitions/.Abs:AccountingUnitNm"
+				},
+				"Abs:PostingInd": {
+					"description": "his field is used to indicate posting accounting units and summary level\n accounting units. Posting levels may\n have a chart of accounts and transaction\n activity. Summary levels are used to\n consolidate information from lower level\n accounting units. Summary levels do not\n have a chart of accounts, nor do they\nallow transaction activity. They are\n created to meet reporting needs.\nP = Posting\nS = Summary",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 5
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:Status": {
+					"$ref": "#/definitions/Abs:CodeWithDescription",
+					"description": "indicate if an accounting unit is active or inactive\nIf an accounting unit isinactive, all associated accounts are\nalso inactive and no posting can occur.\nA = Active\nI = Inactive"
+				},
+				"Abs:VariableLevelNbr": {
+					"$ref": "#/definitions/.Abs:VariableLevelNbr"
+				}
+			},
+			"additionalProperties": false
+		},
+		"Abs:AmountType": {
+			"type": "object",
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"Abs:CurrencyCd": {
+					"$ref": "#/definitions/.Abs:CurrencyCd"
+				},
+				"Abs:CurrencyExchangeRt": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "number"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:DecimalNbr": {
+					"$ref": "../Global/AbsGlobalComponents.json#/definitions/xs:decimal"
+				},
+				"Abs:TransactionAmt": {
+					"$ref": "../Global/AbsGlobalComponents.json#/definitions/xs:decimal"
+				}
+			},
+			"additionalProperties": false
+		},
+		"Abs:AssetRecordType": {
+			"description": "An asset record type is a grouping of one or more asset items that are grouped together, or \"combined,\" for depreciation purposes. It also contains many of the selection and sorting fields that are used for reporting.",
+			"type": "object",
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"Abs:AssetDsc": {
+					"description": "A description of the asset.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 30
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:AssetNbr": {
+					"description": "Asset number that is an unique number within an asset.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "integer"
+						}
+					},
+					"additionalProperties": false
+				}
+			},
+			"required": [
+				"Abs:AssetDsc",
+				"Abs:AssetNbr"
+			],
+			"additionalProperties": false
+		},
+		"Abs:ChargesType": {
+			"description": "contains various attributes related to Charges applied in a document like invoice.",
+			"type": "object",
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"@TypeCd": {
+					"$ref": "#/definitions/xs:string"
+				},
+				"Abs:BasisAmt": {
+					"description": "Base Amt from which the charge is derived",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "number"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:BasisQty": {
+					"description": "Base quantity for which charge Amt is calculated",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "number"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:ChargeAmt": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "number"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:ChargeCd": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 20
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:ChargeDsc": {
+					"description": "Description for the Charge",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 50
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:ChargePercent": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "number"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:ChargeRate": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "number"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:QuantityUOM": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 20
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:ReasonCd": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 20
+						}
+					},
+					"additionalProperties": false
+				}
+			},
+			"additionalProperties": false
+		},
+		"Abs:ChartOfAccounts": {
+			"description": "The General Ledger Chart file contains chart and system account\ninformation in the General Ledger system including retained earnings,\nundistributed retained earnings, error suspense, and gain/loss account records\ndefined in the System Accounts subform.",
+			"type": "object",
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"Abs:Account": {
+					"type": "array",
+					"items": {
+						"description": "various types of accounts for a chart of account name. Ex retained account, balance account, gain account,  loss account, error suspense account, undistributed retained account, rounding account, summary account, commitment account.",
+						"type": "object",
+						"properties": {
+							"#": {
+								"type": "string"
+							},
+							"Abs:AccountId": {
+								"type": [
+									"object",
+									"string",
+									"number",
+									"boolean"
+								],
+								"properties": {
+									"#": {
+										"type": "string"
+									},
+									"$": {
+										"type": "number"
+									}
+								},
+								"additionalProperties": false
+							},
+							"Abs:AccountType": {
+								"$ref": "#/definitions/Abs:CodeWithName"
+							},
+							"Abs:SubAccountId": {
+								"type": [
+									"object",
+									"string",
+									"number",
+									"boolean"
+								],
+								"properties": {
+									"#": {
+										"type": "string"
+									},
+									"$": {
+										"type": "number"
+									}
+								},
+								"additionalProperties": false
+							}
+						},
+						"additionalProperties": false
+					}
+				},
+				"Abs:ChartOfAccountDsc": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 50
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:ChartOfAccountNm": {
+					"$ref": "#/definitions/.Abs:ChartOfAccountNm"
+				},
+				"Abs:ChartOfAccountShortDsc": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 30
+						}
+					},
+					"additionalProperties": false
+				}
+			},
+			"additionalProperties": false
+		},
+		"Abs:CommonCompanyType": {
+			"description": "An accounting Organization which consists of an entire company within some legal framework. ",
+			"type": "object",
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"Abs:AccountingPeriodsNbr": {
+					"description": "The number of periods for a company Accounting Periods     fiscal year. Valid values are 1 - 13.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"$ref": "#/definitions/xs:integer"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:ActiveStatusCd": {
+					"description": "the active status is used to display the development status of a company. D=Delete, L=Live, T=Test, C=Consolidation and E=Elimination.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"minLength": 1,
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:BaseAccountingUnitId": {
+					"description": "The accounting unit name which is a unique location within the company.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"minLength": 20,
+							"maxLength": 20
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:ChartNm": {
+					"description": "Name assigned to the chart of accounts of company structure.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"minLength": 12,
+							"maxLength": 12
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:CompanyId": {
+					"$ref": "#/definitions/.Abs:CompanyId"
+				},
+				"Abs:CompanyNm": {
+					"$ref": "#/definitions/.Abs:CompanyNm"
+				},
+				"Abs:ControlCodeUseInd": {
+					"description": "Indicates whether control totals are required for journal entries.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"minLength": 1,
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:CurrencyCd": {
+					"$ref": "#/definitions/.Abs:CurrencyCd"
+				},
+				"Abs:CurrencyConversionInd": {
+					"description": "Currency Conversion indicator.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"minLength": 1,
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:CurrencyTableNm": {
+					"description": "Currency table name. Currency tables are assigned to companies and define currency exchange and translation information.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"minLength": 12,
+							"maxLength": 12
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:CurrencyTranslationInd": {
+					"description": "Used to control currency translation processing.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"minLength": 1,
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:DecimalPositionNbr": {
+					"description": "Number of decimal positions in the company currency code amount fields.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"$ref": "#/definitions/xs:integer"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:InterzoneBalancingInd": {
+					"description": "Indicates whether interzone balancing is used.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"minLength": 1,
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:LevelDepthVal": {
+					"description": "Number of level defined for the company.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"$ref": "#/definitions/xs:integer"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:LevelDsc": {
+					"type": "array",
+					"items": {
+						"description": "Level description occurs five times.",
+						"type": [
+							"object",
+							"string",
+							"number",
+							"boolean"
+						],
+						"properties": {
+							"#": {
+								"type": "string"
+							},
+							"$": {
+								"type": "string",
+								"minLength": 12,
+								"maxLength": 12
+							}
+						},
+						"additionalProperties": false
+					}
+				},
+				"Abs:LevelNumberDigitLgth": {
+					"type": "array",
+					"items": {
+						"description": "Number of digits for each level.",
+						"type": [
+							"object",
+							"string",
+							"number",
+							"boolean"
+						],
+						"properties": {
+							"#": {
+								"type": "string"
+							},
+							"$": {
+								"$ref": "#/definitions/xs:string"
+							}
+						},
+						"additionalProperties": false
+					}
+				},
+				"Abs:Paygrp": {
+					"$ref": "#/definitions/.Abs:Paygrp"
+				}
+			},
+			"additionalProperties": false
+		},
+		"Abs:CompanyType": {
+			"description": "An accounting Organization which consists of an entire company within some legal framework. ",
+			"type": "object",
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"Abs:AccountingPeriodsNbr": {
+					"description": "The number of periods for a company Accounting Periods     fiscal year. Valid values are 1 - 13.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"$ref": "#/definitions/xs:integer"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:AccountingUnitTxt": {
+					"description": "The accounting unit name which is a unique location within the company.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"minLength": 20,
+							"maxLength": 20
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:ActiveStatusCd": {
+					"description": "the active status is used to display the development status of a company. D=Delete, L=Live, T=Test, C=Consolidation and E=Elimination.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"minLength": 1,
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:ChartNm": {
+					"description": "Name assigned to the chart of accounts of company structure.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"minLength": 12,
+							"maxLength": 12
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:CompanyDecimalPositionNbr": {
+					"description": "Number of decimal positions in the company currency code amount fields.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"$ref": "#/definitions/xs:integer"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:CompanyId": {
+					"description": "The number that identifies a company. A company represents a business or legal  entity of an organization.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 10
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:CompanyNm": {
+					"description": "This is the company name or description.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 50
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:ControlCodeUseInd": {
+					"description": "Indicates whether control totals are required for journal entries.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"minLength": 1,
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:CurrencyCd": {
+					"description": "This is the company base currency code.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"minLength": 5,
+							"maxLength": 5
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:CurrencyConversionInd": {
+					"description": "Currency Conversion indicator.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"minLength": 1,
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:CurrencyTableNm": {
+					"description": "Currency table name. Currency tables are assigned to companies and define currency exchange and translation information.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"minLength": 12,
+							"maxLength": 12
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:CurrencyTranslationInd": {
+					"description": "Used to control currency translation processing.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"minLength": 1,
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:CurrentAcctPeriodNbr": {
+					"description": "Current accounting period.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"$ref": "#/definitions/xs:integer"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:FiscalYr": {
+					"description": "Contains the fiscal year for the data stored.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "integer"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:InterzoneBalancingInd": {
+					"description": "Indicates whether interzone balancing is used.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"minLength": 1,
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:LevelDepthVal": {
+					"description": "Number of level defined for the company.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"$ref": "#/definitions/xs:integer"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:LevelDsc": {
+					"type": "array",
+					"items": {
+						"description": "Level description occurs five times.",
+						"type": [
+							"object",
+							"string",
+							"number",
+							"boolean"
+						],
+						"properties": {
+							"#": {
+								"type": "string"
+							},
+							"$": {
+								"type": "string",
+								"minLength": 12,
+								"maxLength": 12
+							}
+						},
+						"additionalProperties": false
+					}
+				},
+				"Abs:LevelNumberDigitLgth": {
+					"type": "array",
+					"items": {
+						"description": "Number of digits for each level.",
+						"type": [
+							"object",
+							"string",
+							"number",
+							"boolean"
+						],
+						"properties": {
+							"#": {
+								"type": "string"
+							},
+							"$": {
+								"$ref": "#/definitions/xs:string"
+							}
+						},
+						"additionalProperties": false
+					}
+				},
+				"Abs:Paygrp": {
+					"$ref": "file:///C:/Users/snuth00/OneDrive%20-%20Safeway,%20Inc/Documents/Projects/EDIS/Dim_Dev_Repository/esed1_src/CMM_dev/AbsMaster/AbsOmMaster.json#/definitions/Paygrp"
+				}
+			},
+			"additionalProperties": false
+		},
+		"Abs:CurrencyExchangeRateType": {
+			"type": "number"
+		},
+		"Abs:DetailAccountType": {
+			"description": "contains chart detail records including posting and currency\noptions defined in the Detail Accounts",
+			"type": "object",
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"Abs:AccountCategory": {
+					"$ref": "#/definitions/.Abs:AccountCategory"
+				},
+				"Abs:AccountDsc": {
+					"$ref": "#/definitions/.Abs:AccountDsc"
+				},
+				"Abs:AccountId": {
+					"$ref": "#/definitions/.Abs:AccountId"
+				},
+				"Abs:AccountNm": {
+					"$ref": "#/definitions/.Abs:AccountNm"
+				},
+				"Abs:AccountStatus": {
+					"$ref": "#/definitions/Abs:CodeWithDescription",
+					"description": "The status of the account. If Inactive,\n no posting can be done to the account. \n A = Active\n I = Inactive"
+				},
+				"Abs:ChartOfAccountNm": {
+					"$ref": "#/definitions/.Abs:ChartOfAccountNm"
+				},
+				"Abs:ChartOfAccountSection": {
+					"$ref": "#/definitions/.Abs:ChartOfAccountSection"
+				},
+				"Abs:CurrencyCd": {
+					"$ref": "#/definitions/.Abs:CurrencyCd"
+				},
+				"Abs:CurrencyControl": {
+					"$ref": "#/definitions/Abs:CodeWithDescription",
+					"description": "limit all transactions to one currency. \n0 = No\n1 = Yes"
+				},
+				"Abs:DetailAccountShortDsc": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 30
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:LedgerGroupNm": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 30
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:SequenceNbr": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"$ref": "#/definitions/xs:integer"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:SubAccountId": {
+					"$ref": "#/definitions/.Abs:SubAccountId"
+				},
+				"Abs:SummaryAccountId": {
+					"$ref": "#/definitions/.Abs:SummaryAccountId"
+				},
+				"Abs:SummaryAccountNm": {
+					"$ref": "#/definitions/.Abs:SummaryAccountNm"
+				}
+			},
+			"additionalProperties": false
+		},
+		"Abs:GLBalanceType": {
+			"description": "Defines GL balance amounts for GL Master accounts for a period. generates one message for company, fiscal year and accounting unit combination with the balance details for all the underlying accounts.",
+			"type": "object",
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"Abs:AccountingUnit": {
+					"type": "object",
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"Abs:Account": {
+							"type": "array",
+							"minItems": 1,
+							"items": {
+								"type": "object",
+								"properties": {
+									"#": {
+										"type": "string"
+									},
+									"Abs:AccountId": {
+										"$ref": "#/definitions/.Abs:AccountId"
+									},
+									"Abs:BeginingBalance": {
+										"type": "object",
+										"properties": {
+											"#": {
+												"type": "string"
+											},
+											"Abs:CreditAmt": {
+												"type": [
+													"object",
+													"string",
+													"number",
+													"boolean"
+												],
+												"properties": {
+													"#": {
+														"type": "string"
+													},
+													"$": {
+														"type": "number"
+													}
+												},
+												"additionalProperties": false
+											},
+											"Abs:DebitAmt": {
+												"type": [
+													"object",
+													"string",
+													"number",
+													"boolean"
+												],
+												"properties": {
+													"#": {
+														"type": "string"
+													},
+													"$": {
+														"type": "number"
+													}
+												},
+												"additionalProperties": false
+											}
+										},
+										"additionalProperties": false
+									},
+									"Abs:ChartOfAccountNm": {
+										"$ref": "#/definitions/.Abs:ChartOfAccountNm"
+									},
+									"Abs:LocalCurrency": {
+										"$ref": "#/definitions/Abs:CodeWithDescription"
+									},
+									"Abs:PeriodBalance": {
+										"type": "array",
+										"items": {
+											"type": "object",
+											"properties": {
+												"#": {
+													"type": "string"
+												},
+												"Abs:AccountingPeriodNbr": {
+													"$ref": "#/definitions/.Abs:AccountingPeriodNbr"
+												},
+												"Abs:AcitvityInd": {
+													"type": [
+														"object",
+														"string",
+														"number",
+														"boolean"
+													],
+													"properties": {
+														"#": {
+															"type": "string"
+														},
+														"$": {
+															"type": "string",
+															"maxLength": 5
+														}
+													},
+													"additionalProperties": false
+												},
+												"Abs:CreditAmt": {
+													"type": [
+														"object",
+														"string",
+														"number",
+														"boolean"
+													],
+													"properties": {
+														"#": {
+															"type": "string"
+														},
+														"$": {
+															"type": "number"
+														}
+													},
+													"additionalProperties": false
+												},
+												"Abs:DebitAmt": {
+													"type": [
+														"object",
+														"string",
+														"number",
+														"boolean"
+													],
+													"properties": {
+														"#": {
+															"type": "string"
+														},
+														"$": {
+															"type": "number"
+														}
+													},
+													"additionalProperties": false
+												}
+											},
+											"additionalProperties": false
+										}
+									},
+									"Abs:PostingCurrency": {
+										"$ref": "#/definitions/Abs:CodeWithDescription"
+									},
+									"Abs:RecordAuditData": {
+										"$ref": "#/definitions/Abs:RecordAuditData"
+									},
+									"Abs:SubAccountId": {
+										"$ref": "#/definitions/.Abs:SubAccountId"
+									},
+									"Abs:VariableLevelNbr": {
+										"$ref": "#/definitions/.Abs:VariableLevelNbr"
+									}
+								},
+								"required": [
+									"Abs:AccountId",
+									"Abs:ChartOfAccountNm"
+								],
+								"additionalProperties": false
+							}
+						},
+						"Abs:AccountingUnitId": {
+							"$ref": "#/definitions/.Abs:AccountingUnitId"
+						}
+					},
+					"required": [
+						"Abs:Account",
+						"Abs:AccountingUnitId"
+					],
+					"additionalProperties": false
+				},
+				"Abs:CompanyCurrency": {
+					"$ref": "#/definitions/Abs:CodeWithDescription"
+				},
+				"Abs:CompanyId": {
+					"$ref": "#/definitions/.Abs:CompanyId"
+				},
+				"Abs:FisclaYear": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"$ref": "#/definitions/xs:integer"
+						}
+					},
+					"additionalProperties": false
+				}
+			},
+			"required": [
+				"Abs:AccountingUnit",
+				"Abs:CompanyId",
+				"Abs:FisclaYear"
+			],
+			"additionalProperties": false
+		},
+		"Abs:GLMasterType": {
+			"description": "General Ledger Master account details. contains the chart of accounts. All financial subsystems verify the existence of accounts against this.",
+			"type": "object",
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"Abs:AccountDsc": {
+					"$ref": "#/definitions/.Abs:AccountDsc"
+				},
+				"Abs:AccountId": {
+					"$ref": "#/definitions/.Abs:AccountId"
+				},
+				"Abs:AccountNm": {
+					"$ref": "#/definitions/.Abs:AccountNm"
+				},
+				"Abs:AccountingUnitId": {
+					"$ref": "#/definitions/.Abs:AccountingUnitId"
+				},
+				"Abs:AccountingUnitNm": {
+					"$ref": "#/definitions/.Abs:AccountingUnitNm"
+				},
+				"Abs:BaseCurrencyCd": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 20
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:ChartOfAccountNm": {
+					"$ref": "#/definitions/.Abs:ChartOfAccountNm"
+				},
+				"Abs:CompanyId": {
+					"$ref": "#/definitions/.Abs:CompanyId"
+				},
+				"Abs:CompanyNm": {
+					"$ref": "#/definitions/.Abs:CompanyNm"
+				},
+				"Abs:CurrencyCd": {
+					"$ref": "#/definitions/.Abs:CurrencyCd"
+				},
+				"Abs:GLMasterUpdate": {
+					"$ref": "#/definitions/Abs:LastUpdateType"
+				},
+				"Abs:PostingLevel": {
+					"$ref": "#/definitions/Abs:CodeWithDescription"
+				},
+				"Abs:Status": {
+					"$ref": "#/definitions/Abs:CodeWithDescription"
+				},
+				"Abs:SubAccountId": {
+					"$ref": "#/definitions/.Abs:SubAccountId"
+				},
+				"Abs:SummaryAccountId": {
+					"$ref": "#/definitions/.Abs:SummaryAccountId"
+				},
+				"Abs:SummaryAccountNm": {
+					"$ref": "#/definitions/.Abs:SummaryAccountNm"
+				},
+				"Abs:VariableLevelNbr": {
+					"$ref": "#/definitions/.Abs:VariableLevelNbr"
+				}
+			},
+			"additionalProperties": false
+		},
+		"Abs:GLTransactionType": {
+			"description": "The General Ledger Transaction message contains the journal entry detail information to be posted to the General Ledger system.",
+			"type": "object",
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"Abs:AccountAmt": {
+					"$ref": "#/definitions/Abs:AmountType"
+				},
+				"Abs:AccountCategory": {
+					"$ref": "#/definitions/.Abs:AccountCategory"
+				},
+				"Abs:AccountDsc": {
+					"$ref": "#/definitions/.Abs:AccountDsc"
+				},
+				"Abs:AccountId": {
+					"$ref": "#/definitions/.Abs:AccountId"
+				},
+				"Abs:AccountNm": {
+					"$ref": "#/definitions/.Abs:AccountNm"
+				},
+				"Abs:AccountingPeriodNbr": {
+					"$ref": "#/definitions/.Abs:AccountingPeriodNbr"
+				},
+				"Abs:AccountingUnitId": {
+					"$ref": "#/definitions/.Abs:AccountingUnitId"
+				},
+				"Abs:AccountingUnitNm": {
+					"$ref": "#/definitions/.Abs:AccountingUnitNm"
+				},
+				"Abs:AutoReverseInd": {
+					"description": "When the Auto Reversal field is set to \"Y,\" the General Ledger Closing program  creates an opposite                        entry  for this transaction in the next  period.   \n                       Y = Yes                                  \n                       N = No ",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 5
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:BaseAmount": {
+					"$ref": "#/definitions/.Abs:BaseAmount"
+				},
+				"Abs:BaseZoneId": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 20
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:CompanyId": {
+					"$ref": "#/definitions/.Abs:CompanyId"
+				},
+				"Abs:CompanyNm": {
+					"$ref": "#/definitions/.Abs:CompanyNm"
+				},
+				"Abs:ControlGroupNbr": {
+					"description": "displays the journal entry number used for process control of the                       journal entry detail.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"$ref": "#/definitions/xs:integer"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:CurrencyCd": {
+					"$ref": "#/definitions/.Abs:CurrencyCd"
+				},
+				"Abs:CurrencyExchangeRate": {
+					"$ref": "#/definitions/.Abs:CurrencyExchangeRate"
+				},
+				"Abs:EffectiveDt": {
+					"description": "The effective date of the transaction.\n Used for calculating average daily balances. ",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"$ref": "#/definitions/xs:date"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:FiscalYearId": {
+					"$ref": "#/definitions/.Abs:FiscalYearId"
+				},
+				"Abs:GLLineNbr": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"$ref": "#/definitions/xs:integer"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:GLSystem": {
+					"$ref": "#/definitions/Abs:CodeWithName",
+					"description": "A two-character code representing an\n  application used within the Lawson        \n  system. (i.e.: GL = General Ledger, AP =   Accounts Payable, etc.) "
+				},
+				"Abs:JournalEntryLastUpdate": {
+					"$ref": "#/definitions/Abs:LastUpdateType"
+				},
+				"Abs:JournalEntrySequenceNbr": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"$ref": "#/definitions/xs:integer"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:JournalEntryType": {
+					"$ref": "#/definitions/Abs:CodeWithDescription",
+					"description": "The journal entry type.\n  N = Normal    \n I = Intercompany\n   A = A/R Normal     \n R = A/R Intercpy "
+				},
+				"Abs:NegativeAdjustmentInd": {
+					"description": "Indicates a negative adjustment.  Y = -  N     ",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 5
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:OriginCompany": {
+					"type": "object",
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"Abs:CompanyId": {
+							"$ref": "#/definitions/.Abs:CompanyId"
+						},
+						"Abs:CompanyNm": {
+							"$ref": "#/definitions/.Abs:CompanyNm"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:PostingDt": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"$ref": "#/definitions/xs:date"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:ReconcileInd": {
+					"description": "Indicates the reconciliation of transactions.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 10
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:ReferenceTxt": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 100
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:SubAccountId": {
+					"$ref": "#/definitions/.Abs:SubAccountId"
+				},
+				"Abs:SubSystemRecordId": {
+					"$ref": "#/definitions/.Abs:SubSystemRecordId"
+				},
+				"Abs:ToBaseAmt": {
+					"$ref": "#/definitions/Abs:AmountType"
+				},
+				"Abs:ToCompany": {
+					"type": "object",
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"Abs:CompanyId": {
+							"$ref": "#/definitions/.Abs:CompanyId"
+						},
+						"Abs:CompanyNm": {
+							"$ref": "#/definitions/.Abs:CompanyNm"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:TransactionAmt": {
+					"$ref": "#/definitions/.Abs:TransactionAmt"
+				},
+				"Abs:TransactionDsc": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 100
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:TransactionDt": {
+					"description": "Transaction create dt in the system",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"$ref": "#/definitions/xs:date"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:TransactionShortDsc": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 50
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:TransactionSource": {
+					"$ref": "#/definitions/Abs:CodeWithDescription"
+				},
+				"Abs:TransactionStatus": {
+					"$ref": "#/definitions/Abs:CodeWithDescription",
+					"description": "This field displays the status of the transaction.     \n 0 = Unrel  \n 1 = Rel       \n 5 = ERROR     \n 8 = Memo       \n 9 = Hist "
+				},
+				"Abs:UnitAmount": {
+					"$ref": "#/definitions/Abs:AmountType"
+				},
+				"Abs:VariableLevelNbr": {
+					"$ref": "#/definitions/.Abs:VariableLevelNbr"
+				}
+			},
+			"required": [
+				"Abs:AccountId",
+				"Abs:AccountingPeriodNbr",
+				"Abs:AccountingUnitId",
+				"Abs:CompanyId",
+				"Abs:CompanyNm",
+				"Abs:ControlGroupNbr",
+				"Abs:FiscalYearId",
+				"Abs:GLLineNbr",
+				"Abs:GLSystem",
+				"Abs:JournalEntrySequenceNbr",
+				"Abs:JournalEntryType",
+				"Abs:VariableLevelNbr"
+			],
+			"additionalProperties": false
+		},
+		"Abs:IncomeType": {
+			"description": "An income code is used to track a vendor's reportable income for reporting or withholding purposes.",
+			"type": "object",
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"Abs:BoxIdentifierCd": {
+					"description": "Box identifier code. Valid values are: A = Attorney Fees EPP = Golden Parachute Payments.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 3
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:IncomeActivityInd": {
+					"description": "Indicates whether the income code has been used. Valid values are: Y = Yes.  N = No.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:IncomeCd": {
+					"$ref": "#/definitions/.Abs:IncomeCd"
+				},
+				"Abs:IncomeDsc": {
+					"description": "The income code description.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 30
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:TaxFormBoxNbr": {
+					"description": "The tax form box number used to print a vendor's accumulated reportable income.  Each form has corresponding boxes for different types of income.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:TaxFormInd": {
+					"description": "Indicates the type of tax form that will be created by AP145 (1099 Forms Creation) or AP146 (1099 Tape Creation).  Valid values are: I = Interest.  D = Dividend.  M = Miscellaneous.  Blank = 1099 forms or tapes will not be created.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				}
+			},
+			"additionalProperties": false
+		},
+		"Abs:ProcessGrpType": {
+			"description": "Process groups are be used to segregate vendors to enable concurrent processing within a cash payment cycle. Each process group represents one or more vendors.",
+			"type": "object",
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"Abs:ProcessGrp": {
+					"$ref": "#/definitions/.Abs:ProcessGrp"
+				},
+				"Abs:ProcessGrpDsc": {
+					"description": "The process group description.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 30
+						}
+					},
+					"additionalProperties": false
+				}
+			},
+			"additionalProperties": false
+		},
+		"Abs:PurchaseOrderType": {
+			"description": " Defines a PurchaseOrder basic elements",
+			"type": "object",
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"Abs:PurchaseOrderDt": {
+					"description": "Date on the PurchaseOrder doc.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:DateType"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:PurchaseOrderNbr": {
+					"description": "Identifies the Purchase Order referenced in the object.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 50
+						}
+					},
+					"additionalProperties": false
+				}
+			},
+			"additionalProperties": false
+		},
+		"Abs:ReceivableType": {
+			"description": "Receivable is a transaction representing an invoice, credit memo or debit memo to a customer.  A receivable is an open (unpaid) item in the Accounts Receivable ledger.Defines open receivable items.",
+			"type": "object",
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"Abs:ARCustomerNbr": {
+					"$ref": "#/definitions/.Abs:ARCustomerNbr"
+				},
+				"Abs:ARCustomerPO": {
+					"$ref": "#/definitions/Abs:PurchaseOrderType"
+				},
+				"Abs:AccountReceivableCd": {
+					"$ref": "#/definitions/.Abs:AccountReceivableCd"
+				},
+				"Abs:BankPaymentType": {
+					"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:CodeWithDescription"
+				},
+				"Abs:BankTransactionType": {
+					"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:CodeWithDescription"
+				},
+				"Abs:BaseAmount": {
+					"$ref": "#/definitions/Abs:AmountType"
+				},
+				"Abs:BatchNbr": {
+					"$ref": "../Global/AbsGlobalFields.json#/definitions/xs:string"
+				},
+				"Abs:ChargeBack": {
+					"type": "object",
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"Abs:CompanyId": {
+							"$ref": "#/definitions/.Abs:CompanyId"
+						},
+						"Abs:Reason": {
+							"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:CodeWithDescription"
+						},
+						"Abs:SeqNbr": {
+							"type": [
+								"object",
+								"string",
+								"number",
+								"boolean"
+							],
+							"properties": {
+								"#": {
+									"type": "string"
+								},
+								"$": {
+									"type": "number"
+								}
+							},
+							"additionalProperties": false
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:CompanyId": {
+					"$ref": "#/definitions/.Abs:CompanyId"
+				},
+				"Abs:CrossReferenceTransaction": {
+					"$ref": "#/definitions/.Abs:CrossReferenceTransaction"
+				},
+				"Abs:DistributionSeqNbr": {
+					"description": "The last distribution sequence number\nassigned to the transaction.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "number"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:GLPostingDt": {
+					"$ref": "#/definitions/.Abs:GLPostingDt"
+				},
+				"Abs:InvoiceDt": {
+					"type": "string"
+				},
+				"Abs:InvoiceNbr": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 50
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:LateCharges": {
+					"type": "object",
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"Abs:LateChargeAmount": {
+							"$ref": "#/definitions/Abs:AmountType"
+						},
+						"Abs:LateChargeInd": {
+							"type": [
+								"object",
+								"string",
+								"number",
+								"boolean"
+							],
+							"properties": {
+								"#": {
+									"type": "string"
+								},
+								"$": {
+									"type": "string",
+									"maxLength": 5
+								}
+							},
+							"additionalProperties": false
+						},
+						"Abs:TransactionNbr": {
+							"type": [
+								"object",
+								"string",
+								"number",
+								"boolean"
+							],
+							"properties": {
+								"#": {
+									"type": "string"
+								},
+								"$": {
+									"type": "string",
+									"maxLength": 20
+								}
+							},
+							"additionalProperties": false
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:OpenItem": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"#": {
+								"type": "string"
+							},
+							"Abs:AccountReceivableCd": {
+								"$ref": "#/definitions/.Abs:AccountReceivableCd"
+							},
+							"Abs:AppliedAmt": {
+								"$ref": "#/definitions/Abs:AmountType"
+							},
+							"Abs:DisputeSeqNbr": {
+								"type": [
+									"object",
+									"string",
+									"number",
+									"boolean"
+								],
+								"properties": {
+									"#": {
+										"type": "string"
+									},
+									"$": {
+										"type": "number"
+									}
+								},
+								"additionalProperties": false
+							},
+							"Abs:DueDt": {
+								"type": [
+									"object",
+									"string",
+									"number",
+									"boolean"
+								],
+								"properties": {
+									"#": {
+										"type": "string"
+									},
+									"$": {
+										"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:DateType"
+									}
+								},
+								"additionalProperties": false
+							},
+							"Abs:GLPostingDt": {
+								"$ref": "#/definitions/.Abs:GLPostingDt"
+							},
+							"Abs:PaymentSeqNbr": {
+								"$ref": "../Global/AbsGlobalFields.json#/definitions/xs:positiveInteger"
+							},
+							"Abs:TransactionAmt": {
+								"$ref": "#/definitions/.Abs:TransactionAmt"
+							},
+							"Abs:TransactionType": {
+								"$ref": "#/definitions/.Abs:TransactionType"
+							}
+						},
+						"additionalProperties": false
+					}
+				},
+				"Abs:PaymentSeqNbr": {
+					"$ref": "../Global/AbsGlobalFields.json#/definitions/xs:positiveInteger"
+				},
+				"Abs:PaymentTerms": {
+					"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:PaymentTermType"
+				},
+				"Abs:ProcessLevelId": {
+					"$ref": "#/definitions/.Abs:ProcessLevelId"
+				},
+				"Abs:ReceivableDescriptionTxt": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 100
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:ReceivableTransactionDt": {
+					"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:DateType"
+				},
+				"Abs:ReceivableTransactionId": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "number"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:Status": {
+					"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:StatusType"
+				},
+				"Abs:TaxExemption": {
+					"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:CodeWithDescription"
+				},
+				"Abs:TransactionAmt": {
+					"$ref": "#/definitions/.Abs:TransactionAmt"
+				},
+				"Abs:TransactionOrigin": {
+					"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:CodeWithDescription",
+					"description": "code that identifies where the record originated.\n Valid  values are:  \nB = AR invoice\nC = Chargeback \nF = Finance and/or Late Payment Charges\nL = Converted data \nM = Memo \nO = External Order Processing system\nR = Returned Payment\nG = Grouped Debit Memo\nE = Closing created chargeback\nP = Payment created credit memo"
+				},
+				"Abs:TransactionType": {
+					"$ref": "#/definitions/.Abs:TransactionType"
+				}
+			},
+			"required": [
+				"Abs:CompanyId",
+				"Abs:InvoiceNbr",
+				"Abs:TransactionType"
+			],
+			"additionalProperties": false
+		},
+		"Abs:RequisitionType": {
+			"description": "Defines a Request for sourcing items needed in a particular location.\nIt can be sourcing of mercahndising items for sale in stores or expense items required in each facility.",
+			"type": "object",
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"Abs:AccountId": {
+					"$ref": "#/definitions/.Abs:AccountId"
+				},
+				"Abs:AccountingUnitId": {
+					"$ref": "#/definitions/.Abs:AccountingUnitId"
+				},
+				"Abs:Approval": {
+					"type": "object",
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"Abs:ApprovalCd": {
+							"$ref": "#/definitions/Abs:CodeWithDescription"
+						},
+						"Abs:ApprovalDt": {
+							"type": [
+								"object",
+								"string",
+								"number",
+								"boolean"
+							],
+							"properties": {
+								"#": {
+									"type": "string"
+								},
+								"$": {
+									"$ref": "#/definitions/xs:date"
+								}
+							},
+							"additionalProperties": false
+						},
+						"Abs:ApprovalStatus": {
+							"$ref": "#/definitions/Abs:StatusType"
+						},
+						"Abs:ApprovalType": {
+							"$ref": "#/definitions/Abs:CodeWithDescription"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:Buyer": {
+					"$ref": "#/definitions/Abs:IdWithNameType"
+				},
+				"Abs:CompanyId": {
+					"$ref": "#/definitions/.Abs:CompanyId"
+				},
+				"Abs:ReferenceDocument": {
+					"description": "Reference Document for the requisition like purchase order.",
+					"type": "object",
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"Abs:DocumentDt": {
+							"type": [
+								"object",
+								"string",
+								"number",
+								"boolean"
+							],
+							"properties": {
+								"#": {
+									"type": "string"
+								},
+								"$": {
+									"$ref": "#/definitions/xs:date"
+								}
+							},
+							"additionalProperties": false
+						},
+						"Abs:DocumentNbr": {
+							"type": [
+								"object",
+								"string",
+								"number",
+								"boolean"
+							],
+							"properties": {
+								"#": {
+									"type": "string"
+								},
+								"$": {
+									"type": "string",
+									"maxLength": 50
+								}
+							},
+							"additionalProperties": false
+						},
+						"Abs:DocumentType": {
+							"$ref": "#/definitions/Abs:CodeWithName"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:Requester": {
+					"$ref": "#/definitions/Abs:IdWithNameType",
+					"description": "This is the person, department, or area requesting items."
+				},
+				"Abs:RequiredDeliveryDt": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"$ref": "#/definitions/xs:date"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:RequisitionDt": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"$ref": "#/definitions/xs:date"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:RequisitionLine": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"#": {
+								"type": "string"
+							},
+							"Abs:AgreementReferenceTxt": {
+								"type": [
+									"object",
+									"string",
+									"number",
+									"boolean"
+								],
+								"properties": {
+									"#": {
+										"type": "string"
+									},
+									"$": {
+										"type": "string",
+										"maxLength": 50
+									}
+								},
+								"additionalProperties": false
+							},
+							"Abs:CommentTxt": {
+								"type": [
+									"object",
+									"string",
+									"number",
+									"boolean"
+								],
+								"properties": {
+									"#": {
+										"type": "string"
+									},
+									"$": {
+										"type": "string",
+										"maxLength": 200
+									}
+								},
+								"additionalProperties": false
+							},
+							"Abs:LateDeliveryDt": {
+								"type": [
+									"object",
+									"string",
+									"number",
+									"boolean"
+								],
+								"properties": {
+									"#": {
+										"type": "string"
+									},
+									"$": {
+										"$ref": "#/definitions/xs:date"
+									}
+								},
+								"additionalProperties": false
+							},
+							"Abs:LineCreateDt": {
+								"type": [
+									"object",
+									"string",
+									"number",
+									"boolean"
+								],
+								"properties": {
+									"#": {
+										"type": "string"
+									},
+									"$": {
+										"$ref": "#/definitions/xs:date"
+									}
+								},
+								"additionalProperties": false
+							},
+							"Abs:LineSequenceNbr": {
+								"type": [
+									"object",
+									"string",
+									"number",
+									"boolean"
+								],
+								"properties": {
+									"#": {
+										"type": "string"
+									},
+									"$": {
+										"$ref": "#/definitions/xs:integer"
+									}
+								},
+								"additionalProperties": false
+							},
+							"Abs:LineStatus": {
+								"$ref": "#/definitions/Abs:StatusType"
+							},
+							"Abs:RequestedItemQty": {
+								"type": [
+									"object",
+									"string",
+									"number",
+									"boolean"
+								],
+								"properties": {
+									"#": {
+										"type": "string"
+									},
+									"$": {
+										"type": "number"
+									}
+								},
+								"additionalProperties": false
+							},
+							"Abs:RequiredDeliveryDt": {
+								"type": [
+									"object",
+									"string",
+									"number",
+									"boolean"
+								],
+								"properties": {
+									"#": {
+										"type": "string"
+									},
+									"$": {
+										"$ref": "#/definitions/xs:date"
+									}
+								},
+								"additionalProperties": false
+							},
+							"Abs:RequisitionItem": {
+								"$ref": "#/definitions/Abs:ItemType"
+							},
+							"Abs:RequisitionItemType": {
+								"$ref": "#/definitions/Abs:CodeWithDescription"
+							},
+							"Abs:SourcingFromLocation": {
+								"$ref": "#/definitions/..Abs:LocationType.1",
+								"description": "Internal location from where the items can be sourced."
+							},
+							"Abs:TransactionCostAmt": {
+								"$ref": "#/definitions/Abs:AmountType"
+							},
+							"Abs:UOM": {
+								"$ref": "#/definitions/Abs:CodeWithDescription",
+								"description": "Requested item unit of measurement."
+							},
+							"Abs:UnitCostAmt": {
+								"$ref": "#/definitions/Abs:AmountType"
+							}
+						},
+						"additionalProperties": false
+					}
+				},
+				"Abs:RequisitionNbr": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"$ref": "#/definitions/xs:integer"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:RequisitionOriginLocation": {
+					"$ref": "#/definitions/Abs:LocationType",
+					"description": "This is the location requesting items. \nThis location can be an inventory location, or a noninventory location.\nThe requesting location defaults to the requisition based on the\nrequester. "
+				},
+				"Abs:RequisitionRelease": {
+					"type": "object",
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"Abs:ReleaseBy": {
+							"$ref": "#/definitions/Abs:CodeWithName"
+						},
+						"Abs:ReleaseDt": {
+							"type": [
+								"object",
+								"string",
+								"number",
+								"boolean"
+							],
+							"properties": {
+								"#": {
+									"type": "string"
+								},
+								"$": {
+									"$ref": "#/definitions/xs:date"
+								}
+							},
+							"additionalProperties": false
+						},
+						"Abs:ReleaseTm": {
+							"type": [
+								"object",
+								"string",
+								"number",
+								"boolean"
+							],
+							"properties": {
+								"#": {
+									"type": "string"
+								},
+								"$": {
+									"$ref": "#/definitions/xs:time"
+								}
+							},
+							"additionalProperties": false
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:RequisitionStatus": {
+					"$ref": "#/definitions/Abs:StatusType",
+					"description": "This is the processing status of the requisition as described below.\nReleased = Requisition has been released \nUnreleased = Requisition added but not released\nClosed = Every requisition line is fully\ndelivered or backorders are canceled.\nRejected = The approver has rejected the requisition.\nThis closes the requisition, which cannot be reopened.\nProcessed = The requisition has been fully approved.\n0 = Unreleased\n1 = Released\n5 = In Process\n9 = Processed\n8 = Rejected"
+				},
+				"Abs:TotalRequestAmt": {
+					"$ref": "#/definitions/Abs:AmountType"
+				},
+				"Abs:UserAuditData": {
+					"$ref": "#/definitions/Abs:RecordAuditData"
+				},
+				"Abs:Vendor": {
+					"description": "Poposed Vendor for the requisition.",
+					"type": "object",
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"Abs:VendorId": {
+							"$ref": "#/definitions/.Abs:VendorId"
+						},
+						"Abs:VendorNm": {
+							"$ref": "#/definitions/.Abs:VendorNm"
+						},
+						"Abs:VendorSubAccountNbr": {
+							"type": [
+								"object",
+								"string",
+								"number",
+								"boolean"
+							],
+							"properties": {
+								"#": {
+									"type": "string"
+								},
+								"$": {
+									"type": "string",
+									"maxLength": 20
+								}
+							},
+							"additionalProperties": false
+						}
+					},
+					"additionalProperties": false
+				}
+			},
+			"additionalProperties": false
+		},
+		"Abs:SubLedgerType": {
+			"description": "Sub-ledger type represents an intermediary set of accounts linked to the general ledger. It is a detailed subset of accounts that contains transaction information. It is the subset of general ledger in the accounting it is not possible to record all transaction in general ledger hence transaction are recorded in sub ledger in a different account and their total sum is reflected in general ledger.",
+			"type": "object",
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"Abs:GLData": {
+					"$ref": "#/definitions/Abs:GLMasterType"
+				},
+				"Abs:SourceCd": {
+					"description": "A two-character code assigned to a  transaction to identify where the   transaction was created. ",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 2
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:SourceSystemTypeCd": {
+					"description": "A two-character code representing an  application used within the Lawson  system. (i.e.: GL = General Ledger,  Accounts Payable, etc.)",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 2
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:XRefObjectId": {
+					"description": "A subsystem interface identification number. Used for Drill Around purposes.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "integer"
+						}
+					},
+					"additionalProperties": false
+				}
+			},
+			"required": [
+				"Abs:GLData",
+				"Abs:SourceCd",
+				"Abs:SourceSystemTypeCd"
+			],
+			"additionalProperties": false
+		},
+		"Abs:SummaryAccountType": {
+			"description": "contains chart summary records including summary account\ninformation and report options",
+			"type": "object",
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"Abs:AccountCategory": {
+					"$ref": "#/definitions/.Abs:AccountCategory"
+				},
+				"Abs:ChartOfAccountNm": {
+					"$ref": "#/definitions/.Abs:ChartOfAccountNm"
+				},
+				"Abs:ChartOfAccountSection": {
+					"$ref": "#/definitions/.Abs:ChartOfAccountSection"
+				},
+				"Abs:SequenceNbr": {
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"$ref": "#/definitions/xs:integer"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:SummaryAccountId": {
+					"$ref": "#/definitions/.Abs:SummaryAccountId"
+				},
+				"Abs:SummaryAccountNm": {
+					"$ref": "#/definitions/.Abs:SummaryAccountNm"
+				}
+			},
+			"additionalProperties": false
+		},
+		"Abs:VendorClassType": {
+			"description": "The Vendor Class represents all class records for a vendor group. A vendor class is a subgroup of vendors that share common payment or processing characteristics, such as office supply vendors or employees.$",
+			"type": "object",
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"Abs:CashCd": {
+					"description": "The cash code to default on vendors added for the vendor class. Represents a bank account.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 4
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:DistribCd": {
+					"description": "The distribution code to default on vendors added for the vendor class. Used to automatically create expense distribution lines for an invoice during entry.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 9
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:HandlingCd": {
+					"description": "Handling Code.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 4
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:InvoiceEnclosureInd": {
+					"description": "Indicates whether the invoice requires an enclosure with its payment.  Y = Yes N = No.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:MatchPrePayInd": {
+					"description": "Flag that denotes if the invoice will be prepaid. This is for match invoices.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:MatchPrePayMethodInd": {
+					"description": "Flag that denotes the method of match prepayment. Values are: 0 = No. 1 = Prepay from Invoice. 2 = Eligible for Prepayment.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "integer"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:MatchTableTxt": {
+					"description": "BLANK. Requires clarification!!!",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 10
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:MaxPymtAmt": {
+					"description": "The maximum single payment amount that can be created for any vendor within this vendor class. AP150 or AP151 assigns the Maximum Payment Hold Code you select for the vendor class to invoices that, if scheduled for payment, would cause a payment total greater than this maximum amount.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "number",
+							"maximum": 18
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:MaxPymtHoldCd": {
+					"description": "The hold code to be assigned to vendor invoices within this vendor class when the maximum single payment amount is exceeded. Must be a valid invoice hold code in the Hold Code file. Used only if a Maximum Payment Amount is defined for the vendor class.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 9
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:PaymentCd": {
+					"description": "The payment code to default on vendors added for the vendor class. Represents a type of cash or bill of exchange payment.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 3
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:PostingOptionInd": {
+					"description": "The posting option for the vendor class. Determines the volume of invoice   AP520 expense distribution information that AP175 (Invoice Distribution Closing) transfers to the general ledger. Valid values are: S = Summary. Invoice distributions post to the general ledger in summary.  Invoice distributions with the same accounting unit, account number, activity, and post date are grouped into one general ledger journal entry.  D = Detail. Invoice distributions post to the general ledger in detail. Each invoice distribution represents one general ledger journal entry.  Blank = Posting option not selected for vendor class. Company posting option is used.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:RequirePOInd": {
+					"description": "Indicates whether a PO is required. Values are: \" \" = MA Company Default Y = Yes N = No.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:RuleGrpTxt": {
+					"description": "BLANK. Requires clarification!!!",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 10
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:TaxExemptCd": {
+					"description": "The tax code to default on vendors Used to calculate invoice tax information.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 10
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:TaxUsageCd": {
+					"description": "The tax usage coe for the vendor.  This filed is required if the AP Company inidcates that VAT reporting required.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 10
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:ValidatePOInd": {
+					"description": "Indicates whether a PO is required to be validaded. Values are: \" \" = MA Company Default Y = Yes N = No.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:VendorClass": {
+					"$ref": "#/definitions/.Abs:VendorClass"
+				},
+				"Abs:VendorClassDsc": {
+					"$ref": "#/definitions/.Abs:VendorClassDsc"
+				},
+				"Abs:VendorCurrencyCd": {
+					"description": "The income code to default on vendors added for the vendor class. Used to track vendor reportable income.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 4
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:VendorGrp": {
+					"$ref": "#/definitions/.Abs:VendorGrp"
+				},
+				"Abs:VendorIncomeCd": {
+					"description": "The income code to default on vendors added for the vendor class. Used to track vendor reportable income.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 4
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:VendorPriNbr": {
+					"description": "The payment priority to default on vendors added for the vendor class. Valid values are 1 (highest priority) through 99 (lowest priority).he Vendor Class represents all class records for a vendor group. A vendor class is a subgroup of vendors that share common payment or processing characteristics, such as office supply vendors or employees.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "integer"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:ZeroCheckInd": {
+					"description": "Indicates whether vendors assigned this vendor class will have zero payments created if the vendor's invoices net to zero. Valid values are: N = No.  Y = Yes.$",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:ZeroPymtCd": {
+					"description": "The payment code that represents a zero payment.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 3
+						}
+					},
+					"additionalProperties": false
+				}
+			},
+			"additionalProperties": false
+		},
+		"Abs:VendorGrpType": {
+			"description": "A vendor group type represents a group of vendors that can be shared by one or more accounts payable companies.",
+			"type": "object",
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"Abs:AutoVendorInd": {
+					"description": "Indicates whether vendor numbers are numbering automatically assigned in numeric order when vendors are added for the vendor group. Used only if the vendor group has numeric selected in the Vendor Values field. Valid values are: N = No, Y = Yes.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:InvoiceCreditHoldCd": {
+					"description": "The hold code used to place an invoice on hold for manual payment. Creates a record in the Hold Code file. If left blank, MPAY defaults.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 4
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:InvoiceMaxPymtHoldCd": {
+					"description": "The hold code used to place an invoice on hold when the maximum payment amount for a vendor is exceeded. Creates a record in the Hold Code file. If left blank, MAX defaults.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 4
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:InvoiceMinPymtHoldCd": {
+					"description": "The hold code used to place an invoice on hold when the minimum payment amount for a vendor is reached. Creates a record in the Hold Code file. If left blank, MAX defaults.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 4
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:InvoicePrePymtHoldCd": {
+					"description": "The hold code used to place an invoice on hold when the invoice is created as a prepayment. Creates a record in the Hold code file. If left blank, PREP defaults.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 4
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:InvoiceROIHoldCd": {
+					"description": "The hold code used to place an invoice on hold when it is held due to return on investment calculations. Creates a record in the Hold Code file. If left blank, ROI defaults.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 4
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:InvoiceRetHoldCd": {
+					"description": "BLANK. Inquire about!!!",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 4
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:LastOneTimeVendorNbr": {
+					"description": "The last one-time vendor number added to the Lawson Accounts Payable system. Vendor numbers 999000001 through 999999999 are reserved for one-time vendor numbering.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "integer"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:LastVendorNbr": {
+					"description": "The last vendor number used. Used only if the vendor group has Yes selected in the Auto Vendor Numbering field. Used as a starting point for continuing to number vendors automatically as they are added into to the Lawson Accounts Payable system. If left blank, automatic vendor numbering begins with 1.  ",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "integer"
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:NumericVendorNumberInd": {
+					"description": "Indicates whether vendors added to this vendor group will have alphanumeric or numeric vendor identification numbers. Valid values are: A = Alpha, N = Numeric.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:PreiodEndDt": {
+					"type": "array",
+					"items": {
+						"description": "The period ending date of each period of the current vendor group year.",
+						"type": [
+							"object",
+							"string",
+							"number",
+							"boolean"
+						],
+						"properties": {
+							"#": {
+								"type": "string"
+							},
+							"$": {
+								"$ref": "#/definitions/xs:date"
+							}
+						},
+						"additionalProperties": false
+					}
+				},
+				"Abs:VendorAuditInd": {
+					"description": "Indicates whether to create vendor audit records when vendors within this vendor group are added, changed, or deleted. Valid values are: N = No, Y = Yes.",
+					"type": [
+						"object",
+						"string",
+						"number",
+						"boolean"
+					],
+					"properties": {
+						"#": {
+							"type": "string"
+						},
+						"$": {
+							"type": "string",
+							"maxLength": 1
+						}
+					},
+					"additionalProperties": false
+				},
+				"Abs:VendorGrp": {
+					"$ref": "#/definitions/.Abs:VendorGrp"
+				},
+				"Abs:VendorGrpDsc": {
+					"$ref": "#/definitions/.Abs:VendorGrpDsc"
+				}
+			},
+			"additionalProperties": false
+		}
+	},
+	"description": "JSON Schema generated by XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com)",
+	"properties": {
+		"#": {
+			"type": "string"
+		},
+		"@xmlns:Abs": {
+			"default": "http://collab.safeway.com/it/architecture/info/default.aspx"
+		},
+		"@xmlns:xs": {
+			"default": "http://www.w3.org/2001/XMLSchema"
+		},
+		"Abs:ARCustomerGroupId": {
+			"$ref": "#/definitions/.Abs:ARCustomerGroupId"
+		},
+		"Abs:ARCustomerNbr": {
+			"$ref": "#/definitions/.Abs:ARCustomerNbr"
+		},
+		"Abs:AccountCategory": {
+			"$ref": "#/definitions/.Abs:AccountCategory"
+		},
+		"Abs:AccountDsc": {
+			"$ref": "#/definitions/.Abs:AccountDsc"
+		},
+		"Abs:AccountId": {
+			"$ref": "#/definitions/.Abs:AccountId"
+		},
+		"Abs:AccountNm": {
+			"$ref": "#/definitions/.Abs:AccountNm"
+		},
+		"Abs:AccountReceivableCd": {
+			"$ref": "#/definitions/.Abs:AccountReceivableCd"
+		},
+		"Abs:AccountingPeriodNbr": {
+			"$ref": "#/definitions/.Abs:AccountingPeriodNbr"
+		},
+		"Abs:AccountingUnitId": {
+			"$ref": "#/definitions/.Abs:AccountingUnitId"
+		},
+		"Abs:AccountingUnitNm": {
+			"$ref": "#/definitions/.Abs:AccountingUnitNm"
+		},
+		"Abs:Address": {
+			"$ref": "#/definitions/.Abs:Address"
+		},
+		"Abs:AlternateId": {
+			"$ref": "#/definitions/.Abs:AlternateId"
+		},
+		"Abs:AssetNbr": {
+			"$ref": "#/definitions/.Abs:AssetNbr"
+		},
+		"Abs:BannerCd": {
+			"$ref": "#/definitions/.Abs:BannerCd"
+		},
+		"Abs:BaseAmount": {
+			"$ref": "#/definitions/.Abs:BaseAmount"
+		},
+		"Abs:BatchNbr": {
+			"$ref": "#/definitions/.Abs:BatchNbr"
+		},
+		"Abs:BirthCountry": {
+			"$ref": "#/definitions/.Abs:BirthCountry"
+		},
+		"Abs:BirthCountryCd": {
+			"$ref": "#/definitions/.Abs:BirthCountryCd"
+		},
+		"Abs:BirthDt": {
+			"$ref": "#/definitions/.Abs:BirthDt"
+		},
+		"Abs:BookId": {
+			"$ref": "#/definitions/.Abs:BookId"
+		},
+		"Abs:ChartOfAccountNm": {
+			"$ref": "#/definitions/.Abs:ChartOfAccountNm"
+		},
+		"Abs:ChartOfAccountSection": {
+			"$ref": "#/definitions/.Abs:ChartOfAccountSection"
+		},
+		"Abs:Classification": {
+			"$ref": "#/definitions/.Abs:Classification"
+		},
+		"Abs:Code": {
+			"$ref": "#/definitions/.Abs:Code"
+		},
+		"Abs:Codes": {
+			"$ref": "#/definitions/.Abs:Codes"
+		},
+		"Abs:Company": {
+			"$ref": "#/definitions/.Abs:Company"
+		},
+		"Abs:CompanyId": {
+			"$ref": "#/definitions/.Abs:CompanyId"
+		},
+		"Abs:CompanyNm": {
+			"$ref": "#/definitions/.Abs:CompanyNm"
+		},
+		"Abs:Contact": {
+			"$ref": "#/definitions/.Abs:Contact"
+		},
+		"Abs:CorporateItemCd": {
+			"$ref": "#/definitions/.Abs:CorporateItemCd"
+		},
+		"Abs:CorporationId": {
+			"$ref": "#/definitions/.Abs:CorporationId"
+		},
+		"Abs:CrossReferenceTransaction": {
+			"$ref": "#/definitions/.Abs:CrossReferenceTransaction"
+		},
+		"Abs:CurrencyCd": {
+			"$ref": "#/definitions/.Abs:CurrencyCd"
+		},
+		"Abs:CurrencyExchangeRate": {
+			"$ref": "#/definitions/.Abs:CurrencyExchangeRate"
+		},
+		"Abs:DeathDt": {
+			"$ref": "#/definitions/.Abs:DeathDt"
+		},
+		"Abs:DepartmentId": {
+			"$ref": "#/definitions/.Abs:DepartmentId"
+		},
+		"Abs:DigitalContact": {
+			"$ref": "#/definitions/.Abs:DigitalContact"
+		},
+		"Abs:DistributionCenterId": {
+			"$ref": "#/definitions/.Abs:DistributionCenterId"
+		},
+		"Abs:DivisionId": {
+			"$ref": "#/definitions/.Abs:DivisionId"
+		},
+		"Abs:EffectiveTimePeriod": {
+			"$ref": "#/definitions/.Abs:EffectiveTimePeriod"
+		},
+		"Abs:EmergencyContact": {
+			"$ref": "#/definitions/.Abs:EmergencyContact"
+		},
+		"Abs:Employee": {
+			"$ref": "#/definitions/.Abs:Employee"
+		},
+		"Abs:EmployeeTypeCd": {
+			"$ref": "#/definitions/.Abs:EmployeeTypeCd"
+		},
+		"Abs:EncryptionOneWayDigest": {
+			"$ref": "#/definitions/.Abs:EncryptionOneWayDigest"
+		},
+		"Abs:EthnicCd": {
+			"$ref": "#/definitions/.Abs:EthnicCd"
+		},
+		"Abs:Ethnicity": {
+			"$ref": "#/definitions/.Abs:Ethnicity"
+		},
+		"Abs:FamilyNm": {
+			"$ref": "#/definitions/.Abs:FamilyNm"
+		},
+		"Abs:FirstEffectiveDt": {
+			"$ref": "#/definitions/.Abs:FirstEffectiveDt"
+		},
+		"Abs:FirstEffectiveTm": {
+			"$ref": "#/definitions/.Abs:FirstEffectiveTm"
+		},
+		"Abs:FiscalYearId": {
+			"$ref": "#/definitions/.Abs:FiscalYearId"
+		},
+		"Abs:FormattedNm": {
+			"$ref": "#/definitions/.Abs:FormattedNm"
+		},
+		"Abs:GLPostingDt": {
+			"$ref": "#/definitions/.Abs:GLPostingDt"
+		},
+		"Abs:GUID": {
+			"$ref": "#/definitions/.Abs:GUID"
+		},
+		"Abs:Gender": {
+			"$ref": "#/definitions/.Abs:Gender"
+		},
+		"Abs:GenderCd": {
+			"$ref": "#/definitions/.Abs:GenderCd"
+		},
+		"Abs:GenerationAffixCd": {
+			"$ref": "#/definitions/.Abs:GenerationAffixCd"
+		},
+		"Abs:GivenNm": {
+			"$ref": "#/definitions/.Abs:GivenNm"
+		},
+		"Abs:HRDepartment": {
+			"$ref": "#/definitions/.Abs:HRDepartment"
+		},
+		"Abs:HROrgHierarchy": {
+			"$ref": "#/definitions/.Abs:HROrgHierarchy"
+		},
+		"Abs:HireDt": {
+			"$ref": "#/definitions/.Abs:HireDt"
+		},
+		"Abs:HoldCd": {
+			"$ref": "#/definitions/.Abs:HoldCd"
+		},
+		"Abs:IDs": {
+			"$ref": "#/definitions/.Abs:IDs"
+		},
+		"Abs:Id": {
+			"$ref": "#/definitions/.Abs:Id"
+		},
+		"Abs:IncomeCd": {
+			"$ref": "#/definitions/.Abs:IncomeCd"
+		},
+		"Abs:JobCd": {
+			"$ref": "#/definitions/.Abs:JobCd"
+		},
+		"Abs:JobRestrictionCodes": {
+			"$ref": "#/definitions/.Abs:JobRestrictionCodes"
+		},
+		"Abs:JobTitle": {
+			"$ref": "#/definitions/.Abs:JobTitle"
+		},
+		"Abs:LaborAgreement": {
+			"$ref": "#/definitions/.Abs:LaborAgreement"
+		},
+		"Abs:Language": {
+			"$ref": "#/definitions/.Abs:Language"
+		},
+		"Abs:LanguageCd": {
+			"$ref": "#/definitions/.Abs:LanguageCd"
+		},
+		"Abs:LastEffectiveDt": {
+			"$ref": "#/definitions/.Abs:LastEffectiveDt"
+		},
+		"Abs:LastEffectiveTm": {
+			"$ref": "#/definitions/.Abs:LastEffectiveTm"
+		},
+		"Abs:LastHireDt": {
+			"$ref": "#/definitions/.Abs:LastHireDt"
+		},
+		"Abs:LastTerminationDt": {
+			"$ref": "#/definitions/.Abs:LastTerminationDt"
+		},
+		"Abs:LocationID": {
+			"$ref": "#/definitions/.Abs:LocationID"
+		},
+		"Abs:MaidenNm": {
+			"$ref": "#/definitions/.Abs:MaidenNm"
+		},
+		"Abs:ManufacturingPlantId": {
+			"$ref": "#/definitions/.Abs:ManufacturingPlantId"
+		},
+		"Abs:MaritalStatus": {
+			"$ref": "#/definitions/.Abs:MaritalStatus"
+		},
+		"Abs:MaritalStatusCd": {
+			"$ref": "#/definitions/.Abs:MaritalStatusCd"
+		},
+		"Abs:MarriageDt": {
+			"$ref": "#/definitions/.Abs:MarriageDt"
+		},
+		"Abs:MiddleNm": {
+			"$ref": "#/definitions/.Abs:MiddleNm"
+		},
+		"Abs:Name": {
+			"$ref": "#/definitions/.Abs:Name"
+		},
+		"Abs:NameType": {
+			"$ref": "#/definitions/.Abs:NameType"
+		},
+		"Abs:NationalityCountry": {
+			"$ref": "#/definitions/.Abs:NationalityCountry"
+		},
+		"Abs:NationalityCountryCd": {
+			"$ref": "#/definitions/.Abs:NationalityCountryCd"
+		},
+		"Abs:NickNm": {
+			"$ref": "#/definitions/.Abs:NickNm"
+		},
+		"Abs:OrderScheduleType": {
+			"$ref": "#/definitions/.Abs:OrderScheduleType"
+		},
+		"Abs:OriginalHireDt": {
+			"$ref": "#/definitions/.Abs:OriginalHireDt"
+		},
+		"Abs:OvertimeEligibleInd": {
+			"$ref": "#/definitions/.Abs:OvertimeEligibleInd"
+		},
+		"Abs:Paygrp": {
+			"$ref": "#/definitions/.Abs:Paygrp"
+		},
+		"Abs:PaymentSeqNbr": {
+			"$ref": "#/definitions/.Abs:PaymentSeqNbr"
+		},
+		"Abs:PersonNm": {
+			"$ref": "#/definitions/.Abs:PersonNm"
+		},
+		"Abs:PhoneFaxContact": {
+			"$ref": "#/definitions/.Abs:PhoneFaxContact"
+		},
+		"Abs:PreferredSalutationCd": {
+			"$ref": "#/definitions/.Abs:PreferredSalutationCd"
+		},
+		"Abs:ProcessGrp": {
+			"$ref": "#/definitions/.Abs:ProcessGrp"
+		},
+		"Abs:ProcessLevelId": {
+			"$ref": "#/definitions/.Abs:ProcessLevelId"
+		},
+		"Abs:ProfessionalSkill": {
+			"$ref": "#/definitions/.Abs:ProfessionalSkill"
+		},
+		"Abs:Qualification": {
+			"$ref": "#/definitions/.Abs:Qualification"
+		},
+		"Abs:QualificationAffixCd": {
+			"$ref": "#/definitions/.Abs:QualificationAffixCd"
+		},
+		"Abs:ROGCd": {
+			"$ref": "#/definitions/.Abs:ROGCd"
+		},
+		"Abs:Religion": {
+			"$ref": "#/definitions/.Abs:Religion"
+		},
+		"Abs:ReligionCd": {
+			"$ref": "#/definitions/.Abs:ReligionCd"
+		},
+		"Abs:RetailStoreId": {
+			"$ref": "#/definitions/.Abs:RetailStoreId"
+		},
+		"Abs:RetailStoreSK": {
+			"$ref": "#/definitions/.Abs:RetailStoreSK"
+		},
+		"Abs:ScheduleTypeCd": {
+			"$ref": "#/definitions/.Abs:ScheduleTypeCd"
+		},
+		"Abs:Status": {
+			"$ref": "#/definitions/.Abs:Status"
+		},
+		"Abs:SubAccountId": {
+			"$ref": "#/definitions/.Abs:SubAccountId"
+		},
+		"Abs:SubSystemRecordId": {
+			"$ref": "#/definitions/.Abs:SubSystemRecordId"
+		},
+		"Abs:SummaryAccountId": {
+			"$ref": "#/definitions/.Abs:SummaryAccountId"
+		},
+		"Abs:SummaryAccountNm": {
+			"$ref": "#/definitions/.Abs:SummaryAccountNm"
+		},
+		"Abs:Supervisor": {
+			"$ref": "#/definitions/.Abs:Supervisor"
+		},
+		"Abs:TerminationDt": {
+			"$ref": "#/definitions/.Abs:TerminationDt"
+		},
+		"Abs:TimePeriod": {
+			"$ref": "#/definitions/.Abs:TimePeriod"
+		},
+		"Abs:TitleCd": {
+			"$ref": "#/definitions/.Abs:TitleCd"
+		},
+		"Abs:TransactionAmt": {
+			"$ref": "#/definitions/.Abs:TransactionAmt"
+		},
+		"Abs:TransactionType": {
+			"$ref": "#/definitions/.Abs:TransactionType"
+		},
+		"Abs:UUID": {
+			"$ref": "#/definitions/.Abs:UUID"
+		},
+		"Abs:VariableLevelNbr": {
+			"$ref": "#/definitions/.Abs:VariableLevelNbr"
+		},
+		"Abs:VendorClass": {
+			"$ref": "#/definitions/.Abs:VendorClass"
+		},
+		"Abs:VendorClassDsc": {
+			"$ref": "#/definitions/.Abs:VendorClassDsc"
+		},
+		"Abs:VendorGrp": {
+			"$ref": "#/definitions/.Abs:VendorGrp"
+		},
+		"Abs:VendorGrpDsc": {
+			"$ref": "#/definitions/.Abs:VendorGrpDsc"
+		},
+		"Abs:VendorId": {
+			"$ref": "#/definitions/.Abs:VendorId"
+		},
+		"Abs:VendorLocationCd": {
+			"$ref": "#/definitions/.Abs:VendorLocationCd"
+		},
+		"Abs:VendorNm": {
+			"$ref": "#/definitions/.Abs:VendorNm"
+		},
+		"Abs:WageGroupCd": {
+			"$ref": "#/definitions/.Abs:WageGroupCd"
+		},
+		"Abs:WageType": {
+			"$ref": "#/definitions/.Abs:WageType"
+		},
+		"Abs:WageTypeCd": {
+			"$ref": "#/definitions/.Abs:WageTypeCd"
+		},
+		"Abs:WarehouseId": {
+			"$ref": "#/definitions/.Abs:WarehouseId"
+		},
+		"Abs:WorkShiftID": {
+			"$ref": "#/definitions/.Abs:WorkShiftID"
+		}
+	},
+	"type": "object"
+}

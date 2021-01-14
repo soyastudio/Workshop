@@ -1,25 +1,34 @@
 package com.albertsons.edis;
 
 public interface ServiceDispatcher {
-    void register(Object... delegate);
 
-    ServiceCallResult dispatch(ServiceCall call);
+    Object dispatch(String service, String operation, String json) throws Exception;
 
-    ServiceCall newServiceCall(String serviceName, String operationName);
+    interface ServiceRegistry {
+        void register(Object... delegate);
 
-    static interface ServiceCall {
+        String[] getServices();
+
+        String[] getOperations(String serviceName);
+
+        ServiceCall newServiceCall(String serviceName, String operationName);
+    }
+
+    interface ServiceCall {
 
         ServiceCall addParameter(String paramName, Object paramValue);
+
+        ServiceCall fromJson(String json);
 
         ServiceCallResult invoke();
     }
 
-    static interface ServiceCallResult {
+    interface ServiceCallResult {
         boolean isSuccess();
 
         Throwable getException();
 
-        <T> T getResult(Class<T> type);
+        Object getResult();
 
     }
 }

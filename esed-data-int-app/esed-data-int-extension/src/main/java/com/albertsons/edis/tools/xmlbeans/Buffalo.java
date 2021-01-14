@@ -29,7 +29,6 @@ public class Buffalo<T> {
         Object object = yml.load(yaml);
         if (object instanceof Map) {
             Map<String, Object> configuration = (Map<String, Object>) object;
-
             configuration.entrySet().forEach(e -> {
                 String key = e.getKey();
                 Object value = e.getValue();

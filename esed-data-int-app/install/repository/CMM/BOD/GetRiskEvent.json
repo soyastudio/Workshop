@@ -1,0 +1,62 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"$id": "http://example.com/GetRiskEvent.json",
+	"title": "GetRiskEvent",
+	"additionalProperties": false,
+	"$ref": "#/definitions/.n1:GetRiskEvent",
+	"definitions": {
+		".n1:GetRiskEvent": {
+			"$ref": "#/definitions/n1:GetRiskEventType",
+			"description": "Defines the risk event that happened either within Safeway premises or outside but related to Safeway busines.\r\n\r\nEx: Slip / trip / fall of a customer or employee within Safeway premises.\r\n      Safeway truck involved in an accident that caused damages/injuries to other parties.  "
+		},
+		"n1:GetRiskEventType": {
+			"description": "Defines the risk event that happened either within Safeway premises or outside but related to Safeway busines.\r\n\r\nEx: Slip / trip / fall of a customer or employee within Safeway premises.\r\n      Safeway truck involved in an accident that caused damages/injuries to other parties.",
+			"type": "object",
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"n1:DocumentData": {
+					"type": "array",
+					"minItems": 1,
+					"items": {
+						"type": "object",
+						"properties": {
+							"#": {
+								"type": "string"
+							},
+							"n1:Document": {
+								"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:DocumentType"
+							},
+							"n1:DocumentAction": {
+								"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:DocumentActionType"
+							}
+						},
+						"required": [
+							"n1:Document",
+							"n1:DocumentAction"
+						],
+						"additionalProperties": false
+					}
+				},
+				"n1:RiskEventData": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"RiskEvent": {
+								"$ref": "../Nouns/RiskEvent.json#"
+							}
+						},
+						"additionalProperties": false
+					}
+				}
+			},
+			"required": [
+				"n1:DocumentData",
+				"n1:RiskEventData"
+			],
+			"additionalProperties": false
+		}
+	}
+}

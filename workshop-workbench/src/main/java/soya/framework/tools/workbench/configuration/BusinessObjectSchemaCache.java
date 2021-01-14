@@ -71,6 +71,7 @@ public class BusinessObjectSchemaCache {
             BusinessObjectSchema bos = new BusinessObjectSchema(XmlBeansUtils.getSchemaTypeSystem(file));
             nameMappings.put(bos.name, bos.qName);
             schemas.put(bos.qName, bos);
+
         } catch (RuntimeException ex) {
             // TODO:
         }
