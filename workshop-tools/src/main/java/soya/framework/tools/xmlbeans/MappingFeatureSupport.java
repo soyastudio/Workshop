@@ -91,6 +91,9 @@ public abstract class MappingFeatureSupport implements MappingFeature {
         return mapping;
     }
 
+
+
+
     protected Construct createConstruct(String exp) {
         Construct construct = new Construct();
         String token = exp;

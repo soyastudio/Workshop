@@ -1,10 +1,12 @@
 package soya.framework.tools.xmlbeans;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import soya.framework.tools.util.StringBuilderUtils;
 
 import java.util.*;
 
-public class XmlConstructEsqlRenderer extends XmlConstructTree {
+public class XmlEsqlRenderer extends XmlConstructTree {
 
     public static final String URI = "http://collab.safeway.com/it/architecture/info/default.aspx";
     public static final String DOCUMENT_ROOT = "xmlDocRoot";
@@ -18,6 +20,8 @@ public class XmlConstructEsqlRenderer extends XmlConstructTree {
     private XmlSchemaBase base;
 
     private Set<Procedure> procedures = new LinkedHashSet<>();
+    private Map<String, Object> constructions = new LinkedHashMap<>();
+
     private Map<String, ConstructNode> constructNodeMap = new LinkedHashMap<>();
 
     @Override
@@ -76,6 +80,9 @@ public class XmlConstructEsqlRenderer extends XmlConstructTree {
 
         builder.append("END MODULE;");
 
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        System.out.println(gson.toJson(constructNodeMap));
+
         return builder.toString();
     }
 
@@ -83,6 +90,7 @@ public class XmlConstructEsqlRenderer extends XmlConstructTree {
         for (int i = 0; i < indent; i++) {
             builder.append("\t");
         }
+
         builder.append("BEGIN").append("\n");
     }
 
@@ -129,6 +137,7 @@ public class XmlConstructEsqlRenderer extends XmlConstructTree {
     private void printConstruct(XmlSchemaBase.MappingNode node, StringBuilder builder, int indent) {
 
         Construct construct = node.getAnnotation(CONSTRUCT, Construct.class);
+
         if (construct.procedure != null) {
             printProcedureCall(construct.procedure, node, builder, indent);
 
@@ -147,26 +156,14 @@ public class XmlConstructEsqlRenderer extends XmlConstructTree {
 
     private void printLoop(WhileLoop loop, XmlSchemaBase.MappingNode node, StringBuilder builder, int indent) {
 
+        constructions.put(loop.sourcePath, loop);
+
         constructNodeMap.put(loop.variable, loop);
-        String path = loop.sourcePath.replaceAll("/", ".");
 
-        if (path.startsWith("$.")) {
-            path = inputRootVariable + path.substring(1);
-
-        } else if (path.contains("/")) {
-            String var = path.substring(0, path.indexOf("/"));
-            if (constructNodeMap.containsKey(var)) {
-                ConstructNode parent = constructNodeMap.get(var);
-            }
-        }
-
-        if(path.endsWith("[*]")) {
-            path = path.substring(0, path.length() - 3) + ".Item";
-        }
-
+        loop.parent = findParent(loop.sourcePath);
 
         StringBuilderUtils.println("-- LOOP FROM " + loop.sourcePath + " TO " + node.getPath() + ":", builder, node.getLevel() + indent);
-        StringBuilderUtils.println("DECLARE " + loop.variable + " REFERENCE TO " + path + ";", builder, node.getLevel() + indent);
+        StringBuilderUtils.println("DECLARE " + loop.variable + " REFERENCE TO " + getAssignment(loop, inputRootVariable) + ";", builder, node.getLevel() + indent);
         StringBuilderUtils.println(loop.name + " : WHILE LASTMOVE(" + loop.variable + ") DO", builder, node.getLevel() + indent);
         StringBuilderUtils.println(builder);
 
@@ -201,6 +198,7 @@ public class XmlConstructEsqlRenderer extends XmlConstructTree {
     }
 
     private void printConstructor(Constructor constructor, XmlSchemaBase.MappingNode node, StringBuilder builder, int indent) {
+        constructions.put(constructor.sourcePath, constructor);
         constructNodeMap.put(constructor.variable, constructor);
     }
 
@@ -392,6 +390,19 @@ public class XmlConstructEsqlRenderer extends XmlConstructTree {
         }
     }
 
+    private WhileLoop findParent(String path) {
+        String token = path;
+        int index = token.lastIndexOf('/');
+        while (index > 0) {
+            token = token.substring(0, index);
+            if (constructions.containsKey(token)) {
+                return (WhileLoop) constructions.get(token);
+            }
+            index = token.lastIndexOf('/');
+        }
+
+        return null;
+    }
 
     private String getFullName(XmlSchemaBase.MappingNode node) {
         String fullName = node.getName();
@@ -422,7 +433,7 @@ public class XmlConstructEsqlRenderer extends XmlConstructTree {
         return assignment;
     }
 
-    private String getAssignment2(WhileLoop wl, String inputRoot) {
+    private String getAssignment(WhileLoop wl, String inputRoot) {
         if (wl.parent == null) {
             return inputRoot + "." + wl.sourcePath.replace("[*]", "/Item").replaceAll("/", "\\.");
 

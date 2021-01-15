@@ -6,9 +6,7 @@ public abstract class XmlConstructTree extends XmlSchemaBaseRenderer implements 
 
     protected static Gson GSON = new Gson();
 
-
     protected boolean isMapped(XmlSchemaBase.MappingNode node) {
-
         if (node.getAnnotation(MAPPING) != null) {
             return true;
 
@@ -22,6 +20,9 @@ public abstract class XmlConstructTree extends XmlSchemaBaseRenderer implements 
 
         return false;
     }
+
+
+
 /*
 
     protected boolean inLoop(XmlSchemaBase.MappingNode node, WhileLoop loop) {

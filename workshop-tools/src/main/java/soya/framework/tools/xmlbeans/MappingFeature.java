@@ -128,8 +128,8 @@ public interface MappingFeature {
 
     abstract class ConstructNode {
         protected String name;
-        protected String sourcePath;
         protected String variable;
+        protected String sourcePath;
 
     }
 
