@@ -8,19 +8,20 @@
 - soya.framework.tools.xmlbeans.ApplicationAnnotator:
     uri: BusinessObjects/CustomerPreferencesManagement/application.json
 
-# Annotations:
+# Annotate from XLSX file:
 - soya.framework.tools.xmlbeans.XlsxMappingAnnotator:
-    mappingFile: BusinessObjects/CustomerPreferencesManagement/requirement/CustomerPreferenceManagement(CFMS) - v1.2.1.xlsx
+    mappingFile: BusinessObjects/CustomerPreferencesManagement/requirement/CustomerPreferenceManagement(CFMS) - v1.3.1.xlsx
     mappingSheet: "Mapping CFMS to Canonical"
+
     sourceFiles: # load source json from files
       - BusinessObjects/CustomerPreferencesManagement/requirement/input_1.json
 
-## Generate assignments:
+## Override with xpath assignments:
 - soya.framework.tools.xmlbeans.MappingAnnotator:
     globalVariables:
       - name: VERSION_ID
         type: CHARACTER
-        defaultValue: "'1.2.1.003'"
+        defaultValue: "'1.3.1.005'"
       - name: SYSTEM_ENVIRONMENT_CODE
         type: CHARACTER
         defaultValue: "'PROD'"
@@ -28,6 +29,14 @@
     mappingFile: BusinessObjects/CustomerPreferencesManagement/xpath-assignment.properties
 
 # Renderers:
+## Print Json Source Mapping Structure:
+- soya.framework.tools.xmlbeans.JsonSourceMappingRenderer:
+    name: JsonSourceMappings
+
+## Print XML Schema:
+- soya.framework.tools.xmlbeans.XmlSchemaRenderer:
+    name: XmlSchema
+
 ## Print XML construct tree as Avro:
 - soya.framework.tools.xmlbeans.AvroSchemaRenderer:
     name: AvroSchema

@@ -11,7 +11,7 @@
 ## Apply basic annotation from xlsx mapping sheet:
 - soya.framework.tools.xmlbeans.XlsxMappingAnnotator:
     sourceFiles:
-      - BusinessObjects/DeliverySlot/requirement/received-from-qa.json
+      - BusinessObjects/DeliverySlot/requirement/input.json
     mappingFile: BusinessObjects/DeliverySlot/requirement/DeliverySlot_OSMS_TO_EDIS_Canonical_Mapping_v1.2.3.xlsx
     mappingSheet: "Mapping Source to Canonical"
 
@@ -28,7 +28,7 @@
         type: CHARACTER
         defaultValue: "'PROD'"
 
-    mappingFile: BusinessObjects/DeliverySlot/xpath-mappings-v1.0.1.properties
+    mappingFile: BusinessObjects/DeliverySlot/xpath-mappings.properties
 
 
 # Renderers:
@@ -62,15 +62,9 @@
 - soya.framework.tools.xmlbeans.SampleXmlRenderer:
     name: SampleXml
 
-## Print Base Annotation, eg. Unknown mappings:
-- soya.framework.tools.xmlbeans.BaseAnnotationRenderer:
-    name: UnknownMappings
-    annotation: UNKNOWN_MAPPINGS
-
 ## Print XML construct tree:
 - soya.framework.tools.xmlbeans.XmlConstructTreeRenderer:
     name: XmlConstructTree
-
 
 - soya.framework.tools.xmlbeans.LoopAnalyzeRenderer:
     name: LoopAnalyze

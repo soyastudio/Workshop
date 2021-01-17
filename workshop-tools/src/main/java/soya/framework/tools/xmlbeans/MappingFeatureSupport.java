@@ -30,6 +30,8 @@ public abstract class MappingFeatureSupport implements MappingFeature {
             if (mapping != null && mapping.sourcePath != null
                     && (mapping.sourcePath.endsWith("[*]") || mapping.sourcePath.contains("[*]/"))) {
 
+                System.out.println("------------: " + mapping.sourcePath);
+
                 XmlSchemaBase.MappingNode node = findParent(e.getValue());
                 if (node != null) {
                     String sourcePath = mapping.sourcePath;

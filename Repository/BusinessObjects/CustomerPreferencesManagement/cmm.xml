@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?><GetCustomerPreferencesManagement xmlns:Abs="https://collab.safeway.com/it/architecture/info/default.aspx">
     <DocumentData>
-        <Document SystemEnvironmentCd="PROD" VersionId="1.2.1.003">
+        <Document SystemEnvironmentCd="PROD" VersionId="1.3.1.005">
             <Abs:DocumentID>CUSTOMER_PREFERENCES_MANAGEMENT</Abs:DocumentID>
-            <Abs:AlternateDocumentID>IAUC_C02.cfms.aggregate-20210113215244313010</Abs:AlternateDocumentID>
+            <Abs:AlternateDocumentID>IAUC_C02.cfms.aggregate-20210115101932050013</Abs:AlternateDocumentID>
             <Abs:InboundOutboundInd>Outbound from Albertsons</Abs:InboundOutboundInd>
             <Abs:DocumentNm>GetCustomerPreferencesManagement</Abs:DocumentNm>
-            <Abs:CreationDt>2021-01-13T21:52:44.313010-08:00</Abs:CreationDt>
+            <Abs:CreationDt>2021-01-15T10:19:32.050013-08:00</Abs:CreationDt>
             <Abs:Description>Retail customer's generic preferences and the subscriptions</Abs:Description>
-            <Abs:SourceApplicationCd>Microservices</Abs:SourceApplicationCd>
+            <Abs:SourceApplicationCd>CFMS</Abs:SourceApplicationCd>
             <Abs:TargetApplicationCd>EDIS</Abs:TargetApplicationCd>
-            <Abs:GatewayNm>Kafka</Abs:GatewayNm>
             <Abs:InternalFileTransferInd>Y</Abs:InternalFileTransferInd>
             <Abs:DataClassification>
                 <Abs:DataClassificationLevel>
@@ -43,9 +42,11 @@
             <Abs:OptChoice>
                 <Abs:ChoiceDsc>CANCELLED</Abs:ChoiceDsc>
             </Abs:OptChoice>
-            <Abs:PreferenceEffectivePeriod Abs:typeCode="ACTIVE">
+            <Abs:PreferenceEffectivePeriod>
                 <Abs:LastEffectiveDt>2019-12-13</Abs:LastEffectiveDt>
                 <Abs:LastEffectiveTm>00:00</Abs:LastEffectiveTm>
+                <Abs:DurationNbr>14</Abs:DurationNbr>
+                <Abs:DurationUnitDsc>Days</Abs:DurationUnitDsc>
                 <Abs:InclusiveInd>1</Abs:InclusiveInd>
             </Abs:PreferenceEffectivePeriod>
         </Abs:CustomerPreferences>
@@ -192,14 +193,17 @@
             <Abs:PreferredInd>0</Abs:PreferredInd>
         </Abs:CustomerPreferences>
         <Abs:CustomerSubscriptions>
+            <Abs:SubscriptionId>f9b88f7e-5f54-4536-afc0-8b080d189cdf</Abs:SubscriptionId>
             <Abs:SubscriptionCd>SUBSCRIPTION</Abs:SubscriptionCd>
             <Abs:SubscriptionTypeCd>MONTHLYPLAN</Abs:SubscriptionTypeCd>
             <Abs:OptChoice>
                 <Abs:ChoiceDsc>CANCELLED</Abs:ChoiceDsc>
             </Abs:OptChoice>
-            <Abs:SubscriptionEffectivePeriod Abs:typeCode="ACTIVE">
+            <Abs:SubscriptionEffectivePeriod>
                 <Abs:LastEffectiveDt>2019-12-13</Abs:LastEffectiveDt>
                 <Abs:LastEffectiveTm>00:00</Abs:LastEffectiveTm>
+                <Abs:DurationNbr>14</Abs:DurationNbr>
+                <Abs:DurationUnitDsc>Days</Abs:DurationUnitDsc>
                 <Abs:InclusiveInd>1</Abs:InclusiveInd>
             </Abs:SubscriptionEffectivePeriod>
             <Abs:DeliverySubscription>
@@ -209,40 +213,30 @@
                 <Abs:MinimumBasketSizeQty>30</Abs:MinimumBasketSizeQty>
                 <Abs:AutoRenewInd>0</Abs:AutoRenewInd>
                 <Abs:AutoEnrollInd>0</Abs:AutoEnrollInd>
-                <Abs:Fee CurrencyCd="USD" FeeAmt="14.99"/>
-                <Abs:InitialOrderAmountOff CurrencyCd="USD"/>
             </Abs:DeliverySubscription>
         </Abs:CustomerSubscriptions>
         <Abs:CustomerSubscriptions>
+            <Abs:SubscriptionId>1515</Abs:SubscriptionId>
             <Abs:SubscriptionCd>STORE</Abs:SubscriptionCd>
             <Abs:SubscriptionTypeCd>J4U</Abs:SubscriptionTypeCd>
-            <Abs:DeliverySubscription>
-                <Abs:Fee/>
-                <Abs:InitialOrderAmountOff/>
-            </Abs:DeliverySubscription>
+            <Abs:DeliverySubscription/>
         </Abs:CustomerSubscriptions>
         <Abs:CustomerSubscriptions>
+            <Abs:SubscriptionId>LC</Abs:SubscriptionId>
             <Abs:SubscriptionCd>J4U</Abs:SubscriptionCd>
-            <Abs:DeliverySubscription>
-                <Abs:Fee/>
-                <Abs:InitialOrderAmountOff/>
-            </Abs:DeliverySubscription>
+            <Abs:DeliverySubscription/>
         </Abs:CustomerSubscriptions>
         <Abs:CustomerSubscriptions>
+            <Abs:SubscriptionId>AL</Abs:SubscriptionId>
             <Abs:SubscriptionCd>PAGINATION</Abs:SubscriptionCd>
             <Abs:SubscriptionTypeCd>ITEMS_PER_PAGE</Abs:SubscriptionTypeCd>
-            <Abs:DeliverySubscription>
-                <Abs:Fee/>
-                <Abs:InitialOrderAmountOff/>
-            </Abs:DeliverySubscription>
+            <Abs:DeliverySubscription/>
         </Abs:CustomerSubscriptions>
         <Abs:CustomerSubscriptions>
+            <Abs:SubscriptionId>S</Abs:SubscriptionId>
             <Abs:SubscriptionCd>SORT</Abs:SubscriptionCd>
             <Abs:SubscriptionTypeCd>YCS_TOP_10</Abs:SubscriptionTypeCd>
-            <Abs:DeliverySubscription>
-                <Abs:Fee/>
-                <Abs:InitialOrderAmountOff/>
-            </Abs:DeliverySubscription>
+            <Abs:DeliverySubscription/>
         </Abs:CustomerSubscriptions>
         <Abs:CustomerSubscriptions>
             <Abs:SubscriptionCd>HIDDEN_CATEGORY</Abs:SubscriptionCd>
@@ -250,10 +244,7 @@
             <Abs:OptChoice>
                 <Abs:ChoiceDsc>1</Abs:ChoiceDsc>
             </Abs:OptChoice>
-            <Abs:DeliverySubscription>
-                <Abs:Fee/>
-                <Abs:InitialOrderAmountOff/>
-            </Abs:DeliverySubscription>
+            <Abs:DeliverySubscription/>
         </Abs:CustomerSubscriptions>
         <Abs:CustomerSubscriptions>
             <Abs:SubscriptionCd>HIDDEN_CATEGORY</Abs:SubscriptionCd>
@@ -261,10 +252,7 @@
             <Abs:OptChoice>
                 <Abs:ChoiceDsc>1</Abs:ChoiceDsc>
             </Abs:OptChoice>
-            <Abs:DeliverySubscription>
-                <Abs:Fee/>
-                <Abs:InitialOrderAmountOff/>
-            </Abs:DeliverySubscription>
+            <Abs:DeliverySubscription/>
         </Abs:CustomerSubscriptions>
         <Abs:CustomerSubscriptions>
             <Abs:SubscriptionCd>HIDDEN_CATEGORY</Abs:SubscriptionCd>
@@ -272,10 +260,7 @@
             <Abs:OptChoice>
                 <Abs:ChoiceDsc>1</Abs:ChoiceDsc>
             </Abs:OptChoice>
-            <Abs:DeliverySubscription>
-                <Abs:Fee/>
-                <Abs:InitialOrderAmountOff/>
-            </Abs:DeliverySubscription>
+            <Abs:DeliverySubscription/>
         </Abs:CustomerSubscriptions>
         <Abs:CustomerSubscriptions>
             <Abs:SubscriptionCd>PROMOTIONAL</Abs:SubscriptionCd>
@@ -283,10 +268,7 @@
             <Abs:OptChoice>
                 <Abs:ChoiceDsc>OPT_IN</Abs:ChoiceDsc>
             </Abs:OptChoice>
-            <Abs:DeliverySubscription>
-                <Abs:Fee/>
-                <Abs:InitialOrderAmountOff/>
-            </Abs:DeliverySubscription>
+            <Abs:DeliverySubscription/>
         </Abs:CustomerSubscriptions>
         <Abs:CustomerSubscriptions>
             <Abs:SubscriptionCd>PROMOTIONAL</Abs:SubscriptionCd>
@@ -294,10 +276,7 @@
             <Abs:OptChoice>
                 <Abs:ChoiceDsc>OPT_IN</Abs:ChoiceDsc>
             </Abs:OptChoice>
-            <Abs:DeliverySubscription>
-                <Abs:Fee/>
-                <Abs:InitialOrderAmountOff/>
-            </Abs:DeliverySubscription>
+            <Abs:DeliverySubscription/>
         </Abs:CustomerSubscriptions>
         <Abs:CustomerSubscriptions>
             <Abs:SubscriptionCd>PROMOTIONAL</Abs:SubscriptionCd>
@@ -305,25 +284,18 @@
             <Abs:OptChoice>
                 <Abs:ChoiceDsc>OPT_IN</Abs:ChoiceDsc>
             </Abs:OptChoice>
-            <Abs:DeliverySubscription>
-                <Abs:Fee/>
-                <Abs:InitialOrderAmountOff/>
-            </Abs:DeliverySubscription>
+            <Abs:DeliverySubscription/>
         </Abs:CustomerSubscriptions>
         <Abs:CustomerSubscriptions>
+            <Abs:SubscriptionId>DUG</Abs:SubscriptionId>
             <Abs:SubscriptionCd>METHOD</Abs:SubscriptionCd>
-            <Abs:DeliverySubscription>
-                <Abs:Fee/>
-                <Abs:InitialOrderAmountOff/>
-            </Abs:DeliverySubscription>
+            <Abs:DeliverySubscription/>
         </Abs:CustomerSubscriptions>
         <Abs:CustomerSubscriptions>
+            <Abs:SubscriptionId>1515</Abs:SubscriptionId>
             <Abs:SubscriptionCd>STORE</Abs:SubscriptionCd>
             <Abs:SubscriptionTypeCd>DUG</Abs:SubscriptionTypeCd>
-            <Abs:DeliverySubscription>
-                <Abs:Fee/>
-                <Abs:InitialOrderAmountOff/>
-            </Abs:DeliverySubscription>
+            <Abs:DeliverySubscription/>
         </Abs:CustomerSubscriptions>
         <Abs:CustomerSubscriptions>
             <Abs:SubscriptionCd>PAPER</Abs:SubscriptionCd>
@@ -331,10 +303,7 @@
             <Abs:OptChoice>
                 <Abs:ChoiceDsc>OPT_IN</Abs:ChoiceDsc>
             </Abs:OptChoice>
-            <Abs:DeliverySubscription>
-                <Abs:Fee/>
-                <Abs:InitialOrderAmountOff/>
-            </Abs:DeliverySubscription>
+            <Abs:DeliverySubscription/>
         </Abs:CustomerSubscriptions>
         <Abs:CustomerSubscriptions>
             <Abs:SubscriptionCd>PROMOTIONAL</Abs:SubscriptionCd>
@@ -342,10 +311,7 @@
             <Abs:OptChoice>
                 <Abs:ChoiceDsc>OPT_IN</Abs:ChoiceDsc>
             </Abs:OptChoice>
-            <Abs:DeliverySubscription>
-                <Abs:Fee/>
-                <Abs:InitialOrderAmountOff/>
-            </Abs:DeliverySubscription>
+            <Abs:DeliverySubscription/>
         </Abs:CustomerSubscriptions>
         <Abs:SourceAuditData>
             <Abs:SourceNm>CustomerPreferences</Abs:SourceNm>
@@ -356,7 +322,10 @@
             <Abs:CreateHostNm>CustomerPreferenceManagementService-Prod-2</Abs:CreateHostNm>
             <Abs:LastUpdateHostNm>172.31.192.65</Abs:LastUpdateHostNm>
             <Abs:SequenceNbr>35</Abs:SequenceNbr>
+            <Abs:AggregateTs>1603443904773</Abs:AggregateTs>
             <Abs:AggregateRevisionNbr>35</Abs:AggregateRevisionNbr>
+            <Abs:PayloadVersionNbr>1</Abs:PayloadVersionNbr>
+            <Abs:EventId>b414e09d-e21f-4b05-9cc6-15f6142b3a4a</Abs:EventId>
         </Abs:SourceAuditData>
     </CustomerPreferencesManagementData>
 </GetCustomerPreferencesManagement>

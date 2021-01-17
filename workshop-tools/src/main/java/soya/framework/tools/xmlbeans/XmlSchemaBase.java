@@ -26,6 +26,7 @@ public class XmlSchemaBase extends AnnotatableSupport {
 
     private MappingNode root;
     private Map<String, MappingNode> mappings = new LinkedHashMap<>();
+
     private Set<String> variables = new LinkedHashSet<>();
 
     private XmlSchemaBase(SchemaTypeSystem schemaTypeSystem) {

@@ -24,7 +24,6 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
     private String mappingSheet;
 
     private List<String> sourceSheet;
-
     private List<String> excludes;
 
     private transient int targetIndex;
@@ -33,6 +32,8 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
 
     private Set<String> ignores = new HashSet<>();
     private Map<String, String> sourcePaths = new LinkedHashMap<>();
+
+    private JsonObject sourceSchema = new JsonObject();
 
     public XlsxMappingAnnotator() {
     }
@@ -73,6 +74,11 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
 
             Sheet mappingSheet = workbook.getSheet(this.mappingSheet);
             loadMappings(base, mappingSheet);
+
+            base.annotate("SOURCE_MAPPING", sourceSchema);
+
+
+            System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(sourceSchema));
 
         } catch (IOException | InvalidFormatException e) {
             e.printStackTrace();
@@ -144,7 +150,7 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
                 String mappingRule = isEmpty(ruleCell) ? null : ruleCell.getStringCellValue().trim();
 
                 String sourcePath = isEmpty(sourceCell) ? null : sourceCell.getStringCellValue().trim();
-                if(sourcePath != null && !sourcePath.contains("/") && sourcePath.contains(".")) {
+                if (sourcePath != null && !sourcePath.contains("/") && sourcePath.contains(".")) {
                     sourcePath = sourcePath.replaceAll("\\.", "/");
                 }
 
@@ -161,9 +167,13 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
                     mapping.mappingRule = mappingRule;
                     mapping.sourcePath = sourcePath;
 
+                    if (sourcePath != null && sourcePath.trim().length() > 0) {
+                        annotateSourceSchema(sourceSchema, sourcePath, targetPath);
+                    }
+
                     String destType = node.getNodeType().equals(XmlSchemaBase.NodeType.Attribute) ? "string" : node.getDataType();
                     String srcType = sourcePaths.get(sourcePath);
-                    if(srcType != null && "string".equalsIgnoreCase(destType) && !checkTypeCompatible(srcType, destType)) {
+                    if (srcType != null && "string".equalsIgnoreCase(destType) && !checkTypeCompatible(srcType, destType)) {
                         UnknownMapping incompatible = new UnknownMapping();
                         incompatible.targetPath = node.getPath();
                         incompatible.sourcePath = sourcePath;
@@ -208,6 +218,35 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
 
                 start = targetIndex * ruleIndex * sourceIndex != 0;
             }
+        }
+    }
+
+    private void annotateSourceSchema(JsonObject sourceSchema, String sourcePath, String targetPath) {
+        JsonObject parent = sourceSchema;
+        String path = sourcePath;
+        int slash = path.indexOf('/');
+        while (slash > 0) {
+            String name = path.substring(0, slash);
+            path = path.substring(slash + 1);
+            slash = path.indexOf("/");
+            if (parent.get(name) == null) {
+                parent.add(name, new JsonObject());
+            }
+
+            parent = parent.get(name).getAsJsonObject();
+        }
+
+        if(parent.get(path) != null) {
+            JsonArray array = new JsonArray();
+            array.add(parent.get(path));
+            array.add(new JsonPrimitive(targetPath));
+
+            parent.remove(path);
+            parent.add(path, array);
+
+        } else {
+            parent.add(path, new JsonPrimitive(targetPath));
+
         }
     }
 
