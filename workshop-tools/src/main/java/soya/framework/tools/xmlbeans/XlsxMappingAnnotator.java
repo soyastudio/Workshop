@@ -1,5 +1,6 @@
 package soya.framework.tools.xmlbeans;
 
+import com.google.common.base.CaseFormat;
 import com.google.gson.*;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
@@ -19,12 +20,13 @@ import java.util.*;
 public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFeature {
 
     private List<String> sourceFiles;
+    private List<String> excludes;
 
     private String mappingFile;
     private String mappingSheet;
 
-    private List<String> sourceSheet;
-    private List<String> excludes;
+    private CaseFormat targetCaseFormat = CaseFormat.UPPER_CAMEL;
+    private CaseFormat sourceCaseFormat = CaseFormat.LOWER_CAMEL;
 
     private transient int targetIndex;
     private transient int ruleIndex;
@@ -32,6 +34,7 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
 
     private Set<String> ignores = new HashSet<>();
     private Map<String, String> sourcePaths = new LinkedHashMap<>();
+    private Map<String, String> sourcePathIndex = new LinkedHashMap<>();
 
     private JsonObject sourceSchema = new JsonObject();
 
@@ -39,7 +42,6 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
     }
 
     public void annotate(XmlSchemaBase base) {
-
         if (sourceFiles != null) {
             sourceFiles.forEach(sf -> {
                 try {
@@ -55,6 +57,10 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
             });
         }
 
+        sourcePaths.keySet().forEach(e -> {
+            sourcePathIndex.put(e.toUpperCase(), e);
+        });
+
         if (excludes != null) {
             ignores.addAll(excludes);
         }
@@ -64,21 +70,9 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
 
         try {
             workbook = new XSSFWorkbook(excelFile);
-
-            if (sourceSheet != null) {
-                for (String source : sourceSheet) {
-                    Sheet s = workbook.getSheet(source);
-                    loadSourcePaths(base, s);
-                }
-            }
-
             Sheet mappingSheet = workbook.getSheet(this.mappingSheet);
             loadMappings(base, mappingSheet);
-
             base.annotate("SOURCE_MAPPING", sourceSchema);
-
-
-            System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(sourceSchema));
 
         } catch (IOException | InvalidFormatException e) {
             e.printStackTrace();
@@ -146,13 +140,10 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
                 Cell ruleCell = currentRow.getCell(ruleIndex);
                 Cell sourceCell = currentRow.getCell(sourceIndex);
 
-                String targetPath = isEmpty(targetCell) ? null : targetCell.getStringCellValue().trim();
+                String targetPath = isEmpty(targetCell) ? null : trimPath(targetCell.getStringCellValue(), targetCaseFormat);
                 String mappingRule = isEmpty(ruleCell) ? null : ruleCell.getStringCellValue().trim();
 
-                String sourcePath = isEmpty(sourceCell) ? null : sourceCell.getStringCellValue().trim();
-                if (sourcePath != null && !sourcePath.contains("/") && sourcePath.contains(".")) {
-                    sourcePath = sourcePath.replaceAll("\\.", "/");
-                }
+                String sourcePath = isEmpty(sourceCell) ? null : trimPath(sourceCell.getStringCellValue(), sourceCaseFormat);
 
                 // check unknown mapping:
                 UnknownMapping unknownMapping = checkUnknown(targetPath, mappingRule, sourcePath, base);
@@ -221,9 +212,60 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
         }
     }
 
+    private String trimPath(String path, CaseFormat caseFormat) {
+        StringBuilder builder = new StringBuilder();
+        String result = path.replaceAll("\\.", "/");
+        String[] array = result.split("/");
+        for (int i = 0; i < array.length; i++) {
+            if (i > 0) {
+                builder.append("/");
+            }
+
+            builder.append(extract(array[i].trim(), caseFormat));
+        }
+
+        return builder.toString();
+
+    }
+
+    private String extract(String s, CaseFormat caseFormat) {
+        if (s == null || s.isEmpty()) {
+            return "UNKNOWN";
+        }
+
+        String result = s;
+        while (!match(result)) {
+            if (result.length() == 0) {
+                return "UNKNOWN";
+            }
+            result = result.substring(1);
+        }
+
+        if (CaseFormat.UPPER_CAMEL.equals(caseFormat)) {
+            result = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, result);
+        }
+
+        return result;
+    }
+
+    private boolean match(String s) {
+        char c = s.charAt(0);
+        if (c == '_' || c == '@' || c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z') {
+            return true;
+        }
+
+        return false;
+    }
+
+
     private void annotateSourceSchema(JsonObject sourceSchema, String sourcePath, String targetPath) {
+        String token = sourcePath;
+        if(sourcePathIndex.containsKey(token.toUpperCase())) {
+            token = sourcePathIndex.get(token.toUpperCase());
+        }
+
         JsonObject parent = sourceSchema;
-        String path = sourcePath;
+        String path = token;
         int slash = path.indexOf('/');
         while (slash > 0) {
             String name = path.substring(0, slash);
@@ -236,7 +278,7 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
             parent = parent.get(name).getAsJsonObject();
         }
 
-        if(parent.get(path) != null) {
+        if (parent.get(path) != null) {
             JsonArray array = new JsonArray();
             array.add(parent.get(path));
             array.add(new JsonPrimitive(targetPath));
