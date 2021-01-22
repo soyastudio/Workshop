@@ -76,6 +76,13 @@ public class XlsxMappingAnnotator implements Annotator<XmlSchemaBase>, MappingFe
 
         } catch (IOException | InvalidFormatException e) {
             e.printStackTrace();
+
+        } finally {
+            try {
+                workbook.close();
+            } catch (IOException e) {
+
+            }
         }
     }
 

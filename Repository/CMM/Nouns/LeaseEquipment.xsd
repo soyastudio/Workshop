@@ -1,0 +1,1150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.3 Rosabel Macario 11/04/2020 - Added tag to resolve dateTimeStamp issue-->
+	<!--V1.2 Patrick Oliver 10/20/20: Added AltAccountId-->
+	<!--V1.1 Patrick Oliver 7/22/20 - Updated VendorId to string(20)-->
+	<!--V1.0  Alex Nunes 8/16/2019 Initial version -->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
+	<xs:element name="LeaseEquipment" type="LeaseEquipmentType">
+		<xs:annotation>
+			<xs:documentation>root element.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="LeaseEquipmentType">
+		<xs:annotation>
+			<xs:documentation>This represents company's information pertaining to lease equipment such as trucks, equipments in general, etc... from accounting point of view.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CompanyId"/>
+			<xs:element name="LeaseId">
+				<xs:annotation>
+					<xs:documentation>This fields represents the unique identifier for a lease.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="19"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LeaseDsc">
+				<xs:annotation>
+					<xs:documentation>Name or description of the lease.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="30"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LeaseInterest" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Interest data related to the lease.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element ref="VendorId"/>
+						<xs:element name="PymtNbr">
+							<xs:annotation>
+								<xs:documentation>Payment number for the lease.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="6"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CancelSeqNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>An automatically assigned sequence number.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DistribSeqNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="6"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SequenceNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>An automatically assigned sequence number.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CompanyId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Identifies the AP company if the resource type = V.  Identifies the HR company if the resource type = E.  It is
+blank for type A, P or Q resources.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element ref="AccountingUnitId" minOccurs="0"/>
+						<xs:element ref="AccountId" minOccurs="0"/>
+						<xs:element ref="SubAccountId" minOccurs="0"/>
+						<xs:element name="ActivityCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Activities are the processes or  procedures that produce work. Cost objects (products, services, customers, and so on) are the reasons for performing the activity.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="15"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AcctCategoryCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Account categories are groupings of costs, revenues, or a combination of both used for reporting and inquiries for activities in the Activity Management system. All transactions are posted to an account category within an activity. You can assign a specific General Ledger account or range of accounts (company, accounting unit, account, and subaccount) that make up the transactions posted to an account category using AC07.1 (Account Assignment).  Period-to-date, year-to-date, and life-to-date balances are maintained by account category for activities. Account categories must be assigned to activities before you do any budgeting or transaction processing.  Valid account category types are: cost revenue accrual pass thru.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="15"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="InterestAmt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Lease interest amount.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="12"/>
+									<xs:fractionDigits value="5"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="BaseInterestAmt" type="AmountType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Lease base interest amount.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ToBaseAmt" type="AmountType" minOccurs="0"/>
+						<xs:element name="ToBasePrincipalAmt" type="AmountType" minOccurs="0"/>
+						<xs:element name="ToBaseInterestAmt" type="AmountType" minOccurs="0"/>
+						<xs:element name="ToBaseInterestCurrencyCd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="5"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ToBaseInterestRateAmt" type="AmountType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The currency rate.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ObjectId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>A subsystem interface identification number. Used for Drill Around purposes.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="12"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="LeasePaymentSchedule" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Payment schedule detail data pertaining to the lease.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element ref="VendorId"/>
+						<xs:element name="PymtNbr">
+							<xs:annotation>
+								<xs:documentation>Payment number for the lease.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="6"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ExecutoryCostCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field contains an executory cost  code. Executory costs represent supplemental costs such as taxes. maintenance fees, or insurance. You can assign up to 5 executory cost codes to a lease.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="6"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CancelSeqNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>An automatically assigned sequence number.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DistribSeqNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="6"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SequenceNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>An automatically assigned sequence number.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="InvoiceSuffixNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The invoice suffix number. Represents the occurrence value of the invoice.  Used to identify the recurrence value of a recurring invoice and for system-generated credit memos created for prepayments and employee advances.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PymtScheduleDsc" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field displays the description.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CurrencyCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field contains the code  representing the currency used for the lease transactions.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="5"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="RecurringSeqNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field contains a unique number identifying a recurring invoice.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="6"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AuthorizationCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field contains the authority code of the person responsible for releasing the invoice for payment.
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DueDt" type="DateType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field contains the due date for the payment.
+</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PymtAmt" type="AmountType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This lease contains the payment amount in the lease transaction currency.  If you do not enter a payment amount, you must enter a compute name in the COMPUTE-NAME field to let the system calculate the payment amount.
+</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ComputeNm" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field contains a compute name used to calculate the payment amount. A compute name represents an arithmetic
+ equation (also called compute statement) consisting of data dictionary items and  operation symbols. The compute name must be defined using Compute Statemen. A compute name is required if the PAYMENT-AMT field is blank.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="12"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CompanyId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field contains the company from which the compute parameters pull their data.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CompanyGrp" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field contains the company group from which the compute parameters pull their data.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="12"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="MatrixListNm" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field contains the matrix list from which the compute parameters pull their data.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="12"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element ref="AccountingUnitId" minOccurs="0"/>
+						<xs:element name="FirstAccountId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field contains the first account in a range of accounts from which the compute parameters pull their data.
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="6"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LastAccountId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field contains the last account in a range of accounts from which the compute parameters pull their data.
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="6"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="FirstSubAccountId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field contains the first sub-account in a range of accounts from which the compute parameters pull their data.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LastSubAccountId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field contains the last sub-account in a range of accounts from which the compute parameters pull their data.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AccountGrp" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field contains the account group from which the compute parameters pull their data.
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="12"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SubAccountGrp" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field contains the sub-account group from which the compute parameters pull their data.
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="12"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="BudgetNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field contains the budget number associated with the compute parameters.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="VendorInvoiceNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field contains the vendor-defined invoice number.
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="22"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PymtReleaseInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This flag indicates whether this payment schedule record has been released to the Accounts Payable system. Valid values are: Y = Yes, N = No, T = Terminated.
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="BaseCurrencyCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The company base currency.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="5"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="BasePymtAmt" type="AmountType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Payment amount.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="BaseCurrencyRateAmt" type="AmountType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field contain the currency exchange rate for the lease company base currency.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CmpPymtAmt" type="AmountType" minOccurs="0"/>
+						<xs:element name="MaxPymtAmt" type="AmountType" minOccurs="0"/>
+						<xs:element name="ComputeOptionCd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="6"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AccrualInd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AccrualReverseInd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PeriodNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is the current accounting period. This field is updated.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="Year" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Contains the fiscal year for the data stored on this record.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="TaxableInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Defines if Taxable.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="TaxCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field contains a code representing specific tax information.  This must be valid Tax Code.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="TaxUsageCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The tax usage coe for the vendor.  This filed is required if the AP Company inidcates that VAT reporting required.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PercentageTaxableAmt" type="AmountType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The percentage determines how much retention is held. It can either be a percentage of each invoice, or it can be a percentage of a total.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="BaseTaxableAmt" type="AmountType" minOccurs="0"/>
+						<xs:element name="TranTaxableAmt" type="AmountType" minOccurs="0"/>
+						<xs:element name="BaseLandTaxableAmt" type="AmountType" minOccurs="0"/>
+						<xs:element name="TranLandTaxableAmt" type="AmountType" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="StatusCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the status of the lease. Valid values are: 0 = Unreleased, 1 = Released, 2 = Closed, 9 = Retired.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ClassType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the lease classification. An operating lease is processed as an expense; a capital lease is processed as an asset. You can enter the classification or let the FAS13 test supply it automatically. Valid values are: O = Operating, C = Capital.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LeaseTypeCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the user-defined lease type, defined on Lease Types (LM06.1). Types are classifications created by the users for reporting purposes only. For example, EQUIPMENT, or VEHICLES.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CurrencyCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the currency used for the lease transactions.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BaseCurrencyCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the currency used for the lease transactions.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BaseCurrencyRateAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the currency used for the lease transactions.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SimulationInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field specifies whether the lease is simulated or real. Simulated leases can be used to run various lease scenarios without impacting the books. Valid values are: Y = Yes, N = No.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="FirstEffectiveDt" minOccurs="0"/>
+			<xs:element ref="LastEffectiveDt" minOccurs="0"/>
+			<xs:element name="TerminateDt" type="DateType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the date on which a lease was closed or retired.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OwnershipInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field indicates whether lease ownership will transfer to the lessor at the end of the lease. Valid  values are: Y = Yes, N = No If Yes, the lease class must be Capital.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="GuaranteedAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the estimated fair value of the leased item at the end of the lease. Also called guaranteed residual value. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UnguaranteedAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the unguarantedd estimated fair market value of the property at lease end.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BargainPurchaseAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the bargain purchase amount. That is the amount a lessor would pay to purchase the amount at the end of the lease if a bargain purchase option is included in the lease. If this amount is not zero, the lease type must be Capital.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NetPresentAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the net present value of the lease amount. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ObligationAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the total lease obligation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LandOnlyInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field indicates whether the lease involves only land. Valid values are: Y = Yes, N = No.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LandBuildingInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field indicates whether the lease involves both land and buildings. Valid values are: Y = Yes, N = No. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BuildingMarketAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the fair market value of any buildings included in the lease.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TaxCreditAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the lessor's investment tax credit amount. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TotalLifePeriodQty" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the total life of the leased property expressed as a number of periods.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TotalLifePeriodRemainingQty" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the remaining life of the leased property expressed as a number of periods.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the lessor identification.  Must be a valid vendor in the Accounts Payable system.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TermPeriodQty" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the number of periods for which the property is leased.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PaymentYearQty" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the number of lease payments per year.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PaymentTimingInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field indicates whether payments are made at the beginning or the end of a lease period. This information is required for the FAS test. Valid values are: B = Beginning of Period, E = End of Period.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InterestRateAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the lessee's interest rate. Also known as the incremental borrowing rate. This is the interest rate the lessee would pay if borrowing the money to finance the lease.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="12"/>
+						<xs:fractionDigits value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ImplicitInterestRateAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the lessor's interest rate. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="12"/>
+						<xs:fractionDigits value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FirstPaymentDt" type="DateType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the date of the first lease payment.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LastPaymentDt" type="DateType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the date of the last lease payment.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LastPaymentAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the amount of the most recent payment posted.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SegmentInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field indicates whether a user analysis value is associated with the lease. User analysis values are used by the Strategic Ledger system to provide online profitability analysis. Valid values are: Y = Yes, N = No.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FAS13TestInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field indicates whether an FAS13 test will be run when the lease is added or changed. Valid values are: Y = Yes N = No The FAS13 test is an optional test that automates the decision to classify a lease as Capital or Operating.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FAS13LastRunDt" type="DateType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the date when the FAS13 test was last run.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FAS13LastRunTm" type="TimeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the time of the day when the FAS13 test was last run.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FAS13LastResultInd" minOccurs="0" maxOccurs="4">
+				<xs:annotation>
+					<xs:documentation>This field contains the results of FAS13 test. Valid results are: Y = Yes N = No If the result is Yes, the lease is classified as Capital.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ObjectId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the object identifier. It is used to relate Activity Management commitments or posted transactions back to the Lease Management system. Each Lease Management transaction is assigned an object identifier. The object identifier is a unique key used to create Drill Around links between Activity Management and Lease Management.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="12"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ActivityTxt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Activities are the processes or procedures that produce work. Cost objects (products, services, customers, and so on) are the reasons for performing the activity. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="15"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AcctCategoryTypeCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Account categories are groupings of costs, revenues, or a combination of both used for reporting and inquiries for activities in the Activity Management system. All transactions are posted to an account category within an activity. You can assign a specific General Ledger account or range of accounts (company, accounting unit, account, and subaccount) that make up the transactions posted to an account category using AC07.1 (Account Assignment).  Period-to-date, year-to-date, and life-to-date balances are maintained by account category for activities. Account categories must be assigned to activities before you do any budgeting or transaction processing.  Valid account category types are: cost revenue accrual pass thru.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BaseGuaranteedAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The guaranteed amount in base company currency.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BaseUnguaranteedAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The unguaranteed amount in base company currency.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BargainAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The bargain amount in base company currency.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NetValueAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The net value in base company currency.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InitialMarketValueAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the fair market value of the leased item at the inception of the lease.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MarketValueAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The fair market value in base company currency.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LeaseObligationAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The lease obligation in base company currency.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LandValueAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the fair market value of any land included in the lease.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BaseLandValueAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The land value in base company currency.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BuildingValueAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The building value in base company currency.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BaseTaxCreditAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The tax credit in base company currency.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DebtCompanyId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If the lease is classified as Capital, this field contains the  company to which the capital debt is posted.  If the lease is classified as Operating, this field contains the company to which the operating expense is posted.  If no company is specified, the lessor's Accounts Payable company is assumed.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DebtAccountUnitId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If the lease is classified as Capital, this field contains the accounting unit to which the capital debt is posted.  If the lease is classified as Operating, this field contains the accounting unit to which the operating expense is posted.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DebtAccountId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If the lease is classified as Capital, this field contains the account to which the capital debt is posted.  If the lease is classified as Operating, this field contains the account to which the operating expense is posted.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DebtSubAccountId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If the lease is classified as Capital, this field contains the sub-account to which the capital debt is posted.  If the lease is classified as Operating, this field contains the sub-account to which the operating expense is posted.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DebtActivityTxt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the optional activity to which debt amounts may be posted.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="15"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DebtAcctCategoryCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the account category to which debt amounts may be posted.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InterestCompanyId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If the lease is classified as Capital, this field contains the company to which the interest expense is posted.  If no company is specified, the lessor's Accounts Payable company is assumed.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InterestAccountUnitId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If the lease is classified as Capital, this field contains the accounting unit to which the interest  expense is posted.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InterestAccountId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If the lease is classified as Capital, this field contains the account to which the interest expense is posted.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InterestSubAccountId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If the lease is classified as Capital, this field contains the sub-account to which the interest expense is posted.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InterestActivityTxt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the optional activity to which interest expense may be posted.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="15"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InterestAcctCategoryCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the optional account category to which interest expense may be posted.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DefaultCompanyId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identifies the AP company if the resource type = V.  Identifies the HR company if the resource type = E. It is blank for type A, P or Q resources.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DefaultAccountUnitId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The accounting unit is a shorthand notation representing the variable level number. When used in the General Ledger Account Master file, the accounting unit must be defined in the General Ledger Names file as a posting accounting unit.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DefaultAccountId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field along with the accounting unit and subaccount make up the location (account) where amounts and other account information is stored.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DefaultSubAccountId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the subaccount from your general ledger chart of accounts that was charged with the amount carried on this record.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DefaultRentalBalanceAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>No description.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DefaultRentalOverrideAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>No description.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DefaultRentalOverrideInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>No description.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AllocationCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>No description.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="12"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AllocationTypeCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>E = Expense,I = Interest.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="GenCompanyId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identifies the AP company if the resource type = V. Identifies the HR company if the resource type = E. It is blank for type A, P or Q resources.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="GenAccountUnitId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The accounting unit is a shorthand notation representing the variable level number. When used in the General Ledger Account Master file, the accounting unit must be defined in the General Ledger Names file as a posting accounting unit.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AltAccountId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Can be account ID but in string format.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="25"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="GenAccountId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field along with the accounting unit and subaccount make up the location (account) where amounts and other account information is stored.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="GenSubAccountId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the subaccount from your general ledger chart of accounts that was charged with the amount carried on this record.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DownPaymentAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>No description</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BaseDownPaymentAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>No description</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SecurityDepositAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>No description</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BaseSecurityDepositAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>No description</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InvPrefixTxt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>No description</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="16"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

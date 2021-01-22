@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<xs:schema xmlns="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://www.openapplications.org/oagis/9" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.0         Sai Nuthakki        09/19/2018  Initial Version-->
+	<!--V1.1         Rosabel Macario 11/04/2020 - Added tag to resolve dateTimeStamp issue-->
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/ItemMaster.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="GetRetailStoreItemLocation" type="GetRetailStoreItemLocationType">
+		<xs:annotation>
+			<xs:documentation>root</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetRetailStoreItemLocationType">
+		<xs:annotation>
+			<xs:documentation>Business object that provides item location and Tag data from retail stores. One item can be placed in multiple loactions in the store. location zero is primary and same item may also available in location1 or location2. Location zero is the primary location. One UPC can have multiple location but one location will have only one item. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ItemLocationData" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>contains item location in a store or warehouse facility.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="Abs:StoreItemLocationType"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

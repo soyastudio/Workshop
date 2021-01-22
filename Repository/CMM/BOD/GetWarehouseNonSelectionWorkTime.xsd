@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2014 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Safeway, Inc.) -->
+<xs:schema xmlns="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://www.openapplications.org/oagis/9" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" 
+vc:minVersion="1.1"
+elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.0    Sai Nuthakki      01/24/2019       Initial Version-->
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/WarehouseWorkTime.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="GetWarehouseNonSelectionWorkTime">
+		<xs:annotation>
+			<xs:documentation>Provides Warehouse worker time details for shipment selction task by user, assignment and nonselection level. non-Selecion process involves replenishment, putaway tasks.This data is used for worker productivity analytics.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="GetWarehouseNonSelectionWorkTimeType">
+					<xs:attribute name="VersionId" type="xs:string" use="optional">
+						<xs:annotation>
+							<xs:documentation>Version Id for the BOD instance</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="ReleaseId" type="xs:string" use="optional">
+						<xs:annotation>
+							<xs:documentation>ReleaseId for the BOD instance</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="SystemEnvironmentCd" type="xs:string" use="optional" default="Production">
+						<xs:annotation>
+							<xs:documentation>Prod, Test, QA</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="GetWarehouseNonSelectionWorkTimeType">
+		<xs:annotation>
+			<xs:documentation>Provides Warehouse worker time details for shipment selction task by user, assignment and nonselection level. non-Selecion process involves replenishment, putaway tasks.This data is used for worker productivity analytics.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="WarehouseSelectionWorkTimeData" type="Abs:WarehouseNonSelectionWorkTimeType"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,845 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V 1.7 - 1/7/2021 - Alex Nunes - Jira EBC-13448: Change requested by CABS, Vendor Number and WHSE Id must be optional. DealVendorId in DealVendorType section and WarehouseId in VendorDealDetailType section.-->
+	<!--V1.6 11/05/2020 Rosabel Macario - Added tag to resolve dateTimeStamp issue-->
+	<!--V1.5 9/15/2020 Alex Nunes - Added AP Vendor Account Number element as per Jira EBC-12226 -->
+	<!--09/28/20 Patrick Oliver - Fixed mispelling for VendorDealSourceType-->
+	<!--09/08/20: Patrick Oliver - Updated DealtypeCd to VedorDealSourceType at topmost level for source systems-->
+	<!--6/11/20 Patrick updated VendorAllowances in detail to unbounded in order to handle mulitple allowance types from WMALWCOM-->
+	<!--6/1/20: Patrick - Unbounded DealLocationTypeCd per CABS request as can have mulitple values per division -->
+	<!--4/16/20: Patrick added LoadTs and PerformanceCd to DealHeader-->
+	<!--5/28/20: Patrick (By Alex Nunes)  Unbound ROG and DC. Also VendorLeadInd requested by CABS -->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="VendorDeal">
+		<xs:annotation>
+			<xs:documentation>Vendor Deals offered thru eDeals/NOPA</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="DealVendorType">
+		<xs:annotation>
+			<xs:documentation>Vendor data from eDeals / NOPA. Basically it has all vendor data coming from eDelas and some of hte attributes may be different from vendor master data in SSIMS.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DealVendorId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Vendor Number supplied by eDeals.  If this is a DSD vendor with Cost Area, we respect the vendor number.  If not, we find all vendors associated with the offer's items.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="40"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DealInternalVendorId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Vendor number found in SSIMS for the item of this offer.  This is lead vendor too</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="40"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DealVendorNm" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="70"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DealVendorAddress" type="AddressType" minOccurs="0"/>
+			<xs:element name="ARNbr" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Account receivables nbr</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="APNbr" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Account payble nbr</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VendorSubAccntId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Vendor Sub Account Id</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="WimsSubVendorNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identifies the WIMS Vendor number set up by the Buyer. The first character of the number indicates the location e.g. V - Vancouver, E - Edmonton.  Buyer/Merchandisers may break a Vendor outlet into different WIMS Vendors to suit their own purposes. Some of the reasons a Vendor may have several WIMS Vendor records are: 1. Several Buyers buying from the same Vendor. 2. A buyer buying different commodity groups from the same Vendor. 3. A Vendor offering different purchasing terms on different product lines. 4. A Buyer buying some products through a Broker and some directly from the Vendor.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorCostArea" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A cost area code defines an area that a DSD vendor supplies that has 
+the same cost. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DealVendorTrackingNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="30"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RepNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Vendor representative name</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="40"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RepEmailId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LeadVendorInd" minOccurs="0" maxOccurs="2">
+				<xs:annotation>
+					<xs:documentation>This field can have following values: "Y" and " " (Space).</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="VendorDealType">
+		<xs:sequence>
+			<xs:element name="VendorDealSourceType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if the deal is an Apex deal or WIMS deal</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DealHeader" type="VendorDealHeaderType"/>
+			<xs:element name="DealDetail" type="VendorDealDetailType" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DealManufacturerType">
+		<xs:annotation>
+			<xs:documentation>Manufacturer involved in the offer.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ManufacturerNm" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="60"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ManufacturerAddress" type="AddressType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="VendorDealHeaderType">
+		<xs:sequence>
+			<xs:element name="DealHeaderId" type="xs:integer">
+				<xs:annotation>
+					<xs:documentation>Unique identifier for each deal in eDeals system.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OfferNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Offer number from NOPA vendor deal</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorLogNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Artificial generated key in RTPP for a vendor/supplier/Cost area code/Offer combination.
+All promotions committed in RTPP will generate a log number, which will be written in the NOPA and will flow to  PACS system.
+If the log number can’t be seen in PACS, Safeway won’t be able to bill the vendor for the allowance vendor’s gave.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DealLocation" type="DealLocationType">
+				<xs:annotation>
+					<xs:documentation>Location where the deal is offered</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DealVendor" type="DealVendorType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Vendor who offeres the deal on the items he supplies to Albertsons companies.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DealManufacturer" type="DealManufacturerType" minOccurs="0"/>
+			<xs:element name="CategoryManager" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="CategoryManagerNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CategoryManagerNm" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CategoryManagerEmailId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ProductCategory" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ProductCategoryId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="70"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ProductCategoryManagerNm" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="DealDsc" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Description of the deal.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DealStatusCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identifies the status of the vendor deal.
+ex, accepted, rejected, submitted..etc</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DealStatusEffectiveDt" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Effective start date of a particular vendor deal status.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BillToCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identifies the bill to party vendor or manufacturer.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MasterDealId" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identifies the master deal related to the current vendor deal.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MasterVendorNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Vendor name in master vendor deal.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="60"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorAllowances" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Allowances offered by the vendor as part of the deal to promote a particuar product in a particular geography and time period.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="FlatAllowanceAmt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="9"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="FlatAllowancePindCd" default="" minOccurs="0" maxOccurs="4">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AllowanceTypeCd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AllowanceTypeDsc" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="250"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="NetDays" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The number of days in which the net amount of the invoice is due for payment. Net days is one of the vendor terms elements.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DiscountDays" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The number of days in which the cash discount amount of the invoice is valid. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DiscountPct" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The percentage of the cash discount amount in a vendor invoice. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="9"/>
+						<xs:fractionDigits value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PerformanceNm" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the performance.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SPFCOrderNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The specified number of purchase orders that is required for this allowance offering.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WhomNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contact phone number of the person representing the vendor. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ExportActInd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OverlapCalcInd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Overrides" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Various kinds of overrides applied on shecdule dates of the deal.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="OrderStartInd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="OrderEndInd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ShipStartInd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ShipEndInd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ArrivalStartInd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ArrivalEndInd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="WhseInventoryInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates the whether WIMS sync is complete or not.
+Blank is the initial value from Offer Intake.
+P is the value after the "Send to WIMS" is invoked.
+N is the value if the "Send to WIMS" is unsuccessful and rolls back changes.
+Y is the value after the "Send to WIMS" is successful.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Schedules" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Various kinds of deal schedules like, order, ship, arrival, performance.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="CreationDt" type="xs:date" minOccurs="0"/>
+						<xs:element name="OrderStartDt" type="xs:date" minOccurs="0"/>
+						<xs:element name="OrderEndDt" type="xs:date" minOccurs="0"/>
+						<xs:element name="ShipStartDt" type="xs:date" minOccurs="0"/>
+						<xs:element name="ShipEndDt" type="xs:date" minOccurs="0"/>
+						<xs:element name="ArrivalStartDt" type="xs:date" minOccurs="0"/>
+						<xs:element name="ArrivalEndDt" type="xs:date" minOccurs="0"/>
+						<xs:element name="PerformanceStartDt" type="xs:date" minOccurs="0"/>
+						<xs:element name="PerformanceEndDt" type="xs:date" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Comments" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Deal comments.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="DealCommentTxt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1000"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="RecentCommentTxt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1000"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ProcessTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Deal processed timestamp.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CancelTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Deal cancel timestamp.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LastSubmitTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Deal last submitted timestamp.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LastAcceptTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Deal last accepted timestamp.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LoadTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>When did Apex load this offer</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DealStatTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Timestamp of when the deal status changed</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WhseInventoryTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is a timestamp column that indicates when the offer was attempted to be sent to WIMS.  It will be used to indicate how long the user has to wait before re-attempting the process of getting the offer recorded in the WIMS Allowance Tables</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CurrentOfferInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if it is a current offer.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MinimumCorpItemCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="8"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OrgMasterNameType" type="OrgMasterNameType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="DealTypeCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="30"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DealTypeDsc" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PerformanceCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DealLocationNbr" type="xs:int" minOccurs="0"/>
+			<xs:element name="VechicleTypeNm" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FlatAllowanceReasonCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Reason Code indicating whether a deal has been accepted or      
+rejected/inactivated at the header level; there is no default.  
+                                                                
+0 - Allowance accepted                                          
+Valid values for deal rejected/inactivated at header level:     
+1 - Rejected                                                    
+2 - Rejected, not enough money                                  
+3 - Rejected, previous deal                                     
+4 - Rejected, vendor canceled                                   
+5 - Rejected, offer too late                                    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="APVendorAccountNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Account number of AP Vendor which allow allowance billing be sent to Accounting.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="VendorDealDetailType">
+		<xs:sequence>
+			<xs:element name="VendorDealDetailId" type="xs:integer">
+				<xs:annotation>
+					<xs:documentation>Unique identifier of the detail line within a vendor deal.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="CorporateItemCd"/>
+			<xs:element ref="WarehouseId" minOccurs="0"/>
+			<xs:element name="ConsumerUPC" type="UPC" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Retail scan upc at POS</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CaseUPC" type="UPC" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>UPC of the case pack delivered at warehouse/store.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ItemDsc" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Description of the item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ItemGroupCd" type="xs:string" minOccurs="0"/>
+			<xs:element name="ForecastQty" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Quantity forcasted to sell in a geography and a period.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="9"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorRequiredAdCd" type="xs:string" minOccurs="0"/>
+			<xs:element name="VendorRequiredDisplayCd" type="xs:string" minOccurs="0"/>
+			<xs:element name="MatchDsc" type="xs:string" minOccurs="0"/>
+			<xs:element name="ShipUnitPackQty" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The quantity of shelf units in a warehouse unit, or pack for the item at a corporate level. e.g. 24 shelf units in a warehouse unit. Nbr of consumer units per warehouse shipping pack (or store receiving pack for DSD) with Descriptive Size, appears on Purchase Orders for warehoused items. This tells our retail operations how many shelf units are in the warehouse pack (Itempack) Known as PACK_WHSE in SSITMCDS</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="7"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RegularRetailItemPriceAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the regular billing store retail that was last seen at the store by the consumer. If the item is currently on regular retail, this will be the same as the retail in the PRICE column. If the item is currently on LTS, this column will contain the retail of the item prior to being on LTS - it will not match the retail in PRICE. If the item is currently on Ad (and not on LTS), it will contain the retail of the item prior to being on Ad - it will match the retail in PRICE. If the item is currently on both Ad and LTS, it will contain the previous regular (non-LTS) retail - it will not match the retail in PRICE, since that would be the LTS retail.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="12"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ItemCostAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Item Billing Cost of the retail Item</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="12"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SizeQty" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The size of the product as a numeric quantity that can be used in in calculations as compared to SIZE-DESC, which is a descriptive size for printing.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="9"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SizeUOMCd" nillable="false" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorUnitCostAmt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="10"/>
+						<xs:fractionDigits value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PromoPriceAmt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="7"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="NonPromoPriceAmt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="7"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PriceTypeCd" type="xs:integer" minOccurs="0"/>
+			<xs:element name="POVendorNbr" type="xs:string" minOccurs="0"/>
+			<xs:element name="BaseDealNbr" type="xs:integer" minOccurs="0"/>
+			<xs:element name="DSDInd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorLogNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Artificial generated key in RTPP for a vendor/supplier/Cost area code/Offer combination.
+All promotions committed in RTPP will generate a log number, which will be written in the NOPA and will flow to  PACS system.
+If the log number can’t be seen in PACS, Safeway won’t be able to bill the vendor for the allowance vendor’s gave.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VendorAllowances" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="FlatAllowanceAmt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Flat allowance amount offered by vendor for a product over a period of time.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="9"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="FlatAllowancePindCd" default="" minOccurs="0" maxOccurs="4">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="OtherAllowanceAmt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Other types of  allowance amount offered by vendor for a product over a period of time.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="9"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AllowanceTypeCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The allowance type code for the type of allowance offered on an item. These codes are unique throughout the company.   </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AllowanceTypeDsc" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="250"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AllowncePaymentInd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:minLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AllowanceTypeStartDt" type="xs:dateTime" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is the appropriate date column for Ship to Store Allowances</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="AllowanceTypeEndDt" type="xs:dateTime" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is the appropriate date column for Ship to Store Allowances</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ReasonCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Item Rejection Reason Code. A one character field containing the reason code of why the rejected.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ActiveInd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DealLocationType">
+		<xs:annotation>
+			<xs:documentation>Location where vendor deal will be offered/Implemented, could be Division, ROG or a Warehouse</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DealLocationId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Location id from eDeals where deal has been offered. ex 05 - Denver</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="40"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DealLocationTypeCd" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Code to identify a deal location type, D for Div, R for ROG, W for Warehouse..etc</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="DivisionId" minOccurs="0"/>
+			<xs:element name="ResDivisionId" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Represents the retail division for the offer; example is deal from Edeals will say “25 – NorCal” but items in the deal may be sourced from “65 – CPS”. Here '25' is the Retail division and '65' is the Warehouse division</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="WarehouseId" minOccurs="0"/>
+			<xs:element ref="ROGCd" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element ref="DistributionCenterId" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="LocationStatusCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EffectiveStartDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="EffectiveEndDt" type="xs:date" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,634 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Schema Owner: 	Safeway Inc
+   Date Created:      15 Apr 2018
+   Author:		Saikat Mazumdar
+   Description: Contains commonly used Safeway Personnel schema.
+   Name: /SFWY/Global/Fields.xsd
+-->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!---->
+	<!--*** SM 17-Apr: Definition of derived datatypes - simple, or complex ***-->
+	<!---->
+	<xs:element name="AlternateId">
+		<xs:annotation>
+			<xs:documentation>Is an Alternate Identifier of the given instance of an entity within the scope of the integration.
+
+For example, Network ID, Corporate email, National Identifier etc.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:string">
+					<xs:attribute ref="sequenceNbr"/>
+					<xs:attribute ref="typeCode"/>
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="BirthCountry" type="NameBaseType">
+		<xs:annotation>
+			<xs:documentation>Is the name of Country of birth of a person.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="BirthCountryCd" type="CodeType">
+		<xs:annotation>
+			<xs:documentation>Is the code of Country of birth of a person.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="BirthDt" type="DateType">
+		<xs:annotation>
+			<xs:documentation>Is the date and time that a person was born.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="Code">
+		<xs:annotation>
+			<xs:documentation>Element for the communication of all codes.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="50"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:simpleType name="CodeBaseType">
+		<xs:annotation>
+			<xs:documentation>A code is a character string of letters, numbers, special characters (except escape sequences), and symbols. It represents a definitive value, a method, or a property description in an abbreviated or language-independent form that is part of a finite list of allowed values.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:normalizedString"/>
+	</xs:simpleType>
+	<xs:element name="Codes" type="CodesType">
+		<xs:annotation>
+			<xs:documentation>A code is a character string of letters, numbers, special characters (except escape sequences), and symbols. It represents a definitive value, a method, or a property description in an abbreviated or language-independent form that is part of a finite list of allowed values.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="CodesType">
+		<xs:annotation>
+			<xs:documentation>A list of code.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="Code" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Element for the communication of all set of codes.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CodeType">
+		<xs:annotation>
+			<xs:documentation>A code is a character string of letters, numbers, special characters (except escape sequences), and symbols. It represents a definitive value, a method, or a property description in an abbreviated or language-independent form that is part of a finite list of allowed values.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="CodeBaseType"/>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="CodeWithDescription">
+		<xs:annotation>
+			<xs:documentation>Codes and descriptions for general purpose use</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="Code" minOccurs="0"/>
+			<xs:element name="Description" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ShortDescription" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CodeWithName">
+		<xs:annotation>
+			<xs:documentation>Code and corresponding name</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="Code" minOccurs="0"/>
+			<xs:element ref="Name" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="DateBaseType">
+		<xs:annotation>
+			<xs:documentation>The particular date in the progression of time.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:date">
+			<xs:minInclusive value="0001-01-01"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="DateTimeBaseType">
+		<xs:annotation>
+			<xs:documentation>A date time identifies a date and time of day to various common resolutions: year, week, day, hour, minute, second, and fraction of second.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:dateTime"/>
+	</xs:simpleType>
+	<xs:complexType name="DateTimeType">
+		<xs:annotation>
+			<xs:documentation>A date time identifies a date and time of day to various common resolutions: year, week, day, hour, minute, second, and fraction of second.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="DateTimeBaseType"/>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="DateType">
+		<xs:annotation>
+			<xs:documentation>The particular date in the progression of time.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="DateBaseType"/>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:element name="DeathDt" type="DateType" nillable="true">
+		<xs:annotation>
+			<xs:documentation>Is the date and time that a person died.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="EmployeeTypeCd" type="CodeType">
+		<xs:annotation>
+			<xs:documentation>Code type specifing the type of Employee.
+					
+EmployeeType is used to indicate if the Employee is a Contractor, W2, Full-Time, Part-Time.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="EthnicCd" type="CodeType">
+		<xs:annotation>
+			<xs:documentation>Is the Ethnicity code of a person.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="Ethnicity" type="NameBaseType">
+		<xs:annotation>
+			<xs:documentation>Is the name of Ethnic group of a person.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="EthnicityType">
+		<xs:annotation>
+			<xs:documentation>Ethnic cd and description of a person</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CodeWithDescription"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="FamilyNm" type="NameBaseType">
+		<xs:annotation>
+			<xs:documentation>Is the person's family name or last name.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="FormattedNm" type="NameBaseType">
+		<xs:annotation>
+			<xs:documentation>Identifies the Name of the object in which associated.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="Gender" type="NameBaseType">
+		<xs:annotation>
+			<xs:documentation>A gender (sex) of the individual in which it is associated.
+
+Examples are Male, Female, Undeclared.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="GenderCd" type="CodeType">
+		<xs:annotation>
+			<xs:documentation>A code indicating the gender (sex) of the individual in which it is associated.
+
+Examples are M, F, U.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="GenerationAffixCd" type="CodeType">
+		<xs:annotation>
+			<xs:documentation>Is the suffix to person's name, which may include generational designations like Sr., Jr., II etc.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="GivenNm" type="NameBaseType">
+		<xs:annotation>
+			<xs:documentation>Is the person's given name or first name.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="HireDt" type="DateType" nillable="true">
+		<xs:annotation>
+			<xs:documentation>Is the date on which the employee was first hired.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="Id" type="IDType">
+		<xs:annotation>
+			<xs:documentation>Is the Identifier of the given instance of an entity within the scope of the integration.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="IDType">
+		<xs:annotation>
+			<xs:documentation>Element for the communication of all IDs.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:string"/>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="IdWithNameType">
+		<xs:annotation>
+			<xs:documentation>Generic Identiifer and corresponding name like dept id and name</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="IdNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="10"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="IdTxt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Description" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ShortDescription" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="IndicatorType">
+		<xs:annotation>
+			<xs:documentation>An indicator is a list of two mutually exclusive Boolean values that express the only possible states of a property.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:boolean">
+			<xs:pattern value="false"/>
+			<xs:pattern value="true"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="JobCd" type="CodeType">
+		<xs:annotation>
+			<xs:documentation>This is a grouping of similar or equivalent job descriptions</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="JobRestrictionCodes" type="CodesType">
+		<xs:annotation>
+			<xs:documentation>This indicates any limitations to complete a job assignment based on physical, mental, legal or any other conditions</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="JobTitle" type="TextType">
+		<xs:annotation>
+			<xs:documentation>Is the position or designation of the employee with whom associated within the given organization. Examples are Director, Software Engineer, Purchasing Manager etc</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="Language" type="NameBaseType">
+		<xs:annotation>
+			<xs:documentation>List of languages for languages used by a person.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="LanguageCd" type="CodeType">
+		<xs:annotation>
+			<xs:documentation>List of codes for languages used by a person.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="LanguageType">
+		<xs:complexContent>
+			<xs:extension base="CodeWithDescription"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="LastHireDt" type="DateType" nillable="true">
+		<xs:annotation>
+			<xs:documentation>Is the date on which the employee was last hired. Applicable only in case of rehiring an employee.
+
+In case an employee has been hired and rehired multiple times then this is the latest rehire date.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="LastTerminationDt" type="DateType" nillable="true">
+		<xs:annotation>
+			<xs:documentation>Is the date on which employee was terminated previously.
+
+In case an employee has been terminated and rehired multiple times then this is the latest previous termination date.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="LocationID" type="IDType">
+		<xs:annotation>
+			<xs:documentation>This identifies an area consisting of one or more resources where worker is based at.  It is used to identify a specific Work center or location on a facility</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="MaidenNm" type="NameBaseType">
+		<xs:annotation>
+			<xs:documentation>Is the person's maiden name.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="MaritalStatus" type="NameBaseType">
+		<xs:annotation>
+			<xs:documentation>Marital status of a person.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="MaritalStatusCd" type="CodeType">
+		<xs:annotation>
+			<xs:documentation>A code indicating the martial status of a person.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="MarriageDt" type="DateType">
+		<xs:annotation>
+			<xs:documentation>Is the date and time that a person got married.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:simpleType name="MeasureBaseType">
+		<xs:annotation>
+			<xs:documentation>A quantity is a counted number of non-monetary units, possibly including fractions.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:decimal"/>
+	</xs:simpleType>
+	<xs:complexType name="MeasureType">
+		<xs:annotation>
+			<xs:documentation>A measure is a numeric value determined by measuring an object along with the specified unit of measure.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="MeasureBaseType">
+				<xs:attribute name="unitCode" type="CodeBaseType" use="optional">
+					<xs:annotation>
+						<xs:documentation>The unit of measure.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:element name="MiddleNm" type="NameBaseType">
+		<xs:annotation>
+			<xs:documentation>Is the person's middle name.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="Name">
+		<xs:annotation>
+			<xs:documentation>Identifies the Name of the object in which associated.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="NameBaseType">
+				<xs:maxLength value="50"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:simpleType name="NameBaseType">
+		<xs:annotation>
+			<xs:documentation>A name is a word or phrase that constitutes the distinctive designation of a person, place, thing or concept.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:complexType name="NameType">
+		<xs:annotation>
+			<xs:documentation>A name is a word or phrase that constitutes the distinctive designation of a person, place, thing or concept.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="NameBaseType">
+				<xs:attribute ref="sequenceNbr"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:element name="NationalityCountry" type="NameBaseType">
+		<xs:annotation>
+			<xs:documentation>Is the Nationality of a person.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="NationalityCountryCd" type="CodeType">
+		<xs:annotation>
+			<xs:documentation>Is the Nationality country code of a person.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="NickNm" type="NameBaseType">
+		<xs:annotation>
+			<xs:documentation>Is the person's nick name or preferred name.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="NotificationType">
+		<xs:annotation>
+			<xs:documentation>Genric notifications to customers, patients for recalls, reminders etc.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Notification" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="NotificationNm" type="xs:string" minOccurs="0"/>
+			<xs:element name="StatusCd" minOccurs="0"/>
+			<xs:element name="EffectiveStartDt" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="EffectiveEndDt" type="xs:dateTime" minOccurs="0"/>
+			<xs:element ref="LanguageCd" minOccurs="0"/>
+			<xs:element name="ContactMethodCd" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OpenIDType">
+		<xs:annotation>
+			<xs:documentation>Element for the communication of all Open type of IDs - with same decribed in instance document using attribute.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute ref="typeCode"/>
+				<xs:attribute ref="sequenceNbr"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:element name="OrderScheduleType" type="CodeType">
+		<xs:annotation>
+			<xs:documentation>Code identifying the type of order. This can be regular or Firm Orders</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="OriginalHireDt" type="DateType" nillable="true">
+		<xs:annotation>
+			<xs:documentation>Is the original hire date of the employee.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="OvertimeEligibleInd" type="IndicatorType">
+		<xs:annotation>
+			<xs:documentation>This indicates if the associated person or work is eligible to work overtime</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="PersonGenderType">
+		<xs:annotation>
+			<xs:documentation>A gender (sex) of the individual in which it is associated.
+
+Examples are Male, Female, Undeclared.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CodeWithDescription"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:attribute name="preferredInd" type="IndicatorType">
+		<xs:annotation>
+			<xs:documentation>When an object occurs multiple times, this indicator can be used to represent which of them is the preferred one.</xs:documentation>
+		</xs:annotation>
+	</xs:attribute>
+	<xs:element name="PreferredSalutationCd" type="CodeType">
+		<xs:annotation>
+			<xs:documentation>Is the way the person is addressed e.g. Honorable, Highness etc.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="QualificationAffixCd" type="CodeType">
+		<xs:annotation>
+			<xs:documentation>Is the suffix to person's name, which may include post nominal letters like PhD, CFA, etc. signifying qualifications, certifications etc.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:simpleType name="QuantityBaseType">
+		<xs:annotation>
+			<xs:documentation>A quantity is a counted number of non-monetary units, possibly including fractions.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:decimal"/>
+	</xs:simpleType>
+	<xs:complexType name="QuantityType">
+		<xs:annotation>
+			<xs:documentation>A quantity is a counted number of non-monetary units, possibly including fractions.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="QuantityBaseType">
+				<xs:attribute name="unitCode" type="CodeBaseType" use="optional">
+					<xs:annotation>
+						<xs:documentation>The unit of measure.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="RecordAuditData">
+		<xs:annotation>
+			<xs:documentation>Defines create time, last update time and users performed those DB actions on Source data.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="CreateDtTm" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time when the record was created in the source system.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CreateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>the record create timestamp in the source system.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CreateUserId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="UpdateDtTm" type="DateTimeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time when the record was last updated in the source system.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UpdateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Last updated timestamp of the source sytem record.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UpdateUserId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="Religion" type="NameBaseType">
+		<xs:annotation>
+			<xs:documentation>Is the Religion practiced by a person.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="ReligionCd" type="CodeType">
+		<xs:annotation>
+			<xs:documentation>Is the code of Religion practiced by a person.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="ReligionType">
+		<xs:complexContent>
+			<xs:extension base="CodeWithDescription"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="ScheduleTypeCd" type="CodeType">
+		<xs:annotation>
+			<xs:documentation>Is a code or identifier that describes the specific schedule for an employee or worker.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:attribute name="sequenceNbr" type="xs:positiveInteger">
+		<xs:annotation>
+			<xs:documentation>When an object occurs multiple times, this sequence integer can be used to provide the order in which the objects are meaningful.</xs:documentation>
+		</xs:annotation>
+	</xs:attribute>
+	<xs:element name="TerminationDt" type="DateType" nillable="true">
+		<xs:annotation>
+			<xs:documentation>Is the date on which employee was terminated.
+
+In case an employee has been terminated and rehired multiple times then this is the latest termination date.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:simpleType name="TextType">
+		<xs:annotation>
+			<xs:documentation>Text is a character string such as a finite set of characters generally in  the form of words of a language.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="TimeBaseType">
+		<xs:annotation>
+			<xs:documentation>Time is a time of day to various common resolutions - hour, minute, second, and fractions thereof.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:time"/>
+	</xs:simpleType>
+	<xs:complexType name="TimeType">
+		<xs:annotation>
+			<xs:documentation>Time is a time of day to various common resolutions - hour, minute, second, and fractions thereof.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="TimeBaseType"/>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:element name="TitleCd" type="CodeType">
+		<xs:annotation>
+			<xs:documentation>Is the title of the person. For example Dr., Prof. Mr., Mrs., Miss., Ms., etc.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:attribute name="typeCode" type="CodeBaseType">
+		<xs:annotation>
+			<xs:documentation>Attribute used to describe what is the type of the associated entity. This allows for extension of the model without the need for pre-defining a static ID element.
+			
+Examples are -
+When associated with IDType element, what type of ID is it e.g. Corporate, Network, LDAP, Email, National Identifier ID etc.
+When associated with NameType element what type of Name is it e.g. Preferred Name, Short Name etc.
+When associated with Address element what type of address is it e.g. Home, Work, Permanent, Seasonal etc.</xs:documentation>
+		</xs:annotation>
+	</xs:attribute>
+	<xs:attribute name="UOMCd">
+		<xs:annotation>
+			<xs:documentation>generic unit of measure</xs:documentation>
+		</xs:annotation>
+	</xs:attribute>
+	<xs:element name="WageGroupCd" type="CodeType">
+		<xs:annotation>
+			<xs:documentation>This is used to categorize an employee’s wage.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="WageType" type="NameBaseType">
+		<xs:annotation>
+			<xs:documentation>This is the name or description for given wage type.
+			
+Examples include: codes that represent: Exempt from Overtime, Non-Exempt from Overtime.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="WageTypeCd" type="CodeType">
+		<xs:annotation>
+			<xs:documentation>This is a code that describes the specific type a wage an employee or worker is paid.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="WorkShiftID" type="IDType">
+		<xs:annotation>
+			<xs:documentation>This is the Employee Shift Identifier. ShiftID describes the regular or standard authorized work time for the employee</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<!---->
+	<!--*** Definition of Simple elements (fields) i.e. having built-in data types or the types derived above from those.  ***-->
+	<!---->
+	<!---->
+	<!--*** Definition of attributes. As they can only have simple data type hence we can either use built-in data types or the simpleTypes derived above from those.  ***-->
+	<!---->
+</xs:schema>

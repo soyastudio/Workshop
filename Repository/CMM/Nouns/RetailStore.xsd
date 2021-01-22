@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://collab.safeway.com/it/architecture/AbsOmMaster" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.4 011821 Sai N Added override Type in eCom profileType-->
+	<!--V1.3 11/04/2020 Rosabel Macario- Added tag to resolve dateTimeStamp issue-->
+	<!--V1.2  08/14/2020  Sai Nuthakki  Added Faciity online profile type-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:complexType name="RetailStoreControlType">
+		<xs:annotation>
+			<xs:documentation>Store control data from SSSTOCTL table. Excluded store system related data for security reasons.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="WarehouseSystemInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates whether the store is supported on a Warehousing system like EXPRES.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CustomerAccntNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Customer account number uniquely identifies a store as custome to the company. A party is recognized as a customer on an Accounts Receivable account and a vendor on an Accounts Payable account. Valid customer accounts are on the Accounts Receive Master (ARPMAS_TABLE).  Customer account number together with customer sub account number uniquely identify a customer outlet on the Accounts Receivable Customer Master (ARCMAS_TABLE.)</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CustomerSubAccntNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TruckingGroupCd" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A code trucking assigns to a store which allows stores to be grouped together for load out recap purposes.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TlogZoneInd" type="xs:integer" minOccurs="0"/>
+			<xs:element name="MarketAreaCd" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A code to group stores within a division. Used by item movement history.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RepStoreInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This switch will indicate that this Store is the Representative Store for this Retail Order Group.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ElectronicMarketingInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field is used to indicate the status of the electronic marketing/promo code in a store.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TargetMarketingInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This column indicates if the entity as described in the database is is participating in the target marketing promotion wherein promotions are specific to a population segment. Therefore, on COROGTAB, a value of Y indicates that the rog is participating in target marketing. On, SSSTOCTL, a value of Y indicates that the store is participating in target marketing.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CGOStoreInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A switch Y N or ' ' (space) to allow store to accept information from host for computer assisted ordering.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="StoreClusterId" type="xs:integer" minOccurs="0"/>
+			<xs:element name="NIMRequiredInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if nutrition data is required for this store.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RetailStore">
+		<xs:sequence>
+			<xs:element name="Corporation" type="Abs:CorporationType" minOccurs="0"/>
+			<xs:element name="Division" type="Abs:DivisionType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Information related to the operating division. Ex Norcal with Div Id 25 </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReportingDivision" type="Abs:DivisionType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Information related to the accounts reporting division. Also known as Consolidation division for AP/AR.                            Ex Accounting division 17</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OperatingArea" type="Abs:OperatingAreaType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Organization layer within the operating division. Generally it contains one or more operating districts.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ParentOperatingArea" type="Abs:OperatingAreaType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Sometimes retail facilities may have a different reporting structure, generally a division.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="District" type="Abs:DistrictType" minOccurs="0"/>
+			<xs:element name="Banner" type="Abs:BannerType" minOccurs="0"/>
+			<xs:element name="RetailOrderGroup" type="Abs:RetailOrderGroupType" minOccurs="0"/>
+			<xs:element name="StoreData" type="Abs:RetailStoreType" minOccurs="0"/>
+			<xs:element name="StoreAddressData" type="Abs:AddressType" minOccurs="0"/>
+			<xs:element name="StoreDigitalAddressData" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Digital address for a retail store like url, facebook id, twitter account id, Instagram id, emial ..etc</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="DigitalAddressType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="DigitalAddressTxt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="500"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="StoreDepartmentData" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="Abs:StoreDepartmentType">
+							<xs:sequence>
+								<xs:element name="DepartmentHours" minOccurs="0" maxOccurs="unbounded">
+									<xs:complexType>
+										<xs:complexContent>
+											<xs:extension base="Abs:StoreDepartmentHourType"/>
+										</xs:complexContent>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="DepartmentHolidayHours" type="HolidayWorkHoursType" minOccurs="0" maxOccurs="unbounded">
+									<xs:annotation>
+										<xs:documentation>Work hours during public holidays</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="StoreDepartmentSectionType" type="Abs:StoreDepartmentSectionType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="StoreHoursData" type="Abs:RetailStoreHourType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="StoreHolidayHours" type="HolidayWorkHoursType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="StoreCheckStandData" type="Abs:StoreCheckStandType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="StoreControlData" type="RetailStoreControlType" minOccurs="0"/>
+			<xs:element name="FacilityOnlineProfileType" type="StoreOnlineProfileTypeType" minOccurs="0"/>
+			<xs:element name="OrgEntityType" type="Abs:OrgMasterNameType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Generic type to capture different org structures.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="StoreOnlineProfileTypeType">
+		<xs:sequence>
+			<xs:element name="EcommerceEnabledInd" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if the facility is enabled for eCom business operations.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EcommerceStartDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date on which the retail store started serving eComerce customers.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EcommerceEndDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="EcommerceStatus" type="StatusType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>defines the status of facility Online business </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MFCInd" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if the facility is a MFC - micro fullfilment center.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DUGInd" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if the facility has DUG option available. DUG- Drive up and Go. Customer can drive up to the point and pick up items ordered in online.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityProfileType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Defines different types of store profiles to serve online business.
+Ex: 3PL enabled store, Premium store, ERUM store..etc</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="CodeWithDescription">
+							<xs:sequence>
+								<xs:element name="EnabledInd" type="xs:boolean" minOccurs="0"/>
+								<xs:element name="ProfileValueTxt" minOccurs="0">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="200"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PickUpSchedule" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Customer pick up schedules at the facility.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="DayOfWk" type="xs:string" minOccurs="0"/>
+						<xs:element name="FirstPickUpTm" type="xs:string" minOccurs="0"/>
+						<xs:element name="LastPickUpTm" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PickupAreaType" type="CodeWithDescription" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>type of  pickup points available in a facility.
+ex: Inside Locker,Outside Locker, Outside Kiosk.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PickUpLocation" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Location details for customer order pickup.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="PickupAreaTypeCd" minOccurs="0"/>
+						<xs:element name="PickupAreaId" type="xs:string" minOccurs="0"/>
+						<xs:element name="LocationPriorityNbr" type="xs:int" minOccurs="0"/>
+						<xs:element name="MachineId" minOccurs="0" maxOccurs="5">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PickupAreaEnabledInd" type="xs:boolean" minOccurs="0"/>
+						<xs:element name="PickupAreaNm" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AddressLineTxt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="200"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LatitudeDegree" type="xs:decimal" minOccurs="0"/>
+						<xs:element name="LongitudeDegree" type="xs:decimal" minOccurs="0"/>
+						<xs:element name="LocationCommentTxt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2000"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="InstructionsType" minOccurs="0" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="InstructionTypeCd" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="30"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="InstructionsTxt" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="2000"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="DeliveryAreaType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Customer delivery areas covered in online business from the store. ex zip codes or cities</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="AreaTypeCd" type="xs:string" minOccurs="0"/>
+						<xs:element name="AreaTypeValueTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Delivery areas covered like zip codes covered from the store.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ServiceFeeType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Various types of service fee for online business at a store level. Like door delivery fee for business or residential..etc</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ServiceFeeTypeCd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ServiceFeeCategoryCd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ServiceFeeAmt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="6"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ServiceFeeItemId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>item id for the service fee like upc or scan cd.
+ex: scan cd for bag fee.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="BusinessContactType" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ContactTypeCd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ContactNm" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ContactPhoneNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="EmailAddressTxt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="200"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="SlotConfigurationType" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="SlotTypeCd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SlotForecastModelStoreId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SlotForecastLaunchDt" type="xs:date" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="FacilityOverrideType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Various ecom override profiles maintianed at a retail store level.
+Ex: Store can be designated to manually override an automated 3PL delivery schedule. They can refuse to use the serives of a 3PL driver for various reasons.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="OverrideType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="OverrideInd" type="xs:boolean" minOccurs="0"/>
+						<xs:element name="OverrideReasonType" type="CodeWithDescription" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="OnlineProfileAuditData" type="RecordAuditData" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

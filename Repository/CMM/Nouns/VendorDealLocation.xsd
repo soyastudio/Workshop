@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--V1.0 8/26/2020 Alex Nunes New BOD to stream Deal Location data.-->
+	<xs:element name="VendorDealLocation" type="VendorDealLocationType">
+		<xs:annotation>
+			<xs:documentation>Vendor Deals offered thru eDeals/NOPA. Root level.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="VendorDealLocationType">
+		<xs:annotation>
+			<xs:documentation>Location where vendor deal will be offered/Implemented, could be Division, ROG or a Warehouse</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DealLocationId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Location id from eDeals where deal has been offered. ex 05 - Denver</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="40"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DealLocationTypeCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Code to identify a deal location type, D for Div, R for ROG, W for Warehouse..etc</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="DivisionId" minOccurs="0"/>
+			<xs:element name="SubDivisionId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Sub-division Id.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="WarehouseId" minOccurs="0"/>
+			<xs:element ref="ROGCd" minOccurs="0"/>
+			<xs:element ref="DistributionCenterId" minOccurs="0"/>
+			<xs:element name="LocationStatusCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DealLocationCommentTxt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Comment on the Deal Location.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MultiDivisionInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicator of Multi division of a Deal Location.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EffectiveStartDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="EffectiveEndDt" type="xs:date" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

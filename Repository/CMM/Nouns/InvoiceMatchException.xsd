@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Schema Owner: 	Safeway Inc
+   Date Created:      11 Jan 2017
+   Author:		Sai Nuthakki
+   Dsc: contains commonly used Albertson's Purchase order schema.
+   Name: /ABS_CMM_Platform/Nouns/PurchaseOrder.xsd
+-->
+<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by  (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.2 Rosabel Macario 11/04/2020 - Added tag to resolve dateTimeStamp issue-->
+	<!--V1.1 Patrick Oliver 7/22/20 - Updated VendorId & VendorSubAccountId to string(20)-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="InvoiceMatchException" type="InvoiceMatchExceptionType">
+		<xs:annotation>
+			<xs:documentation>Also known as Bouncers - it communicate details about discrepancies between Invoice and Purchase Order amounts. Bouncers are associated with both an AP clerk and a buyer and are the responsibility of one or the other user. There can be multiple comments for a bounced item. Bouncers are uniquely identified by Facility, Purchase Order number, Corporate Item Code, and Sequence Number. Bouncers are associated with an AP Invoice Match (APINMTCH) record and provide details about items assoicated with an Invoice/Purchas Order.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="InvoiceMatchExceptionType">
+		<xs:annotation>
+			<xs:documentation>Also known as Bouncers - it communicate details about discrepancies between Invoice and Purchase Order amounts. Bouncers are associated with both an AP clerk and a buyer and are the responsibility of one or the other user. There can be multiple comments for a bounced item. Bouncers are uniquely identified by Facility, Purchase Order number, Corporate Item Code, and Sequence Number. Bouncers are associated with an AP Invoice Match (APINMTCH) record and provide details about items assoicated with an Invoice/Purchas Order.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporationId" minOccurs="0"/>
+			<xs:element ref="DivisionId" minOccurs="0"/>
+			<xs:element name="FacilityType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Type of the facility like, DC,  warehouse, Retail Store, Office building, manufacturing plant..etc.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FacilityID" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A four character code that is used with corporation
+ and division to uniquely identify a facility. A facility may "belong" to
+ only one corporation and one division. A building may house one or more
+facilities. There are two categories for facilities:
+ 1) Operating facility
+ - actively supports the business of the Company
+ - is a distinct business operation within a building
+  - examples: office, processing plant, retail store, truck service
+ shop, or warehouse building  (A warehouse facility includes all warehouse departments that exist within a single building.)
+ - each type of division/business has a different set of possible types of operating facilities: i.e.,
+ - Retail: retail outlets and offices.
+- Wholesale: warehouse facilities, truck service shop, and offices.
+- Processing/Manufacturing: processing plants and offices.
+ 2) Non-operating Facility                                                     
+ - not currently being operated by the Company.
+ - facilities </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="DistributionCenterId" minOccurs="0"/>
+			<xs:element name="FacilityNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the facility. ex Tracy DC or Safeway store in Bollinger Canyon San Ramon</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AltFacilityId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Alternate Facility Identifier.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InvoiceException" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="InvoiceNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="InvoiceDt" type="xs:date" minOccurs="0"/>
+						<xs:element name="PurchaseOrderNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>An Id created by the authoring system that uniquely represents a purchase order document.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PurchaseOrderDt" type="xs:date" minOccurs="0"/>
+						<xs:element ref="CorporateItemCd" minOccurs="0"/>
+						<xs:element name="Buyer" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="BuyerId" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="BuyerNm" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="APClerk" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="APClerkId" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="APClerkNm" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Vendor" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="VendorId" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="20"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="VendorSubAccountId" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="20"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="VendorNm" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="WarehouseVendorId" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string"/>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="APVendorNbr" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="20"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Exception" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="ThirdPartyCharge" type="CodeWithDescription" minOccurs="0"/>
+									<xs:element name="ExceptionType" type="CodeWithDescription" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Identifies the type of bouncer and the impact on payment processing. Internal bouncers identify an internal to Safeway cost difference that does not hold up payment to the vendor. External bouncers identify a cost difference between Safeway and the vendors invoice which will hold up payment until resolved.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="ExceptionResponse" minOccurs="0" maxOccurs="unbounded">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="ExceptionSeqNbr" type="xs:integer" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Bouncer sequence Nbr</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="Response" type="CodeWithDescription" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Bouncer Response.</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="CommentTxt" minOccurs="0">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:maxLength value="500"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="ExceptionDt" type="xs:date" minOccurs="0"/>
+												<xs:element name="ReviewInd" minOccurs="0">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:maxLength value="5"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="UserData" type="RecordAuditData" minOccurs="0"/>
+									<xs:element name="CostComponent" minOccurs="0" maxOccurs="unbounded">
+										<xs:annotation>
+											<xs:documentation>Defines all the bouncer cost components associated with a Purchase Order that has been bounced.</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="Component" type="CodeWithDescription" minOccurs="0"/>
+												<xs:element name="InvoiceAmt" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Actual amount on invoice.</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:decimal">
+															<xs:totalDigits value="14"/>
+															<xs:fractionDigits value="4"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="CostComponentEnteredInd" minOccurs="0">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:maxLength value="5"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="IntendedInvoiceAmt" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Invoice amount as per the bouncer.</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:decimal">
+															<xs:totalDigits value="14"/>
+															<xs:fractionDigits value="4"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="InvoiceTerms" type="CodeWithDescription" minOccurs="0"/>
+												<xs:element name="IntendedInvoiceTerms" type="CodeWithDescription" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Invoice terms as per the bouncer.</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="OrgMasterNameType" type="OrgMasterNameType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

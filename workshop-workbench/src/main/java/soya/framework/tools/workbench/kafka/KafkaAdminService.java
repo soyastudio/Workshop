@@ -168,7 +168,7 @@ public class KafkaAdminService {
             }
         }
 
-        return rawRecords
+        return   rawRecords
                 .values()
                 .stream()
                 .flatMap(Collection::stream)

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2014 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Safeway, Inc.) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:complexType name="Warehouse">
+		<xs:annotation>
+			<xs:documentation>Contains Data related to  all warehouse facilities where goods can be shipped or received.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="WarehouseData" type="Abs:WarehouseType">
+				<xs:annotation>
+					<xs:documentation>Warehouse facilities from where goods can be shiiped to and from.       
+contains information for WIMS, CRIB, EXPRES and other systems. 
+Facility may relate to a Warehouse Depts in a Distribution Centre or a logical warehouse facility lilke a milk processing plants or a bread plant.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WarehouseAddressData" type="Abs:AddressType"/>
+			<xs:element name="OrderFacilityData" type="Abs:OrderFacilityType">
+				<xs:annotation>
+					<xs:documentation>Facilities from where items can be ordered in a Merchandising system, it includes warehouses, manufacturing plants and all other supply facilities. Order facilites are also in org master as an operating facility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.1 Patrick Oliver 10/20/20: Added complex type VendorSiteData (AlVendorId, VendorSiteId,  VendorSiteCd, VendorSitePurpose)-->
+	<!--V1.0    Patrick Oliver      05/07/2020       Initial Version-->
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/BankStatementAccounts.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="GetBankStatementAccounts" type="GetBankStatementAccounts">
+		<xs:annotation>
+			<xs:documentation>Bank Statements type will be used to process data sent to banks for vendor payments and bank confirmations that vendors have been paid</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetBankStatementAccounts">
+		<xs:annotation>
+			<xs:documentation>Bank Statements type will be used to process data sent to banks for vendor payments and bank confirmations that vendors have been paid</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="BankStatementAccountsData" type="Abs:BankStatementAccountsType"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!---->
+</xs:schema>

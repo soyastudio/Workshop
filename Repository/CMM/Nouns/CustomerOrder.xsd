@@ -1,0 +1,1006 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Schema Owner: 	Safeway Inc
+   Date Created:      11 Jan 2017
+   Author:		Sai Nuthakki
+   Dsc: contains commonly used Albertson's Purchase order schema.
+   Name: /ABS_CMM_Platform/Nouns/StoreOrder.xsd
+-->
+<!-- edited with XMLSpy v2020 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!-- V1.2 7/10/2020 - Alex Nunes - Add elements to support UWARE DSD Order. Change to optional total count elements.-->
+	<!-- V1.3 8/11/2020 - Alex Nunes - Add annotation for CustomerPurchaseOrderNbr wholesale related change. -->
+	<!--V1.4 11/05/2020 - Rosabel Macario - Added tag to resolve dateTimeStamp issue-->
+	<!--V1.5 11/18/2020 - Alex Nunes - Data Type mismatches for wholesale DSD JIRA: - EBC-12858-->
+	<!--V1.6 11/20/2020  - Alex Nunes - Added Potential Suppliers at the header level.-->
+	<xs:element name="CustomerOrder" type="CustomerOrderType">
+		<xs:annotation>
+			<xs:documentation>root</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="CustomerOrderType">
+		<xs:annotation>
+			<xs:documentation>Albertson's companies Standard Wholesale Customer Order. The purpose of the Customer Order Business Object Document is to communicate an order to receivee goods from an Albertsons warehouse or manufacturing plant. Wholesale customers generally  place these orders.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="CustomerOrderHeader" type="CustomerOrderHeaderType"/>
+			<xs:element name="CustomerOrderDetail" type="CustomerOrderDetailType" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>One Customer Order header can have multiple Detail lines at item level.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CustomerOrderDetailType">
+		<xs:annotation>
+			<xs:documentation>Contains data at Customer Order Line item level, ie at ordered item level.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="CustomerOrderNbr" type="xs:integer"/>
+			<xs:element name="LineNbr" type="xs:integer" default="0"/>
+			<xs:element ref="Abs:CorporateItemCd" minOccurs="0"/>
+			<xs:element name="ItemDsc" type="xs:string" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the Dsc of a warehoused item.  It contains the brand and Dsc of the item.
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BranchItemCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the old five digit item code used with the MCL branch to     
+identify an item.  This is Used to interface to detail files, systems
+not converted to corporate item code and divisional users.           
+It is sometimes referred to as Division Item Code.                   
+</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CustomerItemID" type="xs:string" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>identifier provided by the customer. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UPCID" type="UPC" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>upc identifier for the item, could be a case upc or retial scan upc.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrderQty" default="0">
+				<xs:annotation>
+					<xs:documentation>Total Nbr of units ordered.
+</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="9"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="UnitOfMeasurement" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Ex: Cases, Each</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AltOrderQty" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the altered order quantity change made at 'Run' time
+before the selection list was printed or changed during     
+adjustment after picking.                                   
+</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="9"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RetailSectionCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RestrictedDrugItemInd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RandomWeightCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CaseWt" type="xs:decimal" default="0" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>   Wt of a warehouse shipping unit (single case).
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CaseCubeVol" type="xs:decimal" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Volume of the case cube, generally in cubic feet.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RetailUnitPackQty" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The number of shelf units in one warehouse unit.  The shelf unit for the 
+retail unit pack is defined by the ROG and is the amount of units sold   
+together. For instance, Retail unit pack would be 1 if an item is sold   
+by the case, 4 (four 6-packs) for 6-pack UPC, 24 for single can UPC      
+(24/case). The acronym RUP is sometimes used for Retail Unit Pack.       
+</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="7"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PackUnitQty" type="xs:decimal" default="0" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The Qty of shelf units in a warehouse unit, or pack for the item at 
+a corStoreOrderrate level.  e.g. 24 shelf units in a warehouse case.             
+All distribution centers will use this to keep their "24 packs"          
+on the same item Cds.  Nbr of consumer units per warehouse shipping 
+pack (or store receiving pack for DSD) with Descriptive Size, appears on 
+Purchase Orders for warehoused items.                                    
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CommissionInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This identifies items where the independent salesman will 
+receive a commission                                      
+Remark: Used in independent system only                   
+                                                          
+' ' - normal item,     'C' - commission item              
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VendorConvFactor" type="xs:decimal" default="1" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Factor used to convert a vendor pack to a warehouse pack.                    
+eg: If a Vendor's Master case is a 72 Pack and we want to ship 12's to Stores
+then we have a warehouse Pack = 12 and a VEND-CONV-FCTR = 6.
+                             
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ItemShelfUnitSize" type="xs:string" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> The generic retail size of goods. It may be actual size
+ Example: 340 g or a unit type (packet).                           
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InventoryCostAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> This is the inventory cost used for calculating warehouse markdowns       
+ determining the value of inventory. For an item with multiple lots it is  
+ the inventory cost on the last lot received.                              
+ 
+</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="11"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ItemBillingCostAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the item billing cost of the item to Safeway stores, per 
+warehouse unit (usually case) at date of delivery.               
+</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="9"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorUnitCostAmt" default="0" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the base cost charged by a vendor for the product for a vendor unit. It does not include allowances or discounts. VEND-CONV-FCTR is  used to convert the cost from a vendor pack to a warehouse pack.       
+</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="9"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="UnitPrice" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>unit price of the item per unit Qty specified</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Amt" default="0" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PerQty" default="0" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>indicates per Qty side of the Amt.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="12"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PriceOverrideType" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Default price or ovrride price.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RetailPriceAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> This is the retail price charged to the customer for each     
+ shelf unit, or if the price factor is > 1, for price factor   
+ number of units. EG.  It is the ".99 cents" in "2/.99 cents". 
+ It is also used as the over the limit price.                  
+</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="7"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PriceFactor" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the number of shelf items received for the price e.g. it is the 
+"2" in "2/99 cents".                                                    
+</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="2"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PriceAreaCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Price areas are groups of stores within a ROG that have the same     
+Pricing structure. This is the individual price area within the Price
+Area group. 
+</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PromotionInd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ItemStatusCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the status of the order item.  Only valid and postbill items 
+will be processed by the Process and Adjustment systems.  Statuses   
+will be changed by the Edit, F/M, Process and Adjustment systems.    
+</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SpecialPriceInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>if an item is on special for this customer.
+</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ItemMessageTxt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="GSTInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates the tax classification of an item under the Goods and Services
+Tax.
+"B" = Basic Grocery,   "T" = Taxable,   "E" = Exempt                  
+</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FullPalletInd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FullCasePackInd" type="xs:integer" minOccurs="0"/>
+			<xs:element name="PalletHeight" type="xs:decimal" default="0" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Nbr of layers of cases on a vendors pallet.
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PalletLayerUnits" type="xs:decimal" default="0" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Nbr of units that make up a layer on a vendors pallet.
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="HazmatCd" type="xs:integer" minOccurs="0"/>
+			<xs:element name="HazmatId" type="xs:integer" minOccurs="0"/>
+			<xs:element name="CreditStatusCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PriceOverrideInd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OrderItemQty" default="0" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:integer"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ShippedItemQty" type="xs:integer" minOccurs="0"/>
+			<xs:element name="QtyUOM" type="xs:string" default="" minOccurs="0"/>
+			<xs:element name="OrderVolumeQty" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>total cube</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="9"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ShippedVolumeQty" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="9"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OrderPalletQty" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="9"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ShippedPalletQty" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="9"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OrderWtAmt" default="0" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="9"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ShippedWtAmt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="9"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="WtUOM" type="xs:string" default="Lbs" minOccurs="0"/>
+			<xs:element name="BookPriceAmt" type="xs:decimal" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Book price of an item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CustomerOrderCreateFacility">
+		<xs:annotation>
+			<xs:documentation> Facility where customer order has been created or issued. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="Abs:CorporationId" minOccurs="0"/>
+			<xs:element ref="Abs:DivisionId" minOccurs="0"/>
+			<xs:element name="Customer" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="CustomerId" minOccurs="0"/>
+						<xs:element name="CustomerAccountId" minOccurs="0"/>
+						<xs:element name="CustomerSubAccountId" minOccurs="0"/>
+						<xs:element name="CustomerNm" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="DistrictId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CustomerOrderCreateFacilityAddress" type="Abs:AddressType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CustomerOrderReceiveFacility">
+		<xs:annotation>
+			<xs:documentation>Facility that receives and fulfills the customer order.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="Abs:CorporationId" minOccurs="0"/>
+			<xs:element ref="Abs:DivisionId" minOccurs="0"/>
+			<xs:element ref="Abs:DistributionCenterId" minOccurs="0"/>
+			<xs:element ref="Abs:WarehouseId" minOccurs="0"/>
+			<xs:element ref="Abs:ManufacturingPlantId" minOccurs="0"/>
+			<xs:element name="DistrictId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CustomerOrderReceiveFacilityNm" minOccurs="0"/>
+			<xs:element name="CustomerOrderReceiveFacilityAddress" type="Abs:AddressType" minOccurs="0"/>
+			<xs:element name="WarehouseAltId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Alternate identifier for a warehouse like old warehouse id.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:int">
+						<xs:totalDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DistributionCenterAltId" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Alternate identifier for a DC like old DC id.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CustomerOrderHeaderType">
+		<xs:annotation>
+			<xs:documentation>Contains all header level information of a customer Order.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StoreOrderCreateFacility" type="CustomerOrderCreateFacility">
+				<xs:annotation>
+					<xs:documentation>Albertsons Retail store facility where a Store order has been created.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CustomerOrderReceiveFacility" type="CustomerOrderReceiveFacility">
+				<xs:annotation>
+					<xs:documentation>Albertsons internal facility or external Vendorr facility where a store order has been received for order fullfillment.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CustomerOrderMessageType" type="Abs:MessageType"/>
+			<xs:element name="CustomerOrderNbr">
+				<xs:annotation>
+					<xs:documentation>An Id created by the authoring system that uniquely represents a Customer order document.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CustomerOrderDt" type="xs:dateTime">
+				<xs:annotation>
+					<xs:documentation>This is the date the  order was created in authoring system         
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrderStatus" type="Abs:StatusType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> This is the current status of the order, indicating at which  
+ stage the order is in the order process.                      
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrderScheduleStatusCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> This field indicates when  the  order was received according to  the order schedule;  ie: it  indicates whether the order   
+ was received late  or  if it was received totally outside of  the normal scheduled time, making it unscheduled.              
+                                                           
+ "S" = Scheduled                                                
+ "U" = Unscheduled                                              
+ "L" = Late                                                     
+ "E" = Early                                                    
+ "A" = Add To order                                             
+ "B" = Add To order which was late                              
+ "F" = Scheduled Firm Order                                     
+ "G" = ????                                                     
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrderDestinationType" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the type of destination facility placing the order. 
+"R" = retail                                                
+"I" = independent                                           
+"W" = warehouse transfer (current system uses adjustments)  
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrderTypeCd" type="xs:string" minOccurs="0"/>
+			<xs:element name="TenderNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="30"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CustomerPurchaseOrderNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>In case of wholesale, this is the store order number given by Wholesale stores.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="30"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InventoryRunNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This number is assigned to all orders within the same         
+Inventory Group that are submitted together for Inventory     
+processing.  It is used by the Inventory processing programs  
+to identify which orders are to be processed together.        
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InventoryGroupNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This number is assigned to one or more CICS userids from the   
+same division.  All users in an inventory group will be        
+responsible for processing orders for the same set of          
+warehouses.                                                    
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RequestedShipDtTm" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time on which delivery of shipment is required by the buyer.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PickingDocumentNbr" type="xs:integer" minOccurs="0"/>
+			<xs:element name="ScheduledPickDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the date this order will be picked by warehouse  
+personnel for delivery to Safeway stores or Independents 
+customers, as per the DPATS schedule.                    
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ScheduledShipDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="ScheduledDeliveryDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the date the order will arrive at the Safeway store  
+or Independents customer when it is delivered from the whse, 
+as per the DPATS schedule.  Stores are billed for the items  
+they've ordered based on this date.                          
+                                                             
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ScheduledDeliveryWeekNbr" type="xs:integer" minOccurs="0"/>
+			<xs:element name="OrderConfirmationNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is a confirmation number for each order received    
+at the ACCA2 from the handheld. It is a sequential number
+assigned by the ACCA2, and is part of the ACCA2 header   
+record sent to the host in the file transfer.            
+</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OrderSourceInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>code to indicate the origin of an order. 
+values : 'fo' - firm order               
+'co' - cos order                         
+'ex' - expres                            
+</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DataBatchCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This identifies a particular type of transmission sent from a store   
+(destination facility) to the host. The first two characters of the   
+data batch specify the data category; ie. order, firm order, markdown,
+inventory, etc. The second two characters specify the data type; ie.  
+grocery, tobacco, etc.                                                
+Databatch 0101 = GROCERY ORDER
+</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BatchCd" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Batch code groups stores that will be released together in 
+the same RUN for printing selection lists.                 
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrderDeliveryNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This column identifies the order delivery number for a batch when  
+there is more than one order for the same batch ordered at the same
+time but delivered on separate dates.                              
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RouteCd" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The route code is the order the stores are picked and is different by store.                                     
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PlanRouteNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> A grouping code for trucking used in determining the 
+ trucking order group (TOG) for the truck's PC system.
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RestrictedItemsInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>indicates whether an order contains slow moving or restricted items.                                                     
+values 'Y'/'N'                                               
+</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Buyer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Party responsible for ordering the Qty. It could be a Buyer, Forecaster or any other party.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="BuyerId" type="xs:string" minOccurs="0"/>
+						<xs:element name="BuyerNm" type="xs:string" minOccurs="0"/>
+						<xs:element name="FacilityId" type="xs:string" minOccurs="0"/>
+						<xs:element name="BuyerPhoneNbr" type="xs:string" minOccurs="0"/>
+						<xs:element name="BuyerEmailId" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ShipTo" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Final destination of the goods shipped.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ShipToFacilityId" type="xs:string" minOccurs="0"/>
+						<xs:element name="ShipToFacilityNm" type="xs:string" minOccurs="0"/>
+						<xs:element name="ShipToDUNSNbr" type="xs:string" minOccurs="0"/>
+						<xs:element name="ShipToContact" minOccurs="0" maxOccurs="2">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="ContactNm" type="xs:string" minOccurs="0"/>
+									<xs:element name="PhoneNbr" type="xs:string" minOccurs="0"/>
+									<xs:element name="EmailAddresstxt" type="xs:string" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="ShipToAddress" type="AddressType" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="BillTo" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Party resStoreOrdernsible for the payment as per StoreOrder terms.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="BillToFacilityId" type="xs:string" minOccurs="0"/>
+						<xs:element name="BillToFacilityNm" type="xs:string" minOccurs="0"/>
+						<xs:element name="BillToDUNSNbr" type="xs:string" minOccurs="0"/>
+						<xs:element name="BillToContact" minOccurs="0" maxOccurs="2">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="ContactNm" type="xs:string" minOccurs="0"/>
+									<xs:element name="PhoneNbr" type="xs:string" minOccurs="0"/>
+									<xs:element name="EmailAddresstxt" type="xs:string" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="BillToAddress" type="AddressType" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PotentialSupplier" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Potential suppliers from which an order can be sourced from. The potential supplier could be a warehouse, plant or dsd vendor.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="SupplierType" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Type of hte supplier, warehouse, DSD, plant.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="VendorId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="VendorSubAccountNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="BackdoorVendorSubAccountId" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field is used for the BDR (Back Door Receiving) system, to identify a unique vend_num, vend_sub_acnt, markon type, terms id, and usage type to the store level BDR system.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element ref="ManufacturingPlantId" minOccurs="0"/>
+						<xs:element ref="WarehouseId" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CustomerOrderCreateDt" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date on which the Order has been created in the source system.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TransportationTerms" type="TransportationTermType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines tranporrtation terms like inco terms details.
+ex FOB, CIS</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CarrierEquipment" type="Abs:CarrierEquipment" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>Contains information related to carrier for the goods transportation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CustomerOrderComments" minOccurs="0" maxOccurs="30">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="Type" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="UnitLoad" type="ReceivingAppointmentType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines load unit type.
+01 = PALLETIZED
+02 = FLOOR STACK/HAND PILE
+03 = MIXED
+04 = SLIP SHEET
+05 = MODULE</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LoadId" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A unique system generated identifier for a Load. When requesting a     
+produce item, it is required that building loads and assigning produce 
+items to a load be done before a requisition can be sent.              </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PhysicalInventoryInd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is used to indicate if the specified warehouse is performing a physical inventory.                            
+This is used when the warehouse is taking an inventory.
+ If data to be submitted to SSD001 should not be reflected in   
+the inventory count, this indicator must not be set to Y.   
+This indicator will only effect orders, receivings, receiving adjustments and inventory adjustments.            
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OriginModeInd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> Indicates the mode of origin for this order, IE. how this 
+ order was entered into the system.    
+ "0" = Online entry                                        
+ "1" = 4680 transmission                                   
+ "2" = ACCA2 (TELXON only for Indp; B/Up mode for Safeway) 
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FreightTypeCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FreightAmt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="9"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TotalOrderItemQty" default="0" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:integer"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TotalShippedItemQty" type="xs:integer" default="0" minOccurs="0"/>
+			<xs:element name="QtyUOM" type="xs:string" default="Ea" minOccurs="0"/>
+			<xs:element name="TotalOrderVolumeQty" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>total cube</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="9"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TotalShippedVolumeQty" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="9"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TotalOrderPalletQty" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="9"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TotalShippedPalletQty" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="9"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TotalOrderWtAmt" default="0" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="9"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TotalShippedWtAmt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="9"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="WtUOM" type="xs:string" default="Lbs" minOccurs="0"/>
+			<xs:element name="OrgMasterNametype" type="OrgMasterNameType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Vendor" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Vendor information.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="VendorId" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Vendor Identifier.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="VendorNm" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Name of the vendor.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="VendorAddress" type="AddressBaseType" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PurchaseOrderDt" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date of the purchase order.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

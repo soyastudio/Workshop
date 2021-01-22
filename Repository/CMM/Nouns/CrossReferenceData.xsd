@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Schema Owner: 	Safeway Inc
+   Date Created:      07 May 2020
+   Author:		Patrick Oliver
+   Description: Contains commonly used Safeway Purchase order schema.
+   Name: /SFWY/Nouns/SwyPurchaseOrder.xsd
+-->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V2.3 Rosabel Macario 11/05/2020 - Added tag to resolve dateTimeStamp issue-->
+	<!--v2.2 Patrick Oliver - Added HierachyLevelNbr to the SourceDataElement and TargetDataElement-->
+	<!--v2.1 Rosabel Macario 10/13/20: Added Source and TargetSystem. Rename elements-->
+	<!--v2.0 Rosabel Macario 10/02/20: Update based on initial review-->
+	<!--V1.0  Patrick Oliver 09/15/20: Initial Version-->
+	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:complexType name="CrossReferenceDataType">
+		<xs:annotation>
+			<xs:documentation>CrossReference object will be use  any kind of cross reference data between systems for data conversion.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CrossReferenceType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the data for which cross reference is defined here.
+Ex: Chart of Accounts, HR Pay group..etc</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CrossReferenceSource" type="Abs:SourceData" minOccurs="0"/>
+			<xs:element name="CrossReferenceTarget" type="Abs:TargetData" minOccurs="0"/>
+			<xs:element name="AuditDataType" type="RecordAuditData" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SourceData">
+		<xs:annotation>
+			<xs:documentation>Contains attributes from source system/s</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="SourceSystem" type="CodeWithName" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains source system ID, name. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SourceDataElement" type="BusinessKeyType" minOccurs="0" maxOccurs="10">
+				<xs:annotation>
+					<xs:documentation>Contains source information. Sample KeyFieldName - Vendor ID and KeyFieldValue will contain the actual vendor ID. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TargetData">
+		<xs:annotation>
+			<xs:documentation>Contains attributed from target system/s</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="TargetSystem" type="CodeWithName" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains target system ID, name.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TargetDataElement" type="BusinessKeyType" minOccurs="0" maxOccurs="10">
+				<xs:annotation>
+					<xs:documentation>Contains target information. Sample KeyFieldName as OracleID and KeyFieldValue will contain the actual oracle ID value</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="CrossReferenceType" type="CodeWithDescription"/>
+</xs:schema>

@@ -1,0 +1,2571 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Schema Owner: 	Safeway Inc
+   Date Created:      12 Jan 2016
+   Author:		Sai Nuthakki
+   Description: contains commonly used Safeway Purchase order schema.
+   Name: /SFWY/Nouns/SwyPurchaseOrder.xsd
+-->
+<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by Rosabel Macario (Albertsons) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V3.5 Rosabel M 01/15/2021: Increase maxlen of ProcessLvl to 10.-->
+	<!--V3.4 Sai N added Legacy Vendor Id in Header/Dtl.-->
+	<!--V3.3 Patrick Oliver 12/10/20: Updated GLCompanyId to string data type;  Added BuinessUnitNm-->
+	<!--V3.2 Patrick Oliver 11/18/20: Added complex type ChartofAccountData; Increased length of PymtCd; Added AssetSerialNbr, AssetInd, ReceiptCd-->
+	<!--V3.1 Rosabel Macario 11/04/2020 - Added tag to resolve dateTimeStamp issue-->
+	<!--V3.1 Patrick Oliver 10/20/20: Added: VendorSiteData (Oracle Vendor/supplier data), AltAccountId, DepartmentId, SectionCd, AltInvoiceId,  BusinessUnitId,  InstallmentNbr. Updated length for CompanyId-->
+	<!--V3.0: Patrick Oliver 10/05/20: Updated ApprovalOperatorCd to string (20) and LeadItemDescription to string (250)-->
+	<!--V2.9 Patrick Oliver 09/09/20: Updated CustomerParty to include AccountClassId and AccountTypeCd. Added to Invoice Header: LifecycleCategoryStatusCd, OfferNbr, ItemsSumAmt, OverToleranceInd, FlatCd-->
+	<!--V2.8 V2.8 Patrick Oliver 09/01/20:  Added to InvoiceHeader:  DivisionAccountUnitCd, MinBillStartDt,  MaxBillStartDt, LeadCorpItemCode,  LeadItemDesc, RecordAuditData. Added new 'InvoiceDetailItem' segment to model that will be used to roll up item totals for CABS invoice processing systems. The 'InvoiceDetailItem' will contain attributes CIC, UPC, Whse, & total amounts.  Note this will be used by CABS different than 'InvoiceDetail' which will be used by CABS to roll up totals by Account-Store. -->
+	<!--V2.7 Patrick Oliver 08/19/20 - Added CustomerSiteNbr, CrossReferenceTransaction; Updated ContactNm -->
+	<!--V2.6 Patrick Oliver 08/17/20 - Updated CustomerAccountNbr to reference global CustomerAccountNbr defined in Finance Master-->
+	<!--V2.5 Patrick Oliver 08/10/20 - Updated data type for DistributionUser -->
+	<!--V2.4 Patrick Oliver 07/22/20 - Updated VendorId, VendorSubAccountId & PayVendorId to string(20)-->
+	<!--V2.3 Patrick Oliver 06/26/2020 - Per request from CABS added InvoiceProcessedInd to model. This will be set after Financial system (KPMG) processes invoices. -->
+	<!--V2.2 Patrick Oliver 06/10/2020 - For KPMG review added following attributes: Invoice Header:  PurchaseOrderAttachCd , TransactionType, MCLBRNbr,  WarehouseSection, InvoiceInd. Invoice Detail: DistribActivity, DiscountLineAmt-->
+	<!--V2.1 Patrick Oliver 06/2/2020 - For Invoice AP files added to header: TaxPointDt,  PymtInd, LostDiscountInd, VendorInd, RecordInd, InvoiceUserPymtNbr, PymtEnclosure, InvoiceUser, DebitMemoInd. For Detail added: AccountingUnitId, AccountId, SubAccountId, DistributionCompanyId, TaxSequenceNbr, ServicetDt, AssetDescription, TotalUnitLineAmt, SupplementaryQty, VendorParty, SuffixNbr, DistribLineAmt, TaxLineAmt, BaseLineAmt, ProgramSequenceNbr, CategoryCd, DistributionUser, GLLineCd-->
+	<!--V2.0  Alex Nunes 6/4/2019 Modified to work with financial invoices.-->
+	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
+	<xs:include schemaLocation="../Nouns/VendorMaster.xsd"/>
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:complexType name="InvoiceType">
+		<xs:annotation>
+			<xs:documentation>Standard Albertson compaies schema for inbound and outbound invoices.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="InvoiceProcessedInd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if the invoice was processed by Financial system </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InvoiceHeader" type="InvoiceHeaderType"/>
+			<xs:element name="InvoiceDetail" type="InvoiceDetailType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="InvoiceDetailItem" type="InvoiceDetailItemType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InvoiceDetailType">
+		<xs:annotation>
+			<xs:documentation>Contains detail line information from invoice doc</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="GLCompanyId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> The general ledger company associated with this distribution</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InvoiceNbr" type="xs:string"/>
+			<xs:element name="AccountingData" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Accounting data related with the invoice distribution. (*Note this can be used for legacy account data )</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element ref="AccountingUnitId" minOccurs="0"/>
+						<xs:element ref="AccountId" minOccurs="0"/>
+						<xs:element ref="SubAccountId" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="VendorParty" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>It can have information about Vendor, Vendor Sub Account or Warehouse Vendor Sub account.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="InvoiceVendor">
+							<xs:sequence>
+								<xs:element name="LegacyVendorId" minOccurs="0">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="20"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="DistributionCompanyId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The company the expense will be posted to. Must be a valid record in the        General Ledger Company file.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LineNbr" type="xs:integer" minOccurs="0"/>
+			<xs:element ref="CorporateItemCd" minOccurs="0"/>
+			<xs:element name="ItemDescription" type="xs:string" default="" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>This is the description of a warehoused item.  It contains the brand and description of the item.
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AssetDescription" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If the distribution contains asset information, this field contains the asset description</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AssetSerialNbr" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is also referred to as 'Asset Tag Number'. The Tag numbers are concatenation of the facility number and asset’s serial number. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AssetCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>indicates whether an asset (A) or asset repair (R) record exists for the distribution. If it is blank then it means there’s no asset information for the distribution.. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ManufacturerItemID" type="xs:string" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>identifier provided by the manufacturer</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CustomerItemID" type="xs:string" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>identifier provided by the customer. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UPCID" type="xs:string" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>upc identifier for the item, could be a case upc or retial scan upc.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GTINID" type="xs:string" minOccurs="0"/>
+			<xs:element name="OrderQty" type="xs:decimal" default="0" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Total number of units ordered.
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ShippedQty" type="xs:decimal" default="0" minOccurs="0"/>
+			<xs:element name="InvoiceQty" type="xs:decimal" default="0" minOccurs="0"/>
+			<xs:element name="SupplementaryQty" type="xs:decimal" default="0" minOccurs="0"/>
+			<xs:element name="QuantityUOM" type="xs:string" default="" minOccurs="0"/>
+			<xs:element name="LotNbr" type="xs:string" minOccurs="0"/>
+			<xs:element name="CaseWeight" type="xs:decimal" default="0" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>   Weight of a warehouse shipping unit (single case).
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WeightUOM" type="xs:string" default="" minOccurs="0"/>
+			<xs:element name="ItemVolume" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="VolumeUOM" type="xs:string" default="" minOccurs="0"/>
+			<xs:element name="UnitCost" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>unit cost of the item per unit quantity specified</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="UnitCostAmt" type="xs:decimal" default="0" minOccurs="0"/>
+						<xs:element name="PerQuantity" type="xs:decimal" default="0" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>indicates per quantity side of the amount.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="UOM" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Unit of measurement</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="DetailCharges" type="ChargesType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Various charges applied at the Invoice detail line</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DetailAllowances" type="AllowancesType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Allowances or discounts recorded at invoice detail level.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ExtendedLineAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Is an amount not including taxes or charges. In the case of orders, this is typically the Unit Price times the Order Quantity.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TotalLineAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Total Line amount after all discounts and allowances</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TotalQualifiedLineAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Total Line amount qualified for discounts and allowances.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DistribLineAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The amount of the invoice    distribution in the currency of the invoice.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TaxLineAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The taxable amount of the invoice distribution</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BaseLineAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The amount of the distribution in the base currency of the distribution company. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TotalUnitLineAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The total unit amount allocated to the distribution, if applicable.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LineTax" type="TaxType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="PriceBracket" type="xs:string" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A price schedule based on the number of cases that a retailer orders the greater the quantity ordered, the lower the price per case. Also called a volume or quantity discount</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PriceListNbr" type="xs:string" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identification number assigned by a vendor to a price list</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RevisedPriceListNbr" type="xs:string" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Number assigned to revised or new issues of a price list</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ItemPackDetails" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="PackQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="5"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PackSize" type="xs:string" minOccurs="0"/>
+						<xs:element name="SizeUOM" type="xs:string" default="" minOccurs="0"/>
+						<xs:element name="WeightQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="9"/>
+									<xs:fractionDigits value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="WeightUOM" type="xs:string" default="" minOccurs="0"/>
+						<xs:element name="VolumeQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="9"/>
+									<xs:fractionDigits value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="VolumeUOM" type="xs:string" default="" minOccurs="0"/>
+						<xs:element name="Color" type="xs:string" default="" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GoodsShipDt" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="GoodsReceiptDt" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="ServicetDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If the distribution contains asset information, this field contains the in-service date for the asset.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OpenItemInd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates that the line is an open item and is not to be included in the document total. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ProgramSequenceNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Program sequence number. If multiple records with the same keys exist, this sequence number is incremented to make records unique.  </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CategoryCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The account category assigned to the distribution, if applicable used to group distributions under an activity.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SuffixNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The occurrence value of the invoice. Not valid for invoices with an unreleased status.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DistributionUser" type="CodeWithDescription" minOccurs="0" maxOccurs="5"/>
+			<xs:element name="GLLineCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>GL Code</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DistribActivityCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The activity assigned to the
+distribution, if applicable. Used to group expense distribution amounts to
+track costs for projects, jobs,
+construction, and so on.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DiscountLineAmt" type="xs:decimal" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Line Amt discounted</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DepartmentId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines cd for store departments based on its function.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SectionCd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines the Cd that uniquely identified the  grouping of products or services within a department.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AltInvoiceId" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Used for system generated invoice IDs </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VendorSiteData" type="InvoiceVendorSiteType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Used to support information about supplier site level attributes.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ChartOfAccountData" minOccurs="0" maxOccurs="2">
+				<xs:annotation>
+					<xs:documentation>Chart of account data segments </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="GLCombinationId" minOccurs="0"/>
+						<xs:element name="Entity" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Companies with EIN's allows for flexibility of hundreds if not thousands of legal entities and room for special purposes.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:complexContent>
+									<xs:extension base="CodeWithDescription"/>
+								</xs:complexContent>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="LineOfBusiness" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Represents the type of business based on the organizational structure, revenue channels and manufacturing. Used for high level management view of the organization that changes frequently</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:complexContent>
+									<xs:extension base="CodeWithDescription"/>
+								</xs:complexContent>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Account" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Represents the natural account for transaction classifications </xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="AltAccountId" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This can be used to store the account ID in string format.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="25"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element ref="AccountNm" minOccurs="0"/>
+									<xs:element ref="AccountDsc" minOccurs="0"/>
+									<xs:element name="AccountTypeCd" type="CodeWithDescription" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Type of UserAccount.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Site" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Represents physical space, captures a physical space at a facility or location. Allows for Hierarchy structure to capture multiple sites that roll up to facilities</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CostCenter" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>A function that is responsible for the costs that it incurs related to its normal business operations</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ProductTypeGroup" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Groupings of product types is based on a consolidated version of the organization's products that is needed for management reporting within distribution centers and manufacturing plants.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CustomerGroup" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Groupings of customers is based on a consolidated version of the organization's customers that is needed for management reporting.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CashflowMovement" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Cash flows is based on the organization's cash flow and rollforward classifications with linkages to select balance sheet account activity.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="InterCompanyCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Eliminate transactions occurring between its subsidiaries </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+					<xs:attribute ref="typeCode"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InvoiceDetailItemType">
+		<xs:annotation>
+			<xs:documentation>Contains detail line item/section total for invoice needed by CABS</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporateItemCd" minOccurs="0"/>
+			<xs:element name="ManufacturerItemID" type="xs:string" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>identifier provided by the manufacturer</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ItemDescription" type="xs:string" default="" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>This is the description of a warehoused item.  It contains the brand and description of the item.
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UPCID" type="xs:string" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>upc identifier for the item, could be a case upc or retial scan upc.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UPCType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Shows which of the Consumer, Multipack, or Case UPCs is used to make up the right 5 digitis of the UPC. One of these must be chosen.Called UNIT_TYPE in legacy systems.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ItemPackDetails" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="PackQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="5"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ShippedPackQty" type="xs:decimal" default="0" minOccurs="0"/>
+						<xs:element name="PackSize" type="xs:string" minOccurs="0"/>
+						<xs:element name="SizeUOM" type="xs:string" default="" minOccurs="0"/>
+						<xs:element name="WeightQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="9"/>
+									<xs:fractionDigits value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="WeightUOM" type="xs:string" default="" minOccurs="0"/>
+						<xs:element name="VolumeQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="9"/>
+									<xs:fractionDigits value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="VolumeUOM" type="xs:string" default="" minOccurs="0"/>
+						<xs:element name="Color" type="xs:string" default="" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="InvoiceQty" type="xs:decimal" default="0" minOccurs="0"/>
+			<xs:element name="BillStartDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="BillEndDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="DetailAllowances" type="AllowancesType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Allowances or discounts recorded at invoice detail level.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="WarehouseId" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InvoiceVendor">
+		<xs:annotation>
+			<xs:documentation>Contains vendor information related to the Invoice</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="VendorId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorSubAccountId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorNm" type="xs:string" minOccurs="0"/>
+			<xs:element name="WarehouseVendorId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorDUNSNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorContact" minOccurs="0" maxOccurs="2">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ContactNm" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PhoneNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="EmailAddresstxt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Address" type="AddressType" minOccurs="0"/>
+			<xs:element name="VendorInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates whether a one-time vendor record is to be created for the invoiced
+vendor. Valid values are:
+N = No. Default value. Y = Yes.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InvoiceHeaderType">
+		<xs:annotation>
+			<xs:documentation>Information that applies to the entire invoice document. The Header supports summary amounts for line items, charges, taxes and allowances.
+
+It also supports itemizing Header level charges, taxes and allowances for use in credit or debit invoices. In this case Line items are not needed. 
+
+The summary amounts in the Header include the Line level amounts and Header level amounts.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="InvoiceCreateFacility" type="InvoiceCreateFacilityType"/>
+			<xs:element name="InvoiceReceiveFacility" type="InvoiceReceiveFacilityType"/>
+			<xs:element name="InvoiceNbr">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InvoiceDt" type="xs:date"/>
+			<xs:element name="Status" type="StatusType" minOccurs="0" maxOccurs="5"/>
+			<xs:element name="TotalAmt" default="0" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates the total amount of the object associated. This includes the Price and the total of all the charges, allowances and taxes.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ExtendedAmt" default="0" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Is an amount not including taxes or charges. In the case of orders, this is typically the Unit Price times the Order Quantity.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CurrencyCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorParty" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>It can have information about Vendor, Vendor Sub Account or Warehouse Vendor Sub account.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="InvoiceVendor">
+							<xs:sequence>
+								<xs:element name="LegacyVendorId" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>corresponding Vendor Id used in legacy systems like Lawson for the vendor id referred in the invoice.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="20"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="SupplierParty" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="SupplierId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SupplierDUNSNbr" type="xs:string" minOccurs="0"/>
+						<xs:element name="SupplierNm" type="xs:string" minOccurs="0"/>
+						<xs:element name="SupplierContact" minOccurs="0" maxOccurs="2">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="ContactNm" type="PersonNameType" minOccurs="0"/>
+									<xs:element name="PhoneNbr" type="xs:string" minOccurs="0"/>
+									<xs:element name="EmailAddresstxt" type="xs:string" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Address" type="AddressType" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="VendorSiteData" type="InvoiceVendorSiteType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Used to support information about supplier site level attributes.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CustomerParty" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Customer Party that received goods and services from Albertson companies </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="CustomerAccountNbr" minOccurs="0"/>
+						<xs:element name="CustomerSiteNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CustomerFacilityId" type="xs:string" minOccurs="0"/>
+						<xs:element name="CustomerFacilityNm" type="xs:string" minOccurs="0"/>
+						<xs:element name="CustomerDUNSNbr" type="xs:string" minOccurs="0"/>
+						<xs:element name="CustomerContact" minOccurs="0" maxOccurs="2">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="ContactNm" type="PersonNameType" minOccurs="0"/>
+									<xs:element name="PhoneNbr" type="xs:string" minOccurs="0"/>
+									<xs:element name="EmailAddresstxt" type="xs:string" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="AccountClassId" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Customer class indentifier.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="AccountTypeCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates the type of customer account</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CustomerAddress" type="AddressType" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="BillTo" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Party responsible for the payment as per PO or Invoice terms.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="BillToFacilityId" type="xs:string" minOccurs="0"/>
+						<xs:element name="BillToFacilityNm" type="xs:string" minOccurs="0"/>
+						<xs:element name="BillToDUNSNbr" type="xs:string" minOccurs="0"/>
+						<xs:element name="BillToContact" minOccurs="0" maxOccurs="2">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="ContactNm" type="xs:string" minOccurs="0"/>
+									<xs:element name="PhoneNbr" type="xs:string" minOccurs="0"/>
+									<xs:element name="EmailAddresstxt" type="xs:string" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="BillToAddress" type="AddressType" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="RemitTo" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identifies the party or location that the payment is to be remitted to or sent to.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="RemitToFacilityId" type="xs:string" minOccurs="0"/>
+						<xs:element name="RemitToFacilityNm" type="xs:string" minOccurs="0"/>
+						<xs:element name="RemitToDUNSNbr" type="xs:string" minOccurs="0"/>
+						<xs:element name="RemitToContact" minOccurs="0" maxOccurs="2">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="ContactNm" type="xs:string" minOccurs="0"/>
+									<xs:element name="PhoneNbr" type="xs:string" minOccurs="0"/>
+									<xs:element name="EmailAddresstxt" type="xs:string" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="RemitToAddress" type="AddressType" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ShipTo" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identifies the ShipToParty for the document or the line. In a lot of cases, this is the same as the CustomerParty. In multi-organization purchasing, the CustomerParty may be different from the BuyerParty</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ShipToFacilityId" type="xs:string" minOccurs="0"/>
+						<xs:element name="ShipToFacilityNm" type="xs:string" minOccurs="0"/>
+						<xs:element name="ShipToDUNSNbr" type="xs:string" minOccurs="0"/>
+						<xs:element name="ShipToContact" minOccurs="0" maxOccurs="2">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="ContactNm" type="xs:string" minOccurs="0"/>
+									<xs:element name="PhoneNbr" type="xs:string" minOccurs="0"/>
+									<xs:element name="EmailAddresstxt" type="xs:string" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="ShipToAddress" type="AddressType" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Carrier" type="CarrierEquipment" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>Idenitfies the party that serves as the carrier of the goods or services for the transaction.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BillOfLadingNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="30"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ReferencePurchaseOrder" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Purchase Orders associated with the Invoice</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="PurchaseOrderNbr" type="xs:string" minOccurs="0"/>
+						<xs:element name="PurchaseOrderDt" type="xs:date" minOccurs="0"/>
+						<xs:element name="PurchaseOrderStatusCd" type="xs:string" minOccurs="0"/>
+						<xs:element name="PurchaseOrderAttachCd" type="CodeWithDescription" minOccurs="0"/>
+					</xs:sequence>
+					<xs:attribute name="ReferenceType" use="optional">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:maxLength value="20"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:attribute>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Tax" type="TaxType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Indicates the tax for the object associated.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InvoiceCharges" type="ChargesType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>All the charges applied at th eheader level.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InvoiceAllowances" type="AllowancesType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Identifies the discount or allowance that the Customer is to receive off of the TotalAmount owed as a result of the associated document or sub-portion of a document.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PaymentTerms" type="PaymentTermType" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>Identifies the payment term for an Order or Invoice. Supports the abiility to specify an absolute due date, a number of days from a start date, a percent discount or an absolute discount. A common term like "Net30Days" is explicitly code as either a calculated DueDateTime or a PaymentTermsDateTime and NumberOfDays.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InstallmentAmt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InstallmentPercent" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Percenatge of invoice amount paid thru installment</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="6"/>
+						<xs:fractionDigits value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InstallmentGroup" type="xs:string" default="" minOccurs="0"/>
+			<xs:element name="InvoiceComments" default="" minOccurs="0" maxOccurs="5">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="Type" type="xs:string" default=""/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="TransportationTerms" type="TransportationTermType" minOccurs="0"/>
+			<xs:element name="TotalInvoiceQty" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="12"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TotalShippedQty" default="0" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="12"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="QuantityUOM" type="xs:string" default="" minOccurs="0"/>
+			<xs:element name="TotalWeightAmt" default="0" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="12"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="WeightUOM" type="xs:string" default="Lbs" minOccurs="0"/>
+			<xs:element name="TotalVolumeAmt" default="0" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="12"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VolumeUOM" type="xs:string" default="CuFt" minOccurs="0"/>
+			<xs:element name="TotalInvoiceAmt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TotalTaxAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Total tax amount, including all kinds of taxes at the invoice header level.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="12"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PriceBracket" type="xs:string" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A price schedule based on the number of cases that a retailer orders the greater the quantity ordered, the lower the price per case. Also called a volume or quantity discount</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrderSizingFactor" type="xs:decimal" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A product specification other than gross or net weight, or cubic feet for a line item or transaction used for order sizing and pricing purposes</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RequestedShipDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Requested Ship Date/Pick up Date</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RequestedDeliveryDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Delivery Requested on this Date</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GoodsShipDt" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Actual Ship date</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GoodsReceiptDt" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="InvoiceSendDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="OrgMasterNameType" type="OrgMasterNameType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="AccountsPayableData" type="APInvoiceType" minOccurs="0"/>
+			<xs:element name="RecordType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicated the record-type </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RecordInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if the invoice record has not passed the edit due to errors.  Valid values are  N = No, Y = Yes,  " "</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InvoiceSource" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is for the originating system for the AP invoices (M3, WIMS, PACS, etc)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InvoiceDestination" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is for the target system for the AP invoices </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FileSequenceNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Field contains the sequence number for each file processed.  This number increments by 1 for every file processed in the interface.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InvoiceUser" minOccurs="0" maxOccurs="5">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="CodeWithDescription"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="DebitMemoInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Debit/Meno indicator</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="TransactionType" minOccurs="0"/>
+			<xs:element name="MCLBRNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Branch identifier, to be used in conjucton with branch item code to make branch item cd unique. Old legacy identifier for warehouse items.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="WarehouseSection" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Warehouse section id.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InvoiceInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Used to indicate if DSD invoice is unpaid, paid via Money Order or paid via Site Draft. (valued could be 1, 5 or 7)</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="CrossReferenceTransaction" minOccurs="0"/>
+			<xs:element name="BillRecordId" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>ID generated by CABS to track individual billing records.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MinBillStartDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Represents the min bill_start_date of the items </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MaxBillStartDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Represents the max bill_end_date of the items </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LeadCorporateItemCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Lead Corporate Item Code</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LeadItemDescription" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Lead Corp Item Code Description</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RecordAuditData" type="InvoiceRecordAuditData" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="LifecycleCategoryStatusCd" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Invoice category code </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OfferNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Offer number from NOPA vendor deal; part of PACs input files</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ItemsSumAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Total paid amount against the items on invoice</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OverToleranceInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>OverTolerance Indicator - True or False</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FlatCd" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A system-generated unique identifier that is used instead of the natural key.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AltInvoiceId" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Used for system generated invoice IDs </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InstallmentNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Installement number</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReceiptCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Returns the Invoice or Receipt Number and Returns the Receipt Adjustment is Hardcoded as No</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BusinessUnitId" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Corresponds to the business unit identifier </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="BusinessUnitNm" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InvoiceCreateFacilityType">
+		<xs:annotation>
+			<xs:documentation>Facility where Invoice has been created or issued. ex store, warehouse or a plant or Vendors.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="Abs:CorporationId" minOccurs="0"/>
+			<xs:element ref="Abs:DivisionId" minOccurs="0"/>
+			<xs:element name="DivisionAccountUnitCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Division ID in the accounting system.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="Abs:DistributionCenterId" minOccurs="0"/>
+			<xs:element ref="Abs:WarehouseId" minOccurs="0"/>
+			<xs:element ref="Abs:RetailStoreId" minOccurs="0"/>
+			<xs:element ref="Abs:ManufacturingPlantId" minOccurs="0"/>
+			<xs:element name="AccountingOfficeId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Corporate Accounting facility like NASC</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="Abs:DepartmentId" minOccurs="0"/>
+			<xs:element name="VendorId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Vendors may issue Invoices to manufacturing plants or warehouses for items supplied and they will be Albertson's inbound Invoices.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InvoiceCreateFacilityNm" minOccurs="0"/>
+			<xs:element name="InvoiceCreateOrgDUNSNbr" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>DUNS number of the invoice creation facility/organization.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InvoiceCreateFacilityAddress" type="Abs:AddressType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InvoiceReceiveFacilityType">
+		<xs:annotation>
+			<xs:documentation>Facility where Invoice has been received. ex NASC,store, warehouse or a plant or external customer.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="Abs:CorporationId" minOccurs="0"/>
+			<xs:element ref="Abs:DivisionId" minOccurs="0"/>
+			<xs:element name="DivisionAccountUnitCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Division ID in the accounting system.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="Abs:DistributionCenterId" minOccurs="0"/>
+			<xs:element ref="Abs:WarehouseId" minOccurs="0"/>
+			<xs:element ref="Abs:RetailStoreId" minOccurs="0"/>
+			<xs:element ref="Abs:ManufacturingPlantId" minOccurs="0"/>
+			<xs:element name="AccountingOfficeId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Corporate Accounting facility like NASC</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="Abs:DepartmentId" minOccurs="0"/>
+			<xs:element name="CustomerId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>External wholesale customers may receive invoices from manufacturing plants or warehouses for item procurement and they will be Albertson's Outbound Invoices.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CustomerTypeCd" type="xs:string" minOccurs="0"/>
+			<xs:element name="InvoiceReceiveFacilityNm" minOccurs="0"/>
+			<xs:element name="InvoiceReceiveOrgDUNSNbr" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>DUNS number of the facility/organization receiving the invoice.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InvoiceReceiveFacilityAddress" type="Abs:AddressType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="APInvoiceType">
+		<xs:annotation>
+			<xs:documentation>This type represents company's accounts payable invoices.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="CompanyId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The number that identifies a company. A company represents a business or legal  entity of an organization.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InvoiceSuffixNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The invoice suffix number. Represents the occurrence value of the invoice.  Used to identify the recurrence value of a recurring invoice and for system-generated credit memos created for prepayments and employee advances.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="AccountId" minOccurs="0"/>
+			<xs:element name="AltAccountId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Can be account ID but in string format.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="25"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="SubAccountId" minOccurs="0"/>
+			<xs:element name="CancelSeqNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The sequence number assigned upon the  cancellation of a distributed invoice. The first sequence assigned is 9999.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CancelDt" type="DateType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The cancellation date assigned to a canceled invoice.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BatchNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The batch number associated with the invoice. Used only if the company has Yes selected in the Batch Release Option field.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="6"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BatchDt" type="DateType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The batch date assigned to the batch number. Must be a valid record in the Batch file.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VoucherNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The voucher number assigned to the invoice. Used only if the company has Yes selected in the Invoice Registration Option field.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AuthorityCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The authority code assigned to the invoice. Represents the person or department responsible for approving a registered invoice and is required before a registered invoice can be released. Used only by a company that has Yes selected in the Invoice Approval field and No in the Batch Release field.  Must be a valid record in the Authority Code file.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ProcessLvl" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The process level assigned to the invoice. Must be a valid record in the Accounts Payable Process Level file.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AccrualCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The invoice accrual code assigned to the invoice. Used to default a general ledger accrual account to the invoice.  Must be a valid record in the Invoice Accrual Code file.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InvoiceTypeCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identifies the type of invoice. Valid values are: Blank = Invoice. Increases the amount owed to the vendor. If the invoice is fully processed, the vendor's purchase and payment balances will be increased.  C = Credit Memo. Reduces the amount owed to the vendor. If the invoice is fully processed, the vendor's purchase and payment balances will be decreased.  D = Debit Memo. Processed just like an invoice. Increase the vendor's purchase and payment balances.  P = Prepayment. Processed just like an invoice. Used to pay a vendor for goods or services not yet received.  Y = Prepayment Credit Memo. Created by AP170 (Payment Closing) to offset a prepayment and are applied to the vendor's invoice after it has been received.  A = Employee Advance. Processed just like an invoice. Used to pay an employee for expenses not yet incurred.  M = Employee Advance Credit Memo.  Created by Payment Closing (AP170) to offset an employee advance. Can be applied to the employee's expense after it has been received.  E =  Employee Expense. Processed just like an invoice.  R = Match Prepayment.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InvoiceCurrencyCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The currency of the invoice. Must be a valid record in the Currency Code file.  If left blank, the vendor currency defaults.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PayCurrencyCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The currency used to pay the invoice. Must be a valid record in the Currency Code file.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PurchaseFromLocCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The purchase-from location code associated with the invoice. Must be a valid record in the Vendor Location file.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PurchaseOrderNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the number representing the purchase order.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="14"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PurchaseOrderReleaseNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The purchase order release number associated with the invoice. Used to identify a purchase order release created from a blanket or standing order. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PurchaseOrderCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Purchase order number code. Used to keep purchase orders unique. Can be used for reporting purposes.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InvoiceDsc" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The description of the invoice.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="30"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InvoiceBaseAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The amount of the invoice in the company base currency. This amount is calculated based on the currency exchange rate in effect when the invoice was created or entered.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InvoiceNonBaseAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The amount of the invoice in the company base currency. For non-base currency invoices, this amount is updated when currency revaluation takes place.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InvoiceOriginalAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The amount of the invoice in the currency of the invoice.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InvoiceAvailDiscountAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The amount of the invoice available for discount in the currency of the invoice.  Used to calculate the discount amount based on the discount rate. If left blank, the invoice amount defaults.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InvoiceTaxableAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The taxable amount of the invoice in the base currency of the invoice.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InvoiceDiscountAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The discount amount of the invoice in the company base currency.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InvoiceOriginalDiscountAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The discount amount of the invoice in the currency of the invoice.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InvoiceBasePymtAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The total payment amount created for Amount the invoice in the company base currency.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InvoiceOriginalPymtAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The total payment amount created for the invoice in the currency of the invoice.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InvoiceBaseDistribAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The total distribution amount of the invoice in the company base currency.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InvoiceOriginalDistribAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The total distribution amount of the invoice in the currency of the invoice.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InvoiceOriginalTaxAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The total tax amount of the invoice in the currency of the invoice.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InvoiceBaseTaxAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>BLANK. Needs clarification. Originated from API-TRAN-TOT-TXBL </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InvoiceTotalPaidAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The total amount of the invoice paid to date in the currency of the invoice.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CurrencyExchangeRateAmt" type="CurrencyExchangeRateType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The currency exchange rate used to convert the invoice amount to the company base currency. This field may be updated if the invoice is revalued to account for exchange rate fluctuations.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AnticipDiscountInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates whether anticipation criteria will be used to calculate the discount amount of the invoice. Valid values are: N = No.  Y = Yes.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LostDiscountInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>For historical status invoices,
+indicates whether the available discount
+was lost. Valid values are:
+N = No. Default value. Y= Yes.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DiscountRatePct" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The discount rate used to calculate the discount amount of the invoice.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="5"/>
+						<xs:fractionDigits value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DiscountDt" type="DateType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The discount date of the invoice. Used to determine whether a discount will be taken on an invoice.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InvoiceDueDt" type="DateType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The invoice due date. Used to schedule the invoice for payment.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SplitPymtNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Used for split payment invoices to indicate the total number of payments to be made for the invoice.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SplitPymtInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Used for split payment invoices to indicate the frequency of payments to be made for the invoice. The invoice, due, and discount dates are incremented according the schedule selected. Valid values are: W = Weekly.  M = Monthly.  Q = Quarterly.  S = Semiannually.  Y = Yearly.  Blank = Not a split payment invoice.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RecurNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Used for recurring invoices to indicate the number of times the invoice will  recur.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RecurInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Used for recurring invoices to indicate how often the invoice should recur.  Valid values are: W = Weekly.  M = Monthly.  Q = Quarterly.  S = Semiannually.  Y = Yearly.  Blank = Not a recurring invoice.  E = End of Month.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RemitToLocCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The remit-to location code associated with the invoice. Must be a valid record  in the Vendor Location file.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CashCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The cash code assigned to the invoice. Represents the bank account the invoice is to be paid from. Must be a valid record in the Cash Code file.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PymtCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The payment code assigned to the invoice. Represents the type of cash payment or bill of exchange payment used to pay the invoice. Must be a valid cash payment transaction code record in the Bank Transaction Code file.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PymtNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The payment number used to pay the invoice. Required only for historical status invoice records with no payment                      records. If entered, the Payment Code assigned to the invoice must be a valid ash payment type transaction code record in the Bank Transaction Code file.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PymtInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates whether the invoice will be selected for immediate payment regardless of the due date. Valid values  are: N = No. Default value. Y = Yes.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PymtEnclosure" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates whether the invoice requires an enclosure with its payment. If you select Yes, you have the option to group
+payments that require enclosures when  you run AP150 (Cash Requirements). Valid values are: N = No. Default value. Y = Yes.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RecalcCurrencyInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Used for non-base currency invoices to indicate whether the invoice will be revalued when it is scheduled for payment to account for currency exchange rate fluctuations. Valid values are: N = No.  Y = Yes.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TaxCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The tax code or tax table code applied to the invoice. Used to calculate invoice tax information. Must be a valid record in the Tax Code file.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="IncomeCd" minOccurs="0"/>
+			<xs:element name="DistribCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The distribution code assigned to the  invoice. Used during invoice entry to distributions for  the invoice. Must be a valid record in the Distribution Code file.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="9"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InvoiceStatusCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The status of the invoice record. Valid values are: 0 = Unreleased. Not available for payment.  1 = Released. Available for payment.  9 = Historical. Paid and closed.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InvoiceCreateDt" type="DateType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The date the invoice was created in the  Lawson Accounts Payable system.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InvoiceCreateTm" type="TimeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The time the invoice was created in the Lawson Accounts Payable system.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InvoiceDistribDt" type="DateType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The date used for posting invoice distributions to the general ledger.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OperatorCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The operator associated with maintaining the invoice.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="VendorGrp" minOccurs="0"/>
+			<xs:element name="PayVendorId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The pay vendor for the invoice.  Represents the vendor that receives payment for the invoice. Must be a valid record in the Vendor file.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="Paygrp" minOccurs="0"/>
+			<xs:element name="InvoiceGrp" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The invoice group assigned to the invoice. An invoice group is a user-defined character expression that can be used to select invoices for payment. The same invoice group can be assigned to more than one invoice.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LastDistribSeqNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Used by the system to track the number of the last distribution line created for the invoice.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="6"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LastPymtRecNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Used by the system to track the last payment record number used for the invoice.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DiscountCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The discount code assigned to the invoice. Represents a general ledger discount account. Must be a valid record in the Discount Code file.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InvoiceSourceTxt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates the source for creation of the invoice. Valid values are: Blank = Manual entry.  E = Electronic Data Interchange (EDI).  R = Evaluated Receipts Settlement (ERS).  P = Payroll T = Tax G = Garnishment L = Lease C = AR Transfer S = Sub Contractor X = Expense Interface.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InvoiceNumberTypeCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates the type of number the vendor is providing to reference the invoice.  Valid values are: BM = Bill of Lading.  IN = Invoice.  OW = Service Order.  PL = Packing List.  PO = Purchase Order Number.  VN = Vendor Order.  WO = Production Order.  WP = Warehouse Pick Ticket.  ZZ = Mutually Defined.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PymtApprovalInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates whether the invoice is approved for payment. Valid values are: Y = Yes.  N = No.  D = Disapproved M = Message Exists P = Message Pending Action R = Match Prepayment.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ApprovalOperatorCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If the invoice required approval, this field contains the operator that approved the invoice.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ReturnNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If the goods associated with the invoice were returned, this field contains the optional return number assigned to the return.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="JournalBookNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The journal book assigned to the transaction.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="12"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TaxContextInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates when the tax amount is calculated for the invoice, if applicable. Valid values are: I = Invoice.  P = Payment.
+  G = GL Post Date.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ObjectId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A subsystem object interface identification number. Used to identify the Invoice Distribution and Asset Detail records that are associated with the invoice. Also used for Drill Around purposes.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="12"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ReconDt" type="DateType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A subsystem object interface identification number. Used to identify the Invoice Distribution and Asset Detail records that are associated with the invoice. Also used for Drill Around purposes.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ProofOfDeliveryInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates is a proof of delivery has been printed for this invoice.  Valid values are: Y = Yes " " = No.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MatchReferenceNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Matching reference number. This is a user defined number used for matching.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="22"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MatchTypeCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if the invoice is a match invoice.  A = AOC Invoice Y = PO Invoice N = Exp Invoice.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TermCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Invoice payment terms code.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ReceiveDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The date the invoice was received. If left blank, the system date defaults.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RetailAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The retail amount of the item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MatchStatusCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates the match status of the invoice.  Valid values are: 0 = Unmatched 1 = Out of tolerance 2 = Matched 3 = Matched out of tolerance 4 = Matched in tolerance 5 = Matched with auto chargeback 6 = Approved No Receipt (MA61).</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CreditReasonCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the reason code, which indicates the cause for credit memos.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InvoiceHandlingCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Invoice handling code. Determines the processing rules that will be used during matching.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MatchAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Match amount. Represents the goods amount on which the invoice will match to a receipt.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AddonCostAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Add on cost amount.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StockLocationCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains a valid stocking location within the company inventory.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MatchObjectId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A system generated matching object identifier.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="12"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ChargebackPrintInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates whether to print chargebacks. N = No Y = Yes  " " = spaces.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MatchTableTxt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A code representing a match table. A match table contains the processing rules that will be used during matching.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TaxControlCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This control field defines the tax code usage in invoicing and approving taxes.  For PO Invoices, if set to O (Override) all lines approved for payment will use the tax code defined for the whole invoice.  If set to I (Ignore) no PO lines approved for payment will be taxed.  0 = No Tax 1 = Override Product Only 2 = Ignore Product Only 3 = Calculate 4 = Overide Product and AOC 5 = Ignore Product and AOC 6 = ignore tax tol ovr goods tax 7 = ignore tax tol ovr goods/aoc.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InvoiceTaxAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The amount of invoiced tax that will be generated on the invoice from taxable add on costs and taxable purchase order receipt lines assigned to the invoice.  The resulting value is then used to compute the invoice match amount when no tax code has been assigned to the invoice.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LastMatchLineNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Last matched line number.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MatchLevelTxt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates whether the invoice was matched at the invoice or detail level.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MatchDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The date the invoice was matched.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BypassMatchInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>BLANK.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ServiceOnlyInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field indicates a transaction is a Service only transaction.  Y = Yes N = No.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BuyerCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Buyer code.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FinalDistribInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>BLANK.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OriginTransactionCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The Nature of Transaction code.  Must be a valid code defined in IN07.1 (NOTC Maintenance).</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="StatProcedureCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The statistical procedure code applied to the data.  The code must be defined in IN06.1. (Statistical Procedure Maintenance).</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="6"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ShipViaTxt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>BLANK.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="12"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="UnloadPortNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The port where the goods are unloaded if required.  Must be defined in IN04.1  (Port Maintenance)</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="IntrastatNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The number assigned by the Intrastat system to a transaction that involves Intrastat reporting after it has been added.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="12"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ReceivingProcessInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This flag indicates whether goods being shipped by the vendor directly to a non standard location need to have the receiving process performed.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FOBCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The user defined Free On Board Code.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="JournalBookSeqNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The journal book sequence number assigned to a journal book transaction when it is added or interfaced to the Lawson system. Used only when  Auto Journal Book Seq Nbr is set to Yes in GL10.1 (Company).</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DiversityCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Diversity Code for Account Payable Vendors.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FlexInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>BLANK.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RuleGrp" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the rule group entered on the AP20 invoice entry screen.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FloatDaysNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is a number of days to add to best terms calculation if the vendor will allow a specific number of days for payment to reach them and still receive the discount.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MatchPrePayInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Flag that notes if the invoice will be prepaid.  This is for match invoices.  " " = Blank 1 = Yes 2 = No.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MatchPrePayMethodInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Flag that denotes the method of match prepayment. Values are: 0 = No. 1 = Prepay from Invoice. 2 = Eligible for Prepayment.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PrePayDt" type="DateType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>BLANK.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PrePayDiscountCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>BLANK.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PrePayReferenceNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>BLANK.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="22"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PrePayRetailAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>BLANK.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PrePayAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>BLANK.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PrePayAOCAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>BLANK.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PrePayTaxAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>BLANK.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PrePayServiceAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>BLANK.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CostComponentInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the flag when added to the handling code denotes that the invoice will be reviewed for match based on header, line, and Cost components (AOC).</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MatchAOCAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the amount of the AOC that has been matched.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TotalQtyNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the total qty of the goods on the invoice.  This field will be used to match on quantity.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="15"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ExternalVendorId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the total qty of the goods on the invoice.  This field will be used to match on quantity.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="9"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MatchErrorCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the reason the match was not successful for Invoice Match.  01 = Match Invoice 02 = Cost error 03 = No receipt information 04 = Hash quantity error 05 = No AOC on purchase order 06 = No AOC cost 07 = Tax out of balance.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="9"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BestTermDiscountAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the amount of the discount based on best terms.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DiscountPointNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the flag that will note if the discounts will be applied to the cost of the goods or the cost of the goods and the AOC.  1 = Cost of goods 2 = Cost of Goods and AOC.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="APITaxInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>" " = Not interfaced. I = Interfaced.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OutOfBalanceDiffTaxAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Derived field to show difference between header taxable input and total taxable amount from distributions.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ChargebackInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>BLANK.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OriginCountryCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The country from which the goods were shipped. Must be a valid country in IN01.1 (Country Maintenance).</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OriginRegionCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The region of the country from which the goods were shipped, if required. Must be a valid region in IN02.1 (Region Maintenance).</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DestCountryCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The country to which the goods were shipped.  Must be a valid country in IN01.1 (Country Maintenance).</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DestRegionCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The region of the country to which the goods were shipped, if required.  Must be a valid region in IN02.1 (Region Maintenance).</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TransportModeDsc" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The mode of transportation at the border crossing.  Code 7 is used for the Channel Tunnel.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="StatementTxt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Used to identify the invoice.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="22"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DiscountLostind" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>For historical status invoices,
+indicates whether the available discount was lost. Valid values are: N = No. Default value. Y = Yes.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InvoiceRecordAuditData">
+		<xs:annotation>
+			<xs:documentation>Defines create time, last update time and users performed those DB actions on Source data.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="CreateDtTm" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time when the record was created in the source system.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CreateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>the record create timestamp in the source system.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ExpiryTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Delete timestamp of a record.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CreateUserId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="UpdateDtTm" type="DateTimeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time when the record was last updated in the source system.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UpdateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Last updated timestamp of the source sytem record.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UpdateUserId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ApproveUserId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute ref="typeCode"/>
+	</xs:complexType>
+	<xs:complexType name="InvoiceVendorSiteType">
+		<xs:annotation>
+			<xs:documentation>Used to support information about supplier site level attributes.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="AltVendorId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>System generated Supplier unique identifier</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:integer">
+							<xs:attribute name="typeCode">
+								<xs:annotation>
+									<xs:documentation>This can be used to distinguish if this is a system generated vendorId value or legacy vendorId value</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="VendorSite" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="VendorSiteId" type="xs:integer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Supplier site unique identifier. Used for processing controls for transactions (processing rules, payment terms, etc.) </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="VendorSiteCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Site code name</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="VendorSitePurpose" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Different indicators for the site. Note that a site can have multiple purposes </xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="PrimarySiteInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicates if this is primary site (Y or blank)</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="PrimaryPaySiteInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Primary Pay site flag in Supplier site (Y or blank)</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="SourcingSiteInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Sourcing site flag (Y or blank)</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="PurchasingSiteInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Purchasing site flag (Y or blank)</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ProcurementSiteInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Procurement site flag (Y or blank)</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

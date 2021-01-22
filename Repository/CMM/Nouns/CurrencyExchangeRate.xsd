@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by  (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--v1.2 11/03/2020 - Rosavel M - Add tag to resolve issue on dateTimeStamp.-->
+	<!--v1.1 10/07/2020 - Rosabel M - Added ConversionType and AverageBalanceStatus elements.-->
+	<!--v1.0 07/21/2020 - Jayson S  - Initial Version-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:include schemaLocation="FinanceMaster.xsd"/>
+	<xs:complexType name="CurrencyExchangeType">
+		<xs:annotation>
+			<xs:documentation>An exchange rate is the value of one nation's currency versus the currency of another nation or economic zone. For example, how many U.S. dollars does it take to buy one euro? As of Dec. 13, 2019, the exchange rate is 1.10, meaning it takes $1.10 to buy €1</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ExchangeRateEffectiveDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Effective date of the FX Rate</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SourceCurrency" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The source Currency Code for the monetary amount to be converted.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TargetCurrency" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The target Currency Code for the monetary amount to be converted.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CurrencyExchangeRate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Is the multiplier to convert the source units to the target units. (e.g.) The conversion of one currency to another currency monitary amount in the from currency is multiplied by the CalculationRateNumeric to calcultate the monitary amount in the to currency. Another example maybe the conversion between units of measure.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:fractionDigits value="7"/>
+						<xs:totalDigits value="16"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PublicationType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The identification code of the rate type (such as “Monthly End Rate” defined within Configuration workbook within Rate Types)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ConversionType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This defines the type of rate conversion. Possible values could be Spot, Corporate, User, Fixed etc., If user wants to enter different daily rates for the same combination of from-currency, to-currency, and conversion date, different conversion rate types will be used.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AverageBalanceStatus" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This specifies whether the rate can be used for set of books for which average balancing is enabled. By default, the status code will always be C. Possible values are C, O, D. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

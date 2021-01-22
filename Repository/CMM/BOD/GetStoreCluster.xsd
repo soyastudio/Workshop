@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2014 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Safeway, Inc.) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" 
+vc:minVersion="1.1"
+elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/StoreCluster.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="GetStoreCluster" type="Abs:StoreClusterType">
+		<xs:annotation>
+			<xs:documentation>A cluster of stores represents various ways by which STOREs with similar characteristics may be 
+clustered/grouped, and is typically used to facilitate the merchandising of STOREs with similar sales patterns.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetStoreCluster">
+		<xs:annotation>
+			<xs:documentation>A cluster of stores represents various ways by which STOREs with similar characteristics may be 
+clustered/grouped, and is typically used to facilitate the merchandising of STOREs with similar sales patterns.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="StoreClusterData" type="Abs:StoreClusterType" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

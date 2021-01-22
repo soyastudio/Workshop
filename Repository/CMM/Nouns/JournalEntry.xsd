@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by  (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--v1.2: 11/03/2020 - Rosabel M - Add tag to resolve issue on dateTimeStamp-->
+	<!--v1.1: 10/09/2020 - Rosabel M - Add new element JournalEntryFileType-->
+	<!--v1.0: 05/11/2020 - Jayson S  - Initial Draft-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:include schemaLocation="FinanceMaster.xsd"/>
+	<xs:complexType name="JournalEntryType">
+		<xs:annotation>
+			<xs:documentation>A journal represents a change in the balances of a business's financial accounts.  Many tasks or transactions throughout an enterprise will result in the creation of a journal.  Some examples are creating a customer invoice, paying a vendor, transferring inventory, or paying employees.  
+
+Journal Entries are posted to General Ledger for the following:
+Updating expense and liability accounts
+For revenue, cash payments, deductions, finance charges and tax accruals
+For bank account transaction entries and reconciliation adjustments entered in Cash Management application
+For each addition, adjustment, transfer, disposal and depreciation of assets
+</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="RunGroupId" minOccurs="0"/>
+			<xs:element ref="SequenceNbr" minOccurs="0"/>
+			<xs:element ref="OldAccountId" minOccurs="0"/>
+			<xs:element ref="OldCompanyId" minOccurs="0"/>
+			<xs:element ref="PrimeAccountId" minOccurs="0"/>
+			<xs:element ref="SubAccountId" minOccurs="0"/>
+			<xs:element ref="CompanyId" minOccurs="0"/>
+			<xs:element ref="SystemNbrCd" minOccurs="0"/>
+			<xs:element name="SubmittingFacility" type="SubmittingFacilityType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the facility that is submitting the Journal Entry. Depending on the interface, this can either be a warehouse or a retail facility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="JournalEntryNbr" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field will uniquely identify a journal entry within
+a division</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="JournalEntrySource" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains the shorthand code of the Journal Entry interface. Example:
+
+SC - Store Charge
+FS - Facility Sales Management
+... </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="FiscalYearId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Fiscal Year</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FiscalWeekId" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Fiscal Week</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TransactionDayNbr" type="xs:decimal" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Represents individual days of the week.
+1 - Sunday ... 7 - Saturday. Defines the JE transaction day within the fiscal week.
+
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReferenceTxt" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field will identify/refer to information which is
+related to the transaction.
+
+In some cases, reference can be a contact number.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GLSystem" type="CodeWithName" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A two-character code representing an
+  application used within the Lawson        
+  system. (i.e.: GL = General Ledger, AP =   Accounts Payable, etc.) </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="JournalEntryCreationDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains the system creation date.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PostingDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date assigned to the journal entry for posting.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EffectiveDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The effective date used for converting
+transactions when the Transaction
+Conversion program is run.
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Program" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A program code used to identify where a transaction was created.
+
+Ex: GL165</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AutoReverseInd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>When the Auto Reversal field is set to "Y," the General Ledger Closing program  creates an opposite                        entry  for this transaction in the next  period.   
+                       Y = Yes                                  
+                       N = No </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Activity" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Activities are the processes or
+procedures that produce work. Cost
+objects (products, services, customers,
+and so on) are the reasons for
+performing the activity. 
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="AccountCategory" minOccurs="0"/>
+			<xs:element name="DocumentNbr" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Document Number. In Mercator, this is set to Blank, but checking on the GLTRANSREL table this is usually similar with Run Group</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="JournalFileSequenceNbr" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> indicates the sequence number of file processed. value increments for every file processed. Value is passed back to source system after being processed by the financial system.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="JournalBookNbr" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Journal book assigned to the transaction.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AdditionalInfo" type="CodeWithDescription" minOccurs="0" maxOccurs="3">
+				<xs:annotation>
+					<xs:documentation>The attribute value associated with the
+transaction.
+
+For JIF based files, this is USER_FIELD1..3, for GTR-based files, this is MX_VALUE1..3.
+
+Interfaces like Store charge use 2 out of 3 additional info fields. These are INVOICE, and WHSE.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="JournalBookSequenceNbr" type="xs:decimal" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The next available journal book
+sequence number assigned to an
+interfaced transaction when added to the
+Lawson system.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NegativeAdjustmentInd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates a negative adjustment for
+auto-reversing interfaced transactions;
+used if you have defined your company as
+requiring single type accounts.
+ </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="AmountType" minOccurs="0"/>
+			<xs:element name="LineStatusInd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates the status of the transaction</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="JobNbr" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field, in conjunction with the corporation, division,
+and facility numbers, is used to define a project number.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UnitAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Used for amount types 02, 03, 04</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="TransactionAmt" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Used for amount type 01 - COST
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BaseAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The base amount to be posted to the
+General Ledger Master file. If left
+blank, the interfacing program will use
+the currency routine to calculate the
+base amount using the transaction amount
+and transaction currency code.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ToCompanyBaseAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains the To Company base amount.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReportAmt" type="ReportAmountType" minOccurs="0" maxOccurs="2">
+				<xs:annotation>
+					<xs:documentation>No official documentation available and mapping is blank for all interfaces.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SegmentBlockTxt" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field identifies the user analysis
+values included in the transaction.
+
+ 
+
+You can either type up to four values
+or use Define (F6) to open the User
+Analysis Entry subform. Use this subform
+to select the user analysis values you
+want to include in the transaction. If
+you choose to type values, use commas to
+separate them. For example:
+value1,value2,value3,value4</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="TransactionType" minOccurs="0"/>
+			<xs:element name="TransactionSubType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Normally used for FSM Journal entries, this is the sub category or description for the FSM transaction type. An example would be for Transaction Type 1 - Deposit, the sub type might look something like 1 Bank Deposit – Cash</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AccountingUnit" type="AccountingUnitType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Used to capture distribution account details</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DistributionCompanyId" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identifies the AP company if the resource type = V.  
+Identifies the HR company if the resource type = E.  
+It is blank for type A, P or Q resources</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BankType" type="BankType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Used to capture bank details normally found for FSM type JEs.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="JournalEntryFileType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if the Journal Entry is Accrual or Deferral</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ReportAmountType">
+		<xs:annotation>
+			<xs:documentation>No official definition, but this is mapped against GTR-based journal entries. These entries are generally blank.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ReportAmt" type="xs:decimal" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Report Currency 1 Amount</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReportRate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Report Currency Rate</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReportND" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The number of decimals assigned to a
+particular account as determined by the
+account currency.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

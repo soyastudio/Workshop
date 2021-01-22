@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<xs:schema xmlns="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://www.openapplications.org/oagis/9" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" 
+vc:minVersion="1.1"
+elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.0  02142020 Sai Nuthakki   Initial Version-->
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/PharmacyMaster.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="GetFacilityDrugMaster" type="GetFacilityDrugMasterType">
+		<xs:annotation>
+			<xs:documentation>Business Object to define the pharmacy drug master data maintained in a phrmacy facility like a pharmacy store or Rx fulfillment center. It contains the master data for all the drugs dispensed in that facility.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetFacilityDrugMasterType">
+		<xs:annotation>
+			<xs:documentation>Business Object to define the pharmacy drug master data maintained in a phrmacy facility like a pharmacy store or Rx fulfillment center. It contains the master data for all the drugs dispensed in that facility.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="FacilityDrugMasterData" type="Abs:FacilityDrugType"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

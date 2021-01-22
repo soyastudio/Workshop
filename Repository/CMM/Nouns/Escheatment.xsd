@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by  (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--06/10/2020 - Jayson S  - Initial Version-->
+	<!--06/18/2020 V1.0 Jayson S Create custom property Owner Type, renamed Escheat to Escheatment-->
+	<!--08/28/2020 V1.1 Jayson S Added EscheatmentPropertyHolder for Outbound-->
+	<!--09/24/2020 V1.2 Jayson S Added SourceCreateDt and change PropertyId to String-->
+	<!--11/03/2020 V1.3 Rosabel M Added tags to resolve type dateTimestamp issue. -->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:include schemaLocation="FinanceMaster.xsd"/>
+	<xs:complexType name="EscheatmentType">
+		<xs:annotation>
+			<xs:documentation>Escheat refers to the right of a government to take ownership of estate assets or unclaimed property. It most commonly occurs when an individual dies with no will and no heirs. Escheat rights can also be granted when assets are unclaimed for a prolonged period of time. These situations can also be referred to as bona vacantia or simply just unclaimed property.
+
+
+The concept of escheat maintains that property always has a recognized owner, which would be the state or government if no other claimants to ownership exist or are readily identified. In the U.S., each state jurisdiction has its own laws and regulations governing escheat rights and related matters.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="EscheatmentPropertyType" type="CodeWithDescription">
+				<xs:annotation>
+					<xs:documentation>Defines the type of escheatment for this message. Some examples include: 
+
+* Checking or savings accounts
+* Stocks
+* Uncashed dividends or payroll checks
+* Refunds
+* Traveler’s checks
+* Trust distributions
+* Unredeemed money orders or gift certificates (in some states)
+* Certificates of deposit
+* Customer overpayments
+* Utility security deposits
+* Mineral royalty payments
+* Contents of safe deposit boxes
+* Insurance payments or refunds and life insurance policies
+* Annuities</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EscheatmentReportDt" type="xs:date">
+				<xs:annotation>
+					<xs:documentation>Escheatment date.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReferenceNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains related reference Id to the unclaimed Property. This can be payroll number if it is a paycheck, Invoice number if it is an invoice payment, Purchase Order for purchases, etc. Type of reference is identified by Qualifier Code.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="QualifierCd" type="xs:string">
+								<xs:annotation>
+									<xs:documentation>Defines the kind of reference Id used for this unclaimed property. Example includes Payroll Number for paycheck, Purchase Order Number, Invoice Number, etc.</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="EscheatmentBankType" type="BankType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>For savings or checking account, contains the bank details of the property for escheatment.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EscheatmentCheckType" type="CheckType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains details of the unclaimed check.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ProcessReturnMessageTxt" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Return message. Message returned by the Financial system to tell whether it was processed successfully or not.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Property" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines the details of the unclaimed property </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="PropertyId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Defines the applicable identification for the property due for Escheatment. This can be insurance policy number, gift certificate number, etc.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:simpleContent>
+									<xs:extension base="xs:string">
+										<xs:attribute name="QualifierCd" type="xs:string">
+											<xs:annotation>
+												<xs:documentation>Qualifies the kind of identifier. Can be Gift Certificate Id, Insurance Policy Number, Certificate of Deposit Number, etc.</xs:documentation>
+											</xs:annotation>
+										</xs:attribute>
+									</xs:extension>
+								</xs:simpleContent>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="PropertyOwner" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Defines the owner of the property that is for Escheatment. This can be the owner of the check, savings account, etc.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:complexContent>
+									<xs:extension base="PropertyOwnerType"/>
+								</xs:complexContent>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="PropertyDetailTxt" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Contains relevant detailed text about the property that is subject to escheatment</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="EscheatmentStatus" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Populated for Adjustment file only. This pertains to the status of the transaction in the Lawson Cash Ledger system.  (Open, Reconciled, Voided, Stop Payment, Stale Date, Escheatment)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BankTransactionDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Represents the date the transaction cleared the bank or was voided.       </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RemarkTxt" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>this is "CHECK" as these are checks for tracker . Check for abandoned properties, unclaimed check payroll of employee or unclaimed check payment to vendor.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EscheatmentAltTransactionId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Any Alternate identification associated to the escheated property.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EscheatmentDocLastModifiedDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains the last modified date of the escheated property document</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EscheatmentPropertyHolder" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Also known as Holder ID Number or State ID. A state ID number distributed by some states to identify holders that have previously reported unclaimed property in their state. This ID is usually included in subsequent filings and can be used by states to ensure timely filing of reports.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SourceCreateDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Create date from source system like Oracle.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PropertyOwnerType">
+		<xs:annotation>
+			<xs:documentation>Defines the owner of the unclaimed property. Can be a Person, or an Organization</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PropertyOwnerType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines the type of owner for the unclaimed property. Owner can be a person, or an organization.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Person" type="PersonNameType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the person who owns the unclaimed property</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrganizationNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the organization or company if the owner is not a person.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PropertyOwnerAddress" type="AddressBaseType" minOccurs="0"/>
+			<xs:element name="BusinessOwnerInd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if the property owner is a businessowner</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

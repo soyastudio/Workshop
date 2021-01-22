@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://collab.safeway.com/it/architecture/AbsOmMaster" xmlns:ns2="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--V2.0 - Alex Nunes - 1/12/21 - Structure redesigned to accomodate business requirement changes and introduction of new system of record.-->
+	<xs:complexType name="StoreItemSchematic">
+		<xs:annotation>
+			<xs:documentation>Defines the layout of various item placement structures in a retail store.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StoreFixtureData" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation> Fixtures in a particular Store upon which a Planogram is placed.  For example, a Planogram designed for a 9ft long Gondola would be associated to 3 - 3ft long Gondola Fixtures in a Store.  In general, Planograms are associated to one or more Store Fixtures.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="PlanogramId" type="xs:integer" minOccurs="0"/>
+						<xs:element name="FixtureShelf" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>represents each of the individual areas on a FIXTURE that can be used to display ITEMs for sale or to store ITEMs, as detailed on a PLANOGRAM. Typically it is similar to the concept of a "shelf" in a traditional "bookcase", but can take on other forms as well in the case of more unusual/ creatively shaped STORE FIXTUREs (i.e., pegboard, pallet, slot wall).  </xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="ShelfNbr" type="xs:integer" minOccurs="0"/>
+									<xs:element name="SlotItem" minOccurs="0" maxOccurs="unbounded">
+										<xs:annotation>
+											<xs:documentation>details the specific ITEM to be displayed in a specific positional location on a FIXTURE SHELF, as detailed on a PLANOGRAM.
+
+Example: 
+In the left-most position of the bottom shelf of the Store Fixture, display the "Tide" laundry detergent with the front of the box facing the Shopper.  Display at least 4 boxes at all times, and allow up to 3 more boxes stacked behind each box.
+</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="UPC" type="ns2:UPC" minOccurs="0"/>
+												<xs:element ref="ns2:CorporateItemCd" minOccurs="0"/>
+												<xs:element name="ConsumerSellingCd" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>CSC - Consumer Selling Code is a grouping of similar purchase-able items.
+For example, Coke sold in the individual can or in a 6-pack are two distinct "purchase-able" consumer Items.</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:maxLength value="20"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="ConsumerSellingCdDsc" minOccurs="0">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:maxLength value="50"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="ItemDsc" minOccurs="0">
+													<xs:complexType>
+														<xs:sequence>
+															<xs:element name="POSItemDsc" type="xs:string" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Abreviated Dsc of the item that will appear on scanner store receipts.</xs:documentation>
+																	<xs:documentation>Dsc of the item in retail POS.</xs:documentation>
+																</xs:annotation>
+															</xs:element>
+															<xs:element name="RetailItemDsc" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Description of item in Retail systems.</xs:documentation>
+																</xs:annotation>
+															</xs:element>
+															<xs:element name="InternetItemDsc" type="xs:string" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Dsc used in internet for various promotions.</xs:documentation>
+																</xs:annotation>
+															</xs:element>
+															<xs:element name="WarehouseItemDsc" nillable="false" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>This is the Dsc of a warehoused item. It contains the brand and Dsc of the item. The brand occurs first. The space after the brand is located using the column brand end position. The space before the flavor/type in the Dsc is located using the column SUFFIXPOS.</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:maxLength value="40"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:element>
+															<xs:element name="VendorItemDsc" type="xs:string" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Item Dsc provided by the vendor</xs:documentation>
+																</xs:annotation>
+															</xs:element>
+														</xs:sequence>
+													</xs:complexType>
+												</xs:element>
+												<xs:element name="PlacementCnt" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Items placement count with in the shelf in a planogram.</xs:documentation>
+													</xs:annotation>
+													<xs:complexType>
+														<xs:sequence>
+															<xs:element name="HorizontalCnt" type="xs:integer" minOccurs="0"/>
+															<xs:element name="VerticalCnt" type="xs:integer" minOccurs="0"/>
+															<xs:element name="CapCnt" type="xs:integer" minOccurs="0"/>
+															<xs:element name="FaceCoordinateNbr" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Delimited list of the X location of each facing of the item.</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:decimal">
+																		<xs:totalDigits value="11"/>
+																		<xs:fractionDigits value="2"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:element>
+															<xs:element name="DepthCnt" type="xs:int" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Facings deep count.</xs:documentation>
+																</xs:annotation>
+															</xs:element>
+														</xs:sequence>
+													</xs:complexType>
+												</xs:element>
+												<xs:element name="Slot" minOccurs="0">
+													<xs:complexType>
+														<xs:sequence>
+															<xs:element name="SlotNbr" type="xs:integer" minOccurs="0"/>
+															<xs:element name="SlotDimensions" type="DimensionsType" minOccurs="0"/>
+															<xs:element name="SlotCoordinates" type="CoordinatesType" minOccurs="0"/>
+															<xs:element name="AverageDaysSupplyNbr" minOccurs="0">
+																<xs:simpleType>
+																	<xs:restriction base="xs:decimal">
+																		<xs:totalDigits value="10"/>
+																		<xs:fractionDigits value="3"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:element>
+														</xs:sequence>
+													</xs:complexType>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CoordinatesType">
+		<xs:sequence>
+			<xs:element name="XCoordinateNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="10"/>
+						<xs:fractionDigits value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="YCoordinateNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="10"/>
+						<xs:fractionDigits value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ZCoordinateNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="10"/>
+						<xs:fractionDigits value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CoordinateUOMCd" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AisleType">
+		<xs:sequence>
+			<xs:element name="AisleNbr" type="xs:string" minOccurs="0"/>
+			<xs:element name="AisleDsc" type="xs:string" minOccurs="0"/>
+			<xs:element name="AisleTypeCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Type of an Aisle within the store 
+Ex: Dry goods, liquor or frozen item Aisle.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AislePositionTxt" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DimensionsType">
+		<xs:sequence>
+			<xs:element name="Height" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="10"/>
+						<xs:fractionDigits value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Width" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="10"/>
+						<xs:fractionDigits value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Depth" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="10"/>
+						<xs:fractionDigits value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="UOMCd" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ProductHierarchy">
+		<xs:annotation>
+			<xs:documentation>Contains product hierarchy information like group, class, category..etc to which a product belongs to.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ProductGroup" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ProductGroupCd" type="xs:integer" minOccurs="0"/>
+						<xs:element name="ProductGroupNm" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ProductCategoryCd" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ProductCategoryCd" type="xs:integer" minOccurs="0"/>
+						<xs:element name="ProductCategoryNm" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ProductClassCd" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ProductClassCd" type="xs:integer" minOccurs="0"/>
+						<xs:element name="ProductClassNm" type="xs:string" minOccurs="0"/>
+						<xs:element name="RetailSectionCd" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ProductSubClassLevel1" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ProductSubClassLevel1Cd" type="xs:integer" minOccurs="0"/>
+						<xs:element name="ProductSubClassLeve1Nm" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ProductSubClassLevel2" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ProductSubClassLevel2Cd" type="xs:integer" minOccurs="0"/>
+						<xs:element name="ProductSubClassLevel2Nm" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ResponsiblePartyType">
+		<xs:annotation>
+			<xs:documentation>Merchandising responsible party in the org like business unit group manager, category director and category manager.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="BUGMNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Business unit group manager id/nbr.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BUGMNm" minOccurs="0"/>
+			<xs:element name="CategoryDirectorNbr" minOccurs="0"/>
+			<xs:element name="CategoryDirectorNm" minOccurs="0"/>
+			<xs:element name="CategoryManagerNbr" minOccurs="0"/>
+			<xs:element name="CategoryManagerNm" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

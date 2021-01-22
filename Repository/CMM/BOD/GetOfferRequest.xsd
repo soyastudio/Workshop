@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<xs:schema xmlns="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://www.openapplications.org/oagis/9" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.0 Initial version 06102020   Sai Nuthakki-->
+	<!--V1.1 Rosabel Macario 11/04/2020 - Added tag to resolve dateTimeStamp issue-->
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/OfferRequest.xsd"/>
+	<xs:element name="GetOfferRequest" type="GetOfferRequestType">
+		<xs:annotation>
+			<xs:documentation>Business Object to define the the request process to generate a promotional offer applicable in a specific location and for specific set of sale items.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetOfferRequestType">
+		<xs:annotation>
+			<xs:documentation>Business Object to define the the request process to generate a promotional offer applicable in a specific location and for specific set of sale items.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="OfferRequestData" type="Abs:OfferRequestType"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

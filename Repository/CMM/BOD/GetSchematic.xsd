@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:include schemaLocation="../Nouns/Schematic.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="GetSchematic" type="GetSchematic">
+		<xs:annotation>
+			<xs:documentation>Root element.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetSchematic">
+		<xs:annotation>
+			<xs:documentation>Business object that provides retail store planogram data. Defines the drawings of retail store layout with special attention on product placement.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="SchematicData" type="Schematic"/>
+		</xs:sequence>
+		<xs:attribute name="VersionId" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>Version Id for the BOD instance</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="ReleaseId" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>ReleaseId for the BOD instance</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="SystemEnvironmentCd" type="xs:string" use="optional" default="Production">
+			<xs:annotation>
+				<xs:documentation>Prod, Test, QA</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+</xs:schema>

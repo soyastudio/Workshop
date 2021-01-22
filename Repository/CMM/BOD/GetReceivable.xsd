@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<xs:schema xmlns="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://www.openapplications.org/oagis/9" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.0  07182019 Sai Nuthakki   Initial Version-->
+	<!--V1.1 11/04/2020 Rosabel Macario - Added tag to resolve dateTimeStamp issue-->
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/FinanceMaster.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="GetReceivable" type="GetReceivableType">
+		<xs:annotation>
+			<xs:documentation>Receivable is a transaction representing an invoice, credit memo or debit memo to a customer.  A receivable is an open (unpaid) item in the Accounts Receivable ledger.Defines open receivable items.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetReceivableType">
+		<xs:annotation>
+			<xs:documentation>Receivable is a transaction representing an invoice, credit memo or debit memo to a customer.  A receivable is an open (unpaid) item in the Accounts Receivable ledger.Defines open receivable items.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ReceivableData" type="Abs:ReceivableType"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

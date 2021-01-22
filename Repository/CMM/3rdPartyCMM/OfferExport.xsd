@@ -1,0 +1,1184 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<xsd:schema
+  version="1.0.8"
+  attributeFormDefault="unqualified"
+  elementFormDefault="qualified"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:mstns="http://www.safeway.com/Copient/Offer/Active/Extract/OfferExports.xsd">
+  <xsd:element name="OfferExport">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="PublishingTopic" type="xsd:string" />
+        <xsd:element name="ExportedAt" type="xsd:dateTime" />
+        <xsd:element name="ID" type="xsd:string" />
+        <xsd:element name="Note" type="xsd:string" minOccurs="0" />
+        <xsd:element name="Version" type="xsd:string" fixed="1.0.8" />
+        <xsd:element name="General">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="Identification">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="OfferID" type="xsd:long" id="CPE_ST_Incentives.IncentiveID.2">
+                      <!-- Description: Primary key for offer -->
+                    </xsd:element>
+                    <xsd:element name="ExternalID" id="CPE_ST_Incentives.ClientOfferID.3" minOccurs="0">
+                      <!-- Description: PKID for offer in external system (eg OMS) -->
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                          <xsd:maxLength value="20" />
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="RewardOptionID" type="xsd:long" id="CPE_ST_RewardOptions.RewardOptionID.4"
+                                 minOccurs="0">
+                      <!-- Description: PKID for offer used in CPE -->
+                    </xsd:element>
+                    <xsd:element name="EngineID" type="xsd:integer" id="CPE_ST_Incentives.EnginePhraseID.5">
+                      <!-- Description: 'Not really useful in Safeway, just NCR way of telling what kind of offer this is for, they have different engine in NCR, but Safeway only use CPE'
+Linked to: PromoEngines -->
+                    </xsd:element>
+                    <xsd:element name="EngineName" type="xsd:string"
+                                 id="CPE_ST_Incentives.Phrase.EnginePhraseID.6">
+                      <!-- Field link: CPE_ST_Incentives.EnginePhraseID=PhraseText.PhraseID -->
+                    </xsd:element>
+                    <xsd:element name="Status">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="CPE_ST_Incentives.StatusFlag.7" />
+                          <xsd:element name="Name" id="ProductTypes.Name.7">
+                            <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="255" />
+                              </xsd:restriction>
+                            </xsd:simpleType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="Name" id="CPE_ST_Incentives.IncentiveName.8">
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                          <xsd:maxLength value="100" />
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="Description" id="CPE_ST_Incentives.Description.9">
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                          <xsd:maxLength value="1000" />
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="Category">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="CPE_ST_Incentives.PromoClassID.10" />
+                          <xsd:element name="Name" id="OfferCategories.Description.11">
+                            <!-- Field link: CPE_ST_Incentives.PromoClassID=OfferCategories.OfferCategoryID -->
+                            <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="255" />
+                              </xsd:restriction>
+                            </xsd:simpleType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="VendorCouponCode" id="CPE_ST_Incentives.VendorCouponCode.12">
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                          <xsd:maxLength value="20" />
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="Priority">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="SelectOfferPriority">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="CPE_ST_Incentives.PriorityID.13" />
+                          <xsd:element name="Name" id="CPE_IncentivePriorities.Description.14">
+                            <!-- Description: 'High, Medium, Low'
+Linked to: CPE_IncentivePriorities
+Field link: CPE_ST_Incentives.PriorityID -->
+                            <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="50" />
+                              </xsd:restriction>
+                            </xsd:simpleType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="Dates">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="ProductionStart" type="xsd:date" id="CPE_ST_Incentives.StartDate.15" />
+                    <xsd:element name="ProductionEnd" type="xsd:date" id="CPE_ST_Incentives.EndDate.16" />
+                    <xsd:element name="EligibilityStart" type="xsd:date"
+                                 id="CPE_ST_Incentives.EligibilityStartDate.17" />
+                    <xsd:element name="EligibilityEnd" type="xsd:date"
+                                 id="CPE_ST_Incentives.EligibilityEndDate.18" />
+                    <xsd:element name="TestingStart" type="xsd:date" id="CPE_ST_Incentives.TestingStartDate.19" />
+                    <xsd:element name="TestingEnd" type="xsd:date" id="CPE_ST_Incentives.TestingEndDate.20" />
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="EligibilityFrequency">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="Name" type="xsd:string"
+                                 id="CPE_ST_Incentives.Phrase.P1DistQtyLimitP1DistPeriodP1DistTimeType.21">
+                      <!-- Description: 'term.nolimit, onceperday, etc.: 1-5: no limit, once per transaction, once per day, once per week, once per offer'
+Field link: CPE_DistributionTimeTypes.TimeTypeID=CPE_ST_Incentives.P1DistTimeType and PhraseText.PhraseID=CPE_DistributionTimeTypes.PhraseID -->
+                    </xsd:element>
+                    <xsd:element name="Limit" type="xsd:integer" id="CPE_ST_Incentives.P1DistQtyLimit.22">
+                      <!-- Description: limit 1 fields -->
+                    </xsd:element>
+                    <xsd:element name="Period" type="xsd:integer" id="CPE_ST_Incentives.P1DistPeriod.23" />
+                    <xsd:element name="Type">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="CPE_ST_Incentives.P1DistTimeType.24" />
+                          <xsd:element name="Name" type="xsd:string"
+                                       id="CPE_DistributionTimeTypes.Phrase.TimeTypeID.25" />
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="RewardFrequency">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="Name" type="xsd:string"
+                                 id="CPE_ST_Incentives.Phrase.P3DistQtyLimitP3DistPeriodP3DistTimeType.26">
+                      <!-- Description: limit 3 fields
+Field link: CPE_DistributionTimeTypes.TimeTypeID=CPE_ST_Incentives.P3DistTimeType and PhraseText.PhraseID=CPE_DistributionTimeTypes.PhraseID -->
+                    </xsd:element>
+                    <xsd:element name="Limit" type="xsd:integer" id="CPE_ST_Incentives.P3DistQtyLimit.27" />
+                    <xsd:element name="Period" type="xsd:integer" id="CPE_ST_Incentives.P3DistPeriod.28" />
+                    <xsd:element name="Type">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="CPE_ST_Incentives.P3DistTimeType.29" />
+                          <xsd:element name="Name" type="xsd:string"
+                                       id="CPE_DistributionTimeTypes.Phrase.TimeTypeID.30">
+                            <!-- Field link: CPE_DistributionTimeTypes.TimeTypeID=CPE_ST_Incentives.TimeTypeID and PhraseText.PhraseID=CPE_DistributionTimeTypes.PhraseID -->
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="InboundOutbound">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="CreationSource">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="CPE_ST_Incentives.InboundCRMEngineID.31" />
+                          <xsd:element name="Name" type="xsd:string"
+                                       id="ExtCRMInterfaces.Phrase.InboundCRMEngineID.32">
+                            <!-- Field link: ExtCRMInterfaces.ExtInterfaceId=CPE_ST_Incentives.InboundCRMEngineID -->
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="OutboundData">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="CPE_ST_Incentives.CRMEngineID.33" />
+                          <xsd:element name="Name" type="xsd:string"
+                                       id="ExtCRMInterfaces.Phrase.ExtInterfaceId.34">
+                            <!-- Field link: Phrase for ExtInterfaceId=CPE_ST_Incentives.CRMEngineID -->
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="ChargebackVendor">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="CPE_ST_Incentives.ChargebackVendorID.35" />
+                          <xsd:element name="Name" id="Vendors.Name.36">
+                            <!-- Field link: CPE_ST_Incentives.ChargebackVendorID=Vendors.ExtVendorID -->
+                            <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="100" />
+                              </xsd:restriction>
+                            </xsd:simpleType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="Employees">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="AvailableToEmployeesOnly" type="xsd:boolean"
+                                 id="CPE_ST_Incentives.EmployeesOnly.37">
+                      <!-- Description: Employee enabled when EmployeesOnly Or EmployeesExcluded -->
+                    </xsd:element>
+                    <xsd:element name="NotAvailableToEmployees" type="xsd:boolean"
+                                 id="CPE_ST_Incentives.EmployeesExcluded.38" />
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="AdvancedOptions">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="AutoTransferable" type="xsd:boolean"
+                                 id="CPE_ST_Incentives.AutoTransferable.39" />
+                    <xsd:element name="EnableIssuance" type="xsd:integer" id="CPE_ST_Incentives.SendIssuance.40" />
+                    <xsd:element name="EnableImpressionReporting" type="xsd:boolean"
+                                 id="CPE_ST_Incentives.EnableImpressRpt.41" />
+                    <xsd:element name="EnableRedemptionReporting" type="xsd:boolean"
+                                 id="CPE_ST_Incentives.EnableRedeemRpt.42" />
+                    <xsd:element name="TreatAsManufacturerCoupon" type="xsd:integer"
+                                 id="CPE_ST_Incentives.ManufacturerCoupon.43" />
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="Summary">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="Folders" id="Folders.FolderName.44" minOccurs="0">
+                      <!-- Linked to: FolderItems
+Field link: FoldereItems.LinkID=CPE_ST_Incentives.OfferID and FoldereItems.LinkTypeID=1 -->
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                          <xsd:maxLength value="50" />
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="Tiers" type="xsd:integer" id="CPE_ST_RewardOptions.TierLevels.45">
+                      <!-- Field link: TouchResponse=0 and IncentiveID=OfferID -->
+                    </xsd:element>
+                    <xsd:element name="CreatedBy">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="CPE_ST_Incentives.CreatedByAdminID.46">
+                            <!-- Linked to: AdminUsers
+Field link: AdminUsers.AdminUserID=CPE_ST_Incentives.CreatedByAdminID -->
+                          </xsd:element>
+                          <xsd:element name="Name" id="AdminUsers.FirstNameLastName.47">
+                            <!-- Linked to: AdminUsers
+Field link: AdminUsers.AdminUserID=CPE_ST_Incentives.CreatedByAdminID -->
+                            <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="100" />
+                              </xsd:restriction>
+                            </xsd:simpleType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="LastUpdatedBy">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer"
+                                       id="CPE_ST_Incentives.LastUpdatedByAdminID.48">
+                            <!-- Linked to: AdminUsers
+Field link: AdminUsers.AdminUserID=CPE_ST_Incentives.LastUpdatedByAdminID -->
+                          </xsd:element>
+                          <xsd:element name="Name" id="AdminUsers.FirstNameLastName.49">
+                            <!-- Linked to: AdminUsers
+Field link: AdminUsers.AdminUserID=CPE_ST_Incentives.LastUpdatedByAdminID -->
+                            <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="100" />
+                              </xsd:restriction>
+                            </xsd:simpleType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="Deleted" type="xsd:integer" />
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="Conditions">
+          <xsd:complexType>
+            <xsd:all>
+              <xsd:element name="CustomerConditions" minOccurs="0">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="SelectedCustomerGroup" minOccurs="1" maxOccurs="unbounded">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="CPE_ST_Incentives.RewardOptionID.50">
+                            <!-- Description: ExcludedUsers=0 -->
+                          </xsd:element>
+                          <xsd:element name="Name" id="CustomerGroup.Name.51">
+                            <!-- Description: ExcludedUsers=0
+Field link: 'select CG.CustomerGroupID, Name from CPE_ST_IncentiveCustomerGroups as ICG with (NoLock) left join CustomerGroups as CG with (NoLock) on CG.CustomerGroupID=ICG.CustomerGroupID where RewardOptionID=@RewardOptionID and ICG.deleted=0 and ExcludedUsers=0 and ICG.CustomerGroupID is not null' -->
+                            <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="255" />
+                              </xsd:restriction>
+                            </xsd:simpleType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="ExcludedCustomerGroup" minOccurs="0" maxOccurs="unbounded">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="CPE_ST_Incentives.RewardOptionID.52">
+                            <!-- Description: ExcludedUsers=1 -->
+                          </xsd:element>
+                          <xsd:element name="Name" id="CustomerGroup.ExcludedName.53">
+                            <!-- Description: ExcludedUsers=1
+Field link: 'select CG.CustomerGroupID, Name from CPE_ST_IncentiveCustomerGroups as ICG with (NoLock) left join CustomerGroups as CG with (NoLock) on CG.CustomerGroupID=ICG.CustomerGroupID where RewardOptionID=@RewardOptionID and ICG.deleted=0 and ExcludedUsers=1 and ICG.CustomerGroupID is not null' -->
+                            <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="255" />
+                              </xsd:restriction>
+                            </xsd:simpleType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="EnableHouseholding" type="xsd:boolean"
+                                 id="CPE_ST_RewardOptions.HHEnable.54" minOccurs="0" />
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="ProductConditions" minOccurs="0">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="ProductCondition" maxOccurs="unbounded">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="SelectedProductGroup" minOccurs="0">
+                            <xsd:complexType>
+                              <xsd:sequence>
+                                <xsd:element name="ID" type="xsd:integer"
+                                             id="CPE_ST_IncentiveProductGroups.ProductGroupID.55">
+                                  <!-- Description: ExcludedProducts=0 -->
+                                </xsd:element>
+                                <xsd:element name="Name" id="ProductGroups.Name.56">
+                                  <!-- Description: ExcludedProducts=0
+Linked to: CPE_ST_IncentiveProductGroups
+Field link: 'select PG.ProductGroupID,Name from CPE_ST_IncentiveProductGroups as IPG left join ProductGroups as PG on PG.ProductGroupID=IPG.ProductGroupID where RewardOptionID=@RewardOptionID and IPG.deleted=0 and ExcludedProducts=0 and IPG.ProductGroupID is not null' -->
+                                  <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                      <xsd:maxLength value="200" />
+                                    </xsd:restriction>
+                                  </xsd:simpleType>
+                                </xsd:element>
+                                <xsd:element name="Items" minOccurs="0" maxOccurs="unbounded">
+                                  <xsd:complexType>
+                                    <xsd:sequence>
+                                      <xsd:element name="Item" minOccurs="0" maxOccurs="unbounded">
+                                        <xsd:complexType>
+                                          <xsd:attribute name="Type" type="xsd:integer" />
+                                          <xsd:attribute name="ID" type="xsd:string" />
+                                          <xsd:attribute name="Description" type="xsd:string" />
+                                        </xsd:complexType>
+                                      </xsd:element>
+                                    </xsd:sequence>
+                                  </xsd:complexType>
+                                </xsd:element>
+                              </xsd:sequence>
+                            </xsd:complexType>
+                          </xsd:element>
+                          <xsd:element name="ExcludedProductGroup" minOccurs="0">
+                            <xsd:complexType>
+                              <xsd:sequence>
+                                <xsd:element name="ID" type="xsd:integer" id="CPE_ST_Incentives.ProductGroupID.57">
+                                  <!-- Description: ExcludedProducts=1 -->
+                                </xsd:element>
+                                <xsd:element name="Name" id="ProductGroups.Name.58">
+                                  <!-- Description: ExcludedProducts=1
+Field link: 'select PG.ProductGroupID,Name from CPE_ST_IncentiveProductGroups as IPG left join ProductGroups as PG on PG.ProductGroupID=IPG.ProductGroupID where RewardOptionID=@RewardOptionID and IPG.deleted=0 and ExcludedProducts=1 and IPG.ProductGroupID is not null' -->
+                                  <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                      <xsd:maxLength value="200" />
+                                    </xsd:restriction>
+                                  </xsd:simpleType>
+                                </xsd:element>
+                                <xsd:element name="Items" minOccurs="0" maxOccurs="unbounded">
+                                  <xsd:complexType>
+                                    <xsd:sequence>
+                                      <xsd:element name="Item" minOccurs="0" maxOccurs="unbounded">
+                                        <xsd:complexType>
+                                          <xsd:attribute name="Type" type="xsd:integer" />
+                                          <xsd:attribute name="ID" type="xsd:string" />
+                                          <xsd:attribute name="Description" type="xsd:string" />
+                                        </xsd:complexType>
+                                      </xsd:element>
+                                    </xsd:sequence>
+                                  </xsd:complexType>
+                                </xsd:element>
+                              </xsd:sequence>
+                            </xsd:complexType>
+                          </xsd:element>
+                          <xsd:element name="Quantity" type="xsd:decimal"
+                                       id="CPE_ST_IncentiveProductGroups.QtyForIncentive.59" />
+                          <xsd:element name="Unit">
+                            <xsd:complexType>
+                              <xsd:sequence>
+                                <xsd:element name="ID" type="xsd:integer"
+                                             id="CPE_ST_IncentiveProductGroups.QtyUnitType.60" />
+                                <xsd:element name="Name" id="CPE_UnitTypes.Description.61">
+                                  <!-- Field link: 'select UnitTypeID, PhraseID, Description from CPE_UnitTypes UT with (NoLock) where MultiUOMState in (-1,0);' -->
+                                  <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                      <xsd:maxLength value="50" />
+                                    </xsd:restriction>
+                                  </xsd:simpleType>
+                                </xsd:element>
+                              </xsd:sequence>
+                            </xsd:complexType>
+                          </xsd:element>
+                          <xsd:element name="UniqueProduct" type="xsd:boolean"
+                                       id="CPE_ST_IncentiveProductGroups.UniqueProduct.62" />
+                          <xsd:element name="Minimum" type="xsd:decimal"
+                                       id="CPE_ST_IncentiveProductGroups.MinPurchAmt.63" />
+                          <xsd:element name="Limit" type="xsd:decimal" id="CPE_ST_IncentiveProductGroups.AccumLimit.64">
+                            <!-- Description: per -->
+                          </xsd:element>
+                          <xsd:element name="Accumulation">
+                            <xsd:complexType>
+                              <xsd:sequence>
+                                <xsd:element name="EnableAccumulation" type="xsd:boolean"
+                                             id="CPE_ST_IncentiveProductGroups.AccumMin.65">
+                                  <!-- Description: AccumMin > 0 -->
+                                </xsd:element>
+                                <xsd:element name="Period" type="xsd:integer"
+                                             id="CPE_ST_IncentiveProductGroups.AccumPeriod.66">
+                                  <!-- Description: days -->
+                                </xsd:element>
+                                <xsd:element name="Disqualifier" type="xsd:string"
+                                             id="CPE_ST_IncentiveProductGroups.Disqualifier.66">
+                                  <!-- Description: Disqualifier -->
+                                </xsd:element>
+                              </xsd:sequence>
+                            </xsd:complexType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="ProductConditionsJoinType" type="xsd:string"
+                           id="CPE_ST_RewardOptions.ProductComboID.66.5" minOccurs="0" />
+              <xsd:element name="PointConditions" minOccurs="0">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="SelectedPointProgram" minOccurs="0">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer"
+                                       id="CPE_ST_IncentivePointsGroups.ProgramID.67">
+                            <!-- Description: Doesn't actually have a label -->
+                          </xsd:element>
+                          <xsd:element name="Name" id="PointPrograms.ProgramName.68">
+                            <!-- Description: Doesn't actually have a label
+Field link: 'Select IPG.ProgramID,ProgramName from CPE_ST_IncentivePointsGroups as IPG with (NoLock) left join PointsPrograms as PP with (NoLock) on PP.ProgramID=IPG.ProgramID where IPG.deleted=0 and IPG.ProgramID is not null and RewardOptionID=@RewardOptionID' -->
+                            <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="255" />
+                              </xsd:restriction>
+                            </xsd:simpleType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="ValueNeededToSatisfyCondition" type="xsd:integer"
+                                 id="CPE_ST_IncentivePointsGroups.QtyForIncentive.69" minOccurs="0" />
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="DayConditions" minOccurs="0">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="SelectedDay" minOccurs="0" maxOccurs="7">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="CPE_DaysOfWeek.DOWID.70">
+                            <!-- Description: '1=Sunday, 2=Monday, etc' e-->
+                          </xsd:element>
+                          <xsd:element name="Name" id="CPE_DaysOfWeek.DayName.71">
+                            <!-- Field link: 'select DOWID, DayName, PhraseID from CPE_DaysOfWeek DW with (NoLock)' -->
+                            <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="50" />
+                              </xsd:restriction>
+                            </xsd:simpleType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="TimeConditions" minOccurs="0">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="TimeRange" minOccurs="0" maxOccurs="unbounded">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="StartTime" type="xsd:time" id="CPE_ST_IncentiveTOD.StartTime.72">
+                            <!-- Description: Can be added multiple times
+Field link: select * from CPE_ST_IncentiveTOD with (NoLock) where IncentiveId=@IncentiveId -->
+                          </xsd:element>
+                          <xsd:element name="EndTime" type="xsd:time" id="CPE_ST_IncentiveTOD.EndTime.73">
+                            <!-- Description: Can be added multiple times -->
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="TriggerCodeConditions" minOccurs="0">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="Code" id="CPE_ST_IncentivePLUs.PLU.78" minOccurs="0">
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                          <xsd:maxLength value="50" />
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="DisplayCashierMessageIfTriggerCodeIsNotUsed" type="xsd:boolean"
+                                 id="CPE_ST_IncentivePLUs.CashierMessage.79" minOccurs="0" />
+                    <xsd:element name="RequirementOncePerTransaction" type="xsd:boolean"
+                                 id="CPE_ST_IncentivePLUs.PerRedemption_0.80" minOccurs="0" />
+                    <xsd:element name="RequirementOncePerRedemption" type="xsd:boolean"
+                                 id="CPE_ST_IncentivePLUs.PerRedemption_1.81" minOccurs="0" />
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="CardTypeConditions" minOccurs="0">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="SelectedCardType" minOccurs="0" maxOccurs="unbounded">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="CPE_ST_IncentiveCardTypes.CardTypeID.82">
+                            <!-- Description: Can be added multiple times
+Field link: select CardTypeID from CPE_ST_IncentiveCardTypes with (NoLock) where RewardOptionID=@RewardOptionID and Deleted=0 and CardTypeID is not null -->
+                          </xsd:element>
+                          <xsd:element name="Name" id="CPE_ST_IncentiveCardTypes.Description.83">
+                            <!-- Description: Can be added multiple times
+Field link: select Description from CardTypes with (NoLock) where CardTypeID=@CardTypeID -->
+                            <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="100" />
+                              </xsd:restriction>
+                            </xsd:simpleType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:all>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="Rewards">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="DiscountRewards" minOccurs="0">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="DiscountType">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="CPE_ST_Discounts.DiscountTypeID.84" />
+                          <xsd:element name="Name" id="CPE_DiscountTypes.Name.85">
+                            <!-- Field link: select * from CPE_ST_Discounts with (NoLock) where Deleted=0 and DiscountID=@DiscountID -->
+                            <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="255" />
+                              </xsd:restriction>
+                            </xsd:simpleType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="SelectedProductGroup">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer"
+                                       id="CPE_ST_Discounts.DiscountedProductGroupID.86">
+                            <!-- Field link: Select Name from ProductGroups where Deleted=0 and NonDiscountableGroup=0 and PointsNotApplyGroup=0 and ProductGroupID=@DiscountedProductGroupID -->
+                          </xsd:element>
+                          <xsd:element name="Name" id="ProductGroups.Name.87">
+                            <!-- Field link: Select Name from ProductGroups where Deleted=0 and NonDiscountableGroup=0 and PointsNotApplyGroup=0 and ProductGroupID=@DiscountedProductGroupID -->
+                            <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="200" />
+                              </xsd:restriction>
+                            </xsd:simpleType>
+                          </xsd:element>
+                          <xsd:element name="Items" minOccurs="0" maxOccurs="unbounded">
+                            <xsd:complexType>
+                              <xsd:sequence>
+                                <xsd:element name="Item" minOccurs="0" maxOccurs="unbounded">
+                                  <xsd:complexType>
+                                    <xsd:attribute name="Type" type="xsd:integer" />
+                                    <xsd:attribute name="ID" type="xsd:string" />
+                                    <xsd:attribute name="Description" type="xsd:string" />
+                                  </xsd:complexType>
+                                </xsd:element>
+                              </xsd:sequence>
+                            </xsd:complexType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="ChargebackDepartment">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="CPE_ST_Discounts.ChargebackDeptID.88" />
+                          <xsd:element name="Name" id="ChargebackDepts.Name.89">
+                            <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="200" />
+                              </xsd:restriction>
+                            </xsd:simpleType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="DistributionType">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="CPE_AmountTypes.AmountTypeID.90" />
+                          <xsd:element name="Name" type="xsd:string" id="CPE_AmountTypes.Phrase.AmountTypeID.91" />
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="DistributionAmount" type="xsd:decimal"
+                                 id="CPE_ST_Discounts.DiscountAmount.92" minOccurs="0" />
+                    <xsd:element name="DistributionSalePrice" type="xsd:decimal"
+                                 id="CPE_ST_Discounts.DiscountAmount.93" minOccurs="0" />
+                    <xsd:element name="DistributionUpTo" type="xsd:decimal" id="CPE_ST_Discounts.L2Cap.94"
+                                 minOccurs="0" />
+                    <xsd:element name="DistributionItemLimit" type="xsd:integer"
+                                 id="CPE_ST_Discounts.ItemLimit.95" minOccurs="0" />
+                    <xsd:element name="DistributionDollarLimit" type="xsd:decimal"
+                                 id="CPE_ST_Discounts.DollarLimit.96" minOccurs="0" />
+                    <xsd:element name="DistributionReceeiptText" id="CPE_ST_Discounts.ReceiptDescription.97"
+                                 minOccurs="0">
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                          <xsd:maxLength value="100" />
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="DistributionWeightVolumeLimit" type="xsd:decimal"
+                                 id="CPE_ST_Discounts.WeightLimit.98" minOccurs="0" />
+                    <xsd:element name="DistributionIsWeightTotal" type="xsd:boolean"
+                                 id="CPE_ST_Discounts.IsWeightTotal.99" minOccurs="0" />
+                    <xsd:element name="DistributionProgram">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="CPE_ST_Discounts.SVProgramID.100" />
+                          <xsd:element name="Name" id="StoredValuePrograms.Name.101">
+                            <!-- Field link: CPE_ST_Discounts.SVProgramID=StoredValuePrograms.Name -->
+                            <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="200" />
+                              </xsd:restriction>
+                            </xsd:simpleType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="IncludeOnScorecard">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="CPE_ST_Discounts.ScorecardID.102" />
+                          <xsd:element name="Name" id="Scorecards.Description.103">
+                            <!-- Field link: CPE_ST_Discounts.ScorecardID=Scorecards.ScorecardID -->
+                            <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="100" />
+                              </xsd:restriction>
+                            </xsd:simpleType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="ScorecardText" id="CPE_ST_Discounts.ScorecardDesc.104" minOccurs="0">
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                          <xsd:maxLength value="100" />
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="ComputeDiscount" type="xsd:boolean"
+                                 id="CPE_ST_Discounts.ComputeDiscount.105" minOccurs="0" />
+                    <xsd:element name="BestDealOnItem" type="xsd:boolean" id="CPE_ST_Discounts.BestDeal.106"
+                                 minOccurs="0" />
+                    <xsd:element name="AllowItemToGoNegative" type="xsd:boolean"
+                                 id="CPE_ST_Discounts.AllowNegative.107" minOccurs="0" />
+                    <xsd:element name="FlexNegative" type="xsd:boolean" id="CPE_ST_Discounts.FlexNegative.108"
+                                 minOccurs="0" />
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="PrintedMessageRewards" minOccurs="0">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="MessageID" type="xsd:integer" id="PrintedMessages.MessageID.109" />
+                    <xsd:element name="MessageType">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="PrintedMessageTypes.TypeID.110" />
+                          <xsd:element name="Name" type="xsd:string" id="PrintedMessageTypes.Phrase.TypeID.111">
+                            <!-- Field link: CPE_ST_Deliverables.OutputID=CPE_ST_Discounts.DiscountID -->
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="Message" id="PrintedMessageTiers.BodyText.112" minOccurs="0">
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                          <xsd:maxLength value="4000" />
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="CashierMessageRewards" minOccurs="0">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="Beep">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="CPE_ST_CashierMessageTiers.Beep.113" />
+                          <xsd:element name="Name" type="xsd:string" id="BeepTypes.Phrase.BeepTypeID.114" />
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="BeepDurationInSeconds" type="xsd:integer"
+                                 id="CPE_ST_CashierMessageTiers.BeepDuration.115" minOccurs="0" />
+                    <xsd:element name="MessageLine1" id="CPE_ST_CashierMessageTiers.Line1.116" minOccurs="0">
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                          <xsd:maxLength value="30" />
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="MessageLine2" id="CPE_ST_CashierMessageTiers.Line2.117" minOccurs="0">
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                          <xsd:maxLength value="30" />
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="DisplayAtEOS" type="xsd:boolean"
+                                 id="CPE_ST_CashierMessageTiers.DisplayImmediate.118" minOccurs="0">
+                      <!-- Description: 'DisplayImmediate=0 is Display at EOS, DisplayImmediate=1 is Display Immediately' -->
+                    </xsd:element>
+                    <xsd:element name="TagsSvbal" minOccurs="0">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="StoredValuePrograms.SVProgramID.119" />
+                          <xsd:element name="Name" id="StoredValuePrograms.Name.120">
+                            <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="200" />
+                              </xsd:restriction>
+                            </xsd:simpleType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="TagsPtval" minOccurs="0">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="PointsPrograms.ProgramID.121" />
+                          <xsd:element name="Name" id="PointsPrograms.ProgramName.122">
+                            <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="255" />
+                              </xsd:restriction>
+                            </xsd:simpleType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="FrankingMessageRewards" minOccurs="0">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="FrankingMessage" id="CPE_ST_FrankingMessageTiers.FrankingText.123"
+                                 minOccurs="0">
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                          <xsd:maxLength value="38" />
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="FrankingApplyOption">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer"
+                                       id="CPE_ST_FrankingMessageTiers.FrankFlag.124" />
+                          <xsd:element name="Name" type="xsd:string"
+                                       id="CPE_ST_FrankingMessageTiers.Phrase.FrankFlag.125" />
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="CashierMessageLine1" id="CPE_ST_FrankingMessageTiers.Line1.126"
+                                 minOccurs="0">
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                          <xsd:maxLength value="30" />
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="CashierMessageLine2" id="CPE_ST_FrankingMessageTiers.Line2.127"
+                                 minOccurs="0">
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                          <xsd:maxLength value="30" />
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="Beep">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="CPE_ST_FrankingMessageTiers.Beep.128" />
+                          <xsd:element name="Name" type="xsd:string" id="BeepTypes.Phrase.BeepTypeID.129" />
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="BeepDurationInSeconds" type="xsd:integer"
+                                 id="CPE_ST_FrankingMessageTiers.BeepDuration.130" minOccurs="0" />
+                    <xsd:element name="OpenCashDrawer" type="xsd:boolean"
+                                 id="CPE_ST_FrankingMessageTiers.OpenDrawer.131" minOccurs="0" />
+                    <xsd:element name="RequireManagerOverride" type="xsd:boolean"
+                                 id="CPE_ST_FrankingMessageTiers.ManagerOverride.132" minOccurs="0" />
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="PointRewards" minOccurs="0">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="SelectedPointsProgram">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="CPE_ST_DeliverablePoints.ProgramID.133" />
+                          <xsd:element name="Name" id="PointsPrograms.ProgramName.134">
+                            <!-- Field link: PointPrograms.ProgramID=CPE_ST_DeliverablePoints.ProgramID -->
+                            <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="255" />
+                              </xsd:restriction>
+                            </xsd:simpleType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="QuantityAwarded" type="xsd:integer"
+                                 id="CPE_ST_DeliverablePoints.Quantity.135" minOccurs="0" />
+                    <xsd:element name="MaximumAdjustment" type="xsd:integer"
+                                 id="CPE_ST_DeliverablePoints.MaxAdjustment.136" minOccurs="0" />
+                    <xsd:element name="ChargebackDepartment">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer"
+                                       id="CPE_ST_DeliverablePoints.ChargeBackDeptID.137" />
+                          <xsd:element name="Name" id="ChargebackDepts.Name.138">
+                            <!-- Field link: CPE_ST_DeliverablePoints.ChargeBackDeptID=ChargebackDepts.ChargeBackDeptID -->
+                            <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="200" />
+                              </xsd:restriction>
+                            </xsd:simpleType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="IncludeOnScorecard" minOccurs="0">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="CPE_ST_DeliverablePoints.ScorecardID.139">
+                            <!-- Description: Onscreen scorecard built in ScorecardFeeds.aspx
+Field link: CPE_ST_DeliverablePoints.ScorecardID=Scorecards.ScorecardID -->
+                          </xsd:element>
+                          <xsd:element name="Name" id="Scorecards.Description.140">
+                            <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="100" />
+                              </xsd:restriction>
+                            </xsd:simpleType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="ScorecardText" id="CPE_ST_DeliverablePoints.ScorecardDesc.141"
+                                 minOccurs="0">
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                          <xsd:maxLength value="100" />
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="GroupMembershipRewards" minOccurs="0">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="SelectedCustomerGroup">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer"
+                                       id="CPE_ST_DeliverableCustomerGroupTiers.CustomerGroupID.142" />
+                          <xsd:element name="Name" id="CustomerGroup.Name.143">
+                            <!-- Field link: CPE_ST_DeliverableCustomerGroupTiers.CustomerGroupID=CustomerGroup.CustomerGroupID -->
+                            <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="255" />
+                              </xsd:restriction>
+                            </xsd:simpleType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="EligibilityNotifications" minOccurs="0">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="PrintedMessages">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="MessageType">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="PrintedMessageTypes.TypeID.144">
+                            <!-- Field link: CPE_ST_Deliverables.MessageID=PrintedMessages.OutputID -->
+                          </xsd:element>
+                          <xsd:element name="Name" type="xsd:string" id="PrintedMessageTypes.Phrase.TypeID.145" />
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="Message" id="PrintedMessageTiers.BodyText.146" minOccurs="0">
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                          <xsd:maxLength value="4000" />
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="CashierMessages">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="BeepDurationInSeconds" type="xsd:integer"
+                                 id="CPE_ST_CashierMessageTiers.BeepDuration.147" minOccurs="0">
+                      <!-- Field link: CPE_ST_Deliverables.OutputID=PrintedMessages.OutputID -->
+                    </xsd:element>
+                    <xsd:element name="MessageLine1" id="CPE_ST_CashierMessageTiers.Line1.148" minOccurs="0">
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                          <xsd:maxLength value="30" />
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="MessageLine2" id="CPE_ST_CashierMessageTiers.Line2.149" minOccurs="0">
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                          <xsd:maxLength value="30" />
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="DisplayImmediately" type="xsd:boolean"
+                                 id="CPE_ST_CashierMessageTiers.DisplayImmediate.150" minOccurs="0">
+                      <!-- Description: 'DisplayImmediate=0 is Display at EOS, DisplayImmediate=1 is Display Immediately' -->
+                    </xsd:element>
+                    <xsd:element name="TagsSvbal" minOccurs="0">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="StoredValuePrograms.SVProgramID.151" />
+                          <xsd:element name="Name" id="StoredValuePrograms.Name.152">
+                            <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="200" />
+                              </xsd:restriction>
+                            </xsd:simpleType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="TagsPtval" minOccurs="0">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="PointsPrograms.ProgramID.153" />
+                          <xsd:element name="Name" id="PointsPrograms.ProgramName.154">
+                            <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="255" />
+                              </xsd:restriction>
+                            </xsd:simpleType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="AccumulationNotifications" minOccurs="0">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="PrintedMessages">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="MessageType">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="PrintedMessageTypes.TypeID.155">
+                            <!-- Description: DeliverableTypeID=4
+Field link: CPE_ST_Deliverables.OutputID=PrintedMessages.OutputID -->
+                          </xsd:element>
+                          <xsd:element name="Name" type="xsd:string" id="PrintedMessageTypes.Phrase.TypeID.156" />
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="Message" id="PrintedMessageTiers.BodyText.157" minOccurs="0">
+                      <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                          <xsd:maxLength value="4000" />
+                        </xsd:restriction>
+                      </xsd:simpleType>
+                    </xsd:element>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="Locations">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="StoreGroups">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="Selected" minOccurs="0" maxOccurs="unbounded">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:long" id="OfferLocations.LocationGroupID.158">
+                            <!-- Description: Excluded=0 -->
+                          </xsd:element>
+                          <xsd:element name="Name" id="LocationGroups.Name.159">
+                            <!-- Description: Excluded=0
+Field link: LocationGroups.LocationGroupID = OfferLocations.LocationGroupID -->
+                            <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="200" />
+                              </xsd:restriction>
+                            </xsd:simpleType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="Excluded" minOccurs="0" maxOccurs="unbounded">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:long" id="OfferLocations.LocationGroupID.160">
+                            <!-- Description: Excluded=1 -->
+                          </xsd:element>
+                          <xsd:element name="Name" id="LocationGroups.Name.161">
+                            <!-- Description: Excluded=1
+Field link: LocationGroups.LocationGroupID = OfferLocations.LocationGroupID -->
+                            <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="200" />
+                              </xsd:restriction>
+                            </xsd:simpleType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="Terminals">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="Selected" minOccurs="0" maxOccurs="unbounded">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="OfferTerminals.TerminalTypeID.162">
+                            <!-- Description: Excluded=0
+Field link: OfferTerminals.TerminalTypeID=TerminalTypes.TerminalTypeID and OfferTerminals.OfferID=CPE_ST_Incentives.IncentiveID -->
+                          </xsd:element>
+                          <xsd:element name="Name" id="TerminalTypes.Name.163">
+                            <!-- Description: Excluded=0
+Field link: OfferTerminals.TerminalTypeID=TerminalTypes.TerminalTypeID and OfferTerminals.OfferID=CPE_ST_Incentives.IncentiveID -->
+                            <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="100" />
+                              </xsd:restriction>
+                            </xsd:simpleType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="Excluded" minOccurs="0" maxOccurs="unbounded">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ID" type="xsd:integer" id="OfferTerminals.TerminalTypeID.164">
+                            <!-- Description: Excluded=1
+Field link: OfferTerminals.TerminalTypeID=TerminalTypes.TerminalTypeID and OfferTerminals.OfferID=CPE_ST_Incentives.IncentiveID -->
+                          </xsd:element>
+                          <xsd:element name="Name" id="TerminalTypes.Name.165">
+                            <!-- Description: Excluded=1
+Field link: OfferTerminals.TerminalTypeID=TerminalTypes.TerminalTypeID and OfferTerminals.OfferID=CPE_ST_Incentives.IncentiveID -->
+                            <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="100" />
+                              </xsd:restriction>
+                            </xsd:simpleType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

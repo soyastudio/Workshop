@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Schema Owner: 	Safeway Inc
+   Date Created:      07 Mar 2018
+   Author:		Saikat Mazumdar
+   Description: Contains commonly used Safeway Inventory schema.
+   Name: /SFWY/Nouns/Inventory.xsd
+-->
+<!-- edited with XMLSpy v2019 sp2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.1 Rosabel Macario 11/04/2020 - Added tag to resolve dateTimeStamp issue-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="RetailStoreInventory" type="RetailStoreInventoryType">
+		<xs:annotation>
+			<xs:documentation>Standard Albertsons companies schema for Inventory balance that represents the quantity of each item (balance) by location.
+
+This is expected to provide a quantity snapshot i.e. all quantity is updated as replacing the entire field, not incremented or decremented by the quantity.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="RetailStoreInventoryType">
+		<xs:annotation>
+			<xs:documentation>Inventory of an item in a retail store at a particular point of time.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporationId"/>
+			<xs:element ref="DivisionId"/>
+			<xs:element ref="RetailStoreId"/>
+			<xs:element ref="TxnDt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time at which the inventory transaction was carried out.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InventoryItem" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="InventoryType" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates Perpetual or Periodic inventory. The periodic and perpetual inventory systems are different methods used to track the quantity of goods on hand.The periodic system relies upon an occasional physical count of the inventory to determine the ending inventory balance and the cost of goods sold, while the perpetual system keeps continual track of inventory balances. Valid values 'PP' for Perpetual Inventory and 'PR' for periodic inventory. PS - for Presentation stock like LADs and MEDs.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element ref="CorporateItemCd" minOccurs="0"/>
+						<xs:element name="ItemId" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="UPC" type="UPC" minOccurs="0"/>
+									<xs:element name="UPCComponents" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>UPC ID broken into individual Components.</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:complexContent>
+												<xs:extension base="UPCComponentsType"/>
+											</xs:complexContent>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="GTINID" type="xs:string" minOccurs="0"/>
+									<xs:element name="VendorProductID" type="xs:string" minOccurs="0"/>
+									<xs:element name="ManufProductId" type="xs:string" minOccurs="0"/>
+									<xs:element name="SystemSpecificItemId" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Like NDA id for Drugs.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="RFID" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Allows an instance of an item to carry any radio frequency Id (RFID) that maybe used by a supply chain.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="InternalItemId" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Albertsons internal unique item Id. Ex Corporate Item Cd</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="BranchItemCd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the old five digit item code used with the MCL branch to identify an item. This is Used to interface to detail files systems not converted to corporate item code and divisional users. It is sometimes referred to as Division Item Code.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:minLength value="5"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ItemDescription" type="xs:string" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="ItemQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="QtyUOM" type="xs:string" minOccurs="0"/>
+						<xs:element name="ItemVol" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="VolUOM" type="xs:string" minOccurs="0"/>
+						<xs:element name="ItemWt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="WtUOM" type="xs:string" minOccurs="0"/>
+						<xs:element name="PalletQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element ref="PalletTI" minOccurs="0"/>
+						<xs:element ref="PalletHI" minOccurs="0"/>
+						<xs:element ref="Status" minOccurs="0"/>
+						<xs:element name="ItemSourcingType" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="DSDInd" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Item sourcing by vendor direct Store delivery.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="WarehouseInd" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Item sourcing from internal warehouses.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="ManufacturingPlantInd" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>sourced from manufacturing plants like milk plant, bread plant.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="WholesaleInd" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>sourced from a wholesaler, delivered as DSD or cross dock at internal warehouse.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="StoreCreatedItemInd" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Items created within the store depts like Bakery, deli..etc</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="PresentationStock" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Defines item quantities for presentation stock like LADs/MEDs and Shelf.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="PresentationType" type="CodeWithDescription" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>LAD or MED or Shelf presentation</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element ref="Status" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation> presentation stock state indicator
+.  N – Not active
+.  Y – Item was activated in previous calendar week; if set to ‘Y’ by the user, item’s PS will be activated for promotion in the following calendar week
+.  L – Item was activated in current calendar week (late); if set to ‘L’ by the user, item’s PS will be activated for promotion in the current calendar week
+.  C – Continue back-to-back promotion; value will be transmitted as ‘C’, but will change back to original active value (‘Y’ or ‘L’) after transmission; if set to ‘C’ by the user, item’s PS will be activated for continued promotion into the next calendar week, but not beyond 1 week</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="ItemQty" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:decimal">
+												<xs:totalDigits value="14"/>
+												<xs:fractionDigits value="4"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="CapacitiyItemQty" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Maximum capacity item qty allowed in each Med/Lad.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:decimal">
+												<xs:totalDigits value="14"/>
+												<xs:fractionDigits value="4"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="QtyUOM" type="xs:string" minOccurs="0"/>
+									<xs:element name="ItemVol" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:decimal">
+												<xs:totalDigits value="14"/>
+												<xs:fractionDigits value="4"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="VolUOM" type="xs:string" minOccurs="0"/>
+									<xs:element name="ItemWt" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:decimal">
+												<xs:totalDigits value="14"/>
+												<xs:fractionDigits value="4"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="WtUOM" type="xs:string" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="TxnQty">
+		<xs:annotation>
+			<xs:documentation>Number of inventory items that were part of given transaction.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:decimal">
+				<xs:totalDigits value="14"/>
+				<xs:fractionDigits value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TxnDt" type="xs:dateTime">
+		<xs:annotation>
+			<xs:documentation>Date and time at which the inventory transaction was carried out.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="PalletTI" type="xs:integer" nillable="true">
+		<xs:annotation>
+			<xs:documentation>Number of inventory units (cases) that make up a layer on a pallet.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="PalletHI" type="xs:integer" nillable="true">
+		<xs:annotation>
+			<xs:documentation>Number of layers of inventory units (cases) on a pallet.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+</xs:schema>

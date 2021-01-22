@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.3 Rosabel Macario 11/04/2020 - Added tag to resolve dateTimeStamp issue-->
+	<!--V1.2 Updated VendorId & VendorSubAccountId to string(20)-->
+	<!--V 1.0     06/23/2017                   Sai Nuthakki -  Initial Version-->
+	<!-- V 1.1   09062018 - Sai Nuthakki -   Added elements from SSITMROG-->
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/ItemMaster.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="GetItemMasterSupplyChain" type="GetItemMasterSupplyChainType">
+		<xs:annotation>
+			<xs:documentation>Master data information for the item at supply chain level. In Albertsons terms it is known as Corporate Item code CIC. Corporate Item code is used in procurement of items from vendors, manufacturers and alsoo during the store item replenishment. Item costing and demand forecast are also maintained at CIC level.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetItemMasterSupplyChainType">
+		<xs:annotation>
+			<xs:documentation>Business object that provides item Information at Supply Chain item which is at Corporate Item level.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="SupplyChainItemData" type="Abs:SupplyChainItemType"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

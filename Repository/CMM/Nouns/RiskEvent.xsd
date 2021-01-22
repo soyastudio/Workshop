@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.0  08072019 Sai Nuthakki   Initial Version-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="RiskEvent" type="RiskEventType">
+		<xs:annotation>
+			<xs:documentation>Defines the risk event happened and reported either in Safeway facility or other location resulted in a claim for payment.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="DriverLicenseType">
+		<xs:annotation>
+			<xs:documentation>Defines Person's Driver License details</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DriverLicenseNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ExpiryDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="IssuedState" type="CodeWithName" minOccurs="0"/>
+			<xs:element name="IssuedDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="DriverLicenseType" type="CodeWithName" minOccurs="0"/>
+			<xs:element name="RestrictionType" type="CodeWithDescription" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ClaimClaimantType">
+		<xs:annotation>
+			<xs:documentation>Defines claimants involved in a claim.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="ClaimantId" minOccurs="0"/>
+			<xs:element name="LossNature" type="CodeWithDescription" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>define the nature of the condition resulted by the accident. Ex, Strin, Fracture, Contusion, death</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InjuryType" type="CodeWithDescription" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Defines injuries caused by the risk event.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Diagnosis" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>define various diagnosis codes codes mentioned within a claim by a claimant.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="CodeWithDescription">
+							<xs:sequence maxOccurs="unbounded">
+								<xs:element name="ICD9Cd" type="CodeWithName" minOccurs="0"/>
+								<xs:element name="ICD10Cd" type="CodeWithName" minOccurs="0"/>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Procedure" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>define various medical procedure codes mentioned within a claim by a claimant.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="CodeWithDescription">
+							<xs:sequence>
+								<xs:element ref="EffectiveTimePeriod" minOccurs="0"/>
+								<xs:element name="RequestedUnits" minOccurs="0">
+									<xs:simpleType>
+										<xs:restriction base="xs:decimal">
+											<xs:totalDigits value="14"/>
+											<xs:fractionDigits value="4"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="ApprovedUnits" minOccurs="0">
+									<xs:simpleType>
+										<xs:restriction base="xs:decimal">
+											<xs:totalDigits value="14"/>
+											<xs:fractionDigits value="4"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="VehicleType" type="VehicleType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="DamageType" type="CodeWithDescription" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Describes vehicle or property damages</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EventLocation" minOccurs="0">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="LocationType">
+							<xs:sequence>
+								<xs:element name="JurisdictionState" type="CodeWithName" minOccurs="0"/>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="VehicleType">
+		<xs:annotation>
+			<xs:documentation>Defines the vehicle involved in risk event and claim.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Make" type="CodeWithName" minOccurs="0"/>
+			<xs:element name="Model" type="CodeWithName" minOccurs="0"/>
+			<xs:element name="ModelYear" type="xs:integer" minOccurs="0"/>
+			<xs:element name="LicensePlateNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="IdentificationNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="25"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ClaimPaymentType">
+		<xs:annotation>
+			<xs:documentation>Defines the claim payment details.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Payee" type="PayeeType" minOccurs="0"/>
+			<xs:element name="Payment" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="PaymentTransactionNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="0"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PaymentTransactionDt" type="xs:date" minOccurs="0"/>
+						<xs:element name="PaymentAmt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CheckNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CheckDt" type="xs:date" minOccurs="0"/>
+						<xs:element name="Bank" type="IdWithNameType" minOccurs="0"/>
+						<xs:element name="ControlNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="25"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PaymentType" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Defines payment or collection.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Approver" type="IdWithNameType" minOccurs="0"/>
+						<xs:element name="ApprovedDt" type="xs:date" minOccurs="0"/>
+						<xs:element name="PaymentStatus" type="StatusType" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PayeeType">
+		<xs:annotation>
+			<xs:documentation>Defines the payee who receives the claim amount.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PayeeType" type="CodeWithName" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines payee type, person or hospital.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PayeeNm" type="PersonNameType" minOccurs="0"/>
+			<xs:element name="PayeeContact" type="CommunicationType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RiskEventClaimType">
+		<xs:annotation>
+			<xs:documentation>Defines the claim details of a risk event like accident or injury.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ClaimId" type="IdWithNameType" minOccurs="0"/>
+			<xs:element name="ClaimNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="25"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ClaimDt" type="xs:dateTime" minOccurs="0"/>
+			<xs:element ref="RiskEventId" minOccurs="0"/>
+			<xs:element name="PlanId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Insurance plan that covers the claim.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="25"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PolicyNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Insurance policy that covers the claim.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="25"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ClaimType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>define claim types by source system and line of coverage.
+"BI - Bodily Injury
+MP - Medical Payment
+OT - Other
+PD - Property Damage
+PI - Personal Injury"</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="CodeWithDescription">
+							<xs:sequence>
+								<xs:element name="SubType" type="CodeWithDescription" minOccurs="0" maxOccurs="unbounded">
+									<xs:annotation>
+										<xs:documentation>define claim sub types with in a claim type by line of coverage.
+ex:LOC                                   claim type                subtype    desc
+WC - Workers Compensation	IN - Indemnity	SB	Subrogation Claims
+WC - Workers Compensation	IN - Indemnity	SF	Special Injury Fund
+WC - Workers Compensation	IN - Indemnity	SP	Special Handling
+WC - Workers Compensation	MO - Medical Only	(Blank)	(Blank)
+WC - Workers Compensation	MO - Medical Only	CC	Companion Claim
+WC - Workers Compensation	MO - Medical Only	FN	Financial Recovery
+WC - Workers Compensation	MO - Medical Only	LS	Long Shore Harbor Workers
+WC - Workers Compensation	MO - Medical Only	MM	Minor Medical</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ClaimStatus" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="StatusType">
+							<xs:sequence>
+								<xs:element name="StatusSubType" type="StatusType" minOccurs="0" maxOccurs="unbounded"/>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ClaimAdjuster" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Claim adjustments happen over a period.
+A claim may go thru multiple adjustments by different adjusters.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="AdjusterId" type="IdWithNameType" minOccurs="0"/>
+						<xs:element name="AdjusterNm" type="PersonNameType" minOccurs="0"/>
+						<xs:element ref="EffectiveTimePeriod" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ClaimClaimant" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="ClaimClaimantType">
+							<xs:sequence>
+								<xs:element name="ClaimPayment" type="ClaimPaymentType" minOccurs="0" maxOccurs="unbounded"/>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="LineOfBusinessType">
+		<xs:annotation>
+			<xs:documentation>define line of risk management business/ insurance coverage.
+Ex: workers comp, general liability, product liability, pharmacy claims, auto claims, slip trip fall claims.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="LOBId" type="xs:integer" minOccurs="0"/>
+			<xs:element name="LOBType" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="SourceSystem" type="CodeWithDescription" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RiskEventType">
+		<xs:annotation>
+			<xs:documentation>Defines the risk event happened either in Safeway facility or other location and resulted in a claim for payment. The incident and the calim details are managed in a Risk Management system.
+</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="RiskEventId" minOccurs="0"/>
+			<xs:element name="RiskEventDsc" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>description of the event happened. Ex: Slipped on the floor while carrying food tray.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LocationDsc" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Description of the location where the event happened. Ex: produce dept with in store 2712.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InternalFacility" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines the facility where the risk event that resulted in injuries, damages happened</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="CorporationId" minOccurs="0"/>
+						<xs:element ref="DivisionId" minOccurs="0"/>
+						<xs:element name="FacilityId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="FacilityType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="Department" type="IdWithNameType" minOccurs="0"/>
+						<xs:element name="Section" type="IdWithNameType" minOccurs="0"/>
+						<xs:element name="FacilityAddress" type="AddressType" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ExternalLocation" type="LocationType" minOccurs="0"/>
+			<xs:element name="OnPremiseInd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="RiskEventDt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time the risk event happened.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="ReportedDt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time the risk event reported to the supervisor.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EventReason" type="CodeWithDescription" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="EventCause" type="CodeWithDescription" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="OSHA" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines OSHA - occupational safety nd hazard admin data for the event.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="RecordableInd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="5"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PrvacyInd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="5"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="EventDsc" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PersonInvolved" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="PersonInvolvedId" minOccurs="0"/>
+						<xs:element name="PersonInvolvedType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="PersonInvolvedNm" type="PersonNameType" minOccurs="0"/>
+						<xs:element name="EmployeeType" type="EmployeeType" minOccurs="0"/>
+						<xs:element name="Address" type="AddressType" minOccurs="0"/>
+						<xs:element name="DriverLicenseType" type="DriverLicenseType" minOccurs="0"/>
+						<xs:element name="WorkersCompNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ClaimantType" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="ClaimantId" minOccurs="0"/>
+						<xs:element name="ClaimantType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="ClaimantNm" type="PersonNameType" minOccurs="0"/>
+						<xs:element name="EmployeeNm" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="EmployeeContact" type="CommunicationType" minOccurs="0"/>
+						<xs:element name="ClaimantAddress" type="AddressType" minOccurs="0"/>
+						<xs:element ref="BirthDt" minOccurs="0"/>
+						<xs:element ref="DeathDt" minOccurs="0"/>
+						<xs:element name="Gender" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="MaritalStatus" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="Language" type="CodeWithDescription" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="RecordAuditData" type="RecordAuditData" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="ClaimantId" type="IdWithNameType"/>
+	<xs:element name="RiskEventId" type="IdWithNameType"/>
+	<xs:element name="RiskEventDt" type="xs:dateTime"/>
+	<xs:element name="ReportedDt" type="xs:dateTime"/>
+	<xs:element name="PersonInvolvedId" type="IdWithNameType"/>
+	<xs:complexType name="LocationType">
+		<xs:annotation>
+			<xs:documentation>location where the risk event happened and resulted in a claim for Safeway.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="LocationNm" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LocationAddress" type="AddressType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

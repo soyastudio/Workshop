@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2014 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Safeway, Inc.) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" 
+vc:minVersion="1.1"
+elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/CustomerReward.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="GetCustomerRewardBalance" type="GetCustomerRewardBalanceType">
+		<xs:annotation>
+			<xs:documentation>Rewards provide a platform for customers to engage, earn, accumulate and redeem loyalty points. The main purpose of this BOD is to represent the balance points of customer rewards.
+Labour work schedules are created in each facility in advance based on various factors like sales forecast, weath</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetCustomerRewardBalanceType">
+		<xs:annotation>
+			<xs:documentation>Rewards provide a platform for customers to engage, earn, accumulate and redeem loyalty points. The main purpose of this BOD is to represent the balance points of customer rewards.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CustomerRewardData" type="Abs:CustomerRewardType" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

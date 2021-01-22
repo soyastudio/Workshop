@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2014 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Safeway, Inc.) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.1 Rosabel Macario 11/04/2020 - Added tag to resolve dateTimeStamp issue-->
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/Patient.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="GetPatient">
+		<xs:annotation>
+			<xs:documentation>root</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="GetPatientType">
+					<xs:attribute name="ReleaseId" type="xs:string" use="optional">
+						<xs:annotation>
+							<xs:documentation>ReleaseId for the BOD instance</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="VersionId" type="xs:string" use="optional">
+						<xs:annotation>
+							<xs:documentation>Version Id for the BOD instance</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="SystemEnvironmentCd" type="xs:string" use="optional" default="Production">
+						<xs:annotation>
+							<xs:documentation>Prod, Test, QA</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="GetPatientType">
+		<xs:annotation>
+			<xs:documentation>Business object that provides information about Patients who receives medications and pharmacy services from Albertsons pharmacy stores, for both inbound and outbound integrations to Albertsons facilities.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PatientData" type="Abs:PatientType"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

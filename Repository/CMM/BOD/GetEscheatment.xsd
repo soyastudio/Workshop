@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by  (Albertsons) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--v1.1 Rosabel Macario 11/3/20 Added tags to resolve issue on dateTimestamp issue.-->
+	<!--V1.0 Jayson Leo Soliman 6/17/20 Initial Version-->
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/Escheatment.xsd"/>
+	<xs:element name="GetEscheatment" type="GetEscheatmentType">
+		<xs:annotation>
+			<xs:documentation>Business object that contains Escheatment information. 
+
+Escheat refers to the right of a government to take ownership of estate assets or unclaimed property. It most commonly occurs when an individual dies with no will and no heirs. Escheat rights can also be granted when assets are unclaimed for a prolonged period of time. These situations can also be referred to as bona vacantia or simply just unclaimed property.
+
+
+The concept of escheat maintains that property always has a recognized owner, which would be the state or government if no other claimants to ownership exist or are readily identified. In the U.S., each state jurisdiction has its own laws and regulations governing escheat rights and related matters.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetEscheatmentType">
+		<xs:annotation>
+			<xs:documentation>Business object that contains Escheatment information. 
+
+Escheat refers to the right of a government to take ownership of estate assets or unclaimed property. It most commonly occurs when an individual dies with no will and no heirs. Escheat rights can also be granted when assets are unclaimed for a prolonged period of time. These situations can also be referred to as bona vacantia or simply just unclaimed property.
+
+
+The concept of escheat maintains that property always has a recognized owner, which would be the state or government if no other claimants to ownership exist or are readily identified. In the U.S., each state jurisdiction has its own laws and regulations governing escheat rights and related matters.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="EscheatmentData" type="Abs:EscheatmentType"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>
