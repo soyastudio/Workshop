@@ -25,6 +25,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.FileReader;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Component
@@ -180,6 +181,16 @@ public class WorkshopResource {
     @Produces(MediaType.APPLICATION_XML)
     @ApiOperation(value = "publish")
     public Response publish(@HeaderParam("inboundTopic") String inboundTopic, @HeaderParam("outboundTopic") String outboundTopic, String input) {
+
+
+
+        long timestamp = 1603443904787l;
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+
+        System.out.println(format.format(new Date(timestamp)));
+
+
         RecordModel recordModel = kafkaAdminService.publish(inboundTopic, input);
 
         List<ConsumerRecord<String, byte[]>> records = kafkaAdminService.getLatestRecords(outboundTopic, 2);
@@ -190,5 +201,8 @@ public class WorkshopResource {
             return Response.status(200).entity(message).build();
         }
     }
+
+
+
 
 }
