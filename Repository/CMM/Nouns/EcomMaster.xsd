@@ -5,6 +5,10 @@
 	<!--V1.1  06092020  Sai Nuthakki   Added ShoppingCartType-->
 	<!--V1.2  08032020 Sai Nuthakki Added Business EventType-->
 	<!--V1.3 11052020  Rosabel Macario - Added tag to resolve dateTimeStamp issue-->
+	<!--V1.4 01/22/21 Patrick Oliver: (1) Added CustomerId to Customer 
+(2) Added complex type ShoppingCartProfileType to EcomMaster.xsd
+(3) Added ShoppingCartProfile to ShoppingCartType in EcomMaster.xsd-->
+	<!--V1.5 012221 Sai Added ShiftNbr in BusinessEventType-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:complexType name="ShoppingCartType">
 		<xs:annotation>
@@ -31,6 +35,7 @@
 				</xs:annotation>
 			</xs:element>
 			<xs:element ref="BookingNbr" minOccurs="0"/>
+			<xs:element name="ShoppingCartProfile" type="ShoppingCartProfileType" minOccurs="0"/>
 			<xs:element name="CartItem" minOccurs="0" maxOccurs="unbounded">
 				<xs:complexType>
 					<xs:sequence>
@@ -241,6 +246,16 @@ ex: delivery truck nbr</xs:documentation>
 										</xs:restriction>
 									</xs:simpleType>
 								</xs:element>
+								<xs:element name="ShiftNbr" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Facility work shift nbr.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="50"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
 							</xs:sequence>
 						</xs:extension>
 					</xs:complexContent>
@@ -268,6 +283,24 @@ ex: pickup location, delivery location, in-transit location</xs:documentation>
 				</xs:complexType>
 			</xs:element>
 			<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ShoppingCartProfileType">
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="ProfileType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines various order profiles.
+Ex WYSIWYG</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ProfileValueInd" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="ProfileValueTxt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="CustomerDeliverySlotType">

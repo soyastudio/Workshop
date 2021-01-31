@@ -128,12 +128,29 @@ public class KafkaAdminService {
         }
     }
 
-    public Future<RecordMetadata> send(String topic, String key, byte[] value) {
-        ProducerRecord<String, byte[]> producerRecord = new ProducerRecord(topic, value);
-        return kafkaProducer.send(producerRecord);
+    public RecordModel publish(String topic, String message, Map<String, String> headers) {
+        RecordModel.Builder builder = RecordModel.builder(topic).generateKey().message(message);
+        headers.entrySet().forEach(entry -> {
+            builder.header(entry.getKey(), entry.getValue());
+        });
+
+        ProducerRecord<String, byte[]> record = builder.create();
+        Future<RecordMetadata> future = kafkaProducer.send(record);
+        while (!future.isDone()) {
+            try {
+                Thread.sleep(100L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            RecordMetadata metadata = future.get();
+            return RecordModel.fromProducerRecord(record, metadata);
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
-
-
 
     // ================= Consumer:
     public List<ConsumerRecord<String, byte[]>> getLatestRecords(String topic, int count) {

@@ -1,11 +1,13 @@
 package soya.framework.tools.workbench.resource;
 
 
-import com.google.gson.Gson;
+import com.google.gson.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.PartitionInfo;
+import org.apache.kafka.common.header.Header;
+import org.apache.kafka.common.header.Headers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import soya.framework.tools.workbench.kafka.KafkaAdminService;
@@ -15,9 +17,7 @@ import soya.framework.tools.workbench.kafka.RecordModel;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Component
 @Path("/kafka")
@@ -106,6 +106,7 @@ public class KafkaAdminResource {
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Send Message")
     public Response publish(@HeaderParam("topic") String topic, String message) {
+
         RecordModel recordModel = kafkaAdminService.publish(topic, message);
         return Response.status(200).entity(recordModel).build();
     }
@@ -123,6 +124,47 @@ public class KafkaAdminResource {
         } else {
             String message = new String(records.get(records.size() - 1).value());
             return Response.status(200).entity(message).build();
+        }
+    }
+
+    @POST
+    @Path("/producer/sendWithHeader")
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Send Message")
+    public Response publishWitHeader(@HeaderParam("topic") String topic, @HeaderParam("headers") String headers, String message) {
+        Map<String, String> map = new LinkedHashMap<>();
+        if(headers != null) {
+            JsonObject obj = JsonParser.parseString(headers).getAsJsonObject();
+            obj.entrySet().forEach(en -> {
+                map.put(en.getKey(), en.getValue().getAsString());
+            });
+
+        }
+
+        RecordModel recordModel = kafkaAdminService.publish(topic, message, map);
+        return Response.status(200).entity(recordModel).build();
+    }
+
+    @GET
+    @Path("/consumer/getHeader")
+    @Consumes({MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @ApiOperation(value = "Get Headers of Latest Message from Topic")
+    public Response latestRecordHeader(@HeaderParam("topic") String topic) {
+        List<ConsumerRecord<String, byte[]>> records = kafkaAdminService.getLatestRecords(topic, 2);
+        if (records.isEmpty()) {
+            return Response.status(200).build();
+
+        } else {
+            JsonObject result = new JsonObject();
+            Headers headers = records.get(records.size() - 1).headers();
+            Header[] array = headers.toArray();
+            for(Header header : array) {
+                String key = header.key();
+                String value = new String(header.value());
+                result.add(key, new JsonPrimitive(value));
+            }
+            return Response.status(200).entity(result).build();
         }
     }
 

@@ -1,10 +1,9 @@
 package soya.framework.tools.xmlbeans;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import org.yaml.snakeyaml.Yaml;
+import soya.framework.tools.markdown.MarkdownBuilder;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,7 +69,7 @@ public class Buffalo<T> {
                 buffalo.renderer = renderer;
             }
 
-            if(renderer.getName() != null) {
+            if (renderer.getName() != null) {
                 buffalo.renderers.put(renderer.getName(), renderer);
 
             } else {
@@ -109,8 +108,24 @@ public class Buffalo<T> {
     }
 
     public String render() {
-        List<String> list = new ArrayList<>(renderers.keySet());
-        return new Gson().toJson(list);
+        MarkdownBuilder mdb = MarkdownBuilder.newInstance();
+        int headingLevel = 1;
+
+        mdb.heading("Renderers", headingLevel);
+        headingLevel++;
+        final int level = headingLevel;
+        renderers.entrySet().forEach(entry -> {
+            String rendererName = entry.getKey();
+            Renderer<T> renderer = entry.getValue();
+
+            mdb.heading(rendererName, level);
+            mdb.fencedCodeBlock(renderer.render(base));
+
+        });
+
+        headingLevel--;
+
+        return mdb.toString();
     }
 
     public String render(Renderer<T> renderer) {

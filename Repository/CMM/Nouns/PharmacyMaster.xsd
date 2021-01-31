@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.1 012221 Sai Added Drug Vendor data-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:complexType name="PatientType">
 		<xs:annotation>
@@ -1193,6 +1194,58 @@ ex Active, Inactive, Active plus Preferred, Information only - not fillable.</xs
 				</xs:simpleType>
 			</xs:element>
 			<xs:element ref="DrugGPIType" minOccurs="0"/>
+			<xs:element name="DrugVendorData" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="DrugVendorType" type="DrugVendorType" minOccurs="0"/>
+						<xs:sequence>
+							<xs:element name="VendorItemId" minOccurs="0">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="50"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="VendorItemGroup" type="CodeWithDescription" minOccurs="0"/>
+							<xs:element name="ItemQualifierCd" minOccurs="0">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="50"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+						</xs:sequence>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DrugVendorType">
+		<xs:annotation>
+			<xs:documentation>Defines Pharmacy drug supplier/vendor</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="VendorId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorNm" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines the type of the vendor. ex Manufacturer, supplier, Wholesaler, distributor.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VendorGroup" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="VendorClass" type="CodeWithDescription" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:element name="NationalDrugCd">

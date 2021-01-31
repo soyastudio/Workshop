@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--!=============================================================================================-->
+	<!--!-->
+	<!--!-->
+	<!--!      Noun: OrderingCostumerGroup-->
+	<!--!                                     Business object that represents the Ordering Customer Groups which are used to segregate Stores into various buckets based -->
+	<!--!                                     on the user needs. Customer Groups are of 3 types: Customer Ordering Group(used for ordering), Customer Allocation Group   -->
+	<!--!                                     (Used for Product allocation) and Customer Release or Schedule Group (Used for releasing orders to downstream systems.) -->
+	<!--!-->
+	<!--!=============================================================================================-->
+	<!--1/26/2021 - Alex Nunes - Initial version.-->
+	<xs:element name="CustomerGroup" type="CustomerGroupType">
+		<xs:annotation>
+			<xs:documentation>Root element.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="CustomerGroupType">
+		<xs:annotation>
+			<xs:documentation>Ordering Customer Groups are used to segregate Stores into various buckets based on the user needs. Customer Groups are of 3 types: Customer Ordering Group(used for ordering), Customer Allocation Group(used for Product allocation) and Customer Release or Schedule Group (used for releasing orders to downstream systems.) </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="Abs:CorporationId"/>
+			<xs:element ref="Abs:DivisionId"/>
+			<xs:element name="CustomerGroupId">
+				<xs:annotation>
+					<xs:documentation>Unique identifier for the customer group.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="GroupType" type="Abs:CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Ordering group types such as Allocation, Scheduling/Release or Ordering.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GroupDsc" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Description of the customer group.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="60"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="GroupLabelTxt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Label description of the customer group.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="120"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CustomerData" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>List of stores or wholesale stores associated with this ordering group.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="CustomerType" type="Abs:CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Customer type code.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element ref="Abs:RetailStoreId" minOccurs="0"/>
+						<xs:element name="WholesaleCustomerNbr" type="xs:integer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Unique identifier of wholesale client. Example: JBG ID (JB Gottstein Wholesale )</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AuditData" type="AuditType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Audit data elements.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AuditType">
+		<xs:annotation>
+			<xs:documentation>This type represents auditing data related to the message at source.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0">
+			<xs:element name="CreateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Time stamp of when message was created at source.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LastUpdateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time stamp of when message was last modified at source.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CreateUserId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Id of the client that created the message at source.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LastUpdateUserId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>User Id of who last modified the message at source.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EffetiveDateTimeType">
+		<xs:annotation>
+			<xs:documentation>Common type for Retail Customer effective date and time.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0">
+			<xs:element ref="Abs:FirstEffectiveDt" minOccurs="0"/>
+			<xs:element ref="Abs:FirstEffectiveTm" minOccurs="0"/>
+			<xs:element ref="Abs:LastEffectiveDt" minOccurs="0"/>
+			<xs:element ref="Abs:LastEffectiveTm" minOccurs="0"/>
+			<xs:element name="InclusiveInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates whether or not the dates and times are inclusive or not.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

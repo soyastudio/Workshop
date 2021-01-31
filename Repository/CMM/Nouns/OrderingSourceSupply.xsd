@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--!=============================================================================================-->
+	<!--!-->
+	<!--!-->
+	<!--!      Noun: OrderingSourceSupply-->
+	<!--!                                     Business object that represents different sources by Customer Groups and Priorities. Customer groups can be configured-->
+	<!--!                                      with different source-warehouses where they could receive products from.-->
+	<!--!-->
+	<!--!=============================================================================================-->
+	<!--1/26/2021 - Alex Nunes - Initial version.-->
+	<xs:element name="SourceSupply" type="SourceSupplyType">
+		<xs:annotation>
+			<xs:documentation>Root element.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="SourceSupplyType">
+		<xs:annotation>
+			<xs:documentation>This type allows user to represent different sources by Customer Groups and Priorities. Customer groups can be configured with different source-warehouses where they could receive products from.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="SourceSupplyId" type="xs:integer">
+				<xs:annotation>
+					<xs:documentation>Unique identifier fore the source of supply.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Supplier" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Data about the supplier of ther orders.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="Abs:CorporationId" minOccurs="0"/>
+						<xs:element ref="Abs:DivisionId" minOccurs="0"/>
+						<xs:element name="SupplierType" type="Abs:CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Supplier type code.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SupplierStatusInd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="VendorId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="VendorSubAccountNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="VendorBackdoorSubAccountNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element ref="Abs:WarehouseId" minOccurs="0"/>
+						<xs:element ref="Abs:ManufacturingPlantId" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Customer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Data about customer from the order management view which could be a retail store or a wholesale customer.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="CustomerType" type="Abs:CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Customer type code.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element ref="Abs:RetailStoreId" minOccurs="0"/>
+						<xs:element name="WholesaleCustomerNbr" type="xs:integer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Unique identifier of wholesale client. Example: JBG ID (JB Gottstein Wholesale )</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CustomerGroupId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Unique identifier for the customer group.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PriorityNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Priority number in which a supplier or a set of suppliers are selected.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StatusInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates whether the rule is enabled/active or disable/inactive.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EffectivePeriod" type="EffetiveDateTimeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Effective dates and times.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AuditData" type="AuditType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Audit data elements.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AuditType">
+		<xs:annotation>
+			<xs:documentation>This type represents auditing data related to the message at source.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0">
+			<xs:element name="CreateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Time stamp of when message was created at source.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LastUpdateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time stamp of when message was last modified at source.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CreateUserId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Id of the client that created the message at source.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LastUpdateUserId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>User Id of who last modified the message at source.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EffetiveDateTimeType">
+		<xs:annotation>
+			<xs:documentation>Common type for Retail Customer effective date and time.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0">
+			<xs:element ref="Abs:FirstEffectiveDt" minOccurs="0"/>
+			<xs:element ref="Abs:FirstEffectiveTm" minOccurs="0"/>
+			<xs:element ref="Abs:LastEffectiveDt" minOccurs="0"/>
+			<xs:element ref="Abs:LastEffectiveTm" minOccurs="0"/>
+			<xs:element name="InclusiveInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates whether or not the dates and times are inclusive or not.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>
