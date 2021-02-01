@@ -2,7 +2,7 @@ package soya.framework.pachira;
 
 import java.util.List;
 
-public interface TreeNode extends Annotatable {
+public interface TreeNode {
     String getName();
 
     TreeNode getParent();

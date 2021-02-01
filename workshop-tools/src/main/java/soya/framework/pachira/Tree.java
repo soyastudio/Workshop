@@ -4,19 +4,19 @@ import java.util.Iterator;
 
 public interface Tree {
 
-    TreeNode get(String path);
-
     Iterator<String> paths();
 
     Iterator<TreeNode> nodes();
 
-    MoneyTree add(TreeNode parent, String name, Object data);
+    TreeNode get(String path);
 
-    MoneyTree rename(TreeNode node, String newName);
+    Tree add(TreeNode parent, String name, Object data);
 
-    MoneyTree copyTo(TreeNode node, String newPath);
+    Tree rename(TreeNode node, String newName);
 
-    MoneyTree remove(String path);
+    Tree copyTo(TreeNode node, String newPath);
 
-    MoneyTree move(TreeNode node, String newPath);
+    Tree move(TreeNode node, String newPath);
+
+    Tree remove(String path);
 }

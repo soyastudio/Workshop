@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class MoneyTree implements Tree, Annotatable {
 
-    private TreeNode root;
+    private DefaultTreeNode root;
     private Map<String, TreeNode> treeNodeMap;
 
     private MoneyTree() {
@@ -179,7 +179,7 @@ public final class MoneyTree implements Tree, Annotatable {
 
     }
 
-    static class DefaultTreeNode implements TreeNode {
+    static class DefaultTreeNode implements TreeNode, Annotatable {
 
         private TreeNode parent;
         private List<TreeNode> children = new ArrayList<>();
