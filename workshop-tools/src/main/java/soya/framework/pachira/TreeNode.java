@@ -17,4 +17,6 @@ public interface TreeNode {
 
     <T> T getData(Class<T> type);
 
+
+
 }

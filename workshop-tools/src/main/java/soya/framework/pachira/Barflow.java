@@ -1,24 +1,46 @@
 package soya.framework.pachira;
 
-public class Barflow<T> {
+public interface Barflow<T> {
 
-    private T base;
+    Barflow<T> baseline(BaselineBuilder<T> builder);
 
-    public Barflow<T> baseline(BaselineBuilder<T> builder) {
-        this.base = builder.create();
-        return this;
-    }
+    Barflow<T> annotator(AnnotatorBuilder builder);
 
-    public Barflow<T> annotate() {
-        return this;
-    }
+    Barflow<T> renderer(RendererBuilder builder);
 
-    public static interface BaselineBuilder<T> {
+
+
+
+    static interface BaselineBuilder<T> {
         T create();
 
     }
 
-    public static interface AnnotatorBuilder {
+    static interface AnnotatorBuilder {
+        String getName();
+
+        AnnotatorBuilder name(String name);
+
+        Annotator<?> create(Configuration configuration);
+
+    }
+
+    static interface RendererBuilder {
+        String getName();
+
+        RendererBuilder name(String name);
+
+        Renderer<?> create(Configuration configuration);
+
+    }
+
+    static interface Configuration {}
+
+    static interface Annotator<T> {
+        void annotate(T base);
+    }
+
+    static interface Renderer<T> {
 
     }
 

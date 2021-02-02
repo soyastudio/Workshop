@@ -89,6 +89,21 @@ public final class MoneyTree implements Tree, Annotatable {
         return this;
     }
 
+    @Override
+    public Set<TreeNode> find(Selector selector) {
+        return selector.select();
+    }
+
+    @Override
+    public Tree filterIn(Selector selector) {
+        return null;
+    }
+
+    @Override
+    public Tree filterOut(Selector selector) {
+        return null;
+    }
+
     public synchronized MoneyTree move(TreeNode node, String newPath) {
         copyTo(node, newPath);
         remove(node.getPath());
@@ -225,7 +240,6 @@ public final class MoneyTree implements Tree, Annotatable {
             return (T) data;
         }
 
-
         @Override
         public void annotate(String namespace, Object annotation) {
             this.annotations.put(namespace, annotation);
@@ -244,9 +258,9 @@ public final class MoneyTree implements Tree, Annotatable {
     }
 
     static class Cursor {
+
         private MoneyTree tree;
         private List<String> paths;
-
         private TreeNode current;
 
 
