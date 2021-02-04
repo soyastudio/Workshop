@@ -13,6 +13,16 @@ public final class MoneyTree implements Tree, Annotatable {
         this.treeNodeMap = new LinkedHashMap<>();
     }
 
+    private MoneyTree(DefaultTreeNode root) {
+        this.root = root;
+        this.treeNodeMap = new LinkedHashMap<>();
+    }
+
+    @Override
+    public String getName() {
+        return root.name;
+    }
+
     public TreeNode get(String path) {
         return treeNodeMap.get(path);
     }

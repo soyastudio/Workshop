@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 public interface Tree {
+    String getName();
 
     Iterator<String> paths();
 

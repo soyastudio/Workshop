@@ -2,18 +2,14 @@ package soya.framework.pachira;
 
 public interface Barflow<T> {
 
-    Barflow<T> baseline(BaselineBuilder<T> builder);
+    Barflow<T> baseline(BaselineBuilder<T> builder) throws FlowBuilderException;
 
-    Barflow<T> annotator(AnnotatorBuilder builder);
+    Barflow<T> annotator(AnnotatorBuilder builder) throws FlowBuilderException;
 
-    Barflow<T> renderer(RendererBuilder builder);
-
-
-
+    Barflow<T> renderer(RendererBuilder builder) throws FlowBuilderException;
 
     static interface BaselineBuilder<T> {
-        T create();
-
+        T create() throws FlowBuilderException;
     }
 
     static interface AnnotatorBuilder {
@@ -21,7 +17,7 @@ public interface Barflow<T> {
 
         AnnotatorBuilder name(String name);
 
-        Annotator<?> create(Configuration configuration);
+        Annotator<?> create(Configuration configuration) throws FlowBuilderException;
 
     }
 
@@ -30,18 +26,62 @@ public interface Barflow<T> {
 
         RendererBuilder name(String name);
 
-        Renderer<?> create(Configuration configuration);
+        Renderer<?> create(Configuration configuration) throws FlowBuilderException;
 
     }
 
-    static interface Configuration {}
+    static interface Configuration {
+    }
 
     static interface Annotator<T> {
-        void annotate(T base);
+        void annotate(T base) throws FlowExecutionException;
     }
 
     static interface Renderer<T> {
+        String render(T base) throws FlowExecutionException;
+    }
 
+    static class FlowException extends RuntimeException {
+
+        public FlowException(Throwable cause) {
+            super(cause);
+        }
+
+        public FlowException(String message) {
+            super(message);
+        }
+
+        public FlowException(String message, Throwable cause) {
+            super(message, cause);
+        }
+    }
+
+    static class FlowBuilderException extends FlowException {
+        public FlowBuilderException(Throwable cause) {
+            super(cause);
+        }
+
+        public FlowBuilderException(String message) {
+            super(message);
+        }
+
+        public FlowBuilderException(String message, Throwable cause) {
+            super(message, cause);
+        }
+    }
+
+    static class FlowExecutionException extends FlowException {
+        public FlowExecutionException(Throwable cause) {
+            super(cause);
+        }
+
+        public FlowExecutionException(String message) {
+            super(message);
+        }
+
+        public FlowExecutionException(String message, Throwable cause) {
+            super(message, cause);
+        }
     }
 
 }

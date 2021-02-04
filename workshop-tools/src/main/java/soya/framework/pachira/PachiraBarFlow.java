@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 import java.util.LinkedHashMap;
 
 public class PachiraBarFlow implements Barflow<MoneyTree> {
+
     private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     private MoneyTree base;
@@ -41,15 +42,23 @@ public class PachiraBarFlow implements Barflow<MoneyTree> {
     }
 
     //
+    public static PachiraBarFlow newInstance() {
+        return new PachiraBarFlow();
+    }
+
+    public static PachiraBarFlow fromTreeBuilder(BaselineBuilder<MoneyTree> builder) {
+        return new PachiraBarFlow().baseline(builder);
+    }
+
     public static PachiraBarFlow fromYaml(String yaml) {
         return null;
     }
 
-    public static PachiraBarFlow fromJson(String yaml) {
+    public static PachiraBarFlow fromJson(String json) {
         return null;
     }
 
-    public static PachiraBarFlow fromXml(String yaml) {
+    public static PachiraBarFlow fromXml(String xml) {
         return null;
     }
 
