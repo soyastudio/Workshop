@@ -1,4 +1,5 @@
 package soya.framework.pachira;
 
-public interface TreeBase<T, N> extends Baseline<T, KnowledgeTree<N>> {
+public interface TreeBase<T, K extends KnowledgeTree> extends Baseline<T, K> {
+    K knowledgeBase();
 }

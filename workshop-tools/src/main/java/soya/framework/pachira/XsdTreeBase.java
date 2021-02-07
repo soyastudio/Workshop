@@ -12,7 +12,7 @@ import java.math.BigInteger;
 import java.net.URL;
 import java.util.Iterator;
 
-public class XsdTreeBase extends Feature<SchemaTypeSystem> implements TreeBase<SchemaTypeSystem, XsdTreeBase.XsNode> {
+public class XsdTreeBase extends Feature<SchemaTypeSystem> implements TreeBase<SchemaTypeSystem, KnowledgeTree<XsdTreeBase.XsNode>> {
 
     private KnowledgeTree<XsNode> tree;
 

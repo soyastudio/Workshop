@@ -10,6 +10,7 @@ public interface Barflow<T extends Baseline> {
 
     Barflow<T> renderer(RendererBuilder builder) throws FlowBuilderException;
 
+
     interface BaselineBuilder<T> {
         BaselineBuilder<T> digester(Digester<?, ?> digester);
 
@@ -21,13 +22,13 @@ public interface Barflow<T extends Baseline> {
     }
 
     interface Annotator<T> {
-        void annotate(T base) throws FlowExecutionException;
+        void annotate(T baseline) throws FlowExecutionException;
     }
 
     interface Renderer<T> {
         String getName();
 
-        String render(T base) throws FlowExecutionException;
+        String render(T baseline) throws FlowExecutionException;
     }
 
     interface AnnotatorBuilder {

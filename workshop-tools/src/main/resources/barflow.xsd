@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="barflow">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="extractor" type="ExtractorType"/>
+                <xs:element name="digester" type="RendererType"/>
+                <xs:element name="annotator" type="AnnotatorType" maxOccurs="unbounded"/>
+                <xs:element name="renderer" type="RendererType" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="ExtractorType">
+        <xs:complexContent>
+            <xs:extension base="ComponentType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="DigesterType">
+        <xs:complexContent>
+            <xs:extension base="ComponentType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="AnnotatorType">
+        <xs:complexContent>
+            <xs:extension base="ComponentType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="RendererType">
+        <xs:complexContent>
+            <xs:extension base="ComponentType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="ComponentType" abstract="true">
+        <xs:sequence>
+            <xs:element name="type" type="xs:string" minOccurs="1"/>
+            <xs:element name="name" type="xs:string" minOccurs="1"/>
+            <xs:element name="description" type="xs:string" minOccurs="0"/>
+            <xs:element name="property" type="PropertyType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PropertyType">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string" minOccurs="1"/>
+            <xs:element name="value" type="xs:string" minOccurs="1"/>
+            <xs:element name="converter" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

@@ -3,29 +3,29 @@ package soya.framework.pachira;
 import java.util.Iterator;
 import java.util.Set;
 
-public interface Tree {
-    TreeNode root();
+public interface Tree<N extends TreeNode> {
+    N root();
 
-    TreeNode create(TreeNode parent, String name, Object data);
+    N create(TreeNode parent, String name, Object data);
 
-    TreeNode get(String path);
+    N get(String path);
 
-    Tree rename(TreeNode node, String newName);
+    Tree<N> rename(TreeNode node, String newName);
 
-    Tree add(TreeNode parent, String name, Object data);
+    Tree<N> add(TreeNode parent, String name, Object data);
 
-    Tree copyTo(TreeNode node, String newPath);
+    Tree<N> copyTo(TreeNode node, String newPath);
 
-    Tree move(TreeNode node, String newPath);
+    Tree<N> move(TreeNode node, String newPath);
 
     Tree remove(String path);
 
     //
     Iterator<String> paths();
 
-    Iterator<TreeNode> nodes();
+    Iterator<N> nodes();
 
-    Set<TreeNode> find(Selector selector);
+    Set<N> find(Selector selector);
 
     Tree filterIn(Selector selector);
 
