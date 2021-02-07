@@ -4,23 +4,26 @@ import java.util.Iterator;
 import java.util.Set;
 
 public interface Tree {
-    String getName();
+    TreeNode root();
 
-    Iterator<String> paths();
-
-    Iterator<TreeNode> nodes();
+    TreeNode create(TreeNode parent, String name, Object data);
 
     TreeNode get(String path);
 
-    Tree add(TreeNode parent, String name, Object data);
-
     Tree rename(TreeNode node, String newName);
+
+    Tree add(TreeNode parent, String name, Object data);
 
     Tree copyTo(TreeNode node, String newPath);
 
     Tree move(TreeNode node, String newPath);
 
     Tree remove(String path);
+
+    //
+    Iterator<String> paths();
+
+    Iterator<TreeNode> nodes();
 
     Set<TreeNode> find(Selector selector);
 

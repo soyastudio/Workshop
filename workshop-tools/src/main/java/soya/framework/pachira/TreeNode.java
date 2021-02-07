@@ -3,6 +3,7 @@ package soya.framework.pachira;
 import java.util.List;
 
 public interface TreeNode {
+
     String getName();
 
     TreeNode getParent();

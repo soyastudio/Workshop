@@ -1,26 +1,29 @@
 package soya.framework.pachira;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
-public final class MoneyTree implements Tree, Annotatable {
+public final class MoneyTree<T> extends Feature<T> implements KnowledgeTree<T> {
 
     private DefaultTreeNode root;
     private Map<String, TreeNode> treeNodeMap;
 
-    private MoneyTree() {
-        this.root = new DefaultTreeNode();
-        this.treeNodeMap = new LinkedHashMap<>();
-    }
-
-    private MoneyTree(DefaultTreeNode root) {
+    protected MoneyTree(DefaultTreeNode<T> root) {
+        super(root.origin());
         this.root = root;
         this.treeNodeMap = new LinkedHashMap<>();
+        treeNodeMap.put(root.path, root);
     }
 
     @Override
-    public String getName() {
-        return root.name;
+    public TreeNode root() {
+        return root;
+    }
+
+    @Override
+    public TreeNode create(TreeNode parent, String name, Object data) {
+        DefaultTreeNode node = new DefaultTreeNode(parent, name, data);
+        treeNodeMap.put(node.path, node);
+        return node;
     }
 
     public TreeNode get(String path) {
@@ -120,35 +123,8 @@ public final class MoneyTree implements Tree, Annotatable {
         return this;
     }
 
-    public Cursor cursor() {
-        return new Cursor(this);
-    }
-
-    @Override
-    public void annotate(String namespace, Object annotation) {
-        root.annotate(namespace, annotation);
-    }
-
-    @Override
-    public Object getAnnotation(String namespace) {
-        return root.getAnnotation(namespace);
-    }
-
-    @Override
-    public <T> T getAnnotation(String namespace, Class<T> annotationType) {
-        return root.getAnnotation(namespace, annotationType);
-    }
-
-    public static MoneyTree newInstance(String name) {
-        MoneyTree tree = new MoneyTree();
-        DefaultTreeNode rootNode = (DefaultTreeNode) tree.root;
-
-        rootNode.name = name;
-        rootNode.path = name;
-
-        tree.treeNodeMap.put(rootNode.path, rootNode);
-
-        return tree;
+    public static MoneyTree newInstance(String name, Object data) {
+        return new MoneyTree(new DefaultTreeNode(null, name, data));
     }
 
     public static TreeNodeBuilder treeNodeBuilder() {
@@ -189,12 +165,7 @@ public final class MoneyTree implements Tree, Annotatable {
                 throw new IllegalArgumentException("Path '" + path + "' already exist.");
             }
 
-            DefaultTreeNode node = new DefaultTreeNode();
-            node.name = name;
-            node.path = path;
-            node.data = data;
-
-            node.parent = parentNode;
+            DefaultTreeNode node = new DefaultTreeNode(parentNode, name, data);
             parentNode.getChildren().add(node);
 
             tree.treeNodeMap.put(path, node);
@@ -204,7 +175,7 @@ public final class MoneyTree implements Tree, Annotatable {
 
     }
 
-    static class DefaultTreeNode implements TreeNode, Annotatable {
+    static class DefaultTreeNode<T> extends Feature<T> implements KnowledgeTreeNode<T> {
 
         private TreeNode parent;
         private List<TreeNode> children = new ArrayList<>();
@@ -214,6 +185,19 @@ public final class MoneyTree implements Tree, Annotatable {
 
         private Object data;
         private Map<String, Object> annotations = new LinkedHashMap<>();
+
+        protected DefaultTreeNode(TreeNode parent, String name, T data) {
+            super(data);
+            this.parent = parent;
+            this.name = name;
+
+            if (parent != null) {
+                parent.getChildren().add(this);
+                this.path = parent.getPath() + "/" + name;
+            } else {
+                this.path = name;
+            }
+        }
 
         @Override
         public String getName() {
@@ -250,34 +234,6 @@ public final class MoneyTree implements Tree, Annotatable {
             return (T) data;
         }
 
-        @Override
-        public void annotate(String namespace, Object annotation) {
-            this.annotations.put(namespace, annotation);
-        }
-
-        @Override
-        public Object getAnnotation(String namespace) {
-            return annotations.get(namespace);
-        }
-
-        @Override
-        public <T> T getAnnotation(String namespace, Class<T> annotationType) {
-            return (T) annotations.get(namespace);
-        }
-
-    }
-
-    static class Cursor {
-
-        private MoneyTree tree;
-        private List<String> paths;
-        private TreeNode current;
-
-
-        private Cursor(MoneyTree tree) {
-            this.tree = tree;
-            this.paths = new ArrayList<>(tree.treeNodeMap.keySet());
-        }
     }
 
 }

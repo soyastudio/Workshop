@@ -1,6 +1,8 @@
 package soya.framework.pachira;
 
-public interface Barflow<T> {
+public interface Barflow<T extends Baseline> {
+
+    T getBaseLine();
 
     Barflow<T> baseline(BaselineBuilder<T> builder) throws FlowBuilderException;
 
@@ -8,11 +10,27 @@ public interface Barflow<T> {
 
     Barflow<T> renderer(RendererBuilder builder) throws FlowBuilderException;
 
-    static interface BaselineBuilder<T> {
+    interface BaselineBuilder<T> {
+        BaselineBuilder<T> digester(Digester<?, ?> digester);
+
         T create() throws FlowBuilderException;
     }
 
-    static interface AnnotatorBuilder {
+    interface Digester<S, D> {
+        D digest(S origin);
+    }
+
+    interface Annotator<T> {
+        void annotate(T base) throws FlowExecutionException;
+    }
+
+    interface Renderer<T> {
+        String getName();
+
+        String render(T base) throws FlowExecutionException;
+    }
+
+    interface AnnotatorBuilder {
         String getName();
 
         AnnotatorBuilder name(String name);
@@ -21,7 +39,7 @@ public interface Barflow<T> {
 
     }
 
-    static interface RendererBuilder {
+    interface RendererBuilder {
         String getName();
 
         RendererBuilder name(String name);
@@ -30,18 +48,10 @@ public interface Barflow<T> {
 
     }
 
-    static interface Configuration {
+    interface Configuration {
     }
 
-    static interface Annotator<T> {
-        void annotate(T base) throws FlowExecutionException;
-    }
-
-    static interface Renderer<T> {
-        String render(T base) throws FlowExecutionException;
-    }
-
-    static class FlowException extends RuntimeException {
+    class FlowException extends RuntimeException {
 
         public FlowException(Throwable cause) {
             super(cause);
@@ -56,7 +66,7 @@ public interface Barflow<T> {
         }
     }
 
-    static class FlowBuilderException extends FlowException {
+    class FlowBuilderException extends FlowException {
         public FlowBuilderException(Throwable cause) {
             super(cause);
         }
@@ -70,7 +80,7 @@ public interface Barflow<T> {
         }
     }
 
-    static class FlowExecutionException extends FlowException {
+    class FlowExecutionException extends FlowException {
         public FlowExecutionException(Throwable cause) {
             super(cause);
         }
