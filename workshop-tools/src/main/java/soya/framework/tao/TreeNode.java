@@ -1,0 +1,23 @@
+package soya.framework.tao;
+
+import java.util.List;
+
+public interface TreeNode {
+
+    String getName();
+
+    TreeNode getParent();
+
+    List<TreeNode> getChildren();
+
+    String getPath();
+
+    void setData(Object data);
+
+    Object getData();
+
+    <T> T getData(Class<T> type);
+
+
+
+}
