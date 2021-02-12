@@ -1,17 +1,23 @@
-package soya.framework.tao;
+package soya.framework.tao.support;
+
+import soya.framework.tao.KnowledgeTree;
+import soya.framework.tao.KnowledgeTreeNode;
+import soya.framework.tao.Tree;
+import soya.framework.tao.TreeNode;
 
 import java.util.*;
 
-public final class MoneyTree<T> extends Feature<T> implements KnowledgeTree<T> {
+public class MoneyTree<K, T> extends Feature<K> implements KnowledgeTree<K, T> {
 
     private KnowledgeTreeNode root;
     private Map<String, KnowledgeTreeNode<T>> treeNodeMap;
 
-    protected MoneyTree(DefaultTreeNode<T> root) {
-        super(root.origin());
+    protected MoneyTree(K knowledge, DefaultTreeNode<T> root) {
+        super(knowledge);
         this.root = root;
         this.treeNodeMap = new LinkedHashMap<>();
         treeNodeMap.put(root.path, root);
+
     }
 
     @Override
@@ -128,15 +134,44 @@ public final class MoneyTree<T> extends Feature<T> implements KnowledgeTree<T> {
         return this;
     }
 
-    public static MoneyTree newInstance(String name, Object data) {
-        return new MoneyTree(new DefaultTreeNode(null, name, data));
+    public static <K, T> MoneyTree<K, T> newInstance(K k, String name, T t) {
+        return new MoneyTree<>(k, new DefaultTreeNode<T>(null, name, t));
+    }
+
+    public static <K, T> KnowledgeTreeBuilder<K, T> builder() {
+        return new MoneyTreeBuilder<K, T>();
     }
 
     public static TreeNodeBuilder treeNodeBuilder() {
         return new TreeNodeBuilder();
     }
 
-    static class TreeNodeBuilder {
+    static class MoneyTreeBuilder<K, T> implements KnowledgeTreeBuilder<K, T>{
+        private K knowledgeBase;
+        private KnowledgeDigester<K, T> knowledgeDigester;
+
+        private MoneyTreeBuilder() {
+        }
+
+        @Override
+        public KnowledgeTreeBuilder<K, T> knowledgeBase(K knowledgeBase) {
+            this.knowledgeBase = knowledgeBase;
+            return this;
+        }
+
+        @Override
+        public KnowledgeTreeBuilder<K, T> knowledgeDigester(KnowledgeDigester<K, T> digester) {
+            this.knowledgeDigester = digester;
+            return this;
+        }
+
+        @Override
+        public KnowledgeTree<K, T> create() {
+            return new MoneyTree(knowledgeBase, (DefaultTreeNode) knowledgeDigester.digester(knowledgeBase));
+        }
+    }
+
+    public static class TreeNodeBuilder {
         private String name;
         private String parent;
         private Object data;

@@ -110,7 +110,7 @@ public class KafkaAdminService {
 
     // ================= Producer:
     public RecordModel publish(String topic, String message) {
-        ProducerRecord<String, byte[]> record = RecordModel.builder(topic).generateKey().message(message).create();
+        ProducerRecord<String, byte[]> record = RecordModel.builder(topic).generateKey().header("Name", "Bob").message(message).create();
         Future<RecordMetadata> future = kafkaProducer.send(record);
         while (!future.isDone()) {
             try {
@@ -185,7 +185,7 @@ public class KafkaAdminService {
             }
         }
 
-        return   rawRecords
+        return rawRecords
                 .values()
                 .stream()
                 .flatMap(Collection::stream)

@@ -1,21 +1,27 @@
 package soya.framework.tao;
 
-public interface Barflow<O, K extends Annotatable> {
+/**
+ * <p>
+ *     道生一，一生二，二生三，三生万物。
+ *     万物负阴而抱阳，冲气以为和。
+ *     人之所恶，唯孤、寡、不谷，而王公以为称。故物或损之而益，或益之而损。人之所教，我亦教之。强梁者不得其死，吾将以为教父。
+ * </p>
+ *
+ * @author Wen Qun
+ *
+ */
+public interface T123W<O, K extends Annotatable> {
 
-    Baseline<O, K> getBaseLine();
+    T123W<O, K> baseline(BaselineBuilder<O, K> builder) throws FlowBuilderException;
 
-    Barflow<O, K> baseline(BaselineBuilder<O, K> builder) throws FlowBuilderException;
+    T123W<O, K> annotator(AnnotatorBuilder<K> builder) throws FlowBuilderException;
 
-    Barflow<O, K> annotator(AnnotatorBuilder<K> builder) throws FlowBuilderException;
-
-    Barflow<O, K> renderer(RendererBuilder builder) throws FlowBuilderException;
-
-    String flowInstance(String format);
+    T123W<O, K> renderer(RendererBuilder builder) throws FlowBuilderException;
 
     interface BaselineBuilder<O, K extends Annotatable> {
-        BaselineBuilder<O, K> extractor(Extractor<O> extractor);
+        // BaselineBuilder<O, K> extractor(Extractor<O> extractor);
 
-        BaselineBuilder<O, K> digester(Digester<O, K> digester);
+        // BaselineBuilder<O, K> digester(Digester<O, K> digester);
 
         Baseline<O, K> create() throws FlowBuilderException;
     }
@@ -69,8 +75,6 @@ public interface Barflow<O, K extends Annotatable> {
         Renderer<K> create(Configuration configuration) throws FlowBuilderException;
 
     }
-
-
 
     interface Configuration {
     }

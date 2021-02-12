@@ -6,11 +6,11 @@ public interface TreeNode {
 
     String getName();
 
+    String getPath();
+
     TreeNode getParent();
 
     List<TreeNode> getChildren();
-
-    String getPath();
 
     void setData(Object data);
 

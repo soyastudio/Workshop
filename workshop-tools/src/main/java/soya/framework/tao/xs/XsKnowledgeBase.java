@@ -1,6 +1,8 @@
-package soya.framework.tao;
+package soya.framework.tao.xs;
 
 import org.apache.xmlbeans.*;
+import soya.framework.tao.*;
+import soya.framework.tao.support.MoneyTree;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
@@ -8,62 +10,79 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.math.BigInteger;
 import java.net.URL;
 
-public class XsdTreeBaseFlow extends TreeBaseFlow<SchemaTypeSystem, KnowledgeTree<XsdTreeBaseFlow.XsNode>, XsdTreeBaseFlow> {
+public class XsKnowledgeBase<T> implements KnowledgeTreeBase<T, KnowledgeTree<SchemaTypeSystem, XsNode>> {
 
-    //
-    public static XsdTreeBaseFlow newInstance() {
-        return new XsdTreeBaseFlow();
+    private T origin;
+    private KnowledgeTree<SchemaTypeSystem, XsNode> knowledgeBase;
+
+    private XsKnowledgeBase() {
+
     }
 
-    public static XsdTreeBaseFlow fromYaml(String yaml) {
-        return null;
+    @Override
+    public T origin() {
+        return origin;
     }
 
-    public static XsdTreeBaseFlow fromJson(String json) {
-        return null;
+    @Override
+    public KnowledgeTree<SchemaTypeSystem, XsNode> knowledgeBase() {
+        return knowledgeBase;
     }
 
-    public static XsdTreeBaseFlow fromXml(String xml) {
-        return null;
+    public static <T> Builder<T> builder() {
+        return new Builder<>();
     }
 
-    //
-    public static Builder builder() {
-        return new Builder();
-    }
+    public static class Builder<T> implements T123W.BaselineBuilder<T, KnowledgeTree<SchemaTypeSystem, XsNode>> {
+        private XmlSchemaExtractor extractor = new XmlSchemaExtractor();
+        private XsKnowledgeTreeDigester digester = new XsKnowledgeTreeDigester();
 
-    public static class Builder implements Barflow.BaselineBuilder<SchemaTypeSystem, KnowledgeTree<XsNode>> {
-
-        private Barflow.Extractor<SchemaTypeSystem> extractor = new XmlSchemaExtractor();
-        private Barflow.Digester<SchemaTypeSystem, KnowledgeTree<XsdTreeBaseFlow.XsNode>> digester = new XsTreeBaseDigester();
-
-        private Builder() {
+        public Builder<T> schemaTypeLoader(SchemaTypeLoader schemaTypeLoader) {
+            extractor.schemaTypeLoader(schemaTypeLoader);
+            return this;
         }
 
+        public Builder<T> xmlOptions(XmlOptions xmlOptions) {
+            extractor.xmlOptions(xmlOptions);
+            return this;
+        }
 
-        @Override
-        public Barflow.BaselineBuilder<SchemaTypeSystem, KnowledgeTree<XsNode>> extractor(Barflow.Extractor<SchemaTypeSystem> extractor) {
-            this.extractor = extractor;
+        public Builder<T> string(String xmlString) {
+            extractor.string(xmlString);
+            return this;
+        }
+
+        public Builder<T> file(File file) {
+            extractor.file(file);
+            return this;
+        }
+
+        public Builder<T> url(URL url) {
+            extractor.url(url);
+            return this;
+        }
+
+        public Builder<T> inputStream(InputStream inputStream) {
+            extractor.inputStream(inputStream);
+            return this;
+        }
+
+        public Builder<T> reader(Reader reader) {
+            extractor.reader(reader);
             return this;
         }
 
         @Override
-        public Barflow.BaselineBuilder<SchemaTypeSystem, KnowledgeTree<XsNode>> digester(Barflow.Digester<SchemaTypeSystem, KnowledgeTree<XsNode>> digester) {
-            this.digester = digester;
-            return this;
-        }
-
-        @Override
-        public XsdTreeBase create() throws Barflow.FlowBuilderException {
-            SchemaTypeSystem sts = extractor.extract();
-            return new XsdTreeBase(sts, digester.digest(sts));
+        public XsKnowledgeBase<T> create() throws T123W.FlowBuilderException {
+            XsKnowledgeBase<T> baseline = new XsKnowledgeBase<>();
+            baseline.knowledgeBase = digester.digester(extractor.extract());
+            return baseline;
         }
     }
 
-    public static class XmlSchemaExtractor implements Barflow.Extractor<SchemaTypeSystem> {
+    public static class XmlSchemaExtractor implements T123W.Extractor<SchemaTypeSystem> {
 
         private Object source;
         private SchemaTypeLoader schemaTypeLoader;
@@ -115,7 +134,7 @@ public class XsdTreeBaseFlow extends TreeBaseFlow<SchemaTypeSystem, KnowledgeTre
         }
 
         @Override
-        public SchemaTypeSystem extract() throws Barflow.FlowBuilderException {
+        public SchemaTypeSystem extract() throws T123W.FlowBuilderException {
             try {
                 // Parse the XML Schema object first to get XML object
                 XmlObject parsedSchema = parse(source, xmlOptions);
@@ -127,7 +146,7 @@ public class XsdTreeBaseFlow extends TreeBaseFlow<SchemaTypeSystem, KnowledgeTre
                 return XmlBeans.compileXsd(schemas, schemaTypeLoader, xmlOptions);
 
             } catch (XmlException | IOException e) {
-                throw new Barflow.FlowBuilderException(e);
+                throw new T123W.FlowBuilderException(e);
 
             }
         }
@@ -161,23 +180,24 @@ public class XsdTreeBaseFlow extends TreeBaseFlow<SchemaTypeSystem, KnowledgeTre
         }
     }
 
-    public static class XsTreeBaseDigester implements Barflow.Digester<SchemaTypeSystem, KnowledgeTree<XsNode>> {
+    public static class XsKnowledgeTreeDigester implements KnowledgeTree.KnowledgeDigester<SchemaTypeSystem, XsNode> {
 
         @Override
-        public KnowledgeTree digest(SchemaTypeSystem source) {
-            MoneyTree tree = null;
-            SchemaType sType = source.documentTypes()[0];
+        public KnowledgeTree<SchemaTypeSystem, XsNode> digester(SchemaTypeSystem schemaTypeSystem) {
+            MoneyTree<SchemaTypeSystem, XsNode> tree = null;
+            SchemaType sType = schemaTypeSystem.documentTypes()[0];
             if (SchemaType.ELEMENT_CONTENT == sType.getContentType()) {
 
                 SchemaLocalElement element = (SchemaLocalElement) sType.getContentModel();
                 QName qName = element.getName();
 
-                tree = MoneyTree.newInstance(qName.getLocalPart(), new XsNode(element));
+                tree = MoneyTree.newInstance(schemaTypeSystem, qName.getLocalPart(), new XsNode(element));
                 processParticle(element.getType().getContentModel(), true, tree.root(), tree);
             }
 
             return tree;
         }
+
 
         private void processParticle(SchemaParticle sp, boolean mixed, TreeNode parent, Tree tree) {
             switch (sp.getParticleType()) {
@@ -254,86 +274,5 @@ public class XsdTreeBaseFlow extends TreeBaseFlow<SchemaTypeSystem, KnowledgeTre
         }
     }
 
-    public static class XsdTreeBase implements KnowledgeTreeBase<SchemaTypeSystem, KnowledgeTree<XsNode>> {
-
-        private SchemaTypeSystem origin;
-        private KnowledgeTree<XsNode> knowledgeBase;
-
-        protected XsdTreeBase(SchemaTypeSystem origin, KnowledgeTree<XsNode> knowledgeBase) {
-            this.origin = origin;
-            this.knowledgeBase = knowledgeBase;
-        }
-
-        @Override
-        public SchemaTypeSystem origin() {
-            return origin;
-        }
-
-        @Override
-        public KnowledgeTree<XsNode> knowledgeBase() {
-            return knowledgeBase;
-        }
-
-    }
-
-    public static enum XsNodeType {
-        Folder, Field, Attribute
-    }
-
-    public static class XsNode {
-        private transient SchemaType schemaType;
-
-        private QName name;
-        private XsNodeType nodeType;
-
-        private BigInteger minOccurs;
-        private BigInteger maxOccurs;
-
-        XsNode(SchemaField schemaField) {
-            this.schemaType = schemaField.getType();
-
-            this.name = schemaField.getName();
-            this.minOccurs = schemaField.getMinOccurs();
-            this.minOccurs = schemaField.getMaxOccurs();
-
-            if (schemaField.getType().isSimpleType()) {
-                nodeType = XsNodeType.Field;
-
-            } else {
-                nodeType = XsNodeType.Folder;
-
-            }
-
-        }
-
-        XsNode(SchemaProperty schemaProperty) {
-            this.schemaType = schemaProperty.getType();
-            this.nodeType = XsNodeType.Attribute;
-
-            this.name = schemaProperty.getName();
-            this.minOccurs = schemaProperty.getMinOccurs();
-            this.minOccurs = schemaProperty.getMaxOccurs();
-        }
-
-        public SchemaType getSchemaType() {
-            return schemaType;
-        }
-
-        public QName getName() {
-            return name;
-        }
-
-        public XsNodeType getNodeType() {
-            return nodeType;
-        }
-
-        public BigInteger getMinOccurs() {
-            return minOccurs;
-        }
-
-        public BigInteger getMaxOccurs() {
-            return maxOccurs;
-        }
-    }
 
 }

@@ -1,9 +1,7 @@
 package soya.framework.tao.edis;
 
-import soya.framework.tao.Barflow;
+import soya.framework.tao.xs.XsKnowledgeAnnotator;
 
-public abstract class EdisAnnotator extends EdisTask implements Barflow.Annotator<XsdTreeBase> {
+public abstract class EdisAnnotator extends EdisTask implements XsKnowledgeAnnotator {
 
-    protected String name;
-    protected String namespace;
 }

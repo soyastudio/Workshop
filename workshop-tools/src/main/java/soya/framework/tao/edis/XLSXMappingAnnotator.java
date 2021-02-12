@@ -7,9 +7,11 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import soya.framework.tao.Barflow;
+import org.apache.xmlbeans.SchemaTypeSystem;
+import soya.framework.tao.T123W;
 import soya.framework.tao.KnowledgeTree;
 import soya.framework.tao.KnowledgeTreeNode;
+import soya.framework.tao.xs.XsNode;
 import soya.framework.tools.xmlbeans.WorkshopRepository;
 
 import java.io.File;
@@ -17,6 +19,7 @@ import java.io.IOException;
 import java.util.Iterator;
 
 public class XLSXMappingAnnotator extends EdisAnnotator {
+    public static String MAPPING_NAMESPACE = "mapping";
 
     private String mappingFile;
     private String mappingSheet;
@@ -29,14 +32,15 @@ public class XLSXMappingAnnotator extends EdisAnnotator {
     private transient int sourceIndex;
 
     @Override
-    public void annotate(XsdTreeBase baseline) throws Barflow.FlowExecutionException {
+    public void annotate(KnowledgeTree<SchemaTypeSystem, XsNode> knowledgeTree) throws T123W.FlowExecutionException {
+
         File excelFile = WorkshopRepository.getFile(mappingFile);
         XSSFWorkbook workbook = null;
 
         try {
             workbook = new XSSFWorkbook(excelFile);
             Sheet mappingSheet = workbook.getSheet(this.mappingSheet);
-            loadMappings(baseline, mappingSheet);
+            loadMappings(knowledgeTree, mappingSheet);
 
         } catch (IOException | InvalidFormatException e) {
             e.printStackTrace();
@@ -50,9 +54,7 @@ public class XLSXMappingAnnotator extends EdisAnnotator {
         }
     }
 
-    private void loadMappings(XsdTreeBase baseline, Sheet mappingSheet) {
-        KnowledgeTree<XsdTreeBase.XsNode> knowledgeTree = baseline.knowledgeBase();
-
+    private void loadMappings(KnowledgeTree<SchemaTypeSystem, XsNode> knowledgeTree, Sheet mappingSheet) {
         boolean start = false;
         Iterator<Row> sheetIterator = mappingSheet.iterator();
         while (sheetIterator.hasNext()) {
@@ -69,14 +71,13 @@ public class XLSXMappingAnnotator extends EdisAnnotator {
 
 
                 if (knowledgeTree.contains(targetPath) && mappingRule != null) {
-                    KnowledgeTreeNode<XsdTreeBase.XsNode> node = knowledgeTree.get(targetPath);
+                    KnowledgeTreeNode<XsNode> node = knowledgeTree.get(targetPath);
 
                     EdisTask.Mapping mapping = new EdisTask.Mapping();
                     mapping.rule = mappingRule;
                     mapping.source = sourcePath;
                     if (sourcePath != null && sourcePath.trim().length() > 0) {
-                        node.annotate(namespace, mapping);
-
+                        node.annotate(MAPPING_NAMESPACE, mapping);
                     }
                 }
 
@@ -161,5 +162,4 @@ public class XLSXMappingAnnotator extends EdisAnnotator {
     private boolean isEmpty(Cell cell) {
         return cell == null || cell.getStringCellValue() == null || cell.getStringCellValue().trim().length() == 0;
     }
-
 }

@@ -1,7 +1,7 @@
 package soya.framework.tao.edis;
 
-import soya.framework.tao.Barflow;
+import soya.framework.tao.xs.XsKnowledgeRenderer;
 
-public abstract class EdisRenderer extends EdisTask implements Barflow.Renderer<XsdTreeBase> {
+public abstract class EdisRenderer extends EdisTask implements XsKnowledgeRenderer {
 
 }

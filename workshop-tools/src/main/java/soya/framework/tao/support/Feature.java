@@ -1,4 +1,6 @@
-package soya.framework.tao;
+package soya.framework.tao.support;
+
+import soya.framework.tao.Annotatable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

@@ -1,23 +1,29 @@
 package soya.framework.tao.edis;
 
-public class EdisBarFlow {
-    /*private static TreeBaseFlow<XsdTreeBase> flow;
+import org.apache.xmlbeans.SchemaTypeSystem;
+import soya.framework.tao.KnowledgeTree;
+import soya.framework.tao.xs.SampleXmlRenderer;
+import soya.framework.tao.xs.XsToAvroSchemaRenderer;
+import soya.framework.tao.xs.XsKnowledgeBase;
+import soya.framework.tao.xs.XsNode;
 
-    static {
-        flow = XsdTreeBaseFlow.newInstance().baseline(
-                XsdTreeBase.builder()
-                        .name("Wen Qun")
-                        .file(new File("C:/github/Workshop/Repository/CMM/BOD/GetCustomerPreferences.xsd")))
-        .renderer("", XsdTreeRenderer.class);
-    }
+import java.io.File;
+
+public class EdisBarFlow {
 
     //
     public static void main(String[] args) {
-        XsdTreeBase treeBase = flow.getBaseLine();
+        KnowledgeTree<SchemaTypeSystem, XsNode> knowledgeTree = XsKnowledgeBase.builder()
+                .file(new File("D:/Workshop/Repository/CMM/BOD/GetCustomerPreferences.xsd"))
+                .create().knowledgeBase();
 
-        System.out.println(new XsdTreeRenderer().render(treeBase));
+        SchemaTypeSystem sts =knowledgeTree.origin();
+
+        System.out.println(new SampleXmlRenderer().render(knowledgeTree));
+        //System.out.println(new XsToAvroSchemaRenderer().render(knowledgeTree));
+        //System.out.println(new XsTreeRenderer().render(knowledgeTree));
         // System.out.println(flow.flowInstance("JSON"));
-    }*/
+    }
 
 
 }

@@ -1,11 +1,7 @@
-#
-C:/Zookeeper-Kafka/apache-zookeeper-3.6.2-bin/bin/zkServer
-
-C:/Zookeeper-Kafka/kafka_2.12-2.6.0/bin/windows/kafka-server-start.bat C:/Zookeeper-Kafka/kafka_2.12-2.6.0/config/server.properties
-
-
 # 
-D:/Kafka-Zookeeper/apache-zookeeper-3.5.6-bin/bin/zkServer
+D:/zookeeper-Kafka-spark/apache-zookeeper-3.6.2-bin/bin/zkServer
 
-D:/Kafka-Zookeeper/kafka_2.12-2.4.0/bin/windows/kafka-server-start.bat C:/Kafka-Zookeeper/kafka_2.12-2.4.0/config/server.properties
+D:/zookeeper-Kafka-spark/kafka_2.12-2.6.0/bin/windows/kafka-server-start.bat D:/zookeeper-Kafka-spark/kafka_2.12-2.6.0/config/server.properties
+
+D:/zookeeper-Kafka-spark/spark-3.0.1-bin-hadoop2.7/bin/spark-shell
 

@@ -1,32 +1,25 @@
-package soya.framework.tao;
+package soya.framework.tao.support;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import soya.framework.tao.Annotatable;
+import soya.framework.tao.T123W;
 
 import java.util.LinkedHashMap;
 
-public class BarFlowSupport<O, K extends Annotatable, F extends BarFlowSupport> implements Barflow<O, K> {
+public class BarFlowSupport<O, K extends Annotatable, F extends BarFlowSupport> implements T123W<O, K> {
 
     private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    protected Baseline<O, K> baseline;
-
     protected BaselineBuilder<O, K> baselineBuilder;
-
     protected LinkedHashMap<String, AnnotatorBuilder<K>> annotatorBuilders = new LinkedHashMap<>();
     protected LinkedHashMap<String, RendererBuilder> rendererBuilders = new LinkedHashMap<>();
 
     @Override
-    public Baseline<O, K> getBaseLine() {
-        return baseline;
-    }
-
-    @Override
     public F baseline(BaselineBuilder<O, K> builder) throws FlowBuilderException {
         this.baselineBuilder = builder;
-        this.baseline = builder.create();
         return (F) this;
     }
 

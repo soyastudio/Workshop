@@ -1,7 +1,8 @@
-package soya.framework.tao;
+package soya.framework.tao.support;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import soya.framework.tao.T123W;
 
 public abstract class GenericBuilder<T, B> {
 
@@ -9,7 +10,7 @@ public abstract class GenericBuilder<T, B> {
 
     protected String name;
     protected Class<? extends T> type;
-    protected Barflow.Configuration configuration;
+    protected T123W.Configuration configuration;
 
     protected GenericBuilder() {
     }
@@ -32,7 +33,7 @@ public abstract class GenericBuilder<T, B> {
         return (B) this;
     }
 
-    public B configure(Barflow.Configuration configuration) {
+    public B configure(T123W.Configuration configuration) {
         this.configuration = configuration;
         return (B) this;
     }
@@ -41,36 +42,36 @@ public abstract class GenericBuilder<T, B> {
         return null;
     }
 
-    public T create(Barflow.Configuration configuration) {
+    public T create(T123W.Configuration configuration) {
         return null;
     }
 
-    public static Barflow.AnnotatorBuilder annotatorBuilder() {
+    public static T123W.AnnotatorBuilder annotatorBuilder() {
         return new GenericAnnotatorBuilder();
     }
 
-    public static Barflow.RendererBuilder rendererBuilder() {
+    public static T123W.RendererBuilder rendererBuilder() {
         return new GenericRendererBuilder();
     }
 
 
-    public static class GenericAnnotatorBuilder extends GenericBuilder<Barflow.Annotator, Barflow.AnnotatorBuilder> implements Barflow.AnnotatorBuilder {
+    public static class GenericAnnotatorBuilder extends GenericBuilder<T123W.Annotator, T123W.AnnotatorBuilder> implements T123W.AnnotatorBuilder {
         protected GenericAnnotatorBuilder() {
         }
 
 
         @Override
-        public Barflow.AnnotatorBuilder annotatorType(Class type) {
+        public T123W.AnnotatorBuilder annotatorType(Class type) {
             return super.type(type);
         }
     }
 
-    public static class GenericRendererBuilder extends GenericBuilder<Barflow.Renderer, Barflow.RendererBuilder> implements Barflow.RendererBuilder {
+    public static class GenericRendererBuilder extends GenericBuilder<T123W.Renderer, T123W.RendererBuilder> implements T123W.RendererBuilder {
         protected GenericRendererBuilder() {
         }
 
         @Override
-        public Barflow.RendererBuilder rendererType(Class type) {
+        public T123W.RendererBuilder rendererType(Class type) {
             return super.type(type);
         }
     }
