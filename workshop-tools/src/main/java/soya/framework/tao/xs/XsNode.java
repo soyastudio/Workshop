@@ -21,7 +21,7 @@ public class XsNode {
 
         this.name = schemaField.getName();
         this.minOccurs = schemaField.getMinOccurs();
-        this.minOccurs = schemaField.getMaxOccurs();
+        this.maxOccurs = schemaField.getMaxOccurs();
 
         if (schemaField.getType().isSimpleType()) {
             nodeType = XsNodeType.Field;
@@ -61,7 +61,6 @@ public class XsNode {
     public BigInteger getMaxOccurs() {
         return maxOccurs;
     }
-
 
     public enum XsNodeType {
         Folder, Field, Attribute

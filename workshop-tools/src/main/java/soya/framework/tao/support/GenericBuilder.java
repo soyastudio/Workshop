@@ -54,6 +54,13 @@ public abstract class GenericBuilder<T, B> {
         return new GenericRendererBuilder();
     }
 
+    public static T123W.Configuration fromJson(String json) {
+        return new GenericConfiguration();
+    }
+
+    public static class GenericConfiguration implements T123W.Configuration {
+
+    }
 
     public static class GenericAnnotatorBuilder extends GenericBuilder<T123W.Annotator, T123W.AnnotatorBuilder> implements T123W.AnnotatorBuilder {
         protected GenericAnnotatorBuilder() {

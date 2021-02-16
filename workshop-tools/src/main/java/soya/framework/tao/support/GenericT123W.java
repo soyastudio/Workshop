@@ -9,7 +9,7 @@ import soya.framework.tao.T123W;
 
 import java.util.LinkedHashMap;
 
-public class BarFlowSupport<O, K extends Annotatable, F extends BarFlowSupport> implements T123W<O, K> {
+public class GenericT123W<O, K extends Annotatable, F extends GenericT123W> implements T123W<O, K> {
 
     private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 

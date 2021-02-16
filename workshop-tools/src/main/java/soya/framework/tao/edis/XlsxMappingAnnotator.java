@@ -11,15 +11,16 @@ import org.apache.xmlbeans.SchemaTypeSystem;
 import soya.framework.tao.T123W;
 import soya.framework.tao.KnowledgeTree;
 import soya.framework.tao.KnowledgeTreeNode;
+import soya.framework.tao.TreeNode;
 import soya.framework.tao.xs.XsNode;
-import soya.framework.tools.xmlbeans.WorkshopRepository;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
-public class XLSXMappingAnnotator extends EdisAnnotator {
-    public static String MAPPING_NAMESPACE = "mapping";
+public class XlsxMappingAnnotator extends EdisAnnotator {
 
     private String mappingFile;
     private String mappingSheet;
@@ -31,10 +32,22 @@ public class XLSXMappingAnnotator extends EdisAnnotator {
     private transient int ruleIndex;
     private transient int sourceIndex;
 
+    private Set<String> aliasSet = new HashSet<>();
+
+    public XlsxMappingAnnotator mappingFile(String mappingFile) {
+        this.mappingFile = mappingFile;
+        return this;
+    }
+
+    public XlsxMappingAnnotator mappingSheet(String mappingSheet) {
+        this.mappingSheet = mappingSheet;
+        return this;
+    }
+
     @Override
     public void annotate(KnowledgeTree<SchemaTypeSystem, XsNode> knowledgeTree) throws T123W.FlowExecutionException {
 
-        File excelFile = WorkshopRepository.getFile(mappingFile);
+        File excelFile = new File(mappingFile);
         XSSFWorkbook workbook = null;
 
         try {
@@ -73,12 +86,24 @@ public class XLSXMappingAnnotator extends EdisAnnotator {
                 if (knowledgeTree.contains(targetPath) && mappingRule != null) {
                     KnowledgeTreeNode<XsNode> node = knowledgeTree.get(targetPath);
 
-                    EdisTask.Mapping mapping = new EdisTask.Mapping();
-                    mapping.rule = mappingRule;
-                    mapping.source = sourcePath;
-                    if (sourcePath != null && sourcePath.trim().length() > 0) {
-                        node.annotate(MAPPING_NAMESPACE, mapping);
+                    Assignment assignment = new Assignment();
+                    assignment.rule = mappingRule;
+                    assignment.source = sourcePath;
+
+                    if (assignment.rule != null || sourcePath != null && sourcePath.trim().length() > 0) {
+                        node.annotate(NAMESPACE_ASSIGNMENT, assignment);
                     }
+
+                    KnowledgeTreeNode<XsNode> parent = (KnowledgeTreeNode<XsNode>) node.getParent();
+                    while (parent != null && parent.getAnnotation(NAMESPACE_CONSTRUCTION) == null) {
+                        Construction construction = new Construction();
+                        construction.setAlias(getAlias(parent.getName()));
+                        construction.setLevel(getLevel(parent));
+
+                        parent.annotate(NAMESPACE_CONSTRUCTION, construction);
+                        parent = (KnowledgeTreeNode<XsNode>) parent.getParent();
+                    }
+
                 }
 
             } else {
@@ -161,5 +186,29 @@ public class XLSXMappingAnnotator extends EdisAnnotator {
 
     private boolean isEmpty(Cell cell) {
         return cell == null || cell.getStringCellValue() == null || cell.getStringCellValue().trim().length() == 0;
+    }
+
+    private String getAlias(String baseName) {
+        String token = baseName + "_";
+        if(aliasSet.contains(token)) {
+            int count = 1;
+            token = baseName + count + "_";
+            while(aliasSet.contains(token)) {
+                token = baseName + count + "_";
+            }
+        }
+        aliasSet.add(token);
+        return token;
+    }
+
+    private int getLevel(TreeNode node) {
+        int level = 0;
+        TreeNode parent = node;
+        while (parent.getParent() != null) {
+            level ++;
+            parent = parent.getParent();
+        }
+
+        return level;
     }
 }

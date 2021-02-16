@@ -14,6 +14,7 @@ import java.util.Map;
 public class AnnotatableSupport implements Annotatable {
 
     private static Gson gson = new Gson();
+
     private Map<String, JsonElement> annotations = new LinkedHashMap<>();
 
     @Override

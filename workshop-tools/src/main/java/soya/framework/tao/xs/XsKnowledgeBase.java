@@ -238,16 +238,16 @@ public class XsKnowledgeBase<T> implements KnowledgeTreeBase<T, KnowledgeTree<Sc
 
             if (element.getType().isSimpleType()) {
                 // end
-                if (!element.getType().isBuiltinType())
-                    System.out.println("===== simple " + element.getName() + ": " + element.getType());
-
+                if (!element.getType().isBuiltinType()) {
+                    // System.out.println("===== simple " + element.getName() + ": " + element.getType());
+                }
             } else if (element.getType().getContentModel() != null) {
                 // next
                 processParticle(element.getType().getContentModel(), mixed, treeNode, tree);
 
             } else {
                 if (element.getType().getBaseType() != null) {
-                    System.out.println("================== ??? " + element.getName() + ": " + element.getType().getBaseType().isSimpleType());
+                    // System.out.println("================== ??? " + element.getName() + ": " + element.getType().getBaseType().isSimpleType());
 
                 }
             }

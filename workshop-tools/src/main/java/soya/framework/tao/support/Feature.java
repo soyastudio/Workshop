@@ -1,5 +1,8 @@
 package soya.framework.tao.support;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import soya.framework.tao.Annotatable;
 
 import java.util.LinkedHashMap;
@@ -7,8 +10,10 @@ import java.util.Map;
 
 public abstract class Feature<T> implements Annotatable<T> {
 
+    private static Gson gson = new Gson();
+
     protected T origin;
-    protected Map<String, Object> annotations = new LinkedHashMap<>();
+    protected JsonObject annotations = new JsonObject();
 
     protected Feature(T origin) {
         this.origin = origin;
@@ -20,7 +25,11 @@ public abstract class Feature<T> implements Annotatable<T> {
 
     @Override
     public void annotate(String namespace, Object annotation) {
-        this.annotations.put(namespace, annotation);
+        if (annotation == null) {
+            annotations.remove(namespace);
+        } else {
+            annotations.add(namespace, gson.toJsonTree(annotation));
+        }
     }
 
     @Override
@@ -30,6 +39,11 @@ public abstract class Feature<T> implements Annotatable<T> {
 
     @Override
     public <A> A getAnnotation(String namespace, Class<A> annotationType) {
-        return (A) annotations.get(namespace);
+        JsonElement v = annotations.get(namespace);
+        if(v == null) {
+            return null;
+        }
+
+        return gson.fromJson(v, annotationType);
     }
 }
