@@ -5,12 +5,14 @@ import org.apache.xmlbeans.SchemaTypeSystem;
 import soya.framework.tao.KnowledgeTree;
 import soya.framework.tao.KnowledgeTreeNode;
 import soya.framework.tao.T123W;
+import soya.framework.tao.TreeNode;
 import soya.framework.tao.xs.XsNode;
 import soya.framework.tools.util.StringBuilderUtils;
 
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Locale;
 
 public class ConstructEsqlRenderer extends EdisRenderer {
 
@@ -125,15 +127,16 @@ public class ConstructEsqlRenderer extends EdisRenderer {
         StringBuilderUtils.println(builder);
     }
 
-
-    protected void printNode(KnowledgeTreeNode<XsNode> node, StringBuilder builder, int indent) {
+    private void printNode(KnowledgeTreeNode<XsNode> node, StringBuilder builder, int indent) {
         if (node.getAnnotation(NAMESPACE_CONSTRUCTION) != null) {
             Construction construction = node.getAnnotation(NAMESPACE_CONSTRUCTION, Construction.class);
             if (construction.getFunctions().size() == 0) {
                 printSimpleFolder(node, builder, indent);
 
             } else {
-                System.out.println("------------------ " + Function.toString(construction.getFunctionArray()));
+                construction.getFunctions().forEach(e -> {
+                    printFunction(e, node, builder, indent);
+                });
             }
 
         } else if (node.getAnnotation(NAMESPACE_ASSIGNMENT) != null) {
@@ -141,7 +144,82 @@ public class ConstructEsqlRenderer extends EdisRenderer {
 
         } else {
             return;
+
         }
+    }
+
+    private void printFunction(Function function, KnowledgeTreeNode<XsNode> node, StringBuilder builder, int indent) {
+        if(FUNCTION_LOOP.equals(function.name)) {
+            printLoopFunction(function, node, builder, indent);
+        }
+    }
+
+    private void printLoopFunction(Function function, KnowledgeTreeNode<XsNode> node, StringBuilder builder, int indent) {
+
+        Construction parentConstruction = ((KnowledgeTreeNode<XsNode>)node.getParent()).getAnnotation(NAMESPACE_CONSTRUCTION, Construction.class);
+        Construction construction = node.getAnnotation(NAMESPACE_CONSTRUCTION, Construction.class);
+        String loopName = function.parameters[0];
+        String srcPath = function.parameters[1];
+        String variable = function.parameters[2];
+
+        String source = srcPath;
+        if(source.endsWith("[*]")) {
+            source = source.substring(0, source.length() - 3) + ".Item";
+        }
+
+        if(source.startsWith("$.")) {
+            source = inputRootVariable + source.substring(1);
+        }
+
+        StringBuilderUtils.println("-- LOOP FROM " + srcPath + " TO " + node.getPath() + ":", builder, construction.getLevel() + indent);
+        StringBuilderUtils.println("DECLARE " + variable + " REFERENCE TO " + source + ";", builder, construction.getLevel() + indent);
+        StringBuilderUtils.println(loopName + " : WHILE LASTMOVE(" + variable + ") DO", builder, construction.getLevel() + indent);
+        StringBuilderUtils.println(builder);
+
+        int offset = 1;
+
+        StringBuilderUtils.println("-- FOLDER: " + node.getPath(), builder, construction.getLevel() + indent + offset);
+        StringBuilderUtils.println("DECLARE " + construction.getAlias() + " REFERENCE TO " + parentConstruction.getAlias() + ";", builder, construction.getLevel() + indent + offset);
+        StringBuilderUtils.println("CREATE LASTCHILD OF " + parentConstruction.getAlias() + " AS " + construction.getAlias() + " TYPE XMLNSC.Folder NAME '" + getFullName(node) + "';"
+                , builder, construction.getLevel() + indent + offset);
+        StringBuilderUtils.println(builder);
+
+        for (TreeNode child : node.getChildren()) {
+            printNode((KnowledgeTreeNode<XsNode>) child, builder, indent + offset);
+        }
+ /*
+
+        if (node.getAnnotation(CONDITION) != null) {
+            String condition = node.getAnnotation(CONDITION, String.class);
+            StringBuilderUtils.println("IF " + condition + " THEN", builder, node.getLevel() + indent + 1);
+            StringBuilderUtils.println(builder);
+            offset++;
+        }
+
+
+        StringBuilderUtils.println("-- " + node.getPath(), builder, node.getLevel() + indent + offset);
+        StringBuilderUtils.println("DECLARE " + node.getAlias() + " REFERENCE TO " + node.getParent().getAlias() + ";", builder, node.getLevel() + indent + offset);
+        StringBuilderUtils.println("CREATE LASTCHILD OF " + node.getParent().getAlias() + " AS " + node.getAlias() + " TYPE XMLNSC.Folder NAME '" + getFullName(node) + "';"
+                , builder, node.getLevel() + indent + offset);
+        StringBuilderUtils.println(builder);
+
+        for (XmlSchemaBase.MappingNode child : node.getChildren()) {
+            printNode(child, builder, indent + offset);
+        }
+
+        if (node.getAnnotation(CONDITION) != null) {
+            StringBuilderUtils.println("END IF;", builder, node.getLevel() + indent + 1);
+            StringBuilderUtils.println(builder);
+        }
+*/
+
+        StringBuilderUtils.println("MOVE " + variable + " NEXTSIBLING;", builder, construction.getLevel() + indent);
+        StringBuilderUtils.println("END WHILE " + loopName + ";", builder, construction.getLevel() + indent);
+        StringBuilderUtils.println(builder);
+
+    }
+
+
 
 /*
 
@@ -167,13 +245,11 @@ public class ConstructEsqlRenderer extends EdisRenderer {
         }
 */
 
-    }
-
     private void printSimpleFolder(KnowledgeTreeNode<XsNode> node, StringBuilder builder, int indent) {
         Construction construction = node.getAnnotation(NAMESPACE_CONSTRUCTION, Construction.class);
         if (node.getParent() != null) {
             Construction parentConstruction = ((KnowledgeTreeNode<XsNode>) node.getParent()).getAnnotation(NAMESPACE_CONSTRUCTION, Construction.class);
-            StringBuilderUtils.println("-- " + node.getPath(), builder, construction.getLevel() + indent);
+            StringBuilderUtils.println("-- FOLDER: " + node.getPath(), builder, construction.getLevel() + indent);
             StringBuilderUtils.println("DECLARE " + construction.getAlias() + " REFERENCE TO " + parentConstruction.getAlias() + ";", builder, construction.getLevel() + indent);
             StringBuilderUtils.println("CREATE LASTCHILD OF " + parentConstruction.getAlias() + " AS " + construction.getAlias() + " TYPE XMLNSC.Folder NAME '" + getFullName(node) + "';"
                     , builder, construction.getLevel() + indent);
@@ -191,7 +267,7 @@ public class ConstructEsqlRenderer extends EdisRenderer {
 
         //String assignment = getAssignment(mapping, inputRootVariable);
         if (assignment != null) {
-            StringBuilderUtils.println("-- " + node.getPath(), builder, construction.getLevel() + indent + 1);
+            StringBuilderUtils.println("-- " + node.origin().getNodeType().name().toUpperCase(Locale.ROOT) + ": " + node.getPath(), builder, construction.getLevel() + indent + 1);
             if(assignment.functions.size() == 1) {
                 Function function = assignment.getFirst();
                 StringBuilderUtils.println("SET " + construction.getAlias()
@@ -212,6 +288,9 @@ public class ConstructEsqlRenderer extends EdisRenderer {
                 assignment = inputRootVariable + assignment.substring(1);
             }
             return assignment;
+
+        } else if(FUNCTION_LOOP_ASSIGN.equals(function.name)) {
+            return function.parameters[1];
         }
 
         return "XXX";

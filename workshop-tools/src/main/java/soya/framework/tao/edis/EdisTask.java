@@ -53,15 +53,17 @@ public class EdisTask {
                         String loopName = "loop" + name;
 
                         if (parent == null || !nameBase.containsKey(parent)) {
+                            srcPath = "$." + srcPath.replaceAll("/", ".");
                             map.get(arrNode).add(Function.newInstance(FUNCTION_LOOP, new String[]{"loop" + name, srcPath, name}));
 
                         } else {
                             String parentName = nameBase.get(parent);
-                            String pathRef = parentName + srcPath.substring(parent.getSource().length());
+                            String pathRef = parentName + srcPath.substring(parent.getSource().length()).replaceAll("/", ".");
                             map.get(arrNode).add(Function.newInstance(FUNCTION_LOOP, new String[]{loopName, pathRef, name}));
                         }
 
-                        String assign = src.replace(srcPath, name).replaceAll("/", ".");
+                        String assign = src.substring(key.getSource().length());
+                        assign = name + assign.replace(srcPath, name).replaceAll("/", ".");
                         map.get(e).add(Function.newInstance(FUNCTION_LOOP_ASSIGN, new String[]{loopName, assign}));
 
                     }

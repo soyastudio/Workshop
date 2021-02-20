@@ -3,6 +3,8 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<xs:include schemaLocation="../Nouns/Schematic.xsd"/>
 	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--v1.0 - 1/12/2021 - Alex Nunes - Initial version.-->
+	<!--v1.1 - 2/4/2021 - Alex Nunes - Removed attributes at the BOD root level. -->
 	<xs:element name="GetSchematic" type="GetSchematic">
 		<xs:annotation>
 			<xs:documentation>Root element.</xs:documentation>
@@ -23,20 +25,5 @@
 			</xs:element>
 			<xs:element name="SchematicData" type="Schematic"/>
 		</xs:sequence>
-		<xs:attribute name="VersionId" type="xs:string" use="optional">
-			<xs:annotation>
-				<xs:documentation>Version Id for the BOD instance</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
-		<xs:attribute name="ReleaseId" type="xs:string" use="optional">
-			<xs:annotation>
-				<xs:documentation>ReleaseId for the BOD instance</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
-		<xs:attribute name="SystemEnvironmentCd" type="xs:string" use="optional" default="Production">
-			<xs:annotation>
-				<xs:documentation>Prod, Test, QA</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
 	</xs:complexType>
 </xs:schema>

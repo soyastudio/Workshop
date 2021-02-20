@@ -902,7 +902,7 @@
 					<xs:documentation>Unit of measure in which drug is dispensed. TAB, CAP, ML, etc.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element ref="DurgSIGType" minOccurs="0" maxOccurs="unbounded">
+			<xs:element ref="DrugSIGType" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:documentation>Patient Instructios to use the drug, also known as SIG codes</xs:documentation>
 				</xs:annotation>
@@ -1281,9 +1281,13 @@ ex Active, Inactive, Active plus Preferred, Information only - not fillable.</xs
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="DurgSIGType">
+	<xs:element name="DrugSIGType">
+		<xs:annotation>
+			<xs:documentation>medical doctor's instructions in the prescription indicating how the patient should take the medication.</xs:documentation>
+		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
+				<xs:element name="SIG" type="CodeWithDescription" minOccurs="0"/>
 				<xs:element name="SIGConversionFctr" type="xs:integer" nillable="true" minOccurs="0">
 					<xs:annotation>
 						<xs:documentation>SIG conversion factor that converts metric liquid measurements to dosage units. The system also uses the conversion factor to calculate days ; supply</xs:documentation>
@@ -1735,7 +1739,7 @@ Dispensing Sites (NPDS) in the United States.</xs:documentation>
 			</xs:element>
 			<xs:element ref="DrugScheduleCodeType" minOccurs="0"/>
 			<xs:element ref="DrugStrengthType" minOccurs="0"/>
-			<xs:element ref="DurgSIGType" minOccurs="0"/>
+			<xs:element ref="DrugSIGType" minOccurs="0"/>
 			<xs:element name="CompoundDrugQty" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<!--V1.0  Alex Nunes 10/23/2019 Initial version -->
 	<!--V1.1  Alex Nunes 7/21/2020 Removal of period from Gregorian calendar, Holiday cardinality. -->
 	<!--V1.2 Rosabel Macario 11/05/2020 - Added tag to resolve dateTimeStamp issue-->
+	<!--V2.0 Patrick Oliver 02/10/21: Added LegacyFiscalCalendar; Added HolidayData to FiscalCalendar and LegacyFiscalCalendar;-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
 	<xs:element name="Calendar" type="CalendarType">
@@ -18,7 +19,7 @@
 	</xs:element>
 	<xs:complexType name="CalendarType">
 		<xs:annotation>
-			<xs:documentation>Calendar type represents all corporate, fiscal and payroll holiday days. It provides reference data for downstream systems.</xs:documentation>
+			<xs:documentation>Calendar type represents all corporate, fiscal,  and payroll holiday days. It provides reference data for downstream systems.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element ref="CalendarDt"/>
@@ -27,13 +28,26 @@
 					<xs:documentation>Julian representation of the date.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="GregorianCalendar" type="GregorianCalendarType" minOccurs="0"/>
-			<xs:element name="FiscalCalendar" type="FiscalCalendarType" minOccurs="0"/>
+			<xs:element name="GregorianCalendar" type="GregorianCalendarType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This represents the current year calendar.  Example: Jan 01 2021 is the first day of the year and is a 'Friday'</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FiscalCalendar" type="FiscalCalendarType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This represents the financial calendar data that company uses for financial reporting and budgeting (Mar-Feb). Example: Feb 28 2021 is first day of financial calendar.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LegacyFiscalCalendar" type="LegacyFiscalCalendarType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This represents the pre-merger financial calendar used for financial reporting and budgeting (Jan-Dec). Example: Jan 03 2021 is first day of pre-merger calendar.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="FiscalCalendarType">
 		<xs:annotation>
-			<xs:documentation>This type represents the calendar data that company uses for financial reporting and budgeting.</xs:documentation>
+			<xs:documentation>This type represents the calendar data that company uses for financial reporting and budgeting (Mar-Feb)</xs:documentation>
 		</xs:annotation>
 		<xs:sequence minOccurs="0">
 			<xs:element name="DateDsc" minOccurs="0">
@@ -84,6 +98,64 @@
 					<xs:documentation>Date of prior year calendar.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="Holiday" type="HolidayType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute ref="typeCode"/>
+	</xs:complexType>
+	<xs:complexType name="LegacyFiscalCalendarType">
+		<xs:annotation>
+			<xs:documentation>This type represents the legacy fiscal calendar data that company uses for financial reporting and budgeting (Jan-Dec)</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DateDsc" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date description.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="30"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Year" type="YearType" minOccurs="0"/>
+			<xs:element name="Quarter" minOccurs="0">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="QuarterType"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Period" minOccurs="0">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="PeriodType"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Week" minOccurs="0">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="WeekType"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Day" type="DayType" minOccurs="0"/>
+			<xs:element name="CompanyHolidayInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Holiday indicator. Values 'H' for holiday.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PriorYearCalendarDt" type="DateBaseType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date of prior year calendar.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Holiday" type="HolidayType" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 		<xs:attribute ref="typeCode"/>
 	</xs:complexType>

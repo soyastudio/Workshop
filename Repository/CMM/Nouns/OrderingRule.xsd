@@ -10,6 +10,8 @@
 	<!--!                                     optimal way. -->
 	<!--!-->
 	<!--!=============================================================================================-->
+	<!--1/26/2021 - v1.0 - Alex Nunes - Initial version.-->
+	<!--2/10/2021 - v1.1 - Alex Nunes - Added CORP and DIV for Customer type.-->
 	<xs:element name="OrderingRule" type="OrderingRuleType">
 		<xs:annotation>
 			<xs:documentation>Root element.</xs:documentation>
@@ -58,8 +60,8 @@
 				<xs:complexType>
 					<xs:sequence>
 						<xs:element name="SupplierType" type="Abs:CodeWithDescription" minOccurs="0"/>
-						<xs:element name="CorporationId" minOccurs="0"/>
-						<xs:element name="DivisionId" minOccurs="0"/>
+						<xs:element ref="CorporationId" minOccurs="0"/>
+						<xs:element ref="DivisionId" minOccurs="0"/>
 						<xs:element name="VendorId" minOccurs="0">
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
@@ -97,12 +99,15 @@
 								<xs:documentation>Customer type code.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
+						<xs:element ref="Abs:CorporationId" minOccurs="0"/>
+						<xs:element ref="Abs:DivisionId" minOccurs="0"/>
 						<xs:element ref="Abs:RetailStoreId" minOccurs="0"/>
 						<xs:element name="WholesaleCustomerNbr" type="xs:integer" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>Unique identifier of wholesale client. Example: JBG ID (JB Gottstein Wholesale )</xs:documentation>
 							</xs:annotation>
 						</xs:element>
+						<xs:element ref="WarehouseId" minOccurs="0"/>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>

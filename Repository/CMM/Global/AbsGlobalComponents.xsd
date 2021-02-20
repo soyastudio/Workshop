@@ -75,6 +75,13 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
+			<xs:element name="CountyCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element name="PostalZoneCd" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
@@ -85,14 +92,28 @@
 			<xs:element name="StateCd" nillable="true" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="10"/>
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="StateNm" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="CountryCd" nillable="true" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="10"/>
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CountryNm" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -399,11 +420,14 @@
 		<xs:attribute name="TypeCd" type="xs:string" default=""/>
 	</xs:complexType>
 	<xs:complexType name="AlternateId">
+		<xs:annotation>
+			<xs:documentation>Used to store alternate IDs (ex: GUID)</xs:documentation>
+		</xs:annotation>
 		<xs:sequence>
 			<xs:element name="AlternateIdTxt" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="30"/>
+						<xs:maxLength value="100"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -416,7 +440,7 @@
 				</xs:simpleType>
 			</xs:element>
 		</xs:sequence>
-		<xs:attribute name="CodeType" type="CodeBaseType" use="optional"/>
+		<xs:attribute ref="typeCode"/>
 		<xs:attribute ref="sequenceNbr"/>
 	</xs:complexType>
 	<xs:complexType name="BeneficiaryType">
@@ -889,6 +913,11 @@ Examples of this maybe the Altitude in the case of a map of the world, or the he
 				</xs:simpleType>
 			</xs:element>
 			<xs:element ref="GUID" minOccurs="0"/>
+			<xs:element name="CustomerId" type="IDType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Customer Identification.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="DataClassificationType">
@@ -1184,6 +1213,32 @@ Low</xs:documentation>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
+			<xs:element name="EmailPurposes" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="PurposeCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Code of the purpose.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PurposeDsc" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Description of the purpose.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
 			<xs:element name="EmailStatuses" minOccurs="0" maxOccurs="unbounded">
 				<xs:complexType>
 					<xs:sequence minOccurs="0">
@@ -1296,91 +1351,88 @@ Low</xs:documentation>
 											</xs:restriction>
 										</xs:simpleType>
 									</xs:element>
+									<xs:element name="StatusCd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Code status</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="20"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ReasonCd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Code reason</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="20"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
 								</xs:sequence>
 							</xs:complexType>
 						</xs:element>
-					</xs:sequence>
-					<xs:attribute ref="typeCode"/>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="EmailPurposes" minOccurs="0">
-				<xs:complexType>
-					<xs:sequence minOccurs="0">
-						<xs:element name="PurposeCd" minOccurs="0">
+						<xs:element name="EffectivePeriod" minOccurs="0" maxOccurs="unbounded">
 							<xs:annotation>
-								<xs:documentation>Code of the purpose.</xs:documentation>
+								<xs:documentation>Note same status can have multiple effective times  period types ("SUCCESS", "FAILED" ,etc.)</xs:documentation>
 							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="10"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="PurposeDsc" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Description of the purpose.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="50"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="EffectivePeriod" minOccurs="0" maxOccurs="unbounded">
-				<xs:complexType>
-					<xs:sequence minOccurs="0">
-						<xs:element name="FirstEffectiveDt" type="xs:date" nillable="false" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>The first Dt on which a condition or a version of an object is, was, or will be in effect.  In order to simplify joins that must match a transaction record to reference data with a Dt filter, First Effective Dt should never contain null values.  When the First Effective Dt is unknown, it should be set to a default of 01/01/0001 or the lowest Dt value supported by the DBMS.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="FirstEffectiveTm" type="xs:time" nillable="false" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>The first time on which a condition or a version of an object is, was, or will be in effect. When the First Effective time is unknown, it should be set to a default of 00:00:00 or the lowest time value supported by the DBMS.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="LastEffectiveDt" type="xs:date" nillable="false" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>The last Dt on which a condition or a version of an object was, or will be in effect.  In order to simplify joins that must match a transaction record to reference data with a Dt filter, Last Effective Dt should never contain null values.  When the Last Effective Dt is unknown, it should be set to a default of 12/31/9999 or the highest Dt value supported by the DBMS.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="LastEffectiveTm" type="xs:time" nillable="false" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>The last time on which a condition or a version of an object is, was, or will be in effect. When the First Effective time is unknown, it should be set to a default of 23:59:59 or the lowest time value supported by the DBMS.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="DurationNbr" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Number that represents the duration.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="10"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="DurationUnitDsc" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Duration unit. D for Days, W for weeks.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="20"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="InclusiveInd" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Indicates whether or not the dates and times are inclusive or not.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="2"/>
-								</xs:restriction>
-							</xs:simpleType>
+							<xs:complexType>
+								<xs:sequence minOccurs="0">
+									<xs:element name="FirstEffectiveDt" type="xs:date" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The first Dt on which a condition or a version of an object is, was, or will be in effect.  In order to simplify joins that must match a transaction record to reference data with a Dt filter, First Effective Dt should never contain null values.  When the First Effective Dt is unknown, it should be set to a default of 01/01/0001 or the lowest Dt value supported by the DBMS.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="FirstEffectiveTm" type="xs:time" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The first time on which a condition or a version of an object is, was, or will be in effect. When the First Effective time is unknown, it should be set to a default of 00:00:00 or the lowest time value supported by the DBMS.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="LastEffectiveDt" type="xs:date" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The last Dt on which a condition or a version of an object was, or will be in effect.  In order to simplify joins that must match a transaction record to reference data with a Dt filter, Last Effective Dt should never contain null values.  When the Last Effective Dt is unknown, it should be set to a default of 12/31/9999 or the highest Dt value supported by the DBMS.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="LastEffectiveTm" type="xs:time" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The last time on which a condition or a version of an object is, was, or will be in effect. When the First Effective time is unknown, it should be set to a default of 23:59:59 or the lowest time value supported by the DBMS.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="DurationNbr" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Number that represents the duration.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="DurationUnitDsc" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Duration unit. D for Days, W for weeks.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="20"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="InclusiveInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicates whether or not the dates and times are inclusive or not.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="2"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+								<xs:attribute ref="typeCode"/>
+							</xs:complexType>
 						</xs:element>
 					</xs:sequence>
 					<xs:attribute ref="typeCode"/>
@@ -2446,73 +2498,72 @@ Examples are - Preferred Name, Short Name etc.</xs:documentation>
 								</xs:sequence>
 							</xs:complexType>
 						</xs:element>
-					</xs:sequence>
-					<xs:attribute ref="typeCode"/>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="EffectivePeriod" minOccurs="0" maxOccurs="unbounded">
-				<xs:complexType>
-					<xs:sequence minOccurs="0">
-						<xs:element name="FirstEffectiveDt" type="xs:date" nillable="false" minOccurs="0">
+						<xs:element name="EffectivePeriod" minOccurs="0" maxOccurs="unbounded">
 							<xs:annotation>
-								<xs:documentation>The first Dt on which a condition or a version of an object is, was, or will be in effect.  In order to simplify joins that must match a transaction record to reference data with a Dt filter, First Effective Dt should never contain null values.  When the First Effective Dt is unknown, it should be set to a default of 01/01/0001 or the lowest Dt value supported by the DBMS.</xs:documentation>
+								<xs:documentation>Note a phone status can have multiple effective time period types ("SUCCESS", "FAILURE", etc.) </xs:documentation>
 							</xs:annotation>
-						</xs:element>
-						<xs:element name="FirstEffectiveTm" type="xs:time" nillable="false" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>The first time on which a condition or a version of an object is, was, or will be in effect. When the First Effective time is unknown, it should be set to a default of 00:00:00 or the lowest time value supported by the DBMS.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="LastEffectiveDt" type="xs:date" nillable="false" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>The last Dt on which a condition or a version of an object was, or will be in effect.  In order to simplify joins that must match a transaction record to reference data with a Dt filter, Last Effective Dt should never contain null values.  When the Last Effective Dt is unknown, it should be set to a default of 12/31/9999 or the highest Dt value supported by the DBMS.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="LastEffectiveTm" type="xs:time" nillable="false" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>The last time on which a condition or a version of an object is, was, or will be in effect. When the First Effective time is unknown, it should be set to a default of 23:59:59 or the lowest time value supported by the DBMS.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="DurationNbr" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Number that represents the duration.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="10"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="DurationUnitDsc" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Duration unit. D for Days, W for weeks.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="20"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="InclusiveInd" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Indicates whether or not the dates and times are inclusive or not.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="2"/>
-								</xs:restriction>
-							</xs:simpleType>
+							<xs:complexType>
+								<xs:sequence minOccurs="0">
+									<xs:element name="FirstEffectiveDt" type="xs:date" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The first Dt on which a condition or a version of an object is, was, or will be in effect.  In order to simplify joins that must match a transaction record to reference data with a Dt filter, First Effective Dt should never contain null values.  When the First Effective Dt is unknown, it should be set to a default of 01/01/0001 or the lowest Dt value supported by the DBMS.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="FirstEffectiveTm" type="xs:time" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The first time on which a condition or a version of an object is, was, or will be in effect. When the First Effective time is unknown, it should be set to a default of 00:00:00 or the lowest time value supported by the DBMS.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="LastEffectiveDt" type="xs:date" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The last Dt on which a condition or a version of an object was, or will be in effect.  In order to simplify joins that must match a transaction record to reference data with a Dt filter, Last Effective Dt should never contain null values.  When the Last Effective Dt is unknown, it should be set to a default of 12/31/9999 or the highest Dt value supported by the DBMS.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="LastEffectiveTm" type="xs:time" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The last time on which a condition or a version of an object is, was, or will be in effect. When the First Effective time is unknown, it should be set to a default of 23:59:59 or the lowest time value supported by the DBMS.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="DurationNbr" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Number that represents the duration.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="DurationUnitDsc" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Duration unit. D for Days, W for weeks.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="20"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="InclusiveInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicates whether or not the dates and times are inclusive or not.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="2"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+								<xs:attribute ref="typeCode"/>
+							</xs:complexType>
 						</xs:element>
 					</xs:sequence>
 					<xs:attribute ref="typeCode"/>
 				</xs:complexType>
 			</xs:element>
 		</xs:sequence>
-		<xs:attribute name="TypeCode" type="xs:string" use="optional" default="">
-			<xs:annotation>
-				<xs:documentation>Business/Mobile/Home/Fax</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
+		<xs:attribute ref="typeCode"/>
 		<xs:attribute name="PrimaryFlag" type="xs:boolean" use="optional" default="0"/>
 	</xs:complexType>
 	<xs:complexType name="PositionType">

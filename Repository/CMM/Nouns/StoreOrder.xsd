@@ -12,6 +12,7 @@
 	<!--V1.1 Patrick Oliver 7/22/20 - Updated VendorId & VendorSubAccountNbr to string(20)-->
 	<!--V1.2 Alex Nunes 11/20/2020 - Added possible suppliers for the order.-->
 	<!--V1.3 Alex Nunes 1/25/2021 - Added DSD purchase order elements. -->
+	<!--v1.3 Alex Nunes 2/5/2021 - Rename //element(*,StoreOrderVendor)/WarehouseVendorId to //element(*,StoreOrderVendor)/BackdoorVendorSubAccountId-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:element name="StoreOrder" type="StoreOrderType">
 		<xs:annotation>
@@ -1348,9 +1349,14 @@ This indicator will only effect orders, receivings, receiving adjustments and in
 					<xs:restriction base="xs:string"/>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="WarehouseVendorId" minOccurs="0">
+			<xs:element name="BackdoorVendorSubAccountId" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field is used for the BDR (Back Door Receiving) system, to identify a unique vend_num, vend_sub_acnt, markon type, terms id, and usage type to the store level BDR system.</xs:documentation>
+				</xs:annotation>
 				<xs:simpleType>
-					<xs:restriction base="xs:string"/>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="VendorDUNSNbr" minOccurs="0">

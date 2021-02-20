@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by Rosabel Macario (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<!--V2.3 Rosabel Macario 01/27/2021: Increase maxlen of CashCd from 4 to 150.-->
 	<!--V2.2 Rosabel Macario 01/12/2021: Increase maxlen of PaymentCd and ProcessLvl-->
@@ -50,6 +50,11 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
+			<xs:element name="VendorSiteData" type="RemittanceVendorSiteType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Used to support information about supplier site level attributes.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element ref="InvoiceNbr"/>
 			<xs:element name="InvoiceSuffixNbr" minOccurs="0">
 				<xs:annotation>
@@ -60,6 +65,11 @@
 						<xs:totalDigits value="3"/>
 					</xs:restriction>
 				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InvoiceDt" type="DateType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The date assigned to the invoice. Used when updating the vendor's purchase balance. If left blank, the system date defaults.</xs:documentation>
+				</xs:annotation>
 			</xs:element>
 			<xs:element name="CancelSeqNbr" minOccurs="0">
 				<xs:annotation>
@@ -531,11 +541,6 @@ revaluation that resulted in the
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="InvoiceDt" type="DateType" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>The date assigned to the invoice. Used when updating the vendor's purchase balance. If left blank, the system date defaults.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
 			<xs:element name="PurchaseOrderNbr" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>This field contains the number representing the purchase order.</xs:documentation>
@@ -647,11 +652,6 @@ combination. Valid values are: 01 = Standard Check.
 					<xs:documentation>The discount code assigned to the invoice payment. Used to default a general ledger discount account to the invoice. Must be a valid record in the Discount Code file.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="VendorSiteData" type="RemittanceVendorSiteType" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Used to support information about supplier site level attributes.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
 			<xs:element name="ChartOfAccountData" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:documentation>Chart of account data segments </xs:documentation>
@@ -739,6 +739,7 @@ combination. Valid values are: 01 = Standard Check.
 					<xs:attribute ref="typeCode"/>
 				</xs:complexType>
 			</xs:element>
+			<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:element name="InvoiceNbr">

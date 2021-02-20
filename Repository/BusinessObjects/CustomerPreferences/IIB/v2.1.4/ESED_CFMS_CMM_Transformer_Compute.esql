@@ -1,0 +1,408 @@
+BROKER SCHEMA com.abs.uca.cfms
+
+CREATE COMPUTE MODULE ESED_CFMS_CMM_Transformer_Compute
+
+	-- Declare UDPs
+	DECLARE VERSION_ID EXTERNAL CHARACTER '2.1.2.015';
+	DECLARE SYSTEM_ENVIRONMENT_CODE EXTERNAL CHARACTER 'PROD';
+	DECLARE LOG_OUPUT_MSG EXTERNAL CHARACTER 'Y';
+
+	-- Declare Namespace
+	DECLARE Abs NAMESPACE 'https://collab.safeway.com/it/architecture/info/default.aspx';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+
+		-- For long to timestamp
+      	DECLARE pattern CHARACTER 'yyyy-MM-dd''T''HH:mm:ss.SSS''Z''';
+		DECLARE epochTimeStamp TIMESTAMP '1970-01-01 00:00:00';
+
+		-- Declare Input Message Root
+		DECLARE _inputRootNode REFERENCE TO InputRoot.JSON.Data;
+
+		-- Declare Output Message Root
+		CREATE LASTCHILD OF OutputRoot DOMAIN 'XMLNSC';
+
+		DECLARE xmlDocRoot REFERENCE TO OutputRoot.XMLNSC.GetCustomerPreferences;
+		CREATE LASTCHILD OF OutputRoot.XMLNSC AS xmlDocRoot TYPE XMLNSC.Folder NAME 'GetCustomerPreferences';
+		SET OutputRoot.XMLNSC.GetCustomerPreferences.(XMLNSC.NamespaceDecl)xmlns:Abs=Abs;
+
+		-- GetCustomerPreferences/DocumentData
+		DECLARE DocumentData_ REFERENCE TO xmlDocRoot;
+		CREATE LASTCHILD OF xmlDocRoot AS DocumentData_ TYPE XMLNSC.Folder NAME 'DocumentData';
+
+			-- GetCustomerPreferences/DocumentData/Document
+			DECLARE Document_ REFERENCE TO DocumentData_;
+			CREATE LASTCHILD OF DocumentData_ AS Document_ TYPE XMLNSC.Folder NAME 'Document';
+
+				-- GetCustomerPreferences/DocumentData/Document/@VersionId
+				SET Document_.(XMLNSC.Attribute)VersionId = VERSION_ID;
+
+				-- GetCustomerPreferences/DocumentData/Document/@SystemEnvironmentCd
+				SET Document_.(XMLNSC.Attribute)SystemEnvironmentCd = SYSTEM_ENVIRONMENT_CODE;
+
+				-- GetCustomerPreferences/DocumentData/Document/DocumentID
+				SET Document_.(XMLNSC.Field)Abs:DocumentID = 'CUSTOMER_PREFERENCES_MANAGEMENT';
+
+				-- GetCustomerPreferences/DocumentData/Document/AlternateDocumentID
+				SET Document_.(XMLNSC.Field)Abs:AlternateDocumentID = 'IAUC_C02.cfms.aggregate-' || CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT 'YYYYMMddHHmmssSSSSSS');
+
+				-- GetCustomerPreferences/DocumentData/Document/InboundOutboundInd
+				SET Document_.(XMLNSC.Field)Abs:InboundOutboundInd = 'Outbound from Albertsons';
+
+				-- GetCustomerPreferences/DocumentData/Document/DocumentNm
+				SET Document_.(XMLNSC.Field)Abs:DocumentNm = 'GetCustomerPreferences';
+
+				-- GetCustomerPreferences/DocumentData/Document/CreationDt
+				SET Document_.(XMLNSC.Field)Abs:CreationDt = CURRENT_TIMESTAMP;
+
+				-- GetCustomerPreferences/DocumentData/Document/Description
+				SET Document_.(XMLNSC.Field)Abs:Description = 'Retail customer''s generic preferences and the subscriptions';
+
+				-- GetCustomerPreferences/DocumentData/Document/SourceApplicationCd
+				SET Document_.(XMLNSC.Field)Abs:SourceApplicationCd = 'CFMS';
+
+				-- GetCustomerPreferences/DocumentData/Document/TargetApplicationCd
+				SET Document_.(XMLNSC.Field)Abs:TargetApplicationCd = 'EDIS';
+
+				-- GetCustomerPreferences/DocumentData/Document/InternalFileTransferInd
+				SET Document_.(XMLNSC.Field)Abs:InternalFileTransferInd = 'Y';
+
+				-- GetCustomerPreferences/DocumentData/Document/DataClassification
+				DECLARE DataClassification_ REFERENCE TO Document_;
+				CREATE LASTCHILD OF Document_ AS DataClassification_ TYPE XMLNSC.Folder NAME 'Abs:DataClassification';
+
+					-- GetCustomerPreferences/DocumentData/Document/DataClassification/DataClassificationLevel
+					DECLARE DataClassificationLevel_ REFERENCE TO DataClassification_;
+					CREATE LASTCHILD OF DataClassification_ AS DataClassificationLevel_ TYPE XMLNSC.Folder NAME 'Abs:DataClassificationLevel';
+
+						-- GetCustomerPreferences/DocumentData/Document/DataClassification/DataClassificationLevel/Code
+						SET DataClassificationLevel_.(XMLNSC.Field)Abs:Code = 'Internal';
+
+					-- GetCustomerPreferences/DocumentData/Document/DataClassification/BusinessSensitivityLevel
+					DECLARE BusinessSensitivityLevel_ REFERENCE TO DataClassification_;
+					CREATE LASTCHILD OF DataClassification_ AS BusinessSensitivityLevel_ TYPE XMLNSC.Folder NAME 'Abs:BusinessSensitivityLevel';
+
+						-- GetCustomerPreferences/DocumentData/Document/DataClassification/BusinessSensitivityLevel/Code
+						SET BusinessSensitivityLevel_.(XMLNSC.Field)Abs:Code = 'Low';
+
+					-- GetCustomerPreferences/DocumentData/Document/DataClassification/PHIdataInd
+					SET DataClassification_.(XMLNSC.Field)Abs:PHIdataInd = 'N';
+
+					-- GetCustomerPreferences/DocumentData/Document/DataClassification/PCIdataInd
+					SET DataClassification_.(XMLNSC.Field)Abs:PCIdataInd = 'N';
+
+					-- GetCustomerPreferences/DocumentData/Document/DataClassification/PIIdataInd
+					SET DataClassification_.(XMLNSC.Field)Abs:PIIdataInd = 'N';
+
+			-- GetCustomerPreferences/DocumentData/DocumentAction
+			DECLARE DocumentAction_ REFERENCE TO DocumentData_;
+			CREATE LASTCHILD OF DocumentData_ AS DocumentAction_ TYPE XMLNSC.Folder NAME 'DocumentAction';
+
+				-- GetCustomerPreferences/DocumentData/DocumentAction/ActionTypeCd
+				SET DocumentAction_.(XMLNSC.Field)Abs:ActionTypeCd = 'UPDATE';
+
+				-- GetCustomerPreferences/DocumentData/DocumentAction/RecordTypeCd
+				SET DocumentAction_.(XMLNSC.Field)Abs:RecordTypeCd = 'CHANGE';
+
+		-- GetCustomerPreferences/CustomerPreferencesData
+		DECLARE CustomerPreferencesData_ REFERENCE TO xmlDocRoot;
+		CREATE LASTCHILD OF xmlDocRoot AS CustomerPreferencesData_ TYPE XMLNSC.Folder NAME 'CustomerPreferencesData';
+
+			-- GetCustomerPreferences/CustomerPreferencesData/CustomerId
+			SET CustomerPreferencesData_.(XMLNSC.Field)Abs:CustomerId = _inputRootNode.aggregateId;
+
+			-- LOOP FROM $.state.preferences[*] TO GetCustomerPreferences/CustomerPreferencesData/CustomerPreferences:
+			DECLARE _state_preference REFERENCE TO _inputRootNode.state.preferences.Item;
+			LOOP_STATE_PREFERENCES : WHILE LASTMOVE(_state_preference) DO
+
+				-- GetCustomerPreferences/CustomerPreferencesData/CustomerPreferences
+				DECLARE CustomerPreferences_ REFERENCE TO CustomerPreferencesData_;
+				CREATE LASTCHILD OF CustomerPreferencesData_ AS CustomerPreferences_ TYPE XMLNSC.Folder NAME 'Abs:CustomerPreferences';
+
+					-- GetCustomerPreferences/CustomerPreferencesData/CustomerPreferences/PreferenceClassNm
+					SET CustomerPreferences_.(XMLNSC.Field)Abs:PreferenceClassNm = _state_preference._class;
+
+					-- GetCustomerPreferences/CustomerPreferencesData/CustomerPreferences/PreferenceCd
+					SET CustomerPreferences_.(XMLNSC.Field)Abs:PreferenceCd = _state_preference.preferenceId;
+
+					-- GetCustomerPreferences/CustomerPreferencesData/CustomerPreferences/PreferenceTypeCd
+					SET CustomerPreferences_.(XMLNSC.Field)Abs:PreferenceTypeCd = _state_preference.type;
+
+					-- GetCustomerPreferences/CustomerPreferencesData/CustomerPreferences/PreferenceVal
+					SET CustomerPreferences_.(XMLNSC.Field)Abs:PreferenceVal = _state_preference.value;
+
+					-- GetCustomerPreferences/CustomerPreferencesData/CustomerPreferences/PreferenceCategoryCd
+					SET CustomerPreferences_.(XMLNSC.Field)Abs:PreferenceCategoryCd = _state_preference.categoryCode;
+
+					-- GetCustomerPreferences/CustomerPreferencesData/CustomerPreferences/PreferenceSubCategoryCd
+					SET CustomerPreferences_.(XMLNSC.Field)Abs:PreferenceSubCategoryCd = _state_preference.subCategoryCode;
+
+					-- LOOP FROM _state_preference.optChoices[*] TO GetCustomerPreferences/CustomerPreferencesData/CustomerPreferences/OptChoice:
+					DECLARE _opt_choice REFERENCE TO _state_preference.optChoices.Item;
+					LOOP_OPT_CHOICES : WHILE LASTMOVE(_opt_choice) DO
+
+						-- GetCustomerPreferences/CustomerPreferencesData/CustomerPreferences/OptChoice
+						DECLARE OptChoice_ REFERENCE TO CustomerPreferences_;
+						CREATE LASTCHILD OF CustomerPreferences_ AS OptChoice_ TYPE XMLNSC.Folder NAME 'Abs:OptChoice';
+
+							-- GetCustomerPreferences/CustomerPreferencesData/CustomerPreferences/OptChoice/ChoiceDsc
+							SET OptChoice_.(XMLNSC.Field)Abs:ChoiceDsc = _opt_choice.choice;
+
+							-- GetCustomerPreferences/CustomerPreferencesData/CustomerPreferences/OptChoice/ReasonCd
+							SET OptChoice_.(XMLNSC.Field)Abs:ReasonCd = _opt_choice.reasonCode;
+
+							-- GetCustomerPreferences/CustomerPreferencesData/CustomerPreferences/OptChoice/ReasonDsc
+							SET OptChoice_.(XMLNSC.Field)Abs:ReasonDsc = _opt_choice.reasonText;
+
+					MOVE _opt_choice NEXTSIBLING;
+					END WHILE LOOP_OPT_CHOICES;
+
+					-- GetCustomerPreferences/CustomerPreferencesData/CustomerPreferences/BannerCd
+					SET CustomerPreferences_.(XMLNSC.Field)Abs:BannerCd = _state_preference.bannerId;
+
+					-- GetCustomerPreferences/CustomerPreferencesData/CustomerPreferences/PreferredInd
+					SET CustomerPreferences_.(XMLNSC.Field)Abs:PreferredInd = _state_preference.preferredInd;
+
+					-- GetCustomerPreferences/CustomerPreferencesData/CustomerPreferences/ChannelTypCd
+					SET CustomerPreferences_.(XMLNSC.Field)Abs:ChannelTypCd = _state_preference.channel.type;
+
+					-- GetCustomerPreferences/CustomerPreferencesData/CustomerPreferences/PlatformTypCd
+					SET CustomerPreferences_.(XMLNSC.Field)Abs:PlatformTypCd = _state_preference.platform.type;
+
+					-- LOOP FROM _state_preference.effectiveTimePeriods[*] TO GetCustomerPreferences/CustomerPreferencesData/CustomerPreferences/PreferenceEffectivePeriod:
+					DECLARE _pref_eff_time_period REFERENCE TO _state_preference.effectiveTimePeriods.Item;
+					LOOP_PREF_EFF_TIME_PERIODS : WHILE LASTMOVE(_pref_eff_time_period) DO
+
+						-- GetCustomerPreferences/CustomerPreferencesData/CustomerPreferences/PreferenceEffectivePeriod
+						DECLARE PreferenceEffectivePeriod_ REFERENCE TO CustomerPreferences_;
+						CREATE LASTCHILD OF CustomerPreferences_ AS PreferenceEffectivePeriod_ TYPE XMLNSC.Folder NAME 'Abs:PreferenceEffectivePeriod';
+
+							-- GetCustomerPreferences/CustomerPreferencesData/CustomerPreferences/PreferenceEffectivePeriod/FirstEffectiveDt
+							SET PreferenceEffectivePeriod_.(XMLNSC.Field)Abs:FirstEffectiveDt = _pref_eff_time_period.startDate;
+
+							-- GetCustomerPreferences/CustomerPreferencesData/CustomerPreferences/PreferenceEffectivePeriod/FirstEffectiveTm
+							SET PreferenceEffectivePeriod_.(XMLNSC.Field)Abs:FirstEffectiveTm = _pref_eff_time_period.startTime;
+
+							-- GetCustomerPreferences/CustomerPreferencesData/CustomerPreferences/PreferenceEffectivePeriod/LastEffectiveDt
+							SET PreferenceEffectivePeriod_.(XMLNSC.Field)Abs:LastEffectiveDt = _pref_eff_time_period.endDate;
+
+							-- GetCustomerPreferences/CustomerPreferencesData/CustomerPreferences/PreferenceEffectivePeriod/LastEffectiveTm
+							SET PreferenceEffectivePeriod_.(XMLNSC.Field)Abs:LastEffectiveTm = _pref_eff_time_period.endTime;
+
+							-- DurationNbr and DurationUnitDsc
+							IF ENDSWITH(_pref_eff_time_period.duration, 'D') THEN
+      							-- GetCustomerPreferencesManagement/CustomerPreferencesManagementData/CustomerPreferences/PreferenceEffectivePeriod/DurationNbr
+								SET PreferenceEffectivePeriod_.(XMLNSC.Field)Abs:DurationNbr = SUBSTRING(_pref_eff_time_period.duration BEFORE 'D');
+
+								-- GetCustomerPreferencesManagement/CustomerPreferencesManagementData/CustomerPreferences/PreferenceEffectivePeriod/DurationUnitDsc
+								SET PreferenceEffectivePeriod_.(XMLNSC.Field)Abs:DurationUnitDsc = 'Days';
+
+							ELSEIF ENDSWITH(_pref_eff_time_period.duration, 'W') THEN
+      							-- GetCustomerPreferencesManagement/CustomerPreferencesManagementData/CustomerSubscriptions/SubscriptionEffectivePeriod/DurationNbr
+								SET PreferenceEffectivePeriod_.(XMLNSC.Field)Abs:DurationNbr = SUBSTRING(_pref_eff_time_period.duration BEFORE 'W');
+
+								-- GetCustomerPreferencesManagement/CustomerPreferencesManagementData/CustomerPreferences/PreferenceEffectivePeriod/DurationUnitDsc
+								SET PreferenceEffectivePeriod_.(XMLNSC.Field)Abs:DurationUnitDsc = 'Weeks';
+
+   							END IF;
+
+							-- GetCustomerPreferences/CustomerPreferencesData/CustomerPreferences/PreferenceEffectivePeriod/InclusiveInd
+							SET PreferenceEffectivePeriod_.(XMLNSC.Field)Abs:InclusiveInd = _pref_eff_time_period.inclusiveInd;
+
+					MOVE _pref_eff_time_period NEXTSIBLING;
+					END WHILE LOOP_PREF_EFF_TIME_PERIODS;
+
+			MOVE _state_preference NEXTSIBLING;
+			END WHILE LOOP_STATE_PREFERENCES;
+
+			-- LOOP FROM $.state.preferences[*] TO GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions:
+			DECLARE _preference REFERENCE TO _inputRootNode.state.preferences.Item;
+			LOOP_CUSTOMER_SUBSCRIPTION : WHILE LASTMOVE(_preference) DO
+
+				-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions
+				DECLARE CustomerSubscriptions_ REFERENCE TO CustomerPreferencesData_;
+				CREATE LASTCHILD OF CustomerPreferencesData_ AS CustomerSubscriptions_ TYPE XMLNSC.Folder NAME 'Abs:CustomerSubscriptions';
+
+					-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/SubscriptionId
+					SET CustomerSubscriptions_.(XMLNSC.Field)Abs:SubscriptionId = _preference.value;
+
+					-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/SubscriptionCd
+					SET CustomerSubscriptions_.(XMLNSC.Field)Abs:SubscriptionCd = _preference.subCategoryCode;
+
+					-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/SubscriptionTypeCd
+					SET CustomerSubscriptions_.(XMLNSC.Field)Abs:SubscriptionTypeCd = _preference.type;
+
+					-- LOOP FROM _preference.optChoices[*] TO GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/OptChoice:
+					DECLARE _choice REFERENCE TO _preference.optChoices.Item;
+					LOOP_SUBSCRIPTION_CHOICES : WHILE LASTMOVE(_choice) DO
+
+						-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/OptChoice
+						DECLARE OptChoice_1 REFERENCE TO CustomerSubscriptions_;
+						CREATE LASTCHILD OF CustomerSubscriptions_ AS OptChoice_1 TYPE XMLNSC.Folder NAME 'Abs:OptChoice';
+
+							-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/OptChoice/ChoiceDsc
+							SET OptChoice_1.(XMLNSC.Field)Abs:ChoiceDsc = _choice.choice;
+
+							-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/OptChoice/ReasonCd
+							SET OptChoice_1.(XMLNSC.Field)Abs:ReasonCd = _choice.reasonCode;
+
+							-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/OptChoice/ReasonDsc
+							SET OptChoice_1.(XMLNSC.Field)Abs:ReasonDsc = _choice.reasonText;
+
+					MOVE _choice NEXTSIBLING;
+					END WHILE LOOP_SUBSCRIPTION_CHOICES;
+
+					-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/DeliverySubscription
+					DECLARE DeliverySubscription_ REFERENCE TO CustomerSubscriptions_;
+					CREATE LASTCHILD OF CustomerSubscriptions_ AS DeliverySubscription_ TYPE XMLNSC.Folder NAME 'Abs:DeliverySubscription';
+
+						-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/DeliverySubscription/ServiceFeeWaivedInd
+						SET DeliverySubscription_.(XMLNSC.Field)Abs:ServiceFeeWaivedInd = _preference.deliverySubscriptionOffer.serviceFeeWaived;
+
+						-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/DeliverySubscription/DeliveryFeeWaivedInd
+						SET DeliverySubscription_.(XMLNSC.Field)Abs:DeliveryFeeWaivedInd = _preference.deliverySubscriptionOffer.deliveryFeeWaived;
+
+						-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/DeliverySubscription/FuelSurchargeWaivedInd
+						SET DeliverySubscription_.(XMLNSC.Field)Abs:FuelSurchargeWaivedInd = _preference.deliverySubscriptionOffer.fuelSurchargeWaived;
+
+						-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/DeliverySubscription/MinimumBasketSizeQty
+						SET DeliverySubscription_.(XMLNSC.Field)Abs:MinimumBasketSizeQty = _preference.deliverySubscriptionOffer.minBasketSize;
+
+						-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/DeliverySubscription/AutoRenewInd
+						SET DeliverySubscription_.(XMLNSC.Field)Abs:AutoRenewInd = _preference.autoRenew;
+
+						-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/DeliverySubscription/AutoEnrollInd
+						SET DeliverySubscription_.(XMLNSC.Field)Abs:AutoEnrollInd = _preference.autoEnroll;
+
+						-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/DeliverySubscription/Fee
+						DECLARE Fee_ REFERENCE TO DeliverySubscription_;
+						CREATE LASTCHILD OF DeliverySubscription_ AS Fee_ TYPE XMLNSC.Folder NAME 'Abs:Fee';
+
+							-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/DeliverySubscription/Fee/@CurrencyCd
+							SET Fee_.(XMLNSC.Attribute)CurrencyCd = _preference.deliverySubscriptionOffer.fee.currency;
+
+							-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/DeliverySubscription/Fee/@FeeAmt
+							SET Fee_.(XMLNSC.Attribute)FeeAmt = CAST(_preference.deliverySubscriptionOffer.fee.amount AS DECIMAL(10, 2));
+
+						-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/DeliverySubscription/InitialOrderAmountOff
+						DECLARE InitialOrderAmountOff_ REFERENCE TO DeliverySubscription_;
+						CREATE LASTCHILD OF DeliverySubscription_ AS InitialOrderAmountOff_ TYPE XMLNSC.Folder NAME 'Abs:InitialOrderAmountOff';
+
+							-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/DeliverySubscription/InitialOrderAmountOff/@CurrencyCd
+							SET InitialOrderAmountOff_.(XMLNSC.Attribute)CurrencyCd = _preference.deliverySubscriptionOffer.initialOrderAmountOff.currency;
+
+							-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/DeliverySubscription/InitialOrderAmountOff/@FeeAmt
+							SET InitialOrderAmountOff_.(XMLNSC.Attribute)FeeAmt = CAST(_preference.deliverySubscriptionOffer.initialOrderAmountOff.amount AS DECIMAL(10, 2));
+
+					-- LOOP FROM _preference/effectiveTimePeriods[*] TO GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/SubscriptionEffectivePeriod:
+					DECLARE _period REFERENCE TO _preference.effectiveTimePeriods.Item;
+					LOOP_SUBSCRIPTION_EFF_TIME_PERIODS : WHILE LASTMOVE(_period) DO
+
+						-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/SubscriptionEffectivePeriod
+						DECLARE SubscriptionEffectivePeriod_ REFERENCE TO CustomerSubscriptions_;
+						CREATE LASTCHILD OF CustomerSubscriptions_ AS SubscriptionEffectivePeriod_ TYPE XMLNSC.Folder NAME 'Abs:SubscriptionEffectivePeriod';
+
+							-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/SubscriptionEffectivePeriod/@typeCode
+							SET SubscriptionEffectivePeriod_.(XMLNSC.Attribute)Abs:typeCode = _period.type;
+
+							-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/SubscriptionEffectivePeriod/FirstEffectiveDt
+							SET SubscriptionEffectivePeriod_.(XMLNSC.Field)Abs:FirstEffectiveDt = _period.startDate;
+
+							-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/SubscriptionEffectivePeriod/FirstEffectiveTm
+							SET SubscriptionEffectivePeriod_.(XMLNSC.Field)Abs:FirstEffectiveTm = _period.startTime;
+
+							-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/SubscriptionEffectivePeriod/LastEffectiveDt
+							SET SubscriptionEffectivePeriod_.(XMLNSC.Field)Abs:LastEffectiveDt = _period.endDate;
+
+							-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/SubscriptionEffectivePeriod/LastEffectiveTm
+							SET SubscriptionEffectivePeriod_.(XMLNSC.Field)Abs:LastEffectiveTm = _period.endTime;
+
+							-- DurationNbr and DurationUnitDsc
+							IF ENDSWITH(_period.duration, 'D') THEN
+      							-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/SubscriptionEffectivePeriod/DurationNbr
+								SET SubscriptionEffectivePeriod_.(XMLNSC.Field)Abs:DurationNbr = SUBSTRING(_period.duration BEFORE 'D');
+
+								-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/SubscriptionEffectivePeriod/DurationUnitDsc
+								SET SubscriptionEffectivePeriod_.(XMLNSC.Field)Abs:DurationUnitDsc = 'Days';
+
+							ELSEIF ENDSWITH(_period.duration, 'W') THEN
+      							-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/SubscriptionEffectivePeriod/DurationNbr
+								SET SubscriptionEffectivePeriod_.(XMLNSC.Field)Abs:DurationNbr = SUBSTRING(_period.duration BEFORE 'W');
+
+								-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/SubscriptionEffectivePeriod/DurationUnitDsc
+								SET SubscriptionEffectivePeriod_.(XMLNSC.Field)Abs:DurationUnitDsc = 'Weeks';
+
+   							END IF;
+
+							-- GetCustomerPreferences/CustomerPreferencesData/CustomerSubscriptions/SubscriptionEffectivePeriod/InclusiveInd
+							SET SubscriptionEffectivePeriod_.(XMLNSC.Field)Abs:InclusiveInd = _period.inclusiveInd;
+
+					MOVE _period NEXTSIBLING;
+					END WHILE LOOP_SUBSCRIPTION_EFF_TIME_PERIODS;
+
+			MOVE _preference NEXTSIBLING;
+			END WHILE LOOP_CUSTOMER_SUBSCRIPTION;
+
+			-- GetCustomerPreferences/CustomerPreferencesData/SourceAuditData
+			DECLARE SourceAuditData_ REFERENCE TO CustomerPreferencesData_;
+			CREATE LASTCHILD OF CustomerPreferencesData_ AS SourceAuditData_ TYPE XMLNSC.Folder NAME 'Abs:SourceAuditData';
+
+				-- GetCustomerPreferences/CustomerPreferencesData/SourceAuditData/SourceNm
+				SET SourceAuditData_.(XMLNSC.Field)Abs:SourceNm = _inputRootNode.aggregateType;
+
+				-- GetCustomerPreferences/CustomerPreferencesData/SourceAuditData/CreateTs
+				-- SET SourceAuditData_.(XMLNSC.Field)Abs:CreateTs = _inputRootNode.state.createTimestamp;
+				DECLARE createTs TIMESTAMP epochTimeStamp + CAST(_inputRootNode.state.createTimestamp.{'$numberLong'}/1000 AS INTERVAL SECOND);
+				SET SourceAuditData_.(XMLNSC.Field)Abs:CreateTs = CAST(createTs AS TIMESTAMP FORMAT pattern);
+
+				-- GetCustomerPreferences/CustomerPreferencesData/SourceAuditData/LastUpdateTs
+				-- SET SourceAuditData_.(XMLNSC.Field)Abs:LastUpdateTs = _inputRootNode.state.lastUpdateTimestamp;
+				DECLARE lastUpdateTs TIMESTAMP epochTimeStamp + CAST(_inputRootNode.state.lastUpdateTimestamp.{'$numberLong'}/1000 AS INTERVAL SECOND);
+				SET SourceAuditData_.(XMLNSC.Field)Abs:LastUpdateTs = CAST(lastUpdateTs AS TIMESTAMP FORMAT pattern);
+
+				-- GetCustomerPreferences/CustomerPreferencesData/SourceAuditData/CreateClientId
+				SET SourceAuditData_.(XMLNSC.Field)Abs:CreateClientId = _inputRootNode.state.createClientId;
+
+				-- GetCustomerPreferences/CustomerPreferencesData/SourceAuditData/CreateUserId
+				SET SourceAuditData_.(XMLNSC.Field)Abs:CreateUserId = _inputRootNode.state.createUserId;
+
+				-- GetCustomerPreferences/CustomerPreferencesData/SourceAuditData/LastUpdateClientId
+				SET SourceAuditData_.(XMLNSC.Field)Abs:LastUpdateClientId = _inputRootNode.state.lastUpdateClientId;
+
+				-- GetCustomerPreferences/CustomerPreferencesData/SourceAuditData/LastUpdateUserId
+				SET SourceAuditData_.(XMLNSC.Field)Abs:LastUpdateUserId = _inputRootNode.state.lastUpdateUserId;
+
+				-- GetCustomerPreferences/CustomerPreferencesData/SourceAuditData/CreateHostNm
+				SET SourceAuditData_.(XMLNSC.Field)Abs:CreateHostNm = _inputRootNode.state.createHostName;
+
+				-- GetCustomerPreferences/CustomerPreferencesData/SourceAuditData/LastUpdateHostNm
+				SET SourceAuditData_.(XMLNSC.Field)Abs:LastUpdateHostNm = _inputRootNode.state.lastUpdateHostName;
+
+				-- GetCustomerPreferences/CustomerPreferencesData/SourceAuditData/SequenceNbr
+				SET SourceAuditData_.(XMLNSC.Field)Abs:SequenceNbr = _inputRootNode.state.sequenceNumber;
+
+				-- GetCustomerPreferences/CustomerPreferencesData/SourceAuditData/AggregateTs
+				-- SET SourceAuditData_.(XMLNSC.Field)Abs:AggregateTs = _inputRootNode.state.timestamp;
+				DECLARE aggregateTs TIMESTAMP epochTimeStamp + CAST(_inputRootNode.state.timestamp.{'$numberLong'}/1000 AS INTERVAL SECOND);
+				SET SourceAuditData_.(XMLNSC.Field)Abs:AggregateTs = CAST(aggregateTs AS TIMESTAMP FORMAT pattern);
+
+				-- GetCustomerPreferences/CustomerPreferencesData/SourceAuditData/AggregateRevisionNbr
+				SET SourceAuditData_.(XMLNSC.Field)Abs:AggregateRevisionNbr = _inputRootNode.state.aggregateRevision;
+
+				-- GetCustomerPreferences/CustomerPreferencesData/SourceAuditData/PayloadVersionNbr
+				SET SourceAuditData_.(XMLNSC.Field)Abs:PayloadVersionNbr = _inputRootNode.state.version;
+
+				-- GetCustomerPreferences/CustomerPreferencesData/SourceAuditData/EventId
+				SET SourceAuditData_.(XMLNSC.Field)Abs:EventId = _inputRootNode.state.eventId;
+
+
+			IF LOG_OUPUT_MSG = 'Y' THEN
+				PROPAGATE TO TERMINAL 'out' DELETE NONE;
+				SET Environment.Variables.MISC_DATA = 1;
+			END IF;
+
+		RETURN TRUE;
+	END;
+
+END MODULE;

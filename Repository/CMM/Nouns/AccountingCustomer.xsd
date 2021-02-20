@@ -6,8 +6,10 @@
    Description: Contains commonly used Safeway Purchase order schema.
    Name: /SFWY/Nouns/SwyPurchaseOrder.xsd
 -->
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V2.0 Rosabel Macario 02/09/21: Added elements - BankBranchType, AccountContactId and SiteContactId, AccountContactNbr and SiteContactNbr, and ContactStatusInd.-->
+	<!--V1.9 Rosabel Macario 02/05/21: Move elements based on the requested leveling; add elements based on the Final review.-->
 	<!--V1.8 Patrick Oliver 01/11/21: Updated WorkTelephoneNbr to string type; Increased lenght for CustomerGroupID; -->
 	<!--V1.7 Patrick Oliver 01/04/21: Added AuditData type to segments CustomerParty, CustomerPartySite, CustomerAccount, CustomerRelationship , PartySiteContactPoints, , AccountContactPoints-->
 	<!--V1.6 Patrick Oliver 12/28/20: Added PartySiteContactNm, AccountContactNm; Changed ‘Contact’ to ‘PartySiteContactPoints’ and AccountContact to AccountContactPoints; Added typeCode attributes to AuditData-->
@@ -25,733 +27,11 @@
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element ref="CompanyId" minOccurs="0"/>
-			<xs:element name="CustomerSource" type="SourceSystemType" minOccurs="0" maxOccurs="unbounded"/>
-			<xs:element name="CustomerGroup" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Legacy application customer groups.</xs:documentation>
-				</xs:annotation>
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element name="CustomerGroupId" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Customer group. A group that customers belong to that transcends companies.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="50"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="CustomerGroupNm" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>The name or description of the customer group.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="50"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="AutoNbr" type="CodeWithDescription" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Automatic customer numbering option. This option can be used only if the numeric customer number option was  specified. Valid values are: N = Manual customer numbering Y = Automatic customer numbering</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="AgeData" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>.</xs:documentation>
-							</xs:annotation>
-							<xs:complexType>
-								<xs:sequence>
-									<xs:element name="AgeCredits" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Determines aging rules for credits for cross-company agings.</xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:maxLength value="1"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-									<xs:element name="AgePymnt" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Determines aging rules for payments for cross-company agings.</xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:maxLength value="1"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-									<xs:element name="AgeDisputes" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Aging default for disputes when the aging is across companies.</xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:maxLength value="1"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-									<xs:element name="AgeType" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Default aging method when aging cross companies.</xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:maxLength value="1"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-									<xs:element name="AgeCurrentNbr" type="xs:integer" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Used to define the transactions going into the "current" and "future" aging
-buckets.</xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="AgePeriodsNbr" type="xs:integer" minOccurs="0" maxOccurs="4">
-										<xs:annotation>
-											<xs:documentation>Aging periods are user defined and established by entering the last day of                        each aging bucket in the Age Period                     field.</xs:documentation>
-										</xs:annotation>
-									</xs:element>
-								</xs:sequence>
-							</xs:complexType>
-						</xs:element>
-						<xs:element name="BillofExchangeProcessInd" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Bill of exchange processing indicator which indicate whether this customer group processes
-bills of exchange. Valid values are:
-N = No; don't process bills of exchange
-Y = Yes; process bills of exchange</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="1"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
 			<xs:element name="CustomerParty" type="CustomerPartyType">
 				<xs:annotation>
 					<xs:documentation>The customer party can be a Person, Organization, Group or Relationship. </xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="CustomerPartySite" type="CustomerPartySitesType" minOccurs="0" maxOccurs="unbounded"/>
-			<xs:element name="CustomerAccounts" maxOccurs="unbounded">
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element name="CustomerAccount" minOccurs="0">
-							<xs:complexType>
-								<xs:sequence>
-									<xs:element name="CustomerAccountId" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>System generated account key</xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:maxLength value="50"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-									<xs:element ref="CustomerAccountNbr" minOccurs="0"/>
-									<xs:element name="PartyId" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Business identifier field for party.</xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:maxLength value="50"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-									<xs:element name="CustomerSiteNbr" minOccurs="0" maxOccurs="unbounded">
-										<xs:annotation>
-											<xs:documentation>Business key for party site</xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:maxLength value="50"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-									<xs:element name="AccountTypeCd" type="CodeWithDescription" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Indicates the type of customer account</xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="KeyAccountInd" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Key account for sales representatives.</xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:maxLength value="1"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-									<xs:element name="AccountClassId" type="CodeWithDescription" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Customer class indentifier.</xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="AccountDsc" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Description chosen by external party </xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:maxLength value="250"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-								</xs:sequence>
-							</xs:complexType>
-						</xs:element>
-						<xs:element name="AccountSource" type="SourceSystemType" minOccurs="0"/>
-						<xs:element name="AccountPurpose" minOccurs="0">
-							<xs:complexType>
-								<xs:sequence>
-									<xs:element name="PurposeNbr" type="xs:integer" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Business purpose number</xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="PurposeInd" type="CodeWithDescription" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Business purpose assigned to customer site account, such as Bill_To, Market, and Statements.</xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="PrimaryInd" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Indicates if this site purpose is the primary site purpose for this customer account site. Y for the primary customer account site purpose. N for non-primary.</xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:maxLength value="1"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-								</xs:sequence>
-							</xs:complexType>
-						</xs:element>
-						<xs:element name="AccountRelationship" minOccurs="0" maxOccurs="unbounded">
-							<xs:complexType>
-								<xs:sequence>
-									<xs:element name="RelationshipNbr" type="xs:integer" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Number used to identify a set of reference data shared across business units and other entities</xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="RelationshipTypeCd" type="CodeWithDescription" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Indicates the type of customer account</xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="ReciprocalInd" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Indicates if this relationship is reciprocal or not. Y for reciprocal relationships, N for relationships that are not reciprocal.</xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:maxLength value="1"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-									<xs:element name="BillToInd" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Indicates if this relationshiop is bill-to or not.</xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:maxLength value="1"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-									<xs:element name="ShipToInd" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Indicates if this relationship is ship-to or not.</xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:maxLength value="1"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-									<xs:element name="CustomerRelatedAccountId" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Related account ID of customer.</xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:maxLength value="50"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-									<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
-								</xs:sequence>
-							</xs:complexType>
-						</xs:element>
-						<xs:element name="AccountClassification" minOccurs="0">
-							<xs:complexType>
-								<xs:sequence>
-									<xs:element name="CategoryClsCd" type="CodeWithDescription" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Classification code Classification category name</xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="PrimaryClsInd" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Indicates that the classification is primary.</xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:maxLength value="1"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-									<xs:element name="RankClsNbr" type="xs:integer" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Used to rank classes if multiple classes have been assigned to a party.</xs:documentation>
-										</xs:annotation>
-									</xs:element>
-								</xs:sequence>
-							</xs:complexType>
-						</xs:element>
-						<xs:element name="AccountStatus" minOccurs="0">
-							<xs:complexType>
-								<xs:sequence minOccurs="0">
-									<xs:element name="StatusCd" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Status code for activation and/or reactivation.</xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:maxLength value="10"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-									<xs:element name="StatusDsc" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Description of the status code for activation and/or reactivation.</xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:maxLength value="50"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-									<xs:element name="StatusVal" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Value of the status.</xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:maxLength value="50"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-									<xs:element name="SourceNm" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Name or description of the source.</xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:maxLength value="50"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-									<xs:element name="ChannelCd" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Code of the channel type.</xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:integer">
-												<xs:totalDigits value="3"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-									<xs:element name="PlatformCd" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Code of the platform type.</xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:integer">
-												<xs:totalDigits value="3"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-								</xs:sequence>
-								<xs:attribute ref="typeCode"/>
-							</xs:complexType>
-						</xs:element>
-						<xs:element name="AccountAddresses" type="AccoutingCustomerAddressType" minOccurs="0" maxOccurs="5"/>
-						<xs:element name="AccountContactNm" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Customer account name Type.</xs:documentation>
-							</xs:annotation>
-							<xs:complexType>
-								<xs:sequence>
-									<xs:element name="Salutation" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Alphanumeric value of Salutation such as Mr, Ms, Mrs, Master, etc...</xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:maxLength value="20"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-									<xs:element name="ContactFullNm" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Name of the Contact.</xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:maxLength value="100"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-									<xs:element ref="GivenNm" minOccurs="0"/>
-									<xs:element ref="NickNm" minOccurs="0"/>
-									<xs:element ref="MiddleNm" minOccurs="0"/>
-									<xs:element ref="FamilyNm" minOccurs="0"/>
-									<xs:element ref="MaidenNm" minOccurs="0"/>
-									<xs:element ref="GenerationAffixCd" minOccurs="0"/>
-									<xs:element ref="QualificationAffixCd" minOccurs="0"/>
-									<xs:element name="JobTitleNm" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Name of job title</xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:maxLength value="250"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-								</xs:sequence>
-							</xs:complexType>
-						</xs:element>
-						<xs:element name="AccountContactPoints" minOccurs="0" maxOccurs="unbounded">
-							<xs:annotation>
-								<xs:documentation>Represents communication details including voice, fax, and digital channels.</xs:documentation>
-							</xs:annotation>
-							<xs:complexType>
-								<xs:complexContent>
-									<xs:extension base="AccountingCustomerContactType"/>
-								</xs:complexContent>
-							</xs:complexType>
-						</xs:element>
-						<xs:element name="AccountProfile" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Represensts the customer account profile. </xs:documentation>
-							</xs:annotation>
-							<xs:complexType>
-								<xs:sequence>
-									<xs:element name="ProfileClsCd" type="CodeWithDescription" minOccurs="0"/>
-									<xs:element name="CreditReviewCycleCd" type="CodeWithDescription" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Credit review cycle that determines the frequency of periodic credit reviews</xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="OrderLimitNbr" type="xs:decimal" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Order Limit in customer group currency for a given customer across all AR companies utilizing this customer.  </xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="CreditLimitNbr" type="xs:decimal" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Maximum amount of credit extended to a customer, in customer group currency, for all AR compaies utilizing this customer.        </xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="CreditToleranceNbr" type="xs:integer" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Credit check tolerance amount over the credit limit.</xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="CreditRatingNbr" type="xs:integer" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>credit rating of the customer account or site.</xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="DiscountRatePct" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>The rate used to calculate the discount amount of the invoice payment.</xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:decimal">
-												<xs:totalDigits value="5"/>
-												<xs:fractionDigits value="3"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-									<xs:element name="DiscountDt" type="DateType" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>The date through which the available discount amount of the invoice can be taken.</xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="CreditLimitDt" type="xs:date" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>The date the credit limit was defined or last reviewed.     </xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="LastReviewDt" type="xs:date" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Last Review Date   </xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="NextReviewDt" type="xs:date" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Review Date   </xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="BillTypeCd" type="CodeWithDescription" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Format of balance forward bill. Can be SUMMARY, DETAIL, or IMPORTED (for Site only).</xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="ShipToSiteNbr" type="xs:integer" minOccurs="0" maxOccurs="unbounded">
-										<xs:annotation>
-											<xs:documentation>This will be used to store customer ship to numbers </xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="BillToSiteNbr" type="xs:integer" minOccurs="0" maxOccurs="unbounded">
-										<xs:annotation>
-											<xs:documentation>This will be used to store customer bill to numbers</xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="BillLevelCd" type="CodeWithDescription" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Level at which balance forward billing is done, ACCOUNT or SITE. </xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="NationalAccntInd" type="CodeWithDescription" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Indicates whether the customer is a national account customer. N = Parent and I = Invoiced</xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="CustomerHoldCd" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Indicates whether a customer is on hold</xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:maxLength value="4"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-									<xs:element name="CreditAnalystCd" type="CodeWithDescription" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>tThe credit analyst code assigned to this customer.</xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="CollectorCd" type="CodeWithDescription" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Collector name</xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="EmployeeNm" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Employee name</xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:maxLength value="250"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-									<xs:element name="SalesRepresentativeCd" type="CodeWithDescription" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>The sales representative for this  invoice, debit memo or credit memo (note numeric)</xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="DunProcessLetterCd" type="CodeWithDescription" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Dunning letter process code.  A unique code that represents a combination of Dunning Letter options.</xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="PrePaymentCd" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Prepayment code. This is the default code to be used for a check entered as a preayment. This will be the offset instead of RNA to cash.</xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:maxLength value="20"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-									<xs:element ref="AccountReceivableCd" minOccurs="0"/>
-									<xs:element name="AutoCashNm" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Autocash hierarchy name.</xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:maxLength value="50"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-									<xs:element name="CurrencyCd" minOccurs="0">
-										<xs:complexType>
-											<xs:complexContent>
-												<xs:extension base="CodeWithDescription">
-													<xs:sequence minOccurs="0">
-														<xs:element ref="CurrencyExchangeRate" minOccurs="0"/>
-													</xs:sequence>
-												</xs:extension>
-											</xs:complexContent>
-										</xs:complexType>
-									</xs:element>
-									<xs:element name="TaxExemptionCd" type="xs:string" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Tax exemption code</xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="Overrides" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Various kinds of overrides applied to customer account</xs:documentation>
-										</xs:annotation>
-										<xs:complexType>
-											<xs:sequence>
-												<xs:element name="SendCreditBalanceInd" minOccurs="0">
-													<xs:annotation>
-														<xs:documentation>Indicates if statement with credit balance can be sent to customer.</xs:documentation>
-													</xs:annotation>
-													<xs:simpleType>
-														<xs:restriction base="xs:string">
-															<xs:maxLength value="1"/>
-														</xs:restriction>
-													</xs:simpleType>
-												</xs:element>
-												<xs:element name="IncludeCreditCheckInd" minOccurs="0">
-													<xs:annotation>
-														<xs:documentation>Indicates whether a customer account is included in credit checking.  Y for inclusion in credit checking, N for optional credit checking.</xs:documentation>
-													</xs:annotation>
-													<xs:simpleType>
-														<xs:restriction base="xs:string">
-															<xs:maxLength value="1"/>
-														</xs:restriction>
-													</xs:simpleType>
-												</xs:element>
-												<xs:element name="CreditHoldInd" minOccurs="0">
-													<xs:annotation>
-														<xs:documentation>Indicates whether a customer account is placed on credit hold.</xs:documentation>
-													</xs:annotation>
-													<xs:simpleType>
-														<xs:restriction base="xs:string">
-															<xs:maxLength value="1"/>
-														</xs:restriction>
-													</xs:simpleType>
-												</xs:element>
-												<xs:element name="AllowDiscountnd" minOccurs="0">
-													<xs:annotation>
-														<xs:documentation>Indicates if discount terms are allowed. Y for discount terms allowed, N for no discount terms.</xs:documentation>
-													</xs:annotation>
-													<xs:simpleType>
-														<xs:restriction base="xs:string">
-															<xs:maxLength value="1"/>
-														</xs:restriction>
-													</xs:simpleType>
-												</xs:element>
-												<xs:element name="SendDunningLetternd" minOccurs="0">
-													<xs:annotation>
-														<xs:documentation>Indicates whether to send dunning letter to a customer account or site.</xs:documentation>
-													</xs:annotation>
-													<xs:simpleType>
-														<xs:restriction base="xs:string">
-															<xs:maxLength value="1"/>
-														</xs:restriction>
-													</xs:simpleType>
-												</xs:element>
-												<xs:element name="EnableLateChargeInd" minOccurs="0">
-													<xs:annotation>
-														<xs:documentation>Indicates if late charges are enabled. Y for enabling late charges, N for not enable late charges.</xs:documentation>
-													</xs:annotation>
-													<xs:simpleType>
-														<xs:restriction base="xs:string">
-															<xs:maxLength value="1"/>
-														</xs:restriction>
-													</xs:simpleType>
-												</xs:element>
-												<xs:element name="SendStatementInd" minOccurs="0">
-													<xs:annotation>
-														<xs:documentation>Indicates whether to create statements for a customer account or site.</xs:documentation>
-													</xs:annotation>
-													<xs:simpleType>
-														<xs:restriction base="xs:string">
-															<xs:maxLength value="1"/>
-														</xs:restriction>
-													</xs:simpleType>
-												</xs:element>
-												<xs:element name="AutoReceiptsDisputeInd" minOccurs="0">
-													<xs:annotation>
-														<xs:documentation>Indicates whether to include disputed transaction in automatic receipt. Y for including disputed transactions, N for not excluding disputed transaction</xs:documentation>
-													</xs:annotation>
-													<xs:simpleType>
-														<xs:restriction base="xs:string">
-															<xs:maxLength value="1"/>
-														</xs:restriction>
-													</xs:simpleType>
-												</xs:element>
-												<xs:element name="BalanceForwardBillingInd" minOccurs="0">
-													<xs:annotation>
-														<xs:documentation>Indicates if balance forward bill is generated and sent to customer. Y for yes, N or null for no.</xs:documentation>
-													</xs:annotation>
-													<xs:simpleType>
-														<xs:restriction base="xs:string">
-															<xs:maxLength value="1"/>
-														</xs:restriction>
-													</xs:simpleType>
-												</xs:element>
-												<xs:element name="OverrideTermsInd" minOccurs="0">
-													<xs:annotation>
-														<xs:documentation>Indicates whether to allow users to override standard terms when creating invoices.</xs:documentation>
-													</xs:annotation>
-													<xs:simpleType>
-														<xs:restriction base="xs:string">
-															<xs:maxLength value="1"/>
-														</xs:restriction>
-													</xs:simpleType>
-												</xs:element>
-												<xs:element name="AutoCashInd" minOccurs="0">
-													<xs:annotation>
-														<xs:documentation>Indicates the automatic cash application method for this customer. </xs:documentation>
-													</xs:annotation>
-													<xs:simpleType>
-														<xs:restriction base="xs:string">
-															<xs:maxLength value="1"/>
-														</xs:restriction>
-													</xs:simpleType>
-												</xs:element>
-												<xs:element name="AutoRemoveInd" minOccurs="0">
-													<xs:annotation>
-														<xs:documentation>This field determines whether payments and trransactions can be removed automatically (Y/N)</xs:documentation>
-													</xs:annotation>
-													<xs:simpleType>
-														<xs:restriction base="xs:string">
-															<xs:maxLength value="1"/>
-														</xs:restriction>
-													</xs:simpleType>
-												</xs:element>
-											</xs:sequence>
-										</xs:complexType>
-									</xs:element>
-								</xs:sequence>
-							</xs:complexType>
-						</xs:element>
-						<xs:element name="AccountBankData" type="AccountingCustomerBankType" minOccurs="0"/>
-						<xs:element name="PaymentTerms" type="PaymentTermType" minOccurs="0" maxOccurs="5">
-							<xs:annotation>
-								<xs:documentation>Identifies the payment term for customer</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="EffectiveTimePeriod" type="EffetiveDateTimeType" minOccurs="0" maxOccurs="unbounded"/>
-						<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="CorpCardType">
@@ -916,7 +196,8 @@ Y = Yes; process bills of exchange</xs:documentation>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="EmailAddrs" minOccurs="0">
+			<xs:element name="ContactType" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="EmailAddrsTxt" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Alphanumeric text of Email Address. </xs:documentation>
 				</xs:annotation>
@@ -926,6 +207,7 @@ Y = Yes; process bills of exchange</xs:documentation>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
+			<xs:element name="WebTypeCd" type="CodeWithDescription" minOccurs="0"/>
 			<xs:element name="WebSiteDsc" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Alphanumeric text of Web Site, in case Contact has one. </xs:documentation>
@@ -1022,7 +304,48 @@ Y = Yes; process bills of exchange</xs:documentation>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
+			<xs:element name="ContactStatusInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Record status flag</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ContactPointPurposes" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>Purpose of customer addresses.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="PurposeCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Code of the purpose.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PurposeDsc" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Description of the address purpose.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+					<xs:attribute ref="typeCode"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="EffectiveTimePeriod" type="EffetiveDateTimeType" minOccurs="0"/>
+			<xs:element name="ContactPointAuditData" type="RecordAuditData" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="CustomerGrpType">
@@ -1150,7 +473,7 @@ companies to use the same set of customers. </xs:documentation>
 			<xs:documentation>Object used to identify various paty sites</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="CustomerSiteId" minOccurs="0">
+			<xs:element name="CustomerSiteId">
 				<xs:annotation>
 					<xs:documentation>System generated key for party site. </xs:documentation>
 				</xs:annotation>
@@ -1160,7 +483,7 @@ companies to use the same set of customers. </xs:documentation>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="CustomerSiteNbr" minOccurs="0">
+			<xs:element name="CustomerSiteNbr">
 				<xs:annotation>
 					<xs:documentation>Business key for party site</xs:documentation>
 				</xs:annotation>
@@ -1170,7 +493,7 @@ companies to use the same set of customers. </xs:documentation>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="PartySiteNm" minOccurs="0">
+			<xs:element name="CustomerSiteNm" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Name of the Party Site.</xs:documentation>
 				</xs:annotation>
@@ -1197,7 +520,7 @@ companies to use the same set of customers. </xs:documentation>
 			</xs:element>
 			<xs:element name="PrimaryAddressInd" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Indicated if this is the identifying address for the party</xs:documentation>
+					<xs:documentation>Indicated if this site represents as the primary identifying address for the customer party</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
@@ -1205,7 +528,7 @@ companies to use the same set of customers. </xs:documentation>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="PrimaryInd" minOccurs="0">
+			<xs:element name="PrimarySiteInd" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Indicates that the record is marked as primary.</xs:documentation>
 				</xs:annotation>
@@ -1215,6 +538,7 @@ companies to use the same set of customers. </xs:documentation>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
+			<xs:element name="SiteStatus" type="StatusType" minOccurs="0"/>
 			<xs:element name="SiteLanguage" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Language of the translated text in Party Site.</xs:documentation>
@@ -1230,38 +554,199 @@ companies to use the same set of customers. </xs:documentation>
 				<xs:annotation>
 					<xs:documentation>Customer name Type.</xs:documentation>
 				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="KeyAccountInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Key account for sales representatives.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="FirstEffectiveDt" minOccurs="0"/>
+			<xs:element ref="LastEffectiveDt" minOccurs="0"/>
+			<xs:element name="SitePurpose" minOccurs="0" maxOccurs="unbounded">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="Salutation" minOccurs="0">
+						<xs:element name="PurposeNbr" type="xs:integer" minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>Alphanumeric value of Salutation such as Mr, Ms, Mrs, Master, etc...</xs:documentation>
+								<xs:documentation>Business purpose number</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PrimaryInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates if this site purpose is the primary site purpose for this customer account site. Y for the primary customer account site purpose. N for non-primary.</xs:documentation>
 							</xs:annotation>
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
-									<xs:maxLength value="20"/>
+									<xs:maxLength value="1"/>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
-						<xs:element name="ContactFullNm" minOccurs="0">
+						<xs:element name="ShipToSiteNbr" minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>Name of the Contact.</xs:documentation>
+								<xs:documentation>Corresponding ship to site nbr, in case if it is different from the site itself.</xs:documentation>
 							</xs:annotation>
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
-									<xs:maxLength value="100"/>
+									<xs:maxLength value="50"/>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
-						<xs:element ref="GivenNm" minOccurs="0"/>
-						<xs:element ref="NickNm" minOccurs="0"/>
-						<xs:element ref="MiddleNm" minOccurs="0"/>
-						<xs:element ref="FamilyNm" minOccurs="0"/>
-						<xs:element ref="MaidenNm" minOccurs="0"/>
-						<xs:element ref="GenerationAffixCd" minOccurs="0"/>
-						<xs:element ref="QualificationAffixCd" minOccurs="0"/>
-						<xs:element name="JobTitleNm" minOccurs="0">
+						<xs:element name="BillToSiteNbr" minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>Name of job title</xs:documentation>
+								<xs:documentation>Corresponding bill to site nbr, in case if it is different from the site itself.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SitePurposeCd" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="SiteLocationTxt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="200"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="EffectiveTimePeriod" type="EffetiveDateTimeType" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="SiteProfile" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Represensts the customer account profile. </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ProfileId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ProfileClsCd" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="CreditReviewCycleCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Credit review cycle that determines the frequency of periodic credit reviews</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="OrderLimitNbr" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Order Limit in customer group currency for a given customer across all AR companies utilizing this customer.  </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CreditLimitNbr" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Maximum amount of credit extended to a customer, in customer group currency, for all AR compaies utilizing this customer.        </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CreditToleranceNbr" type="xs:integer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Credit check tolerance amount over the credit limit.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CreditRatingCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>credit rating of the customer account or site.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="DiscountRatePct" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The rate used to calculate the discount amount of the invoice payment.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="5"/>
+									<xs:fractionDigits value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DiscountDt" type="DateType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The date through which the available discount amount of the invoice can be taken.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CreditLimitDt" type="xs:date" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The date the credit limit was defined or last reviewed.     </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="LastReviewDt" type="xs:date" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Last Review Date   </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="NextReviewDt" type="xs:date" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Review Date   </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="BillToSiteInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This will be used to store customer bill to numbers</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ShipToSiteInd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="BillTypeCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Format of balance forward bill. Can be SUMMARY, DETAIL, or IMPORTED (for Site only).</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="BillLevelCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Level at which balance forward billing is done, ACCOUNT or SITE. </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="NationalAccntInd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates whether the customer is a national account customer. N = Parent and I = Invoiced</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CustomerHoldCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates whether a customer is on hold</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CreditAnalystCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>tThe credit analyst code assigned to this customer.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CollectorCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Collector name</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="EmployeeNm" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Employee name</xs:documentation>
 							</xs:annotation>
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
@@ -1269,18 +754,255 @@ companies to use the same set of customers. </xs:documentation>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
+						<xs:element name="SalesRepresentativeCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The sales representative for this  invoice, debit memo or credit memo (note numeric)</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="DUNSNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DunProcessLetterCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Dunning letter process code.  A unique code that represents a combination of Dunning Letter options.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PrePaymentCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Prepayment code. This is the default code to be used for a check entered as a preayment. This will be the offset instead of RNA to cash.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element ref="AccountReceivableCd" minOccurs="0"/>
+						<xs:element name="AutoCashNm" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Autocash hierarchy name.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CurrencyCd" minOccurs="0">
+							<xs:complexType>
+								<xs:complexContent>
+									<xs:extension base="CodeWithDescription">
+										<xs:sequence minOccurs="0">
+											<xs:element ref="CurrencyExchangeRate" minOccurs="0"/>
+										</xs:sequence>
+									</xs:extension>
+								</xs:complexContent>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="TaxExemptionCd" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Tax exemption code</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Overrides" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Various kinds of overrides applied to customer account</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="SendCreditBalanceInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicates if statement with credit balance can be sent to customer.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="IncludeCreditCheckInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicates whether a customer account is included in credit checking.  Y for inclusion in credit checking, N for optional credit checking.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="CreditHoldInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicates whether a customer account is placed on credit hold.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AllowDiscountnd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicates if discount terms are allowed. Y for discount terms allowed, N for no discount terms.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="SendDunningLetternd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicates whether to send dunning letter to a customer account or site.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="EnableLateChargeInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicates if late charges are enabled. Y for enabling late charges, N for not enable late charges.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="SendStatementInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicates whether to create statements for a customer account or site.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AutoReceiptsDisputeInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicates whether to include disputed transaction in automatic receipt. Y for including disputed transactions, N for not excluding disputed transaction</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="BalanceForwardBillingInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicates if balance forward bill is generated and sent to customer. Y for yes, N or null for no.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="OverrideTermsInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicates whether to allow users to override standard terms when creating invoices.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AutoCashInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicates the automatic cash application method for this customer. </xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AutoRemoveInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This field determines whether payments and trransactions can be removed automatically (Y/N)</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="PaymentTerms" type="PaymentTermType" minOccurs="0" maxOccurs="5">
+							<xs:annotation>
+								<xs:documentation>Identifies the payment term for customer</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="StatementCycleCd" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="StatementDeliveryMethodCd" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="PreferredContactMethodCd" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="EffectiveTimePeriod" type="EffetiveDateTimeType" minOccurs="0" maxOccurs="unbounded"/>
+						<xs:element name="ProfileAuditData" type="RecordAuditData" minOccurs="0"/>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="PartySiteContactPoints" type="AccountingCustomerContactType" minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="SiteBankData" type="AccountingCustomerBankType" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
-					<xs:documentation>Represents communication details including voice, fax, and digital channels.</xs:documentation>
+					<xs:documentation>Defines related bank info for a site. A site can have multiple banks or multiple accounts in a bank.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element ref="CustomerAccountNbr" minOccurs="0" maxOccurs="unbounded"/>
-			<xs:element ref="FirstEffectiveDt" minOccurs="0"/>
-			<xs:element ref="LastEffectiveDt" minOccurs="0"/>
-			<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
+			<xs:element name="SiteContact" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="SiteContactId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Contact Identifier. This is an uniquely identifier for Contacts related to the company.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SiteContactNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SiteContactNm" type="PersonNameType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Customer account name Type.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SiteContactAddress" type="AddressType" minOccurs="0"/>
+						<xs:element name="SiteContactPoints" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Represents communication details including voice, fax, and digital channels.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:complexContent>
+									<xs:extension base="AccountingCustomerContactType"/>
+								</xs:complexContent>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="SiteContactAuditData" type="RecordAuditData" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="SiteCommentTxt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="500"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SiteAuditData" type="RecordAuditData" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="CustomerPartyType">
@@ -1288,7 +1010,8 @@ companies to use the same set of customers. </xs:documentation>
 			<xs:documentation>Common object used to identify various business parties like, customer, shipper, vendor, bilto, ship to..etc</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="PartyId" minOccurs="0">
+			<xs:element name="CustomerSource" type="SourceSystemType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="PartyId">
 				<xs:annotation>
 					<xs:documentation>System generated identifier field for party. A party can have multiple types of identifiers that can be qualified by Type.</xs:documentation>
 				</xs:annotation>
@@ -1298,7 +1021,7 @@ companies to use the same set of customers. </xs:documentation>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="PartyNm" minOccurs="0">
+			<xs:element name="PartyNm">
 				<xs:annotation>
 					<xs:documentation>Name of a party of the Organization party type.</xs:documentation>
 				</xs:annotation>
@@ -1329,7 +1052,636 @@ companies to use the same set of customers. </xs:documentation>
 			</xs:element>
 			<xs:element ref="FirstEffectiveDt" minOccurs="0"/>
 			<xs:element ref="LastEffectiveDt" minOccurs="0"/>
-			<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
+			<xs:element name="CustomerAccounts" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="CustomerAccount" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="CustomerGroup" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Legacy application customer groups.</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="CustomerGroupId" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Customer group. A group that customers belong to that transcends companies.</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:maxLength value="50"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="CustomerGroupNm" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>The name or description of the customer group.</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:maxLength value="50"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="AutoNbr" type="CodeWithDescription" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Automatic customer numbering option. This option can be used only if the numeric customer number option was  specified. Valid values are: N = Manual customer numbering Y = Automatic customer numbering</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="AgeData" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>.</xs:documentation>
+													</xs:annotation>
+													<xs:complexType>
+														<xs:sequence>
+															<xs:element name="AgeCredits" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Determines aging rules for credits for cross-company agings.</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:maxLength value="1"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:element>
+															<xs:element name="AgePymnt" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Determines aging rules for payments for cross-company agings.</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:maxLength value="1"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:element>
+															<xs:element name="AgeDisputes" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Aging default for disputes when the aging is across companies.</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:maxLength value="1"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:element>
+															<xs:element name="AgeType" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Default aging method when aging cross companies.</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:maxLength value="1"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:element>
+															<xs:element name="AgeCurrentNbr" type="xs:integer" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Used to define the transactions going into the "current" and "future" aging
+buckets.</xs:documentation>
+																</xs:annotation>
+															</xs:element>
+															<xs:element name="AgePeriodsNbr" type="xs:integer" minOccurs="0" maxOccurs="4">
+																<xs:annotation>
+																	<xs:documentation>Aging periods are user defined and established by entering the last day of                        each aging bucket in the Age Period                     field.</xs:documentation>
+																</xs:annotation>
+															</xs:element>
+														</xs:sequence>
+													</xs:complexType>
+												</xs:element>
+												<xs:element name="BillofExchangeProcessInd" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Bill of exchange processing indicator which indicate whether this customer group processes
+bills of exchange. Valid values are:
+N = No; don't process bills of exchange
+Y = Yes; process bills of exchange</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:maxLength value="1"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+									<xs:element ref="CustomerAccountNbr"/>
+									<xs:element name="CustomerAccountId">
+										<xs:annotation>
+											<xs:documentation>System generated account key</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AccountTypeCd" type="CodeWithDescription" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicates the type of customer account</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="AccountClassCd" type="CodeWithDescription" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Customer class indentifier.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element ref="AccountNm" minOccurs="0"/>
+									<xs:element name="AccountDsc" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Description chosen by external party </xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="250"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AccountStatus" type="StatusType" minOccurs="0"/>
+									<xs:element name="EffectiveTimePeriod" type="EffetiveDateTimeType" minOccurs="0"/>
+									<xs:element name="AccountProfile" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Represensts the customer account profile. </xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="ProfileId" minOccurs="0">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:maxLength value="50"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="ProfileClsCd" type="CodeWithDescription" minOccurs="0"/>
+												<xs:element name="CreditReviewCycleCd" type="CodeWithDescription" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Credit review cycle that determines the frequency of periodic credit reviews</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="OrderLimitNbr" type="xs:decimal" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Order Limit in customer group currency for a given customer across all AR companies utilizing this customer.  </xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="CreditLimitNbr" type="xs:decimal" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Maximum amount of credit extended to a customer, in customer group currency, for all AR compaies utilizing this customer.        </xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="CreditToleranceNbr" type="xs:integer" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Credit check tolerance amount over the credit limit.</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="CreditRatingCd" type="CodeWithDescription" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>credit rating of the customer account or site.</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="DiscountRatePct" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>The rate used to calculate the discount amount of the invoice payment.</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:decimal">
+															<xs:totalDigits value="5"/>
+															<xs:fractionDigits value="3"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="DiscountDt" type="DateType" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>The date through which the available discount amount of the invoice can be taken.</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="CreditLimitDt" type="xs:date" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>The date the credit limit was defined or last reviewed.     </xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="LastReviewDt" type="xs:date" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Last Review Date   </xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="NextReviewDt" type="xs:date" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Review Date   </xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="BillTypeCd" type="CodeWithDescription" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Format of balance forward bill. Can be SUMMARY, DETAIL, or IMPORTED (for Site only).</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="ShipToSiteNbr" type="xs:integer" minOccurs="0" maxOccurs="unbounded">
+													<xs:annotation>
+														<xs:documentation>This will be used to store customer ship to numbers </xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="BillToSiteNbr" type="xs:integer" minOccurs="0" maxOccurs="unbounded">
+													<xs:annotation>
+														<xs:documentation>This will be used to store customer bill to numbers</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="BillLevelCd" type="CodeWithDescription" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Level at which balance forward billing is done, ACCOUNT or SITE. </xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="NationalAccntInd" type="CodeWithDescription" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Indicates whether the customer is a national account customer. N = Parent and I = Invoiced</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="CustomerHoldCd" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Indicates whether a customer is on hold</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:maxLength value="4"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="CreditAnalystCd" type="CodeWithDescription" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>tThe credit analyst code assigned to this customer.</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="CollectorCd" type="CodeWithDescription" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Collector name</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="EmployeeNm" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Employee name</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:maxLength value="250"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="SalesRepresentativeCd" type="CodeWithDescription" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>The sales representative for this  invoice, debit memo or credit memo (note numeric)</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="DUNSNbr" minOccurs="0">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:maxLength value="50"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="DunProcessLetterCd" type="CodeWithDescription" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Dunning letter process code.  A unique code that represents a combination of Dunning Letter options.</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="PrePaymentCd" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Prepayment code. This is the default code to be used for a check entered as a preayment. This will be the offset instead of RNA to cash.</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:maxLength value="20"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element ref="AccountReceivableCd" minOccurs="0"/>
+												<xs:element name="AutoCashNm" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Autocash hierarchy name.</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:maxLength value="50"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="CurrencyCd" minOccurs="0">
+													<xs:complexType>
+														<xs:complexContent>
+															<xs:extension base="CodeWithDescription">
+																<xs:sequence minOccurs="0">
+																	<xs:element ref="CurrencyExchangeRate" minOccurs="0"/>
+																</xs:sequence>
+															</xs:extension>
+														</xs:complexContent>
+													</xs:complexType>
+												</xs:element>
+												<xs:element name="TaxExemptionCd" type="xs:string" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Tax exemption code</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="Overrides" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Various kinds of overrides applied to customer account</xs:documentation>
+													</xs:annotation>
+													<xs:complexType>
+														<xs:sequence>
+															<xs:element name="ProfileOverrideInd" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Indicates if user can override customer standard profile.</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:maxLength value="1"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:element>
+															<xs:element name="SendCreditBalanceInd" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Indicates if statement with credit balance can be sent to customer.</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:maxLength value="1"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:element>
+															<xs:element name="IncludeCreditCheckInd" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Indicates whether a customer account is included in credit checking.  Y for inclusion in credit checking, N for optional credit checking.</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:maxLength value="1"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:element>
+															<xs:element name="CreditHoldInd" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Indicates whether a customer account is placed on credit hold.</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:maxLength value="1"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:element>
+															<xs:element name="AllowDiscountnd" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Indicates if discount terms are allowed. Y for discount terms allowed, N for no discount terms.</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:maxLength value="1"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:element>
+															<xs:element name="SendDunningLetternd" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Indicates whether to send dunning letter to a customer account or site.</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:maxLength value="1"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:element>
+															<xs:element name="EnableLateChargeInd" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Indicates if late charges are enabled. Y for enabling late charges, N for not enable late charges.</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:maxLength value="1"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:element>
+															<xs:element name="SendStatementInd" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Indicates whether to create statements for a customer account or site.</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:maxLength value="1"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:element>
+															<xs:element name="AutoReceiptsDisputeInd" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Indicates whether to include disputed transaction in automatic receipt. Y for including disputed transactions, N for not excluding disputed transaction</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:maxLength value="1"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:element>
+															<xs:element name="BalanceForwardBillingInd" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Indicates if balance forward bill is generated and sent to customer. Y for yes, N or null for no.</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:maxLength value="1"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:element>
+															<xs:element name="OverrideTermsInd" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Indicates whether to allow users to override standard terms when creating invoices.</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:maxLength value="1"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:element>
+															<xs:element name="AutoCashInd" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Indicates the automatic cash application method for this customer. </xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:maxLength value="1"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:element>
+															<xs:element name="AutoRemoveInd" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>This field determines whether payments and trransactions can be removed automatically (Y/N)</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:maxLength value="1"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:element>
+														</xs:sequence>
+													</xs:complexType>
+												</xs:element>
+												<xs:element name="PaymentTerms" type="PaymentTermType" minOccurs="0" maxOccurs="5">
+													<xs:annotation>
+														<xs:documentation>Identifies the payment term for customer</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="StatementCycleCd" type="CodeWithDescription" minOccurs="0"/>
+												<xs:element name="StatementDeliveryMethodCd" type="CodeWithDescription" minOccurs="0"/>
+												<xs:element name="PreferredContactMethodCd" type="CodeWithDescription" minOccurs="0"/>
+												<xs:element name="EffectiveTimePeriod" type="EffetiveDateTimeType" minOccurs="0" maxOccurs="unbounded"/>
+												<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="AccountRelationship" minOccurs="0" maxOccurs="unbounded">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="RelationshipId" type="xs:integer" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Number used to identify a set of reference data shared across business units and other entities</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="RelationshipTypeCd" type="CodeWithDescription" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Indicates the type of customer account</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="ReciprocalInd" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Indicates if this relationship is reciprocal or not. Y for reciprocal relationships, N for relationships that are not reciprocal.</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:maxLength value="1"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="BillToInd" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Indicates if this relationshiop is bill-to or not.</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:maxLength value="1"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="ShipToInd" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Indicates if this relationship is ship-to or not.</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:maxLength value="1"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="CustomerRelatedAccountNbr" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Account Nbr of the related of customer.</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:maxLength value="50"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="EffectiveTimePeriod" type="EffetiveDateTimeType" minOccurs="0"/>
+												<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="AccountBankData" type="AccountingCustomerBankType" minOccurs="0" maxOccurs="unbounded">
+										<xs:annotation>
+											<xs:documentation>Defines related bank info at customer account level. One account can have accounts in multiple Banks, or multiple accounts in one bank.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="AccountContact" minOccurs="0" maxOccurs="unbounded">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="AccountContactId" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Contact Identifier. This is an uniquely identifier for Contacts related to the company.</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:maxLength value="20"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="AccountContactNbr" minOccurs="0">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:maxLength value="20"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="AccountContactNm" type="PersonNameType" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Customer account name Type.</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="PrimaryAccountContactInd" minOccurs="0">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:maxLength value="10"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="AccountContactAddress" type="AddressType" minOccurs="0"/>
+												<xs:element name="AccountContactPoints" minOccurs="0" maxOccurs="unbounded">
+													<xs:annotation>
+														<xs:documentation>Represents communication details including voice, fax, and digital channels.</xs:documentation>
+													</xs:annotation>
+													<xs:complexType>
+														<xs:complexContent>
+															<xs:extension base="AccountingCustomerContactType"/>
+														</xs:complexContent>
+													</xs:complexType>
+												</xs:element>
+												<xs:element name="AccountContactAuditData" type="RecordAuditData" minOccurs="0"/>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="AccountClassification" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="CategoryClsCd" type="CodeWithDescription" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Classification code Classification category name</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="PrimaryClsInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicates that the classification is primary.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="RankClsNbr" type="xs:integer" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Used to rank classes if multiple classes have been assigned to a party.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="CustomerAccountCommentTxt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="500"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CustomerAuditData" type="RecordAuditData" minOccurs="0"/>
+						<xs:element name="CustomerPartySite" type="CustomerPartySitesType" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PartyAuditData" type="RecordAuditData" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="AccoutingCustomerAddressType">
@@ -1548,16 +1900,6 @@ Examples are: Party, Party Site, Account, Contact, Role, etc.</xs:documentation>
 					<xs:documentation> A user-defined code representing a bank     account at a bank location. Also referred to as Cash Code</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="BankAccntNbr" type="CodeWithDescription" minOccurs="0" maxOccurs="unbounded">
-				<xs:annotation>
-					<xs:documentation>The bank-assigned account number identification to be used for the cash code.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="BankId" type="xs:integer" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Contains the ID number assigned to the bank by the Federal Reserve.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
 			<xs:element name="BankNm" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Contains the bank name.</xs:documentation>
@@ -1568,19 +1910,19 @@ Examples are: Party, Party Site, Account, Contact, Role, etc.</xs:documentation>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="BankTransactionCd" type="CodeWithDescription" minOccurs="0">
+			<xs:element name="BankId" type="xs:integer" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>The bank transaction code. Represents a type of cash payment, bill of exchange    payment, or bank service. Also refered to as Bank-Inst code</xs:documentation>
+					<xs:documentation>Contains the ID number assigned to the bank by the Federal Reserve.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="BankTransactionCdType" type="CodeWithDescription" minOccurs="0">
+			<xs:element name="BankEntity" type="CodeWithDescription" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Indicates the type of bank transaction Type . C = Cash Payment Transaction.  D = Bill of Exchange Payment Transaction. B = Bank Service Transaction.        </xs:documentation>
+					<xs:documentation>The bank location where the bank account is located</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="BankTransactionNbr" type="CodeWithDescription" minOccurs="0">
+			<xs:element name="BankAccntNbr" type="CodeWithDescription" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Unique number used to identify bank transactions.</xs:documentation>
+					<xs:documentation>The bank-assigned account number identification to be used for the cash code.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="BankAccntType" type="CodeWithDescription" minOccurs="0">
@@ -1588,9 +1930,10 @@ Examples are: Party, Party Site, Account, Contact, Role, etc.</xs:documentation>
 					<xs:documentation>Indicates the type of bank account used to deposit electronic payments for the vendor. Valid values are: C = Current/Checking Account.  S = Savings Account. Blank = Electronic payment type not  selected.          </xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="BankTransactionType" type="CodeWithDescription" minOccurs="0">
+			<xs:element name="BankAccntStatus" type="StatusType" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Indicates the type of bank transaction. type Valid values are:  CR = Bank Credit.            DR= Bank Debit.    </xs:documentation>
+					<xs:documentation>The status of the of the bank account. If the bank account is Inactive, new bank transactions cannot be entered for the bank account, but bank transactions already entered in the system can be processed and reconciled. Valid values
+are: A = Active. I = Inactive.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="BankTransitNbr" type="xs:integer" minOccurs="0">
@@ -1603,16 +1946,12 @@ Examples are: Party, Party Site, Account, Contact, Role, etc.</xs:documentation>
 					<xs:documentation>Branch electronic fund transfer user number.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="BankFormCd" type="CodeWithDescription" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Code used to drive the invoice number generation for transactions.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
 			<xs:element name="BankBranchCd" type="CodeWithDescription" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Bank Branch code</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="BankBranchType" type="CodeWithDescription" minOccurs="0"/>
 			<xs:element name="BankBranchId" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Bank Branch ID</xs:documentation>
@@ -1640,6 +1979,11 @@ be made. N = No ACH allowed  Y = ACH allowed</xs:documentation>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
+			<xs:element name="BankFormCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Code used to drive the invoice number generation for transactions.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="BankCurrencyCd" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>The currency of the bank account.</xs:documentation>
@@ -1660,11 +2004,6 @@ be made. N = No ACH allowed  Y = ACH allowed</xs:documentation>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="BankEntity" type="CodeWithDescription" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>The bank location where the bank account is located</xs:documentation>
-				</xs:annotation>
-			</xs:element>
 			<xs:element name="SendBankEntity" type="CodeWithDescription" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Contains the ID assigned by the Federal Reserve to the bank that processes the ACH tape.</xs:documentation>
@@ -1679,12 +2018,6 @@ be made. N = No ACH allowed  Y = ACH allowed</xs:documentation>
 						<xs:maxLength value="200"/>
 					</xs:restriction>
 				</xs:simpleType>
-			</xs:element>
-			<xs:element name="BankAccntStatus" type="StatusType" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>The status of the of the bank account. If the bank account is Inactive, new bank transactions cannot be entered for the bank account, but bank transactions already entered in the system can be processed and reconciled. Valid values
-are: A = Active. I = Inactive.</xs:documentation>
-				</xs:annotation>
 			</xs:element>
 			<xs:element name="BankCodeInd" minOccurs="0">
 				<xs:annotation>
@@ -1713,6 +2046,28 @@ restrictions apply.</xs:documentation>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
+			<xs:element name="BankTransactionCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The bank transaction code. Represents a type of cash payment, bill of exchange    payment, or bank service. Also refered to as Bank-Inst code</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BankTransactionNbr" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Unique number used to identify bank transactions.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BankTransactionCdType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates the type of bank transaction Type . C = Cash Payment Transaction.  D = Bill of Exchange Payment Transaction. B = Bank Service Transaction.        </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BankTransactionType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates the type of bank transaction. type Valid values are:  CR = Bank Credit.            DR= Bank Debit.    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EffectiveTimePeriod" type="EffetiveDateTimeType" minOccurs="0"/>
+			<xs:element name="BankAuditData" type="RecordAuditData" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="EffetiveDateTimeType">

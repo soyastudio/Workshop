@@ -11,17 +11,19 @@ public class EdisBarFlow {
 
     public static void main(String[] args) {
         KnowledgeTree<SchemaTypeSystem, XsNode> knowledgeTree = XsKnowledgeBase.builder()
-                .file(new File("D:/Workshop/Repository/CMM/BOD/GetCustomerPreferences.xsd"))
+                .file(new File("C:/github/Workshop/Repository/CMM/BOD/GetCustomerPreferences.xsd"))
                 .create().knowledgeBase();
 
         new XlsxMappingAnnotator()
-                .mappingFile("D:/Workshop/Repository/BusinessObjects/CustomerPreferences/requirement/CustomerPreference-v2.1.2.xlsx")
+                .mappingFile("C:/github/Workshop/Repository/BusinessObjects/CustomerPreferences/requirement/CustomerPreference-v3.1.4.xlsx")
                 .mappingSheet("Mapping CFMS to Canonical")
                 .annotate(knowledgeTree);
+/*
 
         new XPathAssignmentAnnotator()
-                .file("D:/Workshop/Repository/BusinessObjects/CustomerPreferences/xpath-assignment.properties")
+                .file("C:/github/Workshop/Repository/BusinessObjects/CustomerPreferences/xpath-assignment.properties")
                 .annotate(knowledgeTree);
+
 
         System.out.println(new ConstructEsqlRenderer()
                 .brokerSchema("com.abs.uca.cfms")
@@ -29,10 +31,11 @@ public class EdisBarFlow {
                 .inputRootVariable("_inputRootNode")
                 .inputRootReference("InputRoot.JSON.Data")
                 .render(knowledgeTree));
+*/
 
         //System.out.println(new ConstructTreeRenderer().render(knowledgeTree));
         //System.out.println(new XPathLoopAnalyzer().render(knowledgeTree));
-        //System.out.println(new XPathAssignmentAnalyzer().enableLoopFeature().render(knowledgeTree));
+        System.out.println(new XPathAssignmentAnalyzer().enableLoopFeature().render(knowledgeTree));
         //System.out.println(new SampleXmlRenderer().render(knowledgeTree));
         //System.out.println(new XsToAvroSchemaRenderer().render(knowledgeTree));
         //System.out.println(new XsTreeRenderer().render(knowledgeTree));

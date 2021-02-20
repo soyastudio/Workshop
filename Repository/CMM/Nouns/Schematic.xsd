@@ -2,7 +2,8 @@
 <!-- edited with XMLSpy v2020 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://collab.safeway.com/it/architecture/AbsOmMaster" xmlns:ns2="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
-	<!--V1.0 - Alex Nunes - 1/12/21 - Introduction of new system of record.-->
+	<!--v1.0 - Alex Nunes - 1/12/21 - Introduction of new system of record.-->
+	<!--v1.1 - Alex Nunes - 1/12/21 - Cardinality of planogram shelf changed to 1.-->
 	<xs:complexType name="Schematic">
 		<xs:annotation>
 			<xs:documentation>Defines the drawings of retail store layout with special attention on product placement.</xs:documentation>
@@ -76,7 +77,7 @@
 					<xs:documentation>Section identification by external system. Ex: Apollo.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="PlanogramShelf" minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="PlanogramShelf" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>represents each of the individual areas on a FIXTURE that can be used to display ITEMs for sale or to store ITEMs, as detailed on a PLANOGRAM. Typically it is similar to the concept of a "shelf" in a traditional "bookcase", but can take on other forms as well in the case of more unusual/ creatively shaped STORE FIXTUREs (i.e., pegboard, pallet, slot wall).  </xs:documentation>
 				</xs:annotation>

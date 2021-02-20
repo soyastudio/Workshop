@@ -247,7 +247,7 @@ public class XsKnowledgeBase<T> implements KnowledgeTreeBase<T, KnowledgeTree<Sc
 
             } else {
                 if (element.getType().getBaseType() != null) {
-                    // System.out.println("================== ??? " + element.getName() + ": " + element.getType().getBaseType().isSimpleType());
+                    //System.out.println("================== ??? " + element.getName() + ": " + element.getType().getBaseType().isSimpleType());
 
                 }
             }

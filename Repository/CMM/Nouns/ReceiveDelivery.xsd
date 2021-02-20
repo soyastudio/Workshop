@@ -6,8 +6,9 @@
    Dsc: contains commonly used Albertson's Purchase order schema.
    Name: /ABS_CMM_Platform/Nouns/PurchaseOrder.xsd
 -->
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by Rosabel Macario (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.7 Rosabel Macario 02/01/2021: Set AccountingUnitId and ChartOfAccountNm as Optional-->
 	<!--V1.6 Rosabel Macario 12/21/20: Updated InvoiceNbr maxlen from 10 to 50 same as what is in Invoice noun. -->
 	<!--V1.5 Rosabel Macario 12/15/20: Added MatchQuantity and MatchUnitCostAmt and removed OpenToMatchQuantity. -->
 	<!--V1.4 Patrick Oliver 12/11/20: Added BusinessUnitId and BuinessUnitNm-->
@@ -414,7 +415,7 @@ modification to an offered or existing promotion</xs:documentation>
 								<xs:element name="AccountingUnit" minOccurs="0" maxOccurs="unbounded">
 									<xs:complexType>
 										<xs:sequence>
-											<xs:element ref="AccountingUnitId"/>
+											<xs:element ref="AccountingUnitId" minOccurs="0"/>
 											<xs:element name="Account" maxOccurs="unbounded">
 												<xs:complexType>
 													<xs:sequence>
@@ -430,7 +431,7 @@ modification to an offered or existing promotion</xs:documentation>
 															</xs:simpleType>
 														</xs:element>
 														<xs:element ref="SubAccountId" minOccurs="0"/>
-														<xs:element ref="ChartOfAccountNm"/>
+														<xs:element ref="ChartOfAccountNm" minOccurs="0"/>
 														<xs:element ref="AccountNm" minOccurs="0"/>
 														<xs:element ref="AccountDsc" minOccurs="0"/>
 														<xs:element ref="VariableLevelNbr" minOccurs="0"/>

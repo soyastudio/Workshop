@@ -26,6 +26,9 @@ public class XsNode {
         if (schemaField.getType().isSimpleType()) {
             nodeType = XsNodeType.Field;
 
+        } else if (schemaType.getBaseType() != null && schemaType.getBaseType().isSimpleType()) {
+            nodeType = XsNodeType.Field;
+
         } else {
             nodeType = XsNodeType.Folder;
 

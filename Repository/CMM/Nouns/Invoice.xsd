@@ -8,6 +8,10 @@
 -->
 <!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by Rosabel Macario (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V3.81 Rosabel M 02/16/2021: Increase maxlen of InvoiceDsc from 30 to 240. -->
+	<!--V3.8 Rosabel M 02/11/2021: Added InvoiceInd in InvoiceDetail. -->
+	<!--V3.7 Rosabel M 02/03/2021: Set InvoiceUser and DistributionUser as Unbounded. -->
+	<!--V3.6 Rosabel M 01/29/2021: Increase maxlen of TermCd and OperatorCd to 50 and 64 respectively.-->
 	<!--V3.5 Rosabel M 01/15/2021: Increase maxlen of ProcessLvl to 10.-->
 	<!--V3.4 Sai N added Legacy Vendor Id in Header/Dtl.-->
 	<!--V3.3 Patrick Oliver 12/10/20: Updated GLCompanyId to string data type;  Added BuinessUnitNm-->
@@ -59,6 +63,16 @@
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="InvoiceNbr" type="xs:string"/>
+			<xs:element name="InvoiceInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Used to indicate if DSD invoice is unpaid, paid via Money Order or paid via Site Draft. (valued could be 1, 5 or 7)</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element name="AccountingData" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Accounting data related with the invoice distribution. (*Note this can be used for legacy account data )</xs:documentation>
@@ -319,7 +333,7 @@
 					<xs:documentation>The occurrence value of the invoice. Not valid for invoices with an unreleased status.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="DistributionUser" type="CodeWithDescription" minOccurs="0" maxOccurs="5"/>
+			<xs:element name="DistributionUser" type="CodeWithDescription" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="GLLineCd" type="CodeWithDescription" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>GL Code</xs:documentation>
@@ -1008,7 +1022,7 @@ The summary amounts in the Header include the Line level amounts and Header leve
 					<xs:documentation>Field contains the sequence number for each file processed.  This number increments by 1 for every file processed in the interface.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="InvoiceUser" minOccurs="0" maxOccurs="5">
+			<xs:element name="InvoiceUser" minOccurs="0" maxOccurs="unbounded">
 				<xs:complexType>
 					<xs:complexContent>
 						<xs:extension base="CodeWithDescription"/>
@@ -1434,7 +1448,7 @@ The summary amounts in the Header include the Line level amounts and Header leve
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="30"/>
+						<xs:maxLength value="240"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -1715,7 +1729,7 @@ payments that require enclosures when  you run AP150 (Cash Requirements). Valid 
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="10"/>
+						<xs:maxLength value="64"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -1893,7 +1907,7 @@ payments that require enclosures when  you run AP150 (Cash Requirements). Valid 
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="5"/>
+						<xs:maxLength value="50"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
