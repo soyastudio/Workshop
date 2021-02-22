@@ -2,16 +2,15 @@ package com.albertsons.edis.kafka;
 
 import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.ConsumerGroupListing;
-import org.apache.kafka.clients.admin.DescribeClusterResult;
-import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.*;
+import org.apache.kafka.common.header.Headers;
+import org.apache.kafka.streams.StreamsConfig;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -60,8 +59,6 @@ public class KafkaAdmin {
     private Properties adminProperties;
     private Properties streamProperties;
 
-    private StringBuilder builder;
-
     static {
         defaultProperties = new Properties();
         defaultProperties.put(BOOTSTRAP_SERVERS, "localhost:9092");
@@ -99,8 +96,10 @@ public class KafkaAdmin {
         consumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, configuration.getProperty(AUTO_OFFSET_RESET));
 
         this.adminProperties = new Properties();
+        adminProperties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, configuration.getProperty(BOOTSTRAP_SERVERS));
 
         this.streamProperties = new Properties();
+        streamProperties.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, configuration.getProperty(BOOTSTRAP_SERVERS));
     }
 
     public KafkaAdmin(AdminClient adminClient, KafkaProducer kafkaProducer, KafkaConsumer kafkaConsumer) {
@@ -111,18 +110,6 @@ public class KafkaAdmin {
 
     public Map<MetricName, ? extends Metric> metrics() {
         return adminClient.metrics();
-    }
-
-    // ==================== log:
-    public void log(String message) {
-        builder.append(message).append("\n");
-    }
-
-    public void logout(File file) throws IOException {
-        FileWriter writer = new FileWriter(file);
-        writer.write(builder.toString());
-        writer.flush();
-        writer.close();
     }
 
     // ==================== admin:
@@ -274,7 +261,7 @@ public class KafkaAdmin {
                 .collect(Collectors.toList());
     }
 
-    private static void main(String[] args) {
+    public static void main(String[] args) {
 
         File home = new File(Paths.get("").toAbsolutePath().toString());
         Properties properties = new Properties();
@@ -315,6 +302,20 @@ public class KafkaAdmin {
                 .longOpt("outboundTopic")
                 .hasArg(true)
                 .desc("Consume from Outbound Topic")
+                .required(false)
+                .build());
+
+        options.addOption(Option.builder("f")
+                .longOpt("logFile")
+                .hasArg(true)
+                .desc("File for logging the task result.")
+                .required(false)
+                .build());
+
+        options.addOption(Option.builder("h")
+                .longOpt("header")
+                .hasArg(true)
+                .desc("Kafka message header")
                 .required(false)
                 .build());
 
@@ -374,7 +375,7 @@ public class KafkaAdmin {
             action = PRODUCE;
         }
 
-        logger.append("==================== Execute ").append(action).append(" on ").append(new Date()).append(" ====================").append("\n");
+        logger.append("==================== Execute task '").append(action).append("' on ").append(new Date()).append(" ====================").append("\n");
 
         try {
             if (CREATE.equalsIgnoreCase(action)) {
@@ -427,6 +428,7 @@ public class KafkaAdmin {
 
     }
 
+    // Business Object Tasks:
     private static void createWorkspace(CommandLine cmd, File dir) throws IOException {
         if (!dir.exists()) {
             dir.mkdirs();
@@ -518,7 +520,7 @@ public class KafkaAdmin {
 
         boolean moreRecords = true;
         while (rawRecords.size() < totalCount && moreRecords) {
-            ConsumerRecords<String, byte[]> polled = kafkaConsumer.poll(Duration.ofMillis(2000));
+            ConsumerRecords<String, byte[]> polled = kafkaConsumer.poll(Duration.ofMillis(5000));
 
             moreRecords = false;
             for (TopicPartition partition : polled.partitions()) {
@@ -555,6 +557,7 @@ public class KafkaAdmin {
                 logger.append("Topic: ").append(rc.topic()).append("\n");
                 logger.append("Partition: ").append(rc.partition()).append("\n");
                 logger.append("Offset: ").append(rc.offset()).append("\n");
+                logger.append("Headers: ").append(toString(rc.headers())).append("\n");
                 logger.append("Key: ").append(rc.key()).append("\n");
                 logger.append("Message: ").append(new String(rc.value())).append("\n");
 
@@ -573,12 +576,29 @@ public class KafkaAdmin {
 
         String ibTopic = cmd.hasOption("p") ? cmd.getOptionValue("p") : bod.getProperty("p");
         String obTopic = cmd.hasOption("c") ? cmd.getOptionValue("c") : bod.getProperty("c");
+        String headers = cmd.hasOption("h") ? cmd.getOptionValue("h") : null;
         String message = cmd.hasOption("m") ? cmd.getOptionValue("m") : bod.getProperty("m");
 
         if (ibTopic != null) {
             KafkaProducer kafkaProducer = new KafkaProducer(kafkaAdmin.producerProperties);
+            RecordModel.Builder builder = RecordModel.builder(ibTopic);
+            if (headers != null) {
+                String[] array = headers.split(",");
+                for (int i = 0; i < array.length; i++) {
+                    String token = array[i];
+                    if (token.contains("=")) {
+                        String[] kv = token.split("=");
+                        if (kv.length == 2) {
+                            builder.header(kv[0].trim(), kv[1].trim());
+                        } else {
 
-            ProducerRecord<String, byte[]> record = RecordModel.builder(ibTopic).generateKey().message(message).create();
+                        }
+                    }
+                }
+            }
+
+            ProducerRecord<String, byte[]> record = builder.generateKey().message(message).create();
+
             Future<RecordMetadata> future = kafkaProducer.send(record);
             while (!future.isDone()) {
                 try {
@@ -596,6 +616,7 @@ public class KafkaAdmin {
                 logger.append("Topic: ").append(metadata.topic()).append("\n");
                 logger.append("Partition: ").append(metadata.partition()).append("\n");
                 logger.append("Offset: ").append(metadata.offset()).append("\n");
+                logger.append("Headers: ").append(toString(record.headers())).append("\n");
                 logger.append("Key: ").append(record.key()).append("\n");
                 logger.append("Message: ").append(new String(record.value())).append("\n");
 
@@ -610,6 +631,25 @@ public class KafkaAdmin {
                 consume(cmd, dir, kafkaAdmin, logger);
             }
         }
+    }
 
+    // Global methods:
+    private static void kafkaPublish() {
+
+    }
+
+    // utility methods:
+    private static String toString(Headers headers) {
+        StringBuilder builder = new StringBuilder();
+        headers.forEach(e -> {
+            builder.append(e.key()).append("=").append(new String(e.value())).append(",");
+        });
+
+        String token = builder.toString();
+        if (token.endsWith(",")) {
+            token = token.substring(0, token.length() - 1);
+        }
+
+        return token;
     }
 }
