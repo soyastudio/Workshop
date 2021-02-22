@@ -10,7 +10,7 @@ Project	Release	Version	ChangeOwner	Date		Description
 ------- ------- -------	----------  ---------  	-----------
 EDIS    Drop2	0.1		Spandana    12/06/2017	Initial Draft for createMsgLog 
 												used in both In and Out audit.
-EDIS	Drop3	0.2		Spandana	20/10/2017	Updated to remove mapping for componentID
+EDIS	Drop3	0.2		Spandana	20/10/2017	Updated to remove assignment for componentID
 EDIS	Drop3	0.3		Spandana	12/12/2017	Updated to captureinput msg for MRM parser.
 --------------------------------------------------------------------------------
 FUNCTION NAME: createMsgLog
@@ -35,7 +35,7 @@ CREATE PROCEDURE createMsgLog(IN InputRoot REFERENCE,
 	CREATE LASTCHILD OF msgLogRef NAME 'ComponentData';
 	DECLARE cmpDataLog REFERENCE TO msgLogRef.ComponentData;
 	SET cmpDataLog.ApplicationId = cmpRef.APPLICATION_NAME;
-	/*Spandana #comment: Removed mapping for ComponentId after 
+	/*Spandana #comment: Removed assignment for ComponentId after
 	moving the component details and control flags to UDP from database.*/
 	--SET cmpDataLog.ComponentId   = cmpRef.COMPONENT_ID; 
 	SET cmpDataLog.ComponentName = cmpRef.COMPONENT_NAME;

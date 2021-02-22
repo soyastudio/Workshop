@@ -956,7 +956,7 @@ TODO
       "nodeType": "Attribute",
       "defaultValue": "VersionId",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "assignment": "VERSION_ID"
         }
       }
@@ -969,7 +969,7 @@ TODO
       "nodeType": "Attribute",
       "defaultValue": "SystemEnvironmentCd",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Depending upon Environment where code is deployed map it as DEV, QA, PROD",
           "assignment": "SYSTEM_ENVIRONMENT_CODE"
         }
@@ -990,7 +990,7 @@ TODO
       "alias": "DocumentID_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "It has to be populated from Kafka as of now same as Kafka Topic",
           "sourcePath": "aggregateid",
           "assignment": "\u0027CUSTOMER_PREFERENCES_MANAGEMENT\u0027"
@@ -1012,7 +1012,7 @@ TODO
       "alias": "AlternateDocumentID_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Map \u0027FileName_TimeStamp\u0027 where  Timestamp format - YYYYMMddHHmmssSSSSSS",
           "assignment": "\u0027IAUC_C02.cfms.aggregate-\u0027 || CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT \u0027YYYYMMddHHmmssSSSSSS\u0027)"
         }
@@ -1032,7 +1032,7 @@ TODO
       "alias": "InboundOutboundInd_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "assignment": "\u0027Outbound from Albertsons\u0027"
         }
       }
@@ -1052,7 +1052,7 @@ TODO
       "alias": "DocumentNm_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Default to \u0027GetCustomerPreference\u0027",
           "assignment": "\u0027GetCustomerPreferences\u0027"
         }
@@ -1069,7 +1069,7 @@ TODO
       "alias": "CreationDt_",
       "defaultValue": "2008-09-28T18:49:45",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Get current date and time",
           "assignment": "CURRENT_TIMESTAMP"
         }
@@ -1090,7 +1090,7 @@ TODO
       "alias": "Description_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Default to \u0027Retail customer’s generic preferences and the subscriptions\u0027",
           "assignment": "\u0027Retail customer\u0027\u0027s generic preferences and the subscriptions\u0027"
         }
@@ -1111,7 +1111,7 @@ TODO
       "alias": "SourceApplicationCd_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Default to \u0027CFMS\u0027",
           "assignment": "\u0027CFMS\u0027"
         }
@@ -1132,7 +1132,7 @@ TODO
       "alias": "TargetApplicationCd_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Default to \u0027EDIS\u0027",
           "assignment": "\u0027EDIS\u0027"
         }
@@ -1233,7 +1233,7 @@ TODO
       "alias": "InternalFileTransferInd_",
       "defaultValue": "strin",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Defaul to \u0027Y\u0027",
           "assignment": "\u0027Y\u0027"
         }
@@ -1344,7 +1344,7 @@ TODO
       "alias": "Code_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Default to \u0027Internal\u0027",
           "assignment": "\u0027Internal\u0027"
         }
@@ -1410,7 +1410,7 @@ TODO
       "alias": "Code_1",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Default to \u0027Low\u0027",
           "assignment": "\u0027Low\u0027"
         }
@@ -1464,7 +1464,7 @@ TODO
       "alias": "PHIdataInd_",
       "defaultValue": "strin",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Default to \u0027N\u0027",
           "assignment": "\u0027N\u0027"
         }
@@ -1486,7 +1486,7 @@ TODO
       "alias": "PCIdataInd_",
       "defaultValue": "strin",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Default to \u0027N\u0027",
           "assignment": "\u0027N\u0027"
         }
@@ -1508,7 +1508,7 @@ TODO
       "alias": "PIIdataInd_",
       "defaultValue": "strin",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Default to \u0027N\u0027",
           "assignment": "\u0027N\u0027"
         }
@@ -1538,7 +1538,7 @@ TODO
       "alias": "ActionTypeCd_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Default to \u0027UPDATE\u0027",
           "assignment": "\u0027UPDATE\u0027"
         }
@@ -1555,7 +1555,7 @@ TODO
       "alias": "RecordTypeCd_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Default to \u0027CHANGE\u0027",
           "assignment": "\u0027CHANGE\u0027"
         }
@@ -1584,7 +1584,7 @@ TODO
       "nodeType": "Folder",
       "alias": "CustomerId_",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping\nNote: For all services except CHMS this will be mapped from the service aggregateId. For CHMS the aggregateId will be mapped to HHID",
           "sourcePath": "aggregateId",
           "assignment": "$.aggregateId"
@@ -1687,7 +1687,7 @@ TODO
       "alias": "PreferenceClassNm_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/_class",
           "assignment": "_state_preference._class"
@@ -1705,7 +1705,7 @@ TODO
       "alias": "PreferenceCd_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/preferenceId",
           "assignment": "_state_preference.preferenceId"
@@ -1723,7 +1723,7 @@ TODO
       "alias": "PreferenceTypeCd_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/type",
           "assignment": "_state_preference.type"
@@ -1753,7 +1753,7 @@ TODO
       "alias": "PreferenceVal_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/value",
           "assignment": "_state_preference.value"
@@ -1771,7 +1771,7 @@ TODO
       "alias": "PreferenceCategoryCd_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/categoryCode",
           "assignment": "_state_preference.categoryCode"
@@ -1789,7 +1789,7 @@ TODO
       "alias": "PreferenceSubCategoryCd_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/subCategoryCode",
           "assignment": "_state_preference.subCategoryCode"
@@ -1830,7 +1830,7 @@ TODO
       "alias": "ChoiceDsc_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/optchoices[*]/choice",
           "assignment": "_opt_choice.choice"
@@ -1867,7 +1867,7 @@ TODO
       "alias": "ReasonCd_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/optchoices[*]/reasonCode",
           "assignment": "_opt_choice.reasonCode"
@@ -1889,7 +1889,7 @@ TODO
       "alias": "ReasonDsc_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/optchoices[*]/reasonText",
           "assignment": "_opt_choice.reasonText"
@@ -1923,7 +1923,7 @@ TODO
       "alias": "BannerCd_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/bannerId",
           "assignment": "_state_preference.bannerId"
@@ -1946,7 +1946,7 @@ TODO
       "alias": "PreferredInd_",
       "defaultValue": "100",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/preferredInd",
           "assignment": "_state_preference.preferredInd"
@@ -1964,7 +1964,7 @@ TODO
       "alias": "ChannelTypCd_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/channel/type",
           "assignment": "_state_preference.channel.type"
@@ -1982,7 +1982,7 @@ TODO
       "alias": "PlatformTypCd_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/platform/type",
           "assignment": "_state_preference.platform.type"
@@ -2020,7 +2020,7 @@ TODO
       "nodeType": "Attribute",
       "defaultValue": "typeCode",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/effectiveTimePeriods[*]/type"
         }
@@ -2037,7 +2037,7 @@ TODO
       "alias": "FirstEffectiveDt_",
       "defaultValue": "2018-12-28-08:00",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/effectiveTimePeriods[*]/startDate",
           "assignment": "_pref_eff_time_period.startDate"
@@ -2055,7 +2055,7 @@ TODO
       "alias": "FirstEffectiveTm_",
       "defaultValue": "11:33:25-07:00",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/effectiveTimePeriods[*]/startTime",
           "assignment": "_pref_eff_time_period.startTime"
@@ -2073,7 +2073,7 @@ TODO
       "alias": "LastEffectiveDt_",
       "defaultValue": "2000-09-24",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/effectiveTimePeriods[*]/endDate",
           "assignment": "_pref_eff_time_period.endDate"
@@ -2091,7 +2091,7 @@ TODO
       "alias": "LastEffectiveTm_",
       "defaultValue": "18:04:37",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/effectiveTimePeriods[*]/endTime",
           "assignment": "_pref_eff_time_period.endTime"
@@ -2113,7 +2113,7 @@ TODO
       "alias": "DurationNbr_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Extract the number part from (state.preferences[*].effectiveTimePeriods[*].duration)",
           "sourcePath": "state/preferences[*]/effectiveTimePeriods[*]/duration",
           "assignment": "_pref_eff_time_period.duration"
@@ -2135,7 +2135,7 @@ TODO
       "alias": "DurationUnitDsc_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "IF state.preferences[*].effectiveTimePeriods[*].duration ends with \u0027D\u0027 then \u0027Days\u0027\nIF  state.preferences[*].effectiveTimePeriods[*].duration ends with W then \u0027Weeks\u0027",
           "assignment": "_pref_eff_time_period.duration"
         }
@@ -2156,7 +2156,7 @@ TODO
       "alias": "InclusiveInd_",
       "defaultValue": "st",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/effectiveTimePeriods[*]/inclusiveInd",
           "assignment": "_pref_eff_time_period.inclusiveInd"
@@ -2197,7 +2197,7 @@ TODO
       "alias": "SubscriptionId_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "preferences[].value\nWhen preferences[].categoryCode \u003d \"DELIVERY\" and preferences[].subCategoryCode \u003d  \"SUBSCRIPTION\" ",
           "sourcePath": "state/preferences/value",
           "assignment": "_preference.value"
@@ -2215,7 +2215,7 @@ TODO
       "alias": "SubscriptionCd_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/subCategoryCode",
           "assignment": "_preference.subCategoryCode"
@@ -2233,7 +2233,7 @@ TODO
       "alias": "SubscriptionTypeCd_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/type",
           "assignment": "_preference.type"
@@ -2286,7 +2286,7 @@ TODO
       "alias": "ChoiceDsc_1",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/optchoices[*]/choice",
           "assignment": "_choice.choice"
@@ -2323,7 +2323,7 @@ TODO
       "alias": "ReasonCd_1",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/optchoices[*]/reasonCode",
           "assignment": "_choice.reasonCode"
@@ -2345,7 +2345,7 @@ TODO
       "alias": "ReasonDsc_1",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/optchoices[*]/reasonText",
           "assignment": "_choice.reasonText"
@@ -2392,7 +2392,7 @@ TODO
       "alias": "ServiceFeeWaivedInd_",
       "defaultValue": "s",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/deliverySubscriptionOffer/serviceFeeWaived",
           "assignment": "_preference.deliverySubscriptionOffer.serviceFeeWaived"
@@ -2414,7 +2414,7 @@ TODO
       "alias": "DeliveryFeeWaivedInd_",
       "defaultValue": "s",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/deliverySubscriptionOffer/deliveryFeeWaived",
           "assignment": "_preference.deliverySubscriptionOffer.deliveryFeeWaived"
@@ -2436,7 +2436,7 @@ TODO
       "alias": "FuelSurchargeWaivedInd_",
       "defaultValue": "s",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/deliverySubscriptionOffer/fuelSurchargeWaived",
           "assignment": "_preference.deliverySubscriptionOffer.fuelSurchargeWaived"
@@ -2454,7 +2454,7 @@ TODO
       "alias": "MinimumBasketSizeQty_",
       "defaultValue": "3",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/deliverySubscriptionOffer/minBasketSize",
           "assignment": "_preference.deliverySubscriptionOffer.minBasketSize"
@@ -2476,7 +2476,7 @@ TODO
       "alias": "AutoRenewInd_",
       "defaultValue": "s",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/autoRenew",
           "assignment": "_preference.autoRenew"
@@ -2494,7 +2494,7 @@ TODO
       "alias": "AutoEnrollInd_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/autoEnroll",
           "assignment": "_preference.autoEnroll"
@@ -2522,7 +2522,7 @@ TODO
       "nodeType": "Attribute",
       "defaultValue": "CurrencyCd",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences/deliverySubscriptionOffer/fee/currency",
           "assignment": "_preference.deliverySubscriptionOffer.fee.currency"
@@ -2537,7 +2537,7 @@ TODO
       "nodeType": "Attribute",
       "defaultValue": "FeeAmt",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences/deliverySubscriptionOffer/fee/amount",
           "assignment": "_preference.deliverySubscriptionOffer.fee.amount"
@@ -2565,7 +2565,7 @@ TODO
       "nodeType": "Attribute",
       "defaultValue": "CurrencyCd",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences/deliverySubscriptionOffer/initialOrderAmountOff/currency",
           "assignment": "_preference.deliverySubscriptionOffer.initialOrderAmountOff.currency"
@@ -2641,7 +2641,7 @@ TODO
       "nodeType": "Attribute",
       "defaultValue": "typeCode",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/effectiveTimePeriods[*]/type",
           "assignment": "_period.type"
@@ -2659,7 +2659,7 @@ TODO
       "alias": "FirstEffectiveDt_1",
       "defaultValue": "2005-01-21-08:00",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/effectiveTimePeriods[*]/startDate",
           "assignment": "_period.startDate"
@@ -2677,7 +2677,7 @@ TODO
       "alias": "FirstEffectiveTm_1",
       "defaultValue": "12:00:00",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/effectiveTimePeriods[*]/startTime",
           "assignment": "_period.startTime"
@@ -2695,7 +2695,7 @@ TODO
       "alias": "LastEffectiveDt_1",
       "defaultValue": "2014-12-08",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/effectiveTimePeriods[*]/endDate",
           "assignment": "_period.endDate"
@@ -2713,7 +2713,7 @@ TODO
       "alias": "LastEffectiveTm_1",
       "defaultValue": "11:36:55",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/effectiveTimePeriods[*]/endTime",
           "assignment": "_period.endTime"
@@ -2735,7 +2735,7 @@ TODO
       "alias": "DurationNbr_1",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Extract the number part from (state.preferences[*].effectiveTimePeriods[*].duration)",
           "sourcePath": "state/preferences[*]/effectiveTimePeriods[*]/duration",
           "assignment": "_period.duration"
@@ -2757,7 +2757,7 @@ TODO
       "alias": "DurationUnitDsc_1",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "IF state.preferences[*].effectiveTimePeriods[*].duration ends with \u0027D\u0027 then \u0027Days\u0027\nIF  state.preferences[*].effectiveTimePeriods[*].duration ends with W then \u0027Weeks\u0027",
           "assignment": "_period.duration"
         }
@@ -2778,7 +2778,7 @@ TODO
       "alias": "InclusiveInd_1",
       "defaultValue": "st",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/preferences[*]/effectiveTimePeriods[*]/inclusiveInd",
           "assignment": "_period.inclusiveInd"
@@ -2813,7 +2813,7 @@ TODO
       "alias": "SourceNm_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "aggregateType",
           "assignment": "$.aggregateType"
@@ -2831,7 +2831,7 @@ TODO
       "alias": "CreateTs_",
       "defaultValue": "2017-10-14T05:43:21",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Transform to YYYY-MM-DD-THH:MM:SSZ \nExample 2020-10-06T07:17:58.791Z",
           "sourcePath": "state/createTimestamp",
           "assignment": "$.state.createTimestamp"
@@ -2849,7 +2849,7 @@ TODO
       "alias": "LastUpdateTs_",
       "defaultValue": "2009-07-28T12:14:45",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Transform to YYYY-MM-DD-THH:MM:SSZ \nExample 2020-10-06T07:17:58.791Z",
           "sourcePath": "state/lastUpdateTimestamp",
           "assignment": "$.state.lastUpdateTimestamp"
@@ -2871,7 +2871,7 @@ TODO
       "alias": "CreateClientId_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/createClientId",
           "assignment": "$.state.createClientId"
@@ -2893,7 +2893,7 @@ TODO
       "alias": "CreateUserId_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/createUserId",
           "assignment": "$.state.createUserId"
@@ -2915,7 +2915,7 @@ TODO
       "alias": "LastUpdateClientId_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/lastUpdateClientId",
           "assignment": "$.state.lastUpdateClientId"
@@ -2937,7 +2937,7 @@ TODO
       "alias": "LastUpdateUserId_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/lastUpdateUserId",
           "assignment": "$.state.lastUpdateUserId"
@@ -2959,7 +2959,7 @@ TODO
       "alias": "CreateHostNm_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/createHostName",
           "assignment": "$.state.createHostName"
@@ -2981,7 +2981,7 @@ TODO
       "alias": "LastUpdateHostNm_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/lastUpdateHostName",
           "assignment": "$.state.lastUpdateHostName"
@@ -3004,7 +3004,7 @@ TODO
       "alias": "SequenceNbr_",
       "defaultValue": "100",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/sequenceNumber",
           "assignment": "$.state.sequenceNumber"
@@ -3022,7 +3022,7 @@ TODO
       "alias": "AggregateTs_",
       "defaultValue": "2006-08-04T03:16:57",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Transform to YYYY-MM-DD-THH:MM:SSZ \nExample 2020-10-06T07:17:58.791Z",
           "sourcePath": "state/timestamp",
           "assignment": "$.state.timestamp"
@@ -3045,7 +3045,7 @@ TODO
       "alias": "AggregateRevisionNbr_",
       "defaultValue": "100",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/aggregateRevision",
           "assignment": "$.state.aggregateRevision"
@@ -3068,7 +3068,7 @@ TODO
       "alias": "PayloadVersionNbr_",
       "defaultValue": "100",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/version",
           "assignment": "$.state.version"
@@ -3090,7 +3090,7 @@ TODO
       "alias": "EventId_",
       "defaultValue": "string",
       "annotations": {
-        "mapping": {
+        "assignment": {
           "mappingRule": "Direct Mapping",
           "sourcePath": "state/eventId",
           "assignment": "$.state.eventId"

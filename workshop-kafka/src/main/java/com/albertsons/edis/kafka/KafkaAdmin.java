@@ -1,22 +1,28 @@
 package com.albertsons.edis.kafka;
 
-
 import org.apache.commons.cli.*;
+import org.apache.commons.io.FileUtils;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.ConsumerGroupListing;
 import org.apache.kafka.clients.admin.DescribeClusterResult;
 import org.apache.kafka.clients.admin.NewTopic;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.*;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -24,10 +30,78 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 public class KafkaAdmin {
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS XXX");
+
+    private static final String BOOTSTRAP_SERVERS = "bootstrap-servers";
+
+    private static final String CLIENT_ID = "client-id";
+    private static final String KEY_SERIALIZER = "key-serializer";
+    private static final String VALUE_SERIALIZER = "value-serializer";
+
+    private static final String GROUP_ID = "group-id";
+    private static final String KEY_DESERIALIZER = "key-deserializer";
+    private static final String VALUE_DESERIALIZER = "value-deserializer";
+    private static final String AUTO_OFFSET_RESET = "auto-offset-reset";
+
+    private static Properties defaultProperties;
+
+    private static final String CREATE = "create";
+    private static final String UPDATE = "update";
+    private static final String DELETE = "delete";
+    private static final String CONSUME = "consume";
+    private static final String PRODUCE = "produce";
 
     private AdminClient adminClient;
     private KafkaProducer kafkaProducer;
     private KafkaConsumer kafkaConsumer;
+
+    private Properties producerProperties;
+    private Properties consumerProperties;
+    private Properties adminProperties;
+    private Properties streamProperties;
+
+    private StringBuilder builder;
+
+    static {
+        defaultProperties = new Properties();
+        defaultProperties.put(BOOTSTRAP_SERVERS, "localhost:9092");
+
+        defaultProperties.put(CLIENT_ID, "test_client");
+        defaultProperties.put(KEY_SERIALIZER, "org.apache.kafka.common.serialization.StringSerializer");
+        defaultProperties.put(VALUE_SERIALIZER, "org.apache.kafka.common.serialization.ByteArraySerializer");
+
+        defaultProperties.put(GROUP_ID, "test_group");
+        defaultProperties.put(KEY_DESERIALIZER, "org.apache.kafka.common.serialization.StringDeserializer");
+        defaultProperties.put(VALUE_DESERIALIZER, "org.apache.kafka.common.serialization.ByteArrayDeserializer");
+        defaultProperties.put(AUTO_OFFSET_RESET, "earliest");
+    }
+
+    private KafkaAdmin(Properties properties) {
+        StringBuilder builder = new StringBuilder();
+
+        Properties configuration = new Properties(defaultProperties);
+        configuration.putAll(properties);
+
+        producerProperties = new Properties();
+        producerProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, configuration.getProperty(BOOTSTRAP_SERVERS));
+        producerProperties.put(ProducerConfig.CLIENT_ID_CONFIG, configuration.getProperty(CLIENT_ID));
+        producerProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, configuration.getProperty(KEY_SERIALIZER));
+        producerProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, configuration.getProperty(VALUE_SERIALIZER));
+        //props.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, CustomPartitioner.class.getName());
+
+
+        consumerProperties = new Properties();
+        consumerProperties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, configuration.getProperty(BOOTSTRAP_SERVERS));
+        consumerProperties.put(ConsumerConfig.CLIENT_ID_CONFIG, configuration.getProperty(CLIENT_ID));
+        consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, configuration.getProperty(GROUP_ID));
+        consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, configuration.getProperty(KEY_DESERIALIZER));
+        consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, configuration.getProperty(VALUE_DESERIALIZER));
+        consumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, configuration.getProperty(AUTO_OFFSET_RESET));
+
+        this.adminProperties = new Properties();
+
+        this.streamProperties = new Properties();
+    }
 
     public KafkaAdmin(AdminClient adminClient, KafkaProducer kafkaProducer, KafkaConsumer kafkaConsumer) {
         this.adminClient = adminClient;
@@ -37,6 +111,18 @@ public class KafkaAdmin {
 
     public Map<MetricName, ? extends Metric> metrics() {
         return adminClient.metrics();
+    }
+
+    // ==================== log:
+    public void log(String message) {
+        builder.append(message).append("\n");
+    }
+
+    public void logout(File file) throws IOException {
+        FileWriter writer = new FileWriter(file);
+        writer.write(builder.toString());
+        writer.flush();
+        writer.close();
     }
 
     // ==================== admin:
@@ -188,13 +274,8 @@ public class KafkaAdmin {
                 .collect(Collectors.toList());
     }
 
-    private static final String CREATE = "create";
-    private static final String UPDATE = "update";
-    private static final String DELETE = "delete";
-    private static final String CONSUME = "consume";
-    private static final String PRODUCE = "produce";
+    private static void main(String[] args) {
 
-    public static void main(String[] args) {
         File home = new File(Paths.get("").toAbsolutePath().toString());
         Properties properties = new Properties();
         File configFile = new File(home, "kafka-config.properties");
@@ -205,9 +286,10 @@ public class KafkaAdmin {
                 e.printStackTrace();
             }
         }
+        KafkaAdmin kafkaAdmin = new KafkaAdmin(properties);
 
+        // Command line definition:
         Options options = new Options();
-
         options.addOption(Option.builder("h")
                 .longOpt("help")
                 .hasArg(false)
@@ -219,27 +301,13 @@ public class KafkaAdmin {
                 .longOpt("action")
                 .hasArg(true)
                 .desc("Create business object test workspace.")
-                .required(true)
+                .required(false)
                 .build());
 
         options.addOption(Option.builder("b")
-                .longOpt("bod")
+                .longOpt("businessObject")
                 .hasArg(true)
-                .desc("Create business object test workspace.")
-                .required(false)
-                .build());
-
-        options.addOption(Option.builder("p")
-                .longOpt("inboundTopic")
-                .hasArg(true)
-                .desc("Publish to Inbound Topic, m required.")
-                .required(false)
-                .build());
-
-        options.addOption(Option.builder("m")
-                .longOpt("msg")
-                .hasArg(true)
-                .desc("Message for Kafka producer")
+                .desc("Business object.")
                 .required(false)
                 .build());
 
@@ -250,48 +318,134 @@ public class KafkaAdmin {
                 .required(false)
                 .build());
 
+        options.addOption(Option.builder("m")
+                .longOpt("msg")
+                .hasArg(true)
+                .desc("Message for Kafka producer")
+                .required(false)
+                .build());
+
+        options.addOption(Option.builder("p")
+                .longOpt("inboundTopic")
+                .hasArg(true)
+                .desc("Publish to Inbound Topic, m required.")
+                .required(false)
+                .build());
+
+        options.addOption(Option.builder("x")
+                .longOpt("cleanHistory")
+                .hasArg(false)
+                .desc("Clean log history during process.")
+                .required(false)
+                .build());
+
+        // Parse command line and dispatch to method:
         CommandLineParser parser = new DefaultParser();
+        CommandLine cmd = null;
         try {
-            CommandLine cmd = parser.parse(options, args);
-            if (!cmd.hasOption("a")) {
-                createWorkspace(cmd, home);
+            cmd = parser.parse(options, args);
 
-            } else if(CREATE.equalsIgnoreCase(cmd.getOptionValue("a"))) {
-                createWorkspace(cmd, home);
+        } catch (ParseException e) {
+            System.out.println(e.getMessage());
+            System.exit(1);
+        }
 
-            } else if(CONSUME.equalsIgnoreCase(cmd.getOptionValue("a"))) {
-                createWorkspace(cmd, home);
+        if (cmd.hasOption("b")) {
+            processBusinessObjectTask(cmd, kafkaAdmin, home);
 
-            } else if(PRODUCE.equalsIgnoreCase(cmd.getOptionValue("a"))) {
-                createWorkspace(cmd, home);
+        } else {
+            processKafkaAdminTask(cmd, kafkaAdmin);
 
-            } else if(DELETE.equalsIgnoreCase(cmd.getOptionValue("a"))) {
-                createWorkspace(cmd, home);
+        }
+    }
+
+    private static void processBusinessObjectTask(CommandLine cmd, KafkaAdmin kafkaAdmin, File home) {
+
+        File dir = new File(home, cmd.getOptionValue("b"));
+        File bod = new File(dir, "bod.properties");
+        String action = cmd.hasOption("a") ? cmd.getOptionValue("a") : null;
+        int exit = 0;
+
+        File logFile = new File(dir, "test.log");
+        boolean cleanLogHistory = cmd.hasOption("x");
+
+        StringBuilder logger = new StringBuilder();
+        if (action == null) {
+            action = PRODUCE;
+        }
+
+        logger.append("==================== Execute ").append(action).append(" on ").append(new Date()).append(" ====================").append("\n");
+
+        try {
+            if (CREATE.equalsIgnoreCase(action)) {
+                createWorkspace(cmd, dir);
+
+            } else if (UPDATE.equalsIgnoreCase(action)) {
+                updateWorkspace(cmd, dir);
+
+            } else if (DELETE.equalsIgnoreCase(action)) {
+                deleteWorkspace(cmd, dir);
+
+            } else if (CONSUME.equalsIgnoreCase(action)) {
+                consume(cmd, dir, kafkaAdmin, logger);
+
+            } else if (PRODUCE.equalsIgnoreCase(action)) {
+                produce(cmd, dir, kafkaAdmin, logger);
+
+            } else {
+                System.out.println("Unknown action: " + action);
 
             }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            logger.append("ERROR: " + e.getMessage()).append("\n");
+            logger.append("Root cause: " + e.getCause().getClass().getName()).append("\n");
+
+            System.out.println("Error: '" + e.getMessage() + "': Root cause: " + e.getCause().getClass().getName());
+            exit = 1;
+
+        } finally {
+            logger.append("\n").append("\n").append("\n");
+            if (logFile.exists()) {
+                try {
+                    if (cmd.hasOption("x")) {
+                        Files.write(Paths.get(logFile.toURI()), logger.toString().getBytes(StandardCharsets.UTF_8));
+                    } else {
+                        Files.write(Paths.get(logFile.toURI()), logger.toString().getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND);
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            System.exit(exit);
         }
     }
 
-    private static void createWorkspace(CommandLine cmd, File home) throws IOException {
+    private static void processKafkaAdminTask(CommandLine cmd, KafkaAdmin kafkaAdmin) {
 
-        String bo = cmd.getOptionValue("b");
-        String p = cmd.getOptionValue("p");
-        String c = cmd.getOptionValue("c");
-        String m = cmd.getOptionValue("m");
+    }
 
-        File workspace = new File(home, bo);
-        workspace.mkdirs();
-
-        File file = new File(workspace, "bod.properties");
-        if (!file.exists()) {
-            file.createNewFile();
+    private static void createWorkspace(CommandLine cmd, File dir) throws IOException {
+        if (!dir.exists()) {
+            dir.mkdirs();
         }
 
-        FileWriter writer = new FileWriter(file);
+        File configFile = new File(dir, "bod.properties");
+        if (!configFile.exists()) {
+            configFile.createNewFile();
+        }
+
+        File logFile = new File(dir, "test.log");
+        if (!logFile.exists()) {
+            logFile.createNewFile();
+        }
+        String p = cmd.hasOption("p") ? cmd.getOptionValue("p") : "";
+        String c = cmd.hasOption("c") ? cmd.getOptionValue("c") : "";
+        String m = cmd.hasOption("m") ? cmd.getOptionValue("m") : "";
+
+        FileWriter writer = new FileWriter(configFile);
         writer.write("c=" + c + "\n");
         writer.write("p=" + p + "\n");
         writer.write("m=" + m + "\n");
@@ -301,96 +455,160 @@ public class KafkaAdmin {
 
     }
 
-    private static void updateWorkspace(CommandLine cmd, File home) throws IOException {
-        System.out.println("---------------- update: ");
-        String bo = cmd.getOptionValue("b");
-        String p = cmd.getOptionValue("p");
-        String c = cmd.getOptionValue("c");
-        String m = cmd.getOptionValue("m");
-
-        File workspace = new File(home, bo);
-        workspace.mkdirs();
-
-        File file = new File(workspace, "bod.properties");
-        if (!file.exists()) {
-            file.createNewFile();
+    private static void updateWorkspace(CommandLine cmd, File dir) throws IOException {
+        if (!dir.exists()) {
+            System.out.println("Directory '" + dir.getName() + "' does not exist.");
+            System.exit(1);
         }
 
-        FileWriter writer = new FileWriter(file);
+        File configFile = new File(dir, "bod.properties");
+        if (!configFile.exists()) {
+            System.out.println("Business Object '" + dir.getName() + "' does not exist.");
+            System.exit(1);
+        }
+
+        Properties properties = new Properties();
+        properties.load(new FileInputStream(configFile));
+
+        String p = cmd.hasOption("p") ? cmd.getOptionValue("p") : properties.getProperty("p");
+        String c = cmd.hasOption("c") ? cmd.getOptionValue("c") : properties.getProperty("c");
+        String m = cmd.hasOption("m") ? cmd.getOptionValue("m") : properties.getProperty("m");
+
+        FileWriter writer = new FileWriter(configFile);
         writer.write("c=" + c + "\n");
         writer.write("p=" + p + "\n");
         writer.write("m=" + m + "\n");
-        
+
         writer.flush();
-        
         writer.close();
+    }
+
+    private static void deleteWorkspace(CommandLine cmd, File dir) throws IOException {
+        FileUtils.forceDelete(dir);
+    }
+
+    private static void consume(CommandLine cmd, File dir, KafkaAdmin kafkaAdmin, StringBuilder logger) throws IOException {
+        logger.append("Kafka Consumer:").append("\n");
+
+        long timestamp = System.currentTimeMillis() - 500l;
+
+        Properties bod = new Properties();
+        bod.load(new FileInputStream(new File(dir, "bod.properties")));
+        String topic = cmd.hasOption("c") ? cmd.getOptionValue("c") : bod.getProperty("c");
+
+        KafkaConsumer<String, byte[]> kafkaConsumer = new KafkaConsumer(kafkaAdmin.consumerProperties);
+        int count = 10;
+
+        List<PartitionInfo> partitionInwriteret = kafkaConsumer.partitionsFor(topic);
+        Collection<TopicPartition> partitions = partitionInwriteret.stream()
+                .map(partitionInfo -> new TopicPartition(partitionInfo.topic(),
+                        partitionInfo.partition()))
+                .collect(Collectors.toList());
+        kafkaConsumer.assign(partitions);
+
+        Map<TopicPartition, Long> latestOffsets = kafkaConsumer.endOffsets(partitions);
+        for (TopicPartition partition : partitions) {
+            Long latestOffset = Math.max(0, latestOffsets.get(partition) - 1);
+            kafkaConsumer.seek(partition, Math.max(0, latestOffset - count));
+        }
+
+        int totalCount = count * partitions.size();
+        final Map<TopicPartition, List<ConsumerRecord<String, byte[]>>> rawRecords
+                = partitions.stream().collect(Collectors.toMap(p -> p, p -> new ArrayList<>(count)));
+
+        boolean moreRecords = true;
+        while (rawRecords.size() < totalCount && moreRecords) {
+            ConsumerRecords<String, byte[]> polled = kafkaConsumer.poll(Duration.ofMillis(2000));
+
+            moreRecords = false;
+            for (TopicPartition partition : polled.partitions()) {
+                List<ConsumerRecord<String, byte[]>> records = polled.records(partition);
+                if (!records.isEmpty()) {
+                    rawRecords.get(partition).addAll(records);
+                    moreRecords = records.get(records.size() - 1).offset() < latestOffsets.get(partition) - 1;
+                }
+            }
+        }
+
+        List<ConsumerRecord<String, byte[]>> latestRecords = rawRecords
+                .values()
+                .stream()
+                .flatMap(Collection::stream)
+                .map(rec -> new ConsumerRecord<String, byte[]>(rec.topic(),
+                        rec.partition(),
+                        rec.offset(),
+                        rec.timestamp(),
+                        rec.timestampType(),
+                        0L,
+                        rec.serializedKeySize(),
+                        rec.serializedValueSize(),
+                        rec.key(),
+                        rec.value(),
+                        rec.headers(),
+                        rec.leaderEpoch()))
+                .collect(Collectors.toList());
+
+        if (latestRecords.size() > 0) {
+            latestRecords.forEach(rc -> {
+                //if(rc.timestamp() > timestamp) {
+                logger.append("Timestamp: ").append(DATE_FORMAT.format(new Date(rc.timestamp()))).append("\n");
+                logger.append("Topic: ").append(rc.topic()).append("\n");
+                logger.append("Partition: ").append(rc.partition()).append("\n");
+                logger.append("Offset: ").append(rc.offset()).append("\n");
+                logger.append("Key: ").append(rc.key()).append("\n");
+                logger.append("Message: ").append(new String(rc.value())).append("\n");
+
+                logger.append("\n");
+                //}
+            });
+        }
 
     }
 
-    private static void delete(CommandLine cmd, File home) throws IOException {
-        System.out.println("---------------- update: ");
+    private static void produce(CommandLine cmd, File dir, KafkaAdmin kafkaAdmin, StringBuilder logger) throws IOException {
+        logger.append("Kafka Producer:").append("\n");
 
-        String bo = cmd.getOptionValue("b");
-        String p = cmd.getOptionValue("p");
-        String c = cmd.getOptionValue("c");
-        String m = cmd.getOptionValue("m");
+        Properties bod = new Properties();
+        bod.load(new FileInputStream(new File(dir, "bod.properties")));
 
-        File workspace = new File(home, bo);
-        workspace.mkdirs();
+        String ibTopic = cmd.hasOption("p") ? cmd.getOptionValue("p") : bod.getProperty("p");
+        String obTopic = cmd.hasOption("c") ? cmd.getOptionValue("c") : bod.getProperty("c");
+        String message = cmd.hasOption("m") ? cmd.getOptionValue("m") : bod.getProperty("m");
 
-        File file = new File(workspace, "bod.json");
-        if (!file.exists()) {
-            file.createNewFile();
-        }
+        if (ibTopic != null) {
+            KafkaProducer kafkaProducer = new KafkaProducer(kafkaAdmin.producerProperties);
 
-        File pub = new File(workspace, "publish.sh");
-        if (!pub.exists()) {
-            pub.createNewFile();
-        }
+            ProducerRecord<String, byte[]> record = RecordModel.builder(ibTopic).generateKey().message(message).create();
+            Future<RecordMetadata> future = kafkaProducer.send(record);
+            while (!future.isDone()) {
+                try {
+                    Thread.sleep(100L);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
 
-    }
+            try {
+                RecordMetadata metadata = future.get();
+                RecordModel.fromProducerRecord(record, metadata);
 
-    private static void consume(CommandLine cmd, File home) throws IOException {
-        System.out.println("---------------- update: ");
-        String bo = cmd.getOptionValue("b");
-        String p = cmd.getOptionValue("p");
-        String c = cmd.getOptionValue("c");
-        String m = cmd.getOptionValue("m");
+                logger.append("Timestamp: ").append(DATE_FORMAT.format(new Date(metadata.timestamp()))).append("\n");
+                logger.append("Topic: ").append(metadata.topic()).append("\n");
+                logger.append("Partition: ").append(metadata.partition()).append("\n");
+                logger.append("Offset: ").append(metadata.offset()).append("\n");
+                logger.append("Key: ").append(record.key()).append("\n");
+                logger.append("Message: ").append(new String(record.value())).append("\n");
 
-        File workspace = new File(home, bo);
-        workspace.mkdirs();
+                logger.append("\n");
 
-        File file = new File(workspace, "bod.json");
-        if (!file.exists()) {
-            file.createNewFile();
-        }
 
-        File pub = new File(workspace, "publish.sh");
-        if (!pub.exists()) {
-            pub.createNewFile();
-        }
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
 
-    }
-
-    private static void produce(CommandLine cmd, File home) throws IOException {
-        System.out.println("---------------- update: ");
-
-        String bo = cmd.getOptionValue("b");
-        String p = cmd.getOptionValue("p");
-        String c = cmd.getOptionValue("c");
-        String m = cmd.getOptionValue("m");
-
-        File workspace = new File(home, bo);
-        workspace.mkdirs();
-
-        File file = new File(workspace, "bod.json");
-        if (!file.exists()) {
-            file.createNewFile();
-        }
-
-        File pub = new File(workspace, "publish.sh");
-        if (!pub.exists()) {
-            pub.createNewFile();
+            if (obTopic != null) {
+                consume(cmd, dir, kafkaAdmin, logger);
+            }
         }
 
     }

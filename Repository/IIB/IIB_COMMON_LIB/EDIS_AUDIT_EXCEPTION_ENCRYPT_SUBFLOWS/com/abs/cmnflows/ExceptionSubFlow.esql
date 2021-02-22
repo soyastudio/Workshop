@@ -12,8 +12,8 @@ Project	Release	Version	ChangeOwner	Date		Description
 												Albertsons
 EDIS    Drop2	0.2		Spandana    12/06/2017	Updated to add few more fields
 												in the exception message
-EDIS	Drop3	0.3		Spandana 	02/08/2017	Remove mapping for CorrelationId
-EDIS	Drop3	0.4		Spandana	20/10/2017	Removed mapping for componentID
+EDIS	Drop3	0.3		Spandana 	02/08/2017	Remove assignment for CorrelationId
+EDIS	Drop3	0.4		Spandana	20/10/2017	Removed assignment for componentID
 EDIS	Drop3	0.5		Spandana	28/11/2017	Added mappings for ReplayRule 
 												and maxreplayCount	
 EDIS	Drop3	0.6		Spandana	12/12/2017	Updated to captureinput msg for 
@@ -169,14 +169,14 @@ CREATE COMPUTE MODULE ExceptionSubFlow_ConstructExceptionMsg
 		SET outSrcCmpt.(XMLNSC.Attribute)instanceId = ExecutionGroupLabel;
 		SET outSrcCmpt.(XMLNSC.Attribute)processId = ProcessId;
 		SET outSrcCmpt.(XMLNSC.Attribute)executionEnvironment = Family;
-		--Spandana #comment V0.4 Removed mapping for componentID  
+		--Spandana #comment V0.4 Removed assignment for componentID
 		/*--Spandana : Added mappings for messageType,Input format and BOname
 		SET outSrcCmpt.(XMLNSC.Attribute)componentID =
 				Environment.Variables.CMPNT.COMPONENT_ID;*/
 		SET outSrcCmpt.(XMLNSC.Attribute)applicationName = APPLICATIONNAME;
         SET outSrcCmpt.(XMLNSC.Attribute)inputFormat = INPUTTYPE;
         SET outSrcCmpt.(XMLNSC.Attribute)BOname   = BONAME;
-		--Spandana : V0.5 Added mapping for replayrule and maxreplaycount
+		--Spandana : V0.5 Added assignment for replayrule and maxreplaycount
 		SET outSrcCmpt.(XMLNSC.Attribute)ReplayRule = REPLAYRULE;
 		SET outSrcCmpt.(XMLNSC.Attribute)MaxReplayCount = MAXREPLAYCOUNT;
 		--Spandana: mappings for outSrcCmpt end here
