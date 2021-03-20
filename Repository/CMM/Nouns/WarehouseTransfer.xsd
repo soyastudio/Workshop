@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<!-- edited with XMLSpy v2021 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<!--v2.0 - 2/4/2021 - Alex Nunes - Restructure based on source change - Inventory Adjustment and Shipment feeds.-->
 	<!--v2.0 - 2/5/2021 - Alex Nunes - Additional shipment elements added. -->
 	<!--v2.0 - 2/10/2021 - Alex Nunes - Additional changes and Purchase Order number. -->
+	<!--v2.0 - 2/23/2021 - Alex Nunes - Added Line Number to the detail and removed unbounded Line Item Reference number element also from the detail section. -->
 	<xs:complexType name="WarehouseTransfer">
 		<xs:annotation>
 			<xs:documentation>Contains Data related to  all Warehouse Transfers within Albertsons</xs:documentation>
@@ -191,21 +192,10 @@
 	</xs:complexType>
 	<xs:complexType name="WarehouseTransferDetail">
 		<xs:sequence>
-			<xs:element name="LineItemReferenceNbr" minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="LineNbr" type="xs:integer" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Contains reference numbers related to this line item. These can either be Line numbers coming from OMS, WMS, or it can also be sequence number as a result of substitution. The value is described by LineItemReferenceNm attribute.</xs:documentation>
+					<xs:documentation>Contains line numbers which can either be line numbers coming from inventory adjustment or shipment business processes, in case of inventory adjustment it will always be 1.</xs:documentation>
 				</xs:annotation>
-				<xs:complexType>
-					<xs:simpleContent>
-						<xs:extension base="xs:int">
-							<xs:attribute name="LineItemReferenceNm" type="xs:string">
-								<xs:annotation>
-									<xs:documentation>Can be OMS_LINE_NBR, WMS_DTL_LINE_NBR, SUB_SEQ_NBR, etc</xs:documentation>
-								</xs:annotation>
-							</xs:attribute>
-						</xs:extension>
-					</xs:simpleContent>
-				</xs:complexType>
 			</xs:element>
 			<xs:element ref="CorporateItemCd" minOccurs="0"/>
 			<xs:element name="ItemDsc" type="xs:string" default="" minOccurs="0">

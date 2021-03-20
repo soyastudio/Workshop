@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<!-- edited with XMLSpy v2021 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://collab.safeway.com/it/architecture/AbsOmMaster" xmlns:ns2="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<!--V2.0 - Alex Nunes - 1/12/21 - Structure redesigned to accomodate business requirement changes and introduction of new system of record.-->
+	<!--V2.0 - Alex Nunes - 3/16/21 - Aisle Nbr to Aisle Id and Data type change on ScopeOrientationTxt to string.-->
 	<xs:complexType name="StoreSchematic">
 		<xs:annotation>
 			<xs:documentation>Defines the layout of various item placement structures in a retail store.</xs:documentation>
@@ -20,10 +21,15 @@
 					<xs:documentation>Number of check-stands in the store.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="StoreOrientationTxt" type="xs:date" minOccurs="0">
+			<xs:element name="StoreOrientationTxt" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Front of store is bottom, left, right, back.</xs:documentation>
 				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="30"/>
+					</xs:restriction>
+				</xs:simpleType>
 			</xs:element>
 			<xs:element name="OrgEntityType" type="ns2:OrgMasterNameType" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
@@ -151,7 +157,7 @@ Note:
 	</xs:complexType>
 	<xs:complexType name="AisleType">
 		<xs:sequence>
-			<xs:element name="AisleNbr" type="xs:string" minOccurs="0"/>
+			<xs:element name="AisleId" type="xs:string" minOccurs="0"/>
 			<xs:element name="AisleDsc" type="xs:string" minOccurs="0"/>
 			<xs:element name="AisleTypeCd" type="xs:string" minOccurs="0">
 				<xs:annotation>

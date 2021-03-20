@@ -6,8 +6,9 @@
    Description: Contains commonly used Safeway Purchase order schema.
    Name: /SFWY/Nouns/SwyPurchaseOrder.xsd
 -->
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by Rosabel Macario (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V2.0 Rosabel Macario 03/17/21: Add AccountTypeCd in Detail-->
 	<!--V1.9 Patrick Oliver 12/11/20: Added BusinessUnitId and BuinessUnitNm-->
 	<!--V1.8 Rosabel Macario 11/04/2020 - Added tag to resolve dateTimeStamp issue-->
 	<!--V1.7 Added AltAccountId to InvoiceEntryDetail-->
@@ -74,6 +75,11 @@
 											<xs:totalDigits value="14"/>
 										</xs:restriction>
 									</xs:simpleType>
+								</xs:element>
+								<xs:element name="AccountTypeCd" type="CodeWithDescription" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Indicates the type of customer account</xs:documentation>
+									</xs:annotation>
 								</xs:element>
 								<xs:element ref="CorporateItemCd" minOccurs="0"/>
 								<xs:element name="UPCID" type="xs:string" default="" minOccurs="0">

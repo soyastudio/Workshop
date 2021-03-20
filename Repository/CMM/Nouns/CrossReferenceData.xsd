@@ -6,8 +6,9 @@
    Description: Contains commonly used Safeway Purchase order schema.
    Name: /SFWY/Nouns/SwyPurchaseOrder.xsd
 -->
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by Rosabel Macario (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V2.4 Rosabel Macario 02/17/2021: Update source and target from 0-10 to 0-n cardinality. -->
 	<!--V2.3 Rosabel Macario 11/05/2020 - Added tag to resolve dateTimeStamp issue-->
 	<!--v2.2 Patrick Oliver - Added HierachyLevelNbr to the SourceDataElement and TargetDataElement-->
 	<!--v2.1 Rosabel Macario 10/13/20: Added Source and TargetSystem. Rename elements-->
@@ -41,7 +42,7 @@ Ex: Chart of Accounts, HR Pay group..etc</xs:documentation>
 					<xs:documentation>Contains source system ID, name. </xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="SourceDataElement" type="BusinessKeyType" minOccurs="0" maxOccurs="10">
+			<xs:element name="SourceDataElement" type="BusinessKeyType" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:documentation>Contains source information. Sample KeyFieldName - Vendor ID and KeyFieldValue will contain the actual vendor ID. </xs:documentation>
 				</xs:annotation>
@@ -58,7 +59,7 @@ Ex: Chart of Accounts, HR Pay group..etc</xs:documentation>
 					<xs:documentation>Contains target system ID, name.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="TargetDataElement" type="BusinessKeyType" minOccurs="0" maxOccurs="10">
+			<xs:element name="TargetDataElement" type="BusinessKeyType" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:documentation>Contains target information. Sample KeyFieldName as OracleID and KeyFieldValue will contain the actual oracle ID value</xs:documentation>
 				</xs:annotation>

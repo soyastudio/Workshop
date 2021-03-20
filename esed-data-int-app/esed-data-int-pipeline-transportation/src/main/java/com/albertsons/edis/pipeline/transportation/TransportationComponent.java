@@ -157,8 +157,6 @@ public class TransportationComponent extends PipelineComponent<TransportationCom
                     }
                 }
             });
-
-
         }
     }
 

@@ -6,8 +6,9 @@
    Description: Contains commonly used Safeway Purchase order schema.
    Name: /SFWY/Nouns/SwyPurchaseOrder.xsd
 -->
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by Rosabel Macario (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V2.1 Rosabel Macario 02/17/21: Updated AutoCashInd to AutoCashCd and set the maxlen to 50. -->
 	<!--V2.0 Rosabel Macario 02/09/21: Added elements - BankBranchType, AccountContactId and SiteContactId, AccountContactNbr and SiteContactNbr, and ContactStatusInd.-->
 	<!--V1.9 Rosabel Macario 02/05/21: Move elements based on the requested leveling; add elements based on the Final review.-->
 	<!--V1.8 Patrick Oliver 01/11/21: Updated WorkTelephoneNbr to string type; Increased lenght for CustomerGroupID; -->
@@ -914,13 +915,13 @@ companies to use the same set of customers. </xs:documentation>
 											</xs:restriction>
 										</xs:simpleType>
 									</xs:element>
-									<xs:element name="AutoCashInd" minOccurs="0">
+									<xs:element name="AutoCashCd" minOccurs="0">
 										<xs:annotation>
-											<xs:documentation>Indicates the automatic cash application method for this customer. </xs:documentation>
+											<xs:documentation>Identifier of the autocash hierarchy associated with this customer profile</xs:documentation>
 										</xs:annotation>
 										<xs:simpleType>
 											<xs:restriction base="xs:string">
-												<xs:maxLength value="1"/>
+												<xs:maxLength value="50"/>
 											</xs:restriction>
 										</xs:simpleType>
 									</xs:element>
@@ -1494,13 +1495,13 @@ Y = Yes; process bills of exchange</xs:documentation>
 																	</xs:restriction>
 																</xs:simpleType>
 															</xs:element>
-															<xs:element name="AutoCashInd" minOccurs="0">
+															<xs:element name="AutoCashCd" minOccurs="0">
 																<xs:annotation>
-																	<xs:documentation>Indicates the automatic cash application method for this customer. </xs:documentation>
+																	<xs:documentation>Identifier of the autocash hierarchy associated with this customer profile</xs:documentation>
 																</xs:annotation>
 																<xs:simpleType>
 																	<xs:restriction base="xs:string">
-																		<xs:maxLength value="1"/>
+																		<xs:maxLength value="50"/>
 																	</xs:restriction>
 																</xs:simpleType>
 															</xs:element>

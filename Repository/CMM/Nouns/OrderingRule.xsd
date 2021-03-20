@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<!-- edited with XMLSpy v2021 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<!--!=============================================================================================-->
@@ -12,6 +12,7 @@
 	<!--!=============================================================================================-->
 	<!--1/26/2021 - v1.0 - Alex Nunes - Initial version.-->
 	<!--2/10/2021 - v1.1 - Alex Nunes - Added CORP and DIV for Customer type.-->
+	<!--2/23/2021 - v1.2 - Alex Nunes - Type of roundPercent changed from xs:nonNegativeInteger to xs:integer.-->
 	<xs:element name="OrderingRule" type="OrderingRuleType">
 		<xs:annotation>
 			<xs:documentation>Root element.</xs:documentation>
@@ -152,7 +153,7 @@
 								<xs:documentation>Quantity limit for the rule.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="RuleRoundPct" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1">
+						<xs:element name="RuleRoundPct" type="xs:integer" minOccurs="0" maxOccurs="1">
 							<xs:annotation>
 								<xs:documentation>Percentage round value limit.</xs:documentation>
 							</xs:annotation>

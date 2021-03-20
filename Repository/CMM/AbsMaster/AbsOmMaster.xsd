@@ -4455,10 +4455,27 @@ Hold</xs:documentation>
 									<xs:element name="BankAccountType" type="CodeWithDescription" minOccurs="0"/>
 									<xs:element name="BankNm" minOccurs="0">
 										<xs:simpleType>
+											<xs:restriction base="xs:string"/>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="BankBranchCd" type="CodeWithDescription" minOccurs="0"/>
+									<xs:element name="BankBranchNm" type="xs:string" minOccurs="0"/>
+									<xs:element name="BankBranchId" minOccurs="0">
+										<xs:simpleType>
 											<xs:restriction base="xs:string">
-												<xs:maxLength value="100"/>
+												<xs:maxLength value="50"/>
 											</xs:restriction>
 										</xs:simpleType>
+									</xs:element>
+									<xs:element name="BankTransitNbr" type="xs:integer" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>A routing transit number is a nine-digit number used to identify a bank or financial institution when clearing funds for electronic transfers or processing checks in the United States.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="BankEFTNbr" type="xs:integer" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Electronic Funds transfer nbr</xs:documentation>
+										</xs:annotation>
 									</xs:element>
 									<xs:element name="BankAddress" type="AddressType" minOccurs="0"/>
 								</xs:sequence>
@@ -4489,6 +4506,13 @@ Hold</xs:documentation>
 											</xs:restriction>
 										</xs:simpleType>
 									</xs:element>
+									<xs:element name="InvoiceMaxCurrencyCd" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="20"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
 								</xs:sequence>
 							</xs:complexType>
 						</xs:element>
@@ -4516,6 +4540,26 @@ Hold</xs:documentation>
 						<xs:element name="VendorSiteInvoiceAccrualCd" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>The invoice accrual code assigned to the vendor. Used to default a general lledger accrual account to the vendor&apos;s invoices during entry. Must be a valid record in the Invoice Accrual Code file. If left blank, the invoice accrual code assigned to the vendor class, if assigned, or the company defaults.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="200"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="RemittanceLocationCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The normal remittance location for the vendor, if defined. Must be a valid record in the Vendor Location file. If present, the address defined for the location overrides the vendor address on vendor record when invoice created.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="200"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PurchasingLocationCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The normal purchasing location for the Location vendor, if defined. Must be a valid record in the Vendor Location file. If present, the address defined for the location overrides the vendor address for storing vendor purchase activity balances.</xs:documentation>
 							</xs:annotation>
 							<xs:simpleType>
 								<xs:restriction base="xs:string">

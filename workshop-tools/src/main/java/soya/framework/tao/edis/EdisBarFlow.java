@@ -15,7 +15,7 @@ public class EdisBarFlow {
                 .create().knowledgeBase();
 
         new XlsxMappingAnnotator()
-                .mappingFile("C:/github/Workshop/Repository/BusinessObjects/CustomerPreferences/requirement/CustomerPreference-v3.1.4.xlsx")
+                .mappingFile("C:/github/Workshop/Repository/BusinessObjects/CustomerPreferences/requirement/CustomerPreference-v3.2.8.xlsx")
                 .mappingSheet("Mapping CFMS to Canonical")
                 .annotate(knowledgeTree);
 /*

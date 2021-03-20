@@ -6,7 +6,7 @@
    Description: contains commonly used Safeway Purchase order schema.
    Name: /SFWY/Nouns/SwyPurchaseOrder.xsd
 -->
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
+<!-- edited with XMLSpy v2021 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<!--!=============================================================================================-->
 	<!--!-->
@@ -23,6 +23,7 @@
 	<!--V1.2 Alex Nunes - 8/28/2020 - Added Account Name Change indicator under billing record indicators. -->
 	<!--V1.2a Alex Nunes - 9/28/2020 - Modified Billing record Id to decimal 22 -->
 	<!--V1.2b Rosabel Macario - 11/05/2020 - Added tag to resolve dateTimeStamp issue-->
+	<!--V1.3 Alex Nunes - 3/9/2021 - Added Billing record status code and description elements to the header section-->
 	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:complexType name="AllowanceBillingParameterType">
@@ -202,6 +203,29 @@
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
 									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="BillingRecordStatus" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Billing record status. Expected values: New, Analyze Later, Ready for Income, Completed, Ended, Non-CABS.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="BillingRecordStatusCd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="BillingRecordStatusDsc" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>

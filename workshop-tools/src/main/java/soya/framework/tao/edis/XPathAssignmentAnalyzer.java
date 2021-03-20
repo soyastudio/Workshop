@@ -67,7 +67,7 @@ public class XPathAssignmentAnalyzer extends EdisRenderer {
                 if (!assignment.functions.isEmpty()) {
                     return Function.toString(assignment.functions.toArray(new Function[assignment.functions.size()]));
 
-                } else if (MappingRule.DirectMapping.equals(rule)) {
+                } else if (MappingRule.DirectMapping.equals(rule) && assignment.source != null) {
                     String param = "$." + assignment.source.replaceAll("/", ".");
                     return Function.newInstance(FUNCTION_ASSIGN, new String[]{param}).toString();
 

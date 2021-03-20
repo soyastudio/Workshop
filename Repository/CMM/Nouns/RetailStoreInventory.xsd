@@ -20,7 +20,7 @@ This is expected to provide a quantity snapshot i.e. all quantity is updated as 
 	</xs:element>
 	<xs:complexType name="RetailStoreInventoryType">
 		<xs:annotation>
-			<xs:documentation>Inventory of an item in a retail store at a particular point of time.</xs:documentation>
+			<xs:documentation>Inventory of an item in a retail store or MFC at a particular point of time. Retail inventory generally will not include store created items like deli items, and perishables ike apples. </xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element ref="CorporationId"/>
@@ -100,6 +100,10 @@ Valid vlaues: Store, MFC</xs:documentation>
 							</xs:complexType>
 						</xs:element>
 						<xs:element name="ItemQty" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Total number of selling units.
+If the item is in both cases and singles, ItemQty represents total single selling units. retail stores maintain inventory at CIC level.</xs:documentation>
+							</xs:annotation>
 							<xs:simpleType>
 								<xs:restriction base="xs:decimal">
 									<xs:totalDigits value="14"/>

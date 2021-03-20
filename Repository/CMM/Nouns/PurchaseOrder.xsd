@@ -6,8 +6,10 @@
    Dsc: contains commonly used Albertson's Purchase order schema.
    Name: /ABS_CMM_Platform/Nouns/PurchaseOrder.xsd
 -->
-<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by Rosabel Macario (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.12  Added SiteCds for ORCA POs-->
+	<!--V1.11 Rosabel Macario 2/26/21: Set TotalOrderQty and QtyUOM as Optional for Indirect materials POs. -->
 	<!--V1.10 Rosabel Macario 1/20/21: Increase maxlen of BuyerId from 10 to 20 -->
 	<!--V1.9 Patrick Oliver 01/08/21: Changed  TotalWtAmt and WtUOM to optional fields-->
 	<!--V1.8 - Patrick Oliver 12/17/20: Added BusinessUnitId and BusinessUnitNm-->
@@ -448,6 +450,16 @@ Cost, revenue, accrual,  pass thru</xs:documentation>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
+			<xs:element name="CreateFacilitySiteCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Finance POs will have facility site id.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element name="PurchaseOrderCreateFacilityAddress" type="Abs:AddressType" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
@@ -501,6 +513,13 @@ Cost, revenue, accrual,  pass thru</xs:documentation>
 				</xs:complexType>
 			</xs:element>
 			<xs:element name="PurchaseOrderReceiveFacilityNm" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ReceiveFacilitySiteCd" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
 						<xs:maxLength value="50"/>
@@ -674,6 +693,13 @@ Ex Original, Revised</xs:documentation>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
+						<xs:element name="ShipToFacilitySiteCd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
 						<xs:element name="ShipToDUNSNbr" minOccurs="0">
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
@@ -726,6 +752,13 @@ Ex Original, Revised</xs:documentation>
 							</xs:simpleType>
 						</xs:element>
 						<xs:element name="BillToFacilityNm" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="BillToFacilitySiteCd" minOccurs="0">
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
 									<xs:maxLength value="50"/>
@@ -1084,7 +1117,7 @@ is a discount the Vendor offers for all items attached to the Warehouse Vendor S
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="TotalOrderQty" default="0">
+			<xs:element name="TotalOrderQty" default="0" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
 						<xs:totalDigits value="14"/>
@@ -1092,7 +1125,7 @@ is a discount the Vendor offers for all items attached to the Warehouse Vendor S
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="QtyUOM" default="Ea">
+			<xs:element name="QtyUOM" default="Ea" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
 						<xs:maxLength value="50"/>

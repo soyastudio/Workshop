@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<!-- edited with XMLSpy v2021 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://collab.safeway.com/it/architecture/AbsOmMaster" xmlns:ns2="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<!--v2.0 - Alex Nunes - 1/12/21 - Structure redesigned to accomodate business requirement changes and introduction of new system of record.-->
 	<!--v2.1 - 2/4/2021 - Alex Nunes - Change ConsumerSellingCd data type as per source. -->
+	<!--v2.1 - 3/16/21 - Alex Nunes - Removed complex type AisleType. -->
 	<xs:complexType name="StoreItemSchematic">
 		<xs:annotation>
 			<xs:documentation>Defines the layout of various item placement structures in a retail store.</xs:documentation>
@@ -173,19 +174,6 @@ For example, Coke sold in the individual can or in a 6-pack are two distinct "pu
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="CoordinateUOMCd" type="xs:string" minOccurs="0"/>
-		</xs:sequence>
-	</xs:complexType>
-	<xs:complexType name="AisleType">
-		<xs:sequence>
-			<xs:element name="AisleNbr" type="xs:string" minOccurs="0"/>
-			<xs:element name="AisleDsc" type="xs:string" minOccurs="0"/>
-			<xs:element name="AisleTypeCd" type="xs:string" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Type of an Aisle within the store 
-Ex: Dry goods, liquor or frozen item Aisle.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="AislePositionTxt" type="xs:string" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="DimensionsType">
