@@ -6,8 +6,8 @@ import soya.framework.tao.KnowledgeTree;
 import soya.framework.tao.KnowledgeTreeNode;
 import soya.framework.tao.T123W;
 import soya.framework.tao.TreeNode;
+import soya.framework.tao.util.StringBuilderUtils;
 import soya.framework.tao.xs.XsNode;
-import soya.framework.tools.util.StringBuilderUtils;
 
 import java.util.ArrayList;
 import java.util.Base64;

@@ -7,14 +7,14 @@ package soya.framework.tao;
  * 故恒无欲也，以观其眇；恒有欲也，以观其所徼。两者同出，异名同谓。玄之又玄，众眇之门。
  * </p>
  * <p>
- * O: 无名
- * K: 有名.
+ * T: 宇宙的本原和实质，或事物的客观存在，即无名。
+ * K: 对宇宙或事物的认知，即有名；认知是可以深化和改变的。
  * </p>
  *
  * @author Wen Qun
  */
-public interface Baseline<O, K extends Annotatable> {
-    O origin();
+public interface KnowledgeBase<T, K extends Annotatable> {
+    T tao();
 
-    K knowledgeBase();
+    K knowledge();
 }

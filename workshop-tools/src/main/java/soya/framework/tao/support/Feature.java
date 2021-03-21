@@ -5,14 +5,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import soya.framework.tao.Annotatable;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 public abstract class Feature<T> implements Annotatable<T> {
 
     private static Gson gson = new Gson();
 
-    protected T origin;
+    private final T origin;
     protected JsonObject annotations = new JsonObject();
 
     protected Feature(T origin) {

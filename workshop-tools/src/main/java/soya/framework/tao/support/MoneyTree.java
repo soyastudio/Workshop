@@ -1,9 +1,9 @@
 package soya.framework.tao.support;
 
+import soya.framework.tao.Annotatable;
 import soya.framework.tao.KnowledgeTree;
 import soya.framework.tao.KnowledgeTreeNode;
 import soya.framework.tao.Tree;
-import soya.framework.tao.TreeNode;
 
 import java.util.*;
 
@@ -26,7 +26,7 @@ public class MoneyTree<K, T> extends Feature<K> implements KnowledgeTree<K, T> {
     }
 
     @Override
-    public KnowledgeTreeNode<T> create(TreeNode parent, String name, Object data) {
+    public KnowledgeTreeNode<T> create(KnowledgeTreeNode<T> parent, String name, Object data) {
         DefaultTreeNode node = new DefaultTreeNode(parent, name, data);
         treeNodeMap.put(node.path, node);
         return node;
@@ -49,70 +49,6 @@ public class MoneyTree<K, T> extends Feature<K> implements KnowledgeTree<K, T> {
         return treeNodeMap.values().iterator();
     }
 
-    public synchronized MoneyTree add(TreeNode parent, String name, Object data) {
-        if (parent == null) {
-            new TreeNodeBuilder().name(name).parent(root.getPath()).data(data).create(this);
-        } else {
-            new TreeNodeBuilder().parent(parent.getPath()).name(name).data(data).create(this);
-        }
-
-        return this;
-    }
-
-    public synchronized MoneyTree add(TreeNodeBuilder builder) {
-        builder.create(this);
-        return this;
-    }
-
-    public synchronized MoneyTree rename(TreeNode node, String newName) {
-        TreeNode newNode = new TreeNodeBuilder().name(newName).parent(node.getParent().getPath()).data(node.getData()).create(this);
-        node.getChildren().forEach(e -> {
-            new Thread(() -> {
-                copyTo(e, newNode.getPath());
-            }).start();
-        });
-
-        remove(node.getPath());
-
-        return this;
-    }
-
-    public synchronized MoneyTree copyTo(TreeNode node, String newPath) {
-        TreeNode newParent = treeNodeMap.get(newPath);
-        if (newParent == null) {
-            throw new IllegalArgumentException("Path '" + newPath + "' does not exist.");
-        }
-
-        TreeNode newNode = new TreeNodeBuilder().parent(newPath).name(node.getName()).data(node.getData()).create(this);
-        // FIXME: do we need copy the annotations?
-        node.getChildren().forEach(e -> {
-            new Thread(() -> {
-                copyTo(e, newNode.getPath());
-            }).start();
-        });
-
-        return this;
-    }
-
-    public synchronized MoneyTree remove(String path) {
-        TreeNode node = treeNodeMap.get(path);
-        if (node != null) {
-            TreeNode parent = node.getParent();
-            parent.getChildren().remove(node);
-
-            List<String> paths = new ArrayList<>(treeNodeMap.keySet());
-            Collections.sort(paths);
-            String prefix = path + "/";
-            paths.forEach(e -> {
-                if (path.equals(e) || e.startsWith(prefix)) {
-                    treeNodeMap.remove(e);
-                }
-            });
-        }
-
-        return this;
-    }
-
     @Override
     public Set<KnowledgeTreeNode<T>> find(Selector selector) {
         return selector.select();
@@ -128,25 +64,16 @@ public class MoneyTree<K, T> extends Feature<K> implements KnowledgeTree<K, T> {
         return null;
     }
 
-    public synchronized MoneyTree move(TreeNode node, String newPath) {
-        copyTo(node, newPath);
-        remove(node.getPath());
-        return this;
-    }
-
     public static <K, T> MoneyTree<K, T> newInstance(K k, String name, T t) {
         return new MoneyTree<>(k, new DefaultTreeNode<T>(null, name, t));
     }
-
+/*
     public static <K, T> KnowledgeTreeBuilder<K, T> builder() {
         return new MoneyTreeBuilder<K, T>();
     }
 
-    public static TreeNodeBuilder treeNodeBuilder() {
-        return new TreeNodeBuilder();
-    }
 
-    static class MoneyTreeBuilder<K, T> implements KnowledgeTreeBuilder<K, T>{
+    static class MoneyTreeBuilder<K, T> implements KnowledgeTreeBuilder<K, T> {
         private K knowledgeBase;
         private KnowledgeDigester<K, T> knowledgeDigester;
 
@@ -170,66 +97,23 @@ public class MoneyTree<K, T> extends Feature<K> implements KnowledgeTree<K, T> {
             return new MoneyTree(knowledgeBase, (DefaultTreeNode) knowledgeDigester.digester(knowledgeBase));
         }
     }
+*/
 
-    public static class TreeNodeBuilder {
-        private String name;
-        private String parent;
-        private Object data;
+    static class DefaultTreeNode<T> implements KnowledgeTreeNode<T> {
 
-        private TreeNodeBuilder() {
-        }
-
-        public TreeNodeBuilder name(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public TreeNodeBuilder parent(String parent) {
-            this.parent = parent;
-            return this;
-        }
-
-        public TreeNodeBuilder data(Object data) {
-            this.data = data;
-            return this;
-        }
-
-        private TreeNode create(MoneyTree tree) {
-            TreeNode parentNode = tree.get(parent);
-            if (tree.get(parent) == null) {
-                throw new IllegalArgumentException("Path '" + parent + "' does not exist.");
-            }
-
-            String path = parent + "/" + name;
-            if (tree.get(path) != null) {
-                throw new IllegalArgumentException("Path '" + path + "' already exist.");
-            }
-
-            DefaultTreeNode node = new DefaultTreeNode(parentNode, name, data);
-            parentNode.getChildren().add(node);
-
-            tree.treeNodeMap.put(path, node);
-
-            return node;
-        }
-
-    }
-
-    static class DefaultTreeNode<T> extends Feature<T> implements KnowledgeTreeNode<T> {
-
-        private TreeNode parent;
-        private List<TreeNode> children = new ArrayList<>();
+        private KnowledgeTreeNode parent;
+        private List<KnowledgeTreeNode> children = new ArrayList<>();
 
         private String name;
         private String path;
 
-        private Object data;
+        private DataWrapper<T> dataWrapper;
         private Map<String, Object> annotations = new LinkedHashMap<>();
 
-        protected DefaultTreeNode(TreeNode parent, String name, T data) {
-            super(data);
+        protected DefaultTreeNode(KnowledgeTreeNode parent, String name, T data) {
             this.parent = parent;
             this.name = name;
+            this.dataWrapper = new DataWrapper<>(data);
 
             if (parent != null) {
                 parent.getChildren().add(this);
@@ -245,12 +129,12 @@ public class MoneyTree<K, T> extends Feature<K> implements KnowledgeTree<K, T> {
         }
 
         @Override
-        public TreeNode getParent() {
+        public KnowledgeTreeNode getParent() {
             return parent;
         }
 
         @Override
-        public List<TreeNode> getChildren() {
+        public List<KnowledgeTreeNode> getChildren() {
             return children;
         }
 
@@ -260,20 +144,35 @@ public class MoneyTree<K, T> extends Feature<K> implements KnowledgeTree<K, T> {
         }
 
         @Override
-        public void setData(Object data) {
-            this.data = data;
+        public Annotatable<T> getData() {
+            return dataWrapper;
         }
 
         @Override
-        public Object getData() {
-            return data;
+        public T origin() {
+            return dataWrapper.origin();
         }
 
         @Override
-        public <T> T getData(Class<T> type) {
-            return (T) data;
+        public void annotate(String namespace, Object annotation) {
+            dataWrapper.annotate(namespace, annotation);
         }
 
+        @Override
+        public Object getAnnotation(String namespace) {
+            return dataWrapper.getAnnotation(namespace);
+        }
+
+        @Override
+        public <A> A getAnnotation(String namespace, Class<A> annotationType) {
+            return dataWrapper.getAnnotation(namespace, annotationType);
+        }
+    }
+
+    static class DataWrapper<T> extends Feature<T> {
+        protected DataWrapper(T origin) {
+            super(origin);
+        }
     }
 
 }

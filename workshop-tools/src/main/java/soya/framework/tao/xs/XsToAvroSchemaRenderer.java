@@ -4,7 +4,6 @@ import org.apache.avro.Schema;
 import org.apache.xmlbeans.SchemaTypeSystem;
 import soya.framework.tao.KnowledgeTree;
 import soya.framework.tao.T123W;
-import soya.framework.tools.avro.XmlToAvroSchema;
 
 public class XsToAvroSchemaRenderer implements XsKnowledgeRenderer {
 

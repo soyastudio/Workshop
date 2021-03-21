@@ -2,11 +2,9 @@ package soya.framework.tao.edis;
 
 import org.apache.xmlbeans.SchemaTypeSystem;
 import soya.framework.tao.KnowledgeTree;
-import soya.framework.tao.KnowledgeTreeNode;
 import soya.framework.tao.T123W;
 import soya.framework.tao.xs.XsNode;
 
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 

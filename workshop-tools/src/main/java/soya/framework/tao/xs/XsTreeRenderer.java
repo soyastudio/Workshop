@@ -5,9 +5,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.xmlbeans.SchemaTypeSystem;
-import soya.framework.tao.T123W;
 import soya.framework.tao.KnowledgeTree;
 import soya.framework.tao.KnowledgeTreeNode;
+import soya.framework.tao.T123W;
 
 public class XsTreeRenderer implements XsKnowledgeRenderer {
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();

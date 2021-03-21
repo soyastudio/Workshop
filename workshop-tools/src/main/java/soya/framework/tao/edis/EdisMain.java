@@ -7,15 +7,15 @@ import soya.framework.tao.xs.XsNode;
 
 import java.io.File;
 
-public class EdisBarFlow {
+public class EdisMain {
 
     public static void main(String[] args) {
         KnowledgeTree<SchemaTypeSystem, XsNode> knowledgeTree = XsKnowledgeBase.builder()
                 .file(new File("C:/github/Workshop/Repository/CMM/BOD/GetCustomerPreferences.xsd"))
-                .create().knowledgeBase();
+                .create().knowledge();
 
         new XlsxMappingAnnotator()
-                .mappingFile("C:/github/Workshop/Repository/BusinessObjects/CustomerPreferences/requirement/CustomerPreference-v3.2.8.xlsx")
+                .mappingFile("C:/github/Workshop/Repository/BusinessObjects/CustomerPreferences/requirement/CustomerPreference-v3.3.1.xlsx")
                 .mappingSheet("Mapping CFMS to Canonical")
                 .annotate(knowledgeTree);
 /*

@@ -6,18 +6,12 @@ public interface TreeNode {
 
     String getName();
 
-    String getPath();
-
     TreeNode getParent();
 
-    List<TreeNode> getChildren();
+    List<? extends TreeNode> getChildren();
 
-    void setData(Object data);
+    String getPath();
 
     Object getData();
-
-    <T> T getData(Class<T> type);
-
-
 
 }

@@ -1,6 +1,5 @@
 package soya.framework.tao.edis;
 
-import com.google.gson.JsonObject;
 import org.apache.xmlbeans.SchemaTypeSystem;
 import soya.framework.tao.KnowledgeTree;
 import soya.framework.tao.KnowledgeTreeNode;

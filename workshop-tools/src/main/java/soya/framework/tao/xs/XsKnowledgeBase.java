@@ -12,9 +12,9 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.net.URL;
 
-public class XsKnowledgeBase<T> implements KnowledgeTreeBase<T, KnowledgeTree<SchemaTypeSystem, XsNode>> {
+public class XsKnowledgeBase<T> implements KnowledgeTreeBase<T, SchemaTypeSystem, XsNode> {
 
-    private T origin;
+    private T tao;
     private KnowledgeTree<SchemaTypeSystem, XsNode> knowledgeBase;
 
     private XsKnowledgeBase() {
@@ -22,12 +22,12 @@ public class XsKnowledgeBase<T> implements KnowledgeTreeBase<T, KnowledgeTree<Sc
     }
 
     @Override
-    public T origin() {
-        return origin;
+    public T tao() {
+        return tao;
     }
 
     @Override
-    public KnowledgeTree<SchemaTypeSystem, XsNode> knowledgeBase() {
+    public KnowledgeTree<SchemaTypeSystem, XsNode> knowledge() {
         return knowledgeBase;
     }
 
@@ -35,7 +35,7 @@ public class XsKnowledgeBase<T> implements KnowledgeTreeBase<T, KnowledgeTree<Sc
         return new Builder<>();
     }
 
-    public static class Builder<T> implements T123W.BaselineBuilder<T, KnowledgeTree<SchemaTypeSystem, XsNode>> {
+    public static class Builder<T> implements KnowledgeTreeBaseBuilder<T, SchemaTypeSystem, XsNode> {
         private XmlSchemaExtractor extractor = new XmlSchemaExtractor();
         private XsKnowledgeTreeDigester digester = new XsKnowledgeTreeDigester();
 
@@ -80,16 +80,24 @@ public class XsKnowledgeBase<T> implements KnowledgeTreeBase<T, KnowledgeTree<Sc
             baseline.knowledgeBase = digester.digester(extractor.extract());
             return baseline;
         }
+
+        @Override
+        public KnowledgeTreeBaseBuilder<T, SchemaTypeSystem, XsNode> knowledgeExtractor(KnowledgeExtractor<SchemaTypeSystem> knowledgeExtractor) {
+            return null;
+        }
+
+        @Override
+        public KnowledgeTreeBaseBuilder<T, SchemaTypeSystem, XsNode> knowledgeDigester(KnowledgeDigester<SchemaTypeSystem, XsNode> digester) {
+            return null;
+        }
     }
 
-    public static class XmlSchemaExtractor implements T123W.Extractor<SchemaTypeSystem> {
-
+    public static class XmlSchemaExtractor implements KnowledgeExtractor<SchemaTypeSystem> {
         private Object source;
         private SchemaTypeLoader schemaTypeLoader;
         private XmlOptions xmlOptions = new XmlOptions()
                 .setErrorListener(null).setCompileDownloadUrls()
                 .setCompileNoPvrRule();
-
 
         public XmlSchemaExtractor schemaTypeLoader(SchemaTypeLoader schemaTypeLoader) {
             this.schemaTypeLoader = schemaTypeLoader;
@@ -130,6 +138,12 @@ public class XsKnowledgeBase<T> implements KnowledgeTreeBase<T, KnowledgeTree<Sc
 
         public XmlSchemaExtractor xmlStreamReader(XMLStreamReader xmlStreamReader) {
             this.source = xmlStreamReader;
+            return this;
+        }
+
+        @Override
+        public KnowledgeExtractor<SchemaTypeSystem> source(Object source) {
+            this.source = source;
             return this;
         }
 
@@ -180,7 +194,7 @@ public class XsKnowledgeBase<T> implements KnowledgeTreeBase<T, KnowledgeTree<Sc
         }
     }
 
-    public static class XsKnowledgeTreeDigester implements KnowledgeTree.KnowledgeDigester<SchemaTypeSystem, XsNode> {
+    public static class XsKnowledgeTreeDigester implements KnowledgeDigester<SchemaTypeSystem, XsNode> {
 
         @Override
         public KnowledgeTree<SchemaTypeSystem, XsNode> digester(SchemaTypeSystem schemaTypeSystem) {
@@ -197,7 +211,6 @@ public class XsKnowledgeBase<T> implements KnowledgeTreeBase<T, KnowledgeTree<Sc
 
             return tree;
         }
-
 
         private void processParticle(SchemaParticle sp, boolean mixed, TreeNode parent, Tree tree) {
             switch (sp.getParticleType()) {
@@ -273,6 +286,5 @@ public class XsKnowledgeBase<T> implements KnowledgeTreeBase<T, KnowledgeTree<Sc
             System.out.println(sp.getName());
         }
     }
-
 
 }

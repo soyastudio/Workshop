@@ -22,6 +22,7 @@ public class XPathAssignmentAnalyzer extends EdisRenderer {
         StringBuilder builder = new StringBuilder();
         if (enableLoopFeature) {
             Map<String, LinkedHashSet<Function>> loopFeature = loopFeature(knowledgeBase);
+
             knowledgeBase.paths().forEachRemaining(e -> {
                 LinkedHashSet<Function> functions = loopFeature.get(e);
                 if(functions.isEmpty()) {
@@ -67,9 +68,14 @@ public class XPathAssignmentAnalyzer extends EdisRenderer {
                 if (!assignment.functions.isEmpty()) {
                     return Function.toString(assignment.functions.toArray(new Function[assignment.functions.size()]));
 
-                } else if (MappingRule.DirectMapping.equals(rule) && assignment.source != null) {
-                    String param = "$." + assignment.source.replaceAll("/", ".");
-                    return Function.newInstance(FUNCTION_ASSIGN, new String[]{param}).toString();
+                } else if (MappingRule.DirectMapping.equals(rule)) {
+                    if(assignment.source != null) {
+                        String param = "$." + assignment.source.replaceAll("/", ".");
+                        return Function.newInstance(FUNCTION_ASSIGN, new String[]{param}).toString();
+
+                    } else {
+                        return "???";
+                    }
 
                 } else if (MappingRule.DefaultMapping.equals(rule)) {
                     String value = getDefaultValue(assignment.rule);

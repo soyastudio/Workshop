@@ -13,12 +13,12 @@ public class GenericT123W<O, K extends Annotatable, F extends GenericT123W> impl
 
     private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    protected BaselineBuilder<O, K> baselineBuilder;
+    protected KnowledgeBuilder<O, K> baselineBuilder;
     protected LinkedHashMap<String, AnnotatorBuilder<K>> annotatorBuilders = new LinkedHashMap<>();
     protected LinkedHashMap<String, RendererBuilder> rendererBuilders = new LinkedHashMap<>();
 
     @Override
-    public F baseline(BaselineBuilder<O, K> builder) throws FlowBuilderException {
+    public F baseline(KnowledgeBuilder<O, K> builder) throws FlowBuilderException {
         this.baselineBuilder = builder;
         return (F) this;
     }
