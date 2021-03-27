@@ -19,6 +19,7 @@ import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.Metric;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.config.SslConfigs;
 import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.common.header.internals.RecordHeader;
@@ -48,22 +49,12 @@ import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 public class KafkaAdmin {
     private static Logger logger = LoggerFactory.getLogger("KafkaAdmin");
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS XXX");
-
-    private static final String BOOTSTRAP_SERVERS = "bootstrap-servers";
-
-    private static final String CLIENT_ID = "client-id";
-    private static final String KEY_SERIALIZER = "key-serializer";
-    private static final String VALUE_SERIALIZER = "value-serializer";
-
-    private static final String GROUP_ID = "group-id";
-    private static final String KEY_DESERIALIZER = "key-deserializer";
-    private static final String VALUE_DESERIALIZER = "value-deserializer";
-    private static final String AUTO_OFFSET_RESET = "auto-offset-reset";
 
     private static Properties defaultProperties;
 
@@ -91,123 +82,98 @@ public class KafkaAdmin {
 
     static {
         defaultProperties = new Properties();
-        defaultProperties.setProperty(BOOTSTRAP_SERVERS, "localhost:9092");
+        // common
+        defaultProperties.setProperty(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        defaultProperties.setProperty(CommonClientConfigs.CLIENT_ID_CONFIG, "test_client");
+        defaultProperties.setProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, CommonClientConfigs.DEFAULT_SECURITY_PROTOCOL);
 
-        defaultProperties.setProperty(CLIENT_ID, "test_client");
-        defaultProperties.setProperty(KEY_SERIALIZER, "org.apache.kafka.common.serialization.StringSerializer");
-        defaultProperties.setProperty(VALUE_SERIALIZER, "org.apache.kafka.common.serialization.ByteArraySerializer");
+        // producer
+        defaultProperties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
+        defaultProperties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArraySerializer");
 
-        defaultProperties.setProperty(GROUP_ID, "test_group");
-        defaultProperties.setProperty(KEY_DESERIALIZER, "org.apache.kafka.common.serialization.StringDeserializer");
-        defaultProperties.setProperty(VALUE_DESERIALIZER, "org.apache.kafka.common.serialization.ByteArrayDeserializer");
-        defaultProperties.setProperty(AUTO_OFFSET_RESET, "earliest");
+        // consumer
+        defaultProperties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "test_group");
+        defaultProperties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
+        defaultProperties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArrayDeserializer");
+        defaultProperties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
     }
 
     private KafkaAdmin() {
-        System.out.println("Create KafkaAdmin using default settings.");
-
-        // Producer properties:
-        producerProperties = new Properties();
-        producerProperties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, defaultProperties.getProperty(BOOTSTRAP_SERVERS));
-        producerProperties.setProperty(ProducerConfig.CLIENT_ID_CONFIG, defaultProperties.getProperty(CLIENT_ID));
-        producerProperties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, defaultProperties.getProperty(KEY_SERIALIZER));
-        producerProperties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, defaultProperties.getProperty(VALUE_SERIALIZER));
-
-        // Consumer properties:
-        consumerProperties = new Properties();
-        consumerProperties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, defaultProperties.getProperty(BOOTSTRAP_SERVERS));
-        consumerProperties.setProperty(ConsumerConfig.CLIENT_ID_CONFIG, defaultProperties.getProperty(CLIENT_ID));
-        consumerProperties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, defaultProperties.getProperty(GROUP_ID));
-        consumerProperties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, defaultProperties.getProperty(KEY_DESERIALIZER));
-        consumerProperties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, defaultProperties.getProperty(VALUE_DESERIALIZER));
-        consumerProperties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, defaultProperties.getProperty(AUTO_OFFSET_RESET));
-
-        // Admin properties:
-        adminProperties = new Properties();
-        adminProperties.setProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, defaultProperties.getProperty(BOOTSTRAP_SERVERS));
-
-        // Streams properties:
-        streamProperties = new Properties();
-        streamProperties.setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, defaultProperties.getProperty(BOOTSTRAP_SERVERS));
-    }
-
-    private KafkaAdmin(File configFile) {
-        System.out.println("Create KafkaAdmin using file: " + configFile.getName());
-        Properties configuration = new Properties();
-        try {
-            configuration.load(new FileInputStream(configFile));
-
-            System.setProperty("bootstrap.servers", configuration.getProperty("bootstrap.servers"));
-
-            System.setProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, configuration.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG));
-            System.setProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, configuration.getProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG));
-            System.setProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, configuration.getProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG));
-            System.setProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, configuration.getProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG));
-            System.setProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, configuration.getProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG));
-
-
-            System.setProperty(ProducerConfig.CLIENT_ID_CONFIG, defaultProperties.getProperty(CLIENT_ID));
-            System.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, defaultProperties.getProperty(KEY_SERIALIZER));
-            System.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, defaultProperties.getProperty(VALUE_SERIALIZER));
-
-            System.setProperty(ConsumerConfig.CLIENT_ID_CONFIG, defaultProperties.getProperty(CLIENT_ID));
-            System.setProperty(ConsumerConfig.GROUP_ID_CONFIG, defaultProperties.getProperty(GROUP_ID));
-            System.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, defaultProperties.getProperty(KEY_DESERIALIZER));
-            System.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, defaultProperties.getProperty(VALUE_DESERIALIZER));
-            System.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, defaultProperties.getProperty(AUTO_OFFSET_RESET));
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
+        System.out.println("Create KafkaAdmin for environment: " + env);
 
         // Producer properties:
         this.producerProperties = new Properties();
-        producerProperties.setProperty(ProducerConfig.CLIENT_ID_CONFIG, defaultProperties.getProperty(CLIENT_ID));
-        producerProperties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, defaultProperties.getProperty(KEY_SERIALIZER));
-        producerProperties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, defaultProperties.getProperty(VALUE_SERIALIZER));
+        producerProperties.setProperty(ProducerConfig.CLIENT_ID_CONFIG, getProperty(ProducerConfig.CLIENT_ID_CONFIG));
+        producerProperties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, getProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG));
+        producerProperties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, getProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG));
 
-        producerProperties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, configuration.getProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG));
-        producerProperties.setProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, configuration.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG));
-        producerProperties.setProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, configuration.getProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG));
-        producerProperties.setProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, configuration.getProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG));
-        producerProperties.setProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, configuration.getProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG));
-        producerProperties.setProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, configuration.getProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG));
+        producerProperties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, getProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG));
+        producerProperties.setProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG));
+
+        if ("SSL".equalsIgnoreCase(producerProperties.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG))) {
+            producerProperties.setProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, getProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG));
+            producerProperties.setProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, getProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG));
+            producerProperties.setProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, getProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG));
+            producerProperties.setProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, getProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG));
+
+        } else if ("SASL_SSL".equalsIgnoreCase(producerProperties.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG))) {
+            producerProperties.setProperty(SaslConfigs.SASL_MECHANISM, getProperty(SaslConfigs.SASL_MECHANISM));
+            producerProperties.setProperty(SaslConfigs.SASL_JAAS_CONFIG, getProperty(SaslConfigs.SASL_JAAS_CONFIG));
+        }
 
         // Consumer properties:
         this.consumerProperties = new Properties();
-        consumerProperties.setProperty(ConsumerConfig.CLIENT_ID_CONFIG, defaultProperties.getProperty(CLIENT_ID));
-        consumerProperties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, defaultProperties.getProperty(GROUP_ID));
-        consumerProperties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, defaultProperties.getProperty(KEY_DESERIALIZER));
-        consumerProperties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, defaultProperties.getProperty(VALUE_DESERIALIZER));
-        consumerProperties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, defaultProperties.getProperty(AUTO_OFFSET_RESET));
 
-        consumerProperties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, configuration.getProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG));
-        consumerProperties.setProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, configuration.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG));
-        consumerProperties.setProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, configuration.getProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG));
-        consumerProperties.setProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, configuration.getProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG));
-        consumerProperties.setProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, configuration.getProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG));
-        consumerProperties.setProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, configuration.getProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG));
+        consumerProperties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, getProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG));
+        consumerProperties.setProperty(ConsumerConfig.CLIENT_ID_CONFIG, getProperty(ConsumerConfig.CLIENT_ID_CONFIG));
+        consumerProperties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, getProperty(ConsumerConfig.GROUP_ID_CONFIG));
+        consumerProperties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, getProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG));
+        consumerProperties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, getProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG));
+        consumerProperties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, getProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG));
+
+        consumerProperties.setProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG));
+        if ("SSL".equalsIgnoreCase(consumerProperties.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG))) {
+            consumerProperties.setProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, getProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG));
+            consumerProperties.setProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, getProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG));
+            consumerProperties.setProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, getProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG));
+            consumerProperties.setProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, getProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG));
+
+        } else if ("SASL_SSL".equalsIgnoreCase(producerProperties.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG))) {
+            consumerProperties.setProperty(SaslConfigs.SASL_MECHANISM, getProperty(SaslConfigs.SASL_MECHANISM));
+            consumerProperties.setProperty(SaslConfigs.SASL_JAAS_CONFIG, getProperty(SaslConfigs.SASL_JAAS_CONFIG));
+        }
 
         // Admin properties:
         this.adminProperties = new Properties();
-        adminProperties.setProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, configuration.getProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG));
-        adminProperties.setProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, configuration.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG));
-        adminProperties.setProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, configuration.getProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG));
-        adminProperties.setProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, configuration.getProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG));
-        adminProperties.setProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, configuration.getProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG));
-        adminProperties.setProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, configuration.getProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG));
+        adminProperties.setProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, getProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG));
+        adminProperties.setProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG));
+
+        if ("SSL".equalsIgnoreCase(adminProperties.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG))) {
+            adminProperties.setProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, getProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG));
+            adminProperties.setProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, getProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG));
+            adminProperties.setProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, getProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG));
+            adminProperties.setProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, getProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG));
+
+        } else if ("SASL_SSL".equalsIgnoreCase(producerProperties.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG))) {
+            adminProperties.setProperty(SaslConfigs.SASL_MECHANISM, getProperty(SaslConfigs.SASL_MECHANISM));
+            adminProperties.setProperty(SaslConfigs.SASL_JAAS_CONFIG, getProperty(SaslConfigs.SASL_JAAS_CONFIG));
+        }
 
         // Stream properties:
         this.streamProperties = new Properties();
-        streamProperties.setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, configuration.getProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG));
+        streamProperties.setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, getProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG));
+        streamProperties.setProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG));
 
-        streamProperties.setProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, configuration.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG));
-        streamProperties.setProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, configuration.getProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG));
-        streamProperties.setProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, configuration.getProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG));
-        streamProperties.setProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, configuration.getProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG));
-        streamProperties.setProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, configuration.getProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG));
+        if ("SSL".equalsIgnoreCase(streamProperties.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG))) {
+            streamProperties.setProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, getProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG));
+            streamProperties.setProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, getProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG));
+            streamProperties.setProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, getProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG));
+            streamProperties.setProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, getProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG));
+
+        } else if ("SASL_SSL".equalsIgnoreCase(producerProperties.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG))) {
+            streamProperties.setProperty(SaslConfigs.SASL_MECHANISM, getProperty(SaslConfigs.SASL_MECHANISM));
+            streamProperties.setProperty(SaslConfigs.SASL_JAAS_CONFIG, getProperty(SaslConfigs.SASL_JAAS_CONFIG));
+        }
     }
 
     private KafkaProducer createKafkaProducer() {
@@ -236,18 +202,19 @@ public class KafkaAdmin {
         return streamsConfiguration;
     }
 
+    private static String env = "LOCAL";
     private static File home;
     private static File workspace;
     private static File streams;
     private static File scripts;
 
+    private static Properties configuration;
+
     public static void main(String[] args) {
 
         File bin = new File(Paths.get("").toAbsolutePath().toString());
-
         home = bin.getParentFile();
         System.setProperty("kafkaya.home", home.getAbsolutePath());
-
 
         workspace = new File(home, "workspace");
         if (!workspace.exists()) {
@@ -264,8 +231,15 @@ public class KafkaAdmin {
             scripts.mkdirs();
         }
 
+        configuration = new Properties(defaultProperties);
         File configFile = new File(bin, "kafka-config.properties");
-        KafkaAdmin kafkaAdmin = configFile.exists() ? new KafkaAdmin(configFile) : new KafkaAdmin();
+        if(configFile.exists()) {
+            try {
+                configuration.load(new FileInputStream(configFile));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         // Command line definition:
         Options options = new Options();
@@ -294,6 +268,13 @@ public class KafkaAdmin {
                 .longOpt("consumerTopic")
                 .hasArg(true)
                 .desc("Consumer Topic")
+                .required(false)
+                .build());
+
+        options.addOption(Option.builder("e")
+                .longOpt("action")
+                .hasArg(true)
+                .desc("Environment, default 'local', case insensitive.")
                 .required(false)
                 .build());
 
@@ -378,14 +359,54 @@ public class KafkaAdmin {
             System.exit(1);
         }
 
-        if (cmd.hasOption("b")) {
-            processBusinessObjectTask(cmd, kafkaAdmin, workspace);
+        // Environment:
+        if(cmd.hasOption("e")) {
+            env = cmd.getOptionValue("e").toUpperCase();
+        }
+        System.setProperty("kafka." + CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, getProperty(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG));
+        System.setProperty("kafka." + CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG));
+        System.setProperty("kafka." + CommonClientConfigs.CLIENT_ID_CONFIG, getProperty(CommonClientConfigs.CLIENT_ID_CONFIG));
 
-        } else {
-            processKafkaAdminTask(cmd, kafkaAdmin);
+        System.setProperty("kafka." + ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, getProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG));
+        System.setProperty("kafka." + ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, getProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG));
 
+        System.setProperty("kafka." + ConsumerConfig.GROUP_ID_CONFIG, getProperty(ConsumerConfig.GROUP_ID_CONFIG));
+        System.setProperty("kafka." + ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, getProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG));
+        System.setProperty("kafka." + ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, getProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG));
+        System.setProperty("kafka." + ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, getProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG));
+
+        if("SSL".equalsIgnoreCase(getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG))) {
+            System.setProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, getProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG));
+            System.setProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, getProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG));
+            System.setProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, getProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG));
+            System.setProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, getProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG));
+
+        } else if ("SASL_SSL".equalsIgnoreCase(getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG))) {
+            System.setProperty(SaslConfigs.SASL_MECHANISM, getProperty(SaslConfigs.SASL_MECHANISM));
+            System.setProperty(SaslConfigs.SASL_JAAS_CONFIG, getProperty(SaslConfigs.SASL_JAAS_CONFIG));
         }
 
+        // Context:
+        if (cmd.hasOption("b")) {
+            processBusinessObjectTask(cmd, new KafkaAdmin(), workspace);
+
+        } else {
+            processKafkaAdminTask(cmd, new KafkaAdmin());
+
+        }
+    }
+
+    private static String getProperty(String propName) {
+        if(System.getProperty("kafka." + propName) != null) {
+            return System.getProperty("kafka." + propName);
+        }
+
+        String key = env + "." + propName;
+        if(configuration.containsKey(key)) {
+            return configuration.getProperty(key);
+        }
+
+        return defaultProperties.getProperty(propName);
     }
 
     // Global methods:
@@ -609,7 +630,6 @@ public class KafkaAdmin {
             System.out.println();
 
         } else {
-
             System.out.println("There are no messages on topic " + kafkaTopicName);
             System.out.println();
         }
@@ -965,7 +985,7 @@ public class KafkaAdmin {
     private static void produce(CommandLine cmd, File dir, KafkaAdmin kafkaAdmin, StringBuilder logger) throws IOException {
         logger.append("Kafka Producer:").append("\n");
 
-        long timestamp = -1;
+        long timestamp = System.currentTimeMillis();
 
         Properties bod = new Properties();
         bod.load(new FileInputStream(new File(dir, "bod.properties")));
@@ -984,7 +1004,7 @@ public class KafkaAdmin {
                 msg = base64Decode(cmd.getOptionValue("m"));
             }
 
-            if(msg == null && bod.getProperty("m") != null) {
+            if (msg == null && bod.getProperty("m") != null) {
                 msg = base64Decode(bod.getProperty("m"));
             }
 
@@ -1007,6 +1027,10 @@ public class KafkaAdmin {
 
             Future<RecordMetadata> future = kafkaProducer.send(record);
             while (!future.isDone()) {
+                if(System.currentTimeMillis() - timestamp > 30000l) {
+                    throw new RuntimeException(new TimeoutException());
+                }
+
                 try {
                     Thread.sleep(100L);
 
@@ -1035,15 +1059,15 @@ public class KafkaAdmin {
         }
 
         try {
-            Thread.sleep(3000l);
+            Thread.sleep(10000l);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
         if (c != null) {
-            List<ConsumerRecord<String, byte[]>> list =  consume(kafkaAdmin, c, 2);
+            List<ConsumerRecord<String, byte[]>> list = consume(kafkaAdmin, c, 2);
             ConsumerRecord<String, byte[]> rc = null;
-            if(timestamp > 0 && list.size() > 0 && list.get(0).timestamp() > timestamp) {
+            if (timestamp > 0 && list.size() > 0 && list.get(0).timestamp() > timestamp) {
                 rc = list.get(0);
                 logger.append("Timestamp: ").append(DATE_FORMAT.format(new Date(rc.timestamp()))).append("\n");
                 logger.append("Topic: ").append(rc.topic()).append("\n");
