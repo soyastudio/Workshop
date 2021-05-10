@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" xmlns:ns1="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<xs:include schemaLocation="../Global/AbsGlobalComponents.xsd"/>
 	<!--V 1.1  Alex Nunes  11/20/2018 Change DivisionType AccountingUnitNm MaxLength to 15 and LevelDsc to 50-->
@@ -11,6 +11,7 @@
 	<!--V1.6 Rosabel Macario 11/26/20: Added VendorSiteAssociate in VendorSiteType.-->
 	<!--V1.7 Rosabel Macario 12/15/20: Added ThirdPartyProcurementInd, ThirdPartyStartDt and ThirdPartyEndDt in VendorSite.-->
 	<!--V1.8 Rosabel Macario 01/13/2021: Updated VendorSiteType - moved IncomeCd under VendorSite. -->
+	<!--V1.9 Patrick Oliver 04/22/21: Added BannerId to BannerType -->
 	<xs:group name="AccountingOrganization">
 		<xs:annotation>
 			<xs:documentation>Component to represent the accounting or financial view of organization entities - Company, GLEntity etc. - grouped together.</xs:documentation>
@@ -40,7 +41,7 @@ Synonyms are Business Unit, Fund, G/L Company, Joint Venture, Non-Profit Associa
 	</xs:group>
 	<xs:element name="BannerCd">
 		<xs:annotation>
-			<xs:documentation>Identifier for a banner</xs:documentation>
+			<xs:documentation>Banner code</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
@@ -53,10 +54,14 @@ Synonyms are Business Unit, Fund, G/L Company, Joint Venture, Non-Profit Associa
 			<xs:documentation>Defines Banner and related information. Banner is the marketing identifer in a particular georgraphic area of the division or region.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="BannerCd" minOccurs="0">
+			<xs:element ref="ns1:BannerCd" minOccurs="0"/>
+			<xs:element name="BannerId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Banner identification</xs:documentation>
+				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="30"/>
+						<xs:maxLength value="10"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>

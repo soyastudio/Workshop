@@ -1,0 +1,51 @@
+{
+  "home": "C:/github/Workshop/Repository",
+  "name": "PartnerRewardReconciliation",
+  "application": "ESED_PartnerRewardReconciliation_OCRP_IH_Publisher",
+  "source": "OCRP",
+  "consumer": "EDM",
+  "version": "v1.2.1",
+  "mappings": {
+    "schema": "/CMM/BOD/GetPartnerRewardReconciliation.xsd",
+    "mappingFile": "/requirement/PartnerRewardReconciliation_OCRP_to_EDIS_V1.2.1.xlsx",
+    "mappingSheet": "Mapping_OCRP to Canonical",
+    "constructFile": "xpath-mapping.properties"
+  },
+  "xpathMappingFile": "xpath-mapping.properties",
+  "messageFlow": {
+    "name": "ESED_PartnerRewardReconciliation_OCRP_IH_Publisher",
+    "brokerSchema": "com.abs.ocrp",
+    "input": {
+      "name": "KafkaConsumer",
+      "properties": {
+        "topicName": "OCRP_C02_EDIS_PARTNER_RECON_OUTBOUND"
+      }
+    },
+    "output": {
+      "name": "KafkaProducer",
+      "properties": {
+        "topicName": "ESED_C01_PartnerRewardReconciliation"
+      }
+    },
+    "transformer": {
+      "name": "ESED_PartnerRewardReconciliation_Transformer",
+      "properties": {
+
+      }
+    },
+    "inputAuditor": {
+      "name": "Audit_Validate_Input"
+    },
+    "outputAuditor": {
+      "name": "Audit_Validate_Output"
+    },
+    "exceptionHandler": {
+      "name": "ExceptionSubFlow",
+      "properties": {
+
+      }
+    }
+  },
+  "deployEgNumber": "08",
+  "createTestWorkspace": true
+}

@@ -1,0 +1,432 @@
+BROKER SCHEMA com.abs.uca.cams
+/* ----------------------------------------------------------------------------
+APPLICATION ID : ESED
+INTERFACE NAME : ESED_CustomerAddress_UCA_IH_Publisher
+FLOW NAME : ESED_CustomerAddress_UCA_IH_Publisher
+DESCRIPTION : UCA from Kafka to Kafka
+AUTHOR : Anjana
+CREATED DT : 21/01/2021
+-- ----------------------------------------------------------------------------
+Program History
+Version 	Owner 	Date 		Description
+------- 	------ 	---- 		-----------
+2.1.2.001 	apanc07 01/27/2021 	Mapping sheet v2.1.2
+2.1.3.002 	apanc07 01/29/2021 	Array Fixed by Zafar and update xpath
+2.1.4.003 	apanc07 02/01/2021 	Updating timestamp
+2.1.5.004 	apanc07 02/03/2021 	DocumentNm
+2.2.5.005 	apanc07 02/06/2021 	Added AddressLastUpdateTs, PostalCdLastUpdateTs, SelectedAddrsLastUpdateTs
+3.1.7.006 	apanc07 02/09/2021 	1.Moved PostalCodes, SelectedAddresses
+ 							   	2.Removed Addresses.EffectivePeriod
+							   	3. Mapped AddressUsageTypeCd with state.addresses[*].addressTypes[*].name (Mapping change)
+							   	4. updated source structure field name i.e. column H for CreateTs, LastUpdateTs, AggregateTs AddressLastUpdateTs, PostalCdLastUpdateTs, SelectedAddrsLastUpdateTs(mapping change)
+3.1.8.007 	apanc07 02/11/2021 	Remove aggregateId which was previously mapped with DocumentID
+3.1.8.008,9 apanc07 02/18/2021 	@TypeCode
+3.1.9.010  	apanc07 02/19/2021 	state.postalCodes[*].banner,state.selectedAddresses[*].banner
+3.1.10.011	azhou01 02/25/2021 	Updating the mapping for AddressLastUpdateTs, PostalCdLastUpdateTs, SelectedAddrsLastUpdateTs, CreateTs, LastUpdateTs, AggregateTs by removing $numberLong
+-----------------------------------------------------------------------------*/
+
+CREATE COMPUTE MODULE ESED_CAMS_CMM_Transformer_Compute
+	-- Declare UDPs
+	DECLARE VERSION_ID CHAR '3.1.10.011';
+	DECLARE SysEnvCd CHAR '';
+	DECLARE LOG_OUPUT_MSG EXTERNAL CHARACTER 'N';
+	-- Declare Namespace
+	DECLARE Abs NAMESPACE 'https://collab.safeway.com/it/architecture/info/default.aspx';
+	DECLARE cmmCount INTEGER 0;
+	DECLARE pattern CHARACTER 'yyyy-MM-dd''T''HH:mm:ss';
+	DECLARE epochTimeStamp TIMESTAMP '1970-01-01 00:00:00';
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- Declare Input Message Root
+		DECLARE _inputRootNode REFERENCE TO InputRoot.JSON.Data;
+		-- Declare Output Message Root
+		CREATE LASTCHILD OF OutputRoot DOMAIN 'XMLNSC';
+
+		DECLARE xmlDocRoot REFERENCE TO OutputRoot.XMLNSC.GetCustomerAddress;
+		CREATE LASTCHILD OF OutputRoot.XMLNSC AS xmlDocRoot TYPE XMLNSC.Folder NAME 'GetCustomerAddress';
+		SET OutputRoot.XMLNSC.GetCustomerAddress.(XMLNSC.NamespaceDecl)xmlns:Abs=Abs;
+		-- GetCustomerAddress/DocumentData
+		DECLARE DocumentData_ REFERENCE TO xmlDocRoot;
+		CREATE LASTCHILD OF xmlDocRoot AS DocumentData_ TYPE XMLNSC.Folder NAME 'DocumentData';
+		-- GetCustomerAddress/DocumentData/Document
+		DECLARE Document_ REFERENCE TO DocumentData_;
+		CREATE LASTCHILD OF DocumentData_ AS Document_ TYPE XMLNSC.Folder NAME 'Document';
+		-- GetCustomerAddress/DocumentData/Document/@VersionId
+		SET Document_.(XMLNSC.Attribute)VersionId = VERSION_ID;
+		-- Depending upon Environment where code is deployed map it as DEV, QA, PROD
+		IF BrokerName like '%DV%' THEN
+			SET SysEnvCd = 'DEV';
+		ELSEIF BrokerName like '%QA%' THEN
+			SET SysEnvCd = 'QA';
+		ELSEIF BrokerName like '%PR%' THEN
+			SET SysEnvCd = 'PROD';
+		END IF;
+		-- GetCustomerAddress/DocumentData/Document/@SystemEnvironmentCd
+		SET Document_.(XMLNSC.Attribute)SystemEnvironmentCd = SysEnvCd;
+
+		-- GetCustomerAddress/DocumentData/Document/DocumentID
+		SET Document_.(XMLNSC.Field)Abs:DocumentID = InputLocalEnvironment.Kafka.Input.topicName;
+
+		-- GetCustomerAddress/DocumentData/Document/AlternateDocumentID
+		SET Document_.(XMLNSC.Field)Abs:AlternateDocumentID = 'IAUC_C02_QA_CAMS_AGGREGATE_' ||InputLocalEnvironment.Kafka.Input.partition||'_'||InputLocalEnvironment.Kafka.Input.offset||'_'|| CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT 'IU');
+		-- GetCustomerAddress/DocumentData/Document/InboundOutboundInd
+		SET Document_.(XMLNSC.Field)Abs:InboundOutboundInd = 'Outbound from Albertsons';
+		-- GetCustomerAddress/DocumentData/Document/DocumentNm
+		SET Document_.(XMLNSC.Field)Abs:DocumentNm = 'GetCustomerAddress';
+		-- GetCustomerAddress/DocumentData/Document/CreationDt
+		SET Document_.(XMLNSC.Field)Abs:CreationDt = CURRENT_TIMESTAMP;
+		-- GetCustomerAddress/DocumentData/Document/Description
+		SET Document_.(XMLNSC.Field)Abs:Description = 'status and purpose of various Retail customer address types';
+		-- GetCustomerAddress/DocumentData/Document/SourceApplicationCd
+		SET Document_.(XMLNSC.Field)Abs:SourceApplicationCd = 'CAMS';
+		-- GetCustomerAddress/DocumentData/Document/TargetApplicationCd
+		SET Document_.(XMLNSC.Field)Abs:TargetApplicationCd = 'EDIS';
+		-- GetCustomerAddress/DocumentData/Document/InternalFileTransferInd
+		SET Document_.(XMLNSC.Field)Abs:InternalFileTransferInd = 'Y';
+		-- GetCustomerAddress/DocumentData/Document/DataClassification
+		DECLARE DataClassification_ REFERENCE TO Document_;
+		CREATE LASTCHILD OF Document_ AS DataClassification_ TYPE XMLNSC.Folder NAME 'Abs:DataClassification';
+		-- GetCustomerAddress/DocumentData/Document/DataClassification/DataClassificationLevel
+		DECLARE DataClassificationLevel_ REFERENCE TO DataClassification_;
+		CREATE LASTCHILD OF DataClassification_ AS DataClassificationLevel_ TYPE XMLNSC.Folder NAME 'Abs:DataClassificationLevel';
+		-- GetCustomerAddress/DocumentData/Document/DataClassification/DataClassificationLevel/Code
+		SET DataClassificationLevel_.(XMLNSC.Field)Abs:Code = 'Internal';
+		-- GetCustomerAddress/DocumentData/Document/DataClassification/BusinessSensitivityLevel
+		DECLARE BusinessSensitivityLevel_ REFERENCE TO DataClassification_;
+		CREATE LASTCHILD OF DataClassification_ AS BusinessSensitivityLevel_ TYPE XMLNSC.Folder NAME 'Abs:BusinessSensitivityLevel';
+		-- GetCustomerAddress/DocumentData/Document/DataClassification/BusinessSensitivityLevel/Code
+		SET BusinessSensitivityLevel_.(XMLNSC.Field)Abs:Code = 'Medium';
+		-- GetCustomerAddress/DocumentData/Document/DataClassification/PHIdataInd
+		SET DataClassification_.(XMLNSC.Field)Abs:PHIdataInd = 'N';
+		-- GetCustomerAddress/DocumentData/Document/DataClassification/PCIdataInd
+		SET DataClassification_.(XMLNSC.Field)Abs:PCIdataInd = 'N';
+		-- GetCustomerAddress/DocumentData/Document/DataClassification/PIIdataInd
+		SET DataClassification_.(XMLNSC.Field)Abs:PIIdataInd = 'Y';
+		-- GetCustomerAddress/DocumentData/DocumentAction
+		DECLARE DocumentAction_ REFERENCE TO DocumentData_;
+		CREATE LASTCHILD OF DocumentData_ AS DocumentAction_ TYPE XMLNSC.Folder NAME 'DocumentAction';
+		-- GetCustomerAddress/DocumentData/DocumentAction/ActionTypeCd
+		SET DocumentAction_.(XMLNSC.Field)Abs:ActionTypeCd = 'UPDATE';
+		-- GetCustomerAddress/DocumentData/DocumentAction/RecordTypeCd
+		SET DocumentAction_.(XMLNSC.Field)Abs:RecordTypeCd = 'CHANGE';
+
+		CREATE FIELD xmlDocRoot.CustomerAddressData;
+		DECLARE CustomerAddressData REFERENCE TO xmlDocRoot.CustomerAddressData;
+		SET CustomerAddressData.(XMLNSC.Field)Abs:CustomerId = _inputRootNode.AGGREGATEID;
+
+
+		DECLARE itemStateRef REFERENCE TO _inputRootNode.STATE;
+		-- DECLARE itemStateRef REFERENCE TO _inputRootNode.state;
+		-- addresses array started
+		DECLARE custAddCount INTEGER 1;
+		SET custAddCount=1;
+
+		DECLARE itemAddressRef REFERENCE TO itemStateRef.ADDRESSES.Item;
+		-- DECLARE itemAddressRef REFERENCE TO itemStateRef.addresses.Item;
+
+		WHILE LASTMOVE(itemAddressRef) DO
+			CREATE FIELD CustomerAddressData.Abs:Addresses[custAddCount];
+			DECLARE outGetAddressIdRef REFERENCE TO CustomerAddressData.Abs:Addresses[custAddCount];
+
+			SET outGetAddressIdRef.Abs:AddressId =itemAddressRef.ADDRESSID;
+			SET outGetAddressIdRef.Abs:AddressNm =itemAddressRef.ADDRESSNAME;
+
+			/*Start Addresstype array*/
+			DECLARE addressTypesCount INTEGER 1;
+			SET addressTypesCount=1;
+
+			DECLARE itemAddressTypesRef REFERENCE TO itemAddressRef.ADDRESSTYPES.Item;
+			-- DECLARE itemAddressTypesRef REFERENCE TO itemAddressRef.addressTypes.Item;
+			WHILE LASTMOVE(itemAddressTypesRef) DO
+
+				SET outGetAddressIdRef.Abs:AddressTypeDsc = itemAddressTypesRef.DESCRIPTION;
+				-- SET outGetAddressIdRef.Abs:AddressTypeDsc = itemAddressTypesRef.description ;
+
+				SET outGetAddressIdRef.Abs:Address.Abs:AddressUsageTypeCd = itemAddressTypesRef.NAME;
+				-- SET outGetAddressIdRef.Abs:Address.Abs:AddressUsageTypeCd =itemAddressTypesRef.name ;
+
+				SET addressTypesCount = addressTypesCount+1;
+				MOVE itemAddressTypesRef NEXTSIBLING REPEAT TYPE NAME;
+			END WHILE;
+			/*END Addresstypes array*/
+
+			SET outGetAddressIdRef.Abs:Address.Abs:AddressLine1txt =itemAddressRef.ADDRESS1;
+			-- SET outGetAddressIdRef.Abs:Address.Abs:AddressLine1txt =itemAddressRef.address1 ;
+
+			SET outGetAddressIdRef.Abs:Address.Abs:AddressLine2txt =itemAddressRef.ADDRESS2;
+			-- SET outGetAddressIdRef.Abs:Address.Abs:AddressLine2txt =itemAddressRef.address2 ;
+
+			SET outGetAddressIdRef.Abs:Address.Abs:CityNm =itemAddressRef.CITY;
+			-- SET outGetAddressIdRef.Abs:Address.Abs:CityNm =itemAddressRef.city ;
+
+			SET outGetAddressIdRef.Abs:Address.Abs:PostalZoneCd =itemAddressRef.POSTALCODE;
+			-- SET outGetAddressIdRef.Abs:Address.Abs:PostalZoneCd =itemAddressRef.postalCode ;
+
+			SET outGetAddressIdRef.Abs:Address.Abs:StateCd =itemAddressRef.STATECODE;
+			-- SET outGetAddressIdRef.Abs:Address.Abs:StateCd =itemAddressRef.stateCode ;
+
+			-- Name herachy started
+			DECLARE itemCustNameRef REFERENCE TO itemAddressRef.NAME;
+			-- DECLARE itemCustNameRef REFERENCE TO itemAddressRef.name;
+
+			CREATE FIELD outGetAddressIdRef.Abs:CustomerName;
+			DECLARE outGetCustNameRef REFERENCE TO outGetAddressIdRef.Abs:CustomerName;
+
+			SET outGetCustNameRef.Abs:PreferredSalutationCd = itemCustNameRef.SALUTATION;
+			-- SET outGetCustNameRef.Abs:PreferredSalutationCd = itemCustNameRef.salutation ;
+
+			SET outGetCustNameRef.Abs:GivenNm =itemCustNameRef.FIRSTNAME;
+			-- SET outGetCustNameRef.Abs:GivenNm =itemCustNameRef.firstName ;
+
+			SET outGetCustNameRef.Abs:MiddleNm =itemCustNameRef.MIDDLENAME;
+			-- SET outGetCustNameRef.Abs:MiddleNm =itemCustNameRef.middleName ;
+
+			SET outGetCustNameRef.Abs:FamilyNm =itemCustNameRef.LASTNAME;
+			-- SET outGetCustNameRef.Abs:FamilyNm =itemCustNameRef.lastName;
+
+			SET outGetCustNameRef.Abs:GenerationAffixCd =itemCustNameRef.SUFFIX;
+			-- SET outGetCustNameRef.Abs:GenerationAffixCd =itemCustNameRef.suffix;
+
+			-- Notes array started
+			DECLARE notesCount INTEGER 1;
+			SET notesCount=1;
+			DECLARE itemNotesRef REFERENCE TO itemAddressRef.NOTES.Item;
+			-- DECLARE itemNotesRef REFERENCE TO itemAddressRef.notes.Item;
+			WHILE LASTMOVE(itemNotesRef) DO
+				CREATE FIELD outGetAddressIdRef.Abs:Notes[notesCount];
+				DECLARE outGetNotesRef REFERENCE TO outGetAddressIdRef.Abs:Notes[notesCount];
+
+				SET outGetNotesRef.(XMLNSC.Attribute)Abs:typeCode =itemNotesRef.TYPE;
+				-- SET outGetNotesRef.(XMLNSC.Attribute)Abs:typeCode =itemNotesRef.type;
+
+				SET outGetNotesRef.Abs:NoteTxt = itemNotesRef.VALUE;
+				-- SET outGetNotesRef.Abs:NoteTxt =itemNotesRef.value;
+
+				SET notesCount =notesCount+1;
+				MOVE itemNotesRef NEXTSIBLING REPEAT TYPE NAME;
+			END WHILE;
+
+			-- purposes array started
+			DECLARE purposesCount INTEGER 1;
+			SET purposesCount=1;
+			DECLARE itemPurposesRef REFERENCE TO itemAddressRef.PURPOSES.Item;
+			-- DECLARE itemPurposesRef REFERENCE TO itemAddressRef.purposes.Item;
+			WHILE LASTMOVE(itemPurposesRef) DO
+				CREATE FIELD outGetAddressIdRef.Abs:AddressPurposes[purposesCount];
+				DECLARE outGetAddressPurposesRef REFERENCE TO outGetAddressIdRef.Abs:AddressPurposes[purposesCount];
+
+				SET outGetAddressPurposesRef.Abs:PurposeDsc = itemPurposesRef.NAME;
+				-- SET outGetAddressPurposesRef.Abs:PurposeDsc =itemPurposesRef.name;
+
+				SET purposesCount =purposesCount+1;
+				MOVE itemPurposesRef NEXTSIBLING REPEAT TYPE NAME;
+				END WHILE;
+			-- /*Ending State postalCodes*/
+
+			/*Start AddressStatuses array */
+			DECLARE addStatusesCount INTEGER 1;
+			SET addStatusesCount=1;
+			DECLARE itemAddressStatusesRef REFERENCE TO itemAddressRef.STATUSES.Item;
+			-- DECLARE itemAddressStatusesRef REFERENCE TO itemAddressRef.statuses.Item;
+			WHILE LASTMOVE(itemAddressStatusesRef) DO
+
+				CREATE FIELD outGetAddressIdRef.Abs:AddressStatuses[addStatusesCount];
+				DECLARE outGetAddressStatusesRef REFERENCE TO outGetAddressIdRef.Abs:AddressStatuses[addStatusesCount];
+
+				SET outGetAddressStatusesRef.(XMLNSC.Attribute)Abs:typeCode =itemAddressStatusesRef.TYPE;
+				-- SET outGetAddressStatusesRef.(XMLNSC.Attribute)Abs:typeCode =itemAddressStatusesRef.type ;
+
+				SET outGetAddressStatusesRef.Abs:AddressStatusCd =itemAddressStatusesRef.CODES.CODE;
+				-- SET outGetAddressStatusesRef.Abs:AddressStatusCd =itemAddressStatusesRef.codes.code ;
+
+				SET outGetAddressStatusesRef.Abs:AddressStatusDsc =itemAddressStatusesRef.CODES.DESCRIPTION;
+				-- SET outGetAddressStatusesRef.Abs:AddressStatusDsc =itemAddressStatusesRef.codes.description ;
+
+				SET outGetAddressStatusesRef.Abs:AddressStatusVal =itemAddressStatusesRef.VALUE;
+				-- SET outGetAddressStatusesRef.Abs:AddressStatusVal =itemAddressStatusesRef.value ;
+
+				SET outGetAddressStatusesRef.Abs:SourcePlatformDsc =itemAddressStatusesRef.SOURCE.NAME;
+				-- SET outGetAddressStatusesRef.Abs:SourcePlatformDsc =itemAddressStatusesRef.source.name;
+
+				SET outGetAddressStatusesRef.Abs:BannerCd =itemAddressStatusesRef.SOURCE.BANNERID;
+				-- SET outGetAddressStatusesRef.Abs:BannerCd =itemAddressStatusesRef.source.bannerId;
+
+				SET outGetAddressStatusesRef.Abs:StoreId =itemAddressStatusesRef.SOURCE.STOREID;
+				-- SET outGetAddressStatusesRef.Abs:StoreId =itemAddressStatusesRef.source.storeId;
+
+				SET outGetAddressStatusesRef.Abs:MessageTxt = itemAddressStatusesRef.MESSAGE;
+				-- SET outGetAddressStatusesRef.Abs:MessageTxt =itemAddressStatusesRef.message ;
+
+				SET outGetAddressStatusesRef.Abs:ReferenceId = itemAddressStatusesRef.REFERENCEID;
+				-- SET outGetAddressStatusesRef.Abs:ReferenceId =itemAddressStatusesRef.referenceId ;
+
+				SET addStatusesCount =addStatusesCount+1;
+				MOVE itemAddressStatusesRef NEXTSIBLING REPEAT TYPE NAME;
+			END WHILE;
+			/*Closing AddressStatuses array*/
+
+			--
+			DECLARE addressLastUpdateStr CHARACTER '';
+			DECLARE addressLastUpdateTsMillisec CHARACTER itemAddressRef.LASTUPDATEDTIMESTAMP;
+			-- DECLARE addressLastUpdateTsMillisec CHARACTER itemAddressRef.lastUpdatedTimestamp;
+			DECLARE addressLastUpdateTs TIMESTAMP epochTimeStamp + CAST(CAST(addressLastUpdateTsMillisec AS FLOAT)/1000 AS INTERVAL SECOND);
+			SET addressLastUpdateStr = CAST(addressLastUpdateTs AS CHARACTER FORMAT pattern)||'.'||SUBSTRING(addressLastUpdateTsMillisec FROM LENGTH(addressLastUpdateTsMillisec) - 2 FOR LENGTH(addressLastUpdateTsMillisec))||'Z';
+			SET outGetAddressIdRef.Abs:AddressLastUpdateTs =addressLastUpdateStr ;
+
+			SET custAddCount =custAddCount+1;
+			MOVE itemAddressRef NEXTSIBLING REPEAT TYPE NAME;
+		END WHILE;
+		/*Closing addresses array*/
+
+		/*Starting state postalCodes*/
+		DECLARE postalCount INTEGER 1;
+		SET postalCount=1;
+		DECLARE itempostalRef REFERENCE TO itemStateRef.POSTALCODES.Item;
+		-- DECLARE itempostalRef REFERENCE TO itemStateRef.postalCodes.Item;
+
+		WHILE LASTMOVE(itempostalRef) DO
+			CREATE FIELD CustomerAddressData.Abs:PostalCodes[postalCount];
+			DECLARE outGetPostalCodesRef REFERENCE TO CustomerAddressData.Abs:PostalCodes[postalCount];
+			DECLARE postalCdLastUpdateStr CHARACTER '';
+
+			SET outGetPostalCodesRef.Abs:PostalCodeId =itempostalRef.ID;
+			-- SET outGetPostalCodesRef.Abs:PostalCodeId =itempostalRef.id;
+
+			-- Start purposesPostal array
+			DECLARE purposesPostalCount INTEGER 1;
+			SET purposesPostalCount=1;
+			DECLARE itemPurposesPostalRef REFERENCE TO itempostalRef.PURPOSES.Item;
+			-- DECLARE itemPurposesPostalRef REFERENCE TO itempostalRef.purposes.Item;
+			WHILE LASTMOVE(itemPurposesPostalRef) DO
+				CREATE FIELD outGetPostalCodesRef.Abs:PurposeDsc[purposesPostalCount];
+				DECLARE outGetAddressPurposesRef REFERENCE TO outGetPostalCodesRef.Abs:PurposeDsc[purposesPostalCount];
+
+				SET outGetAddressPurposesRef =itemPurposesPostalRef.NAME;
+				-- SET outGetAddressPurposesRef =itemPurposesPostalRef.name;
+
+				SET purposesPostalCount =purposesPostalCount+1;
+				MOVE itemPurposesPostalRef NEXTSIBLING REPEAT TYPE NAME;
+			END WHILE;
+			--End purposesPostal array
+
+			SET outGetPostalCodesRef.Abs:PostalCd =itempostalRef.POSTALCODE;
+			-- SET outGetPostalCodesRef.Abs:PostalCd =itempostalRef.postalCode;
+
+			SET outGetPostalCodesRef.Abs:BannerCd =itempostalRef.BANNER;
+			-- SET outGetPostalCodesRef.Abs:BannerCd =itempostalRef.banner;
+
+			--SET outGetPostalCodesRef.Abs:PostalCdLastUpdateTs =itempostalRef.lastUpdatedTimestamp;
+
+			DECLARE postalCdLastUpdateTsMillisec CHARACTER itempostalRef.LASTUPDATEDTIMESTAMP;
+			-- DECLARE postalCdLastUpdateTsMillisec CHARACTER itempostalRef.lastUpdatedTimestamp;
+			DECLARE postalCdLastUpdateTs TIMESTAMP epochTimeStamp + CAST(CAST(postalCdLastUpdateTsMillisec AS FLOAT)/1000 AS INTERVAL SECOND);
+			SET postalCdLastUpdateStr = CAST(postalCdLastUpdateTs AS CHARACTER FORMAT pattern)||'.'||SUBSTRING(postalCdLastUpdateTsMillisec FROM LENGTH(postalCdLastUpdateTsMillisec) - 2 FOR LENGTH(postalCdLastUpdateTsMillisec))||'Z';
+			SET outGetPostalCodesRef.Abs:PostalCdLastUpdateTs = postalCdLastUpdateStr;
+			SET postalCount =postalCount+1;
+			MOVE itempostalRef NEXTSIBLING REPEAT TYPE NAME;
+		END WHILE;
+		/*Ending State postalCodes*/
+
+		/*Start Selected Array*/
+		DECLARE selAddressesCount INTEGER 1;
+		SET selAddressesCount=1;
+		DECLARE itemSelectedAddressesRef REFERENCE TO itemStateRef.SELECTEDADDRESSES.Item;
+		-- DECLARE itemSelectedAddressesRef REFERENCE TO itemStateRef.selectedAddresses.Item;
+
+		WHILE LASTMOVE(itemSelectedAddressesRef) DO
+			CREATE FIELD CustomerAddressData.Abs:SelectedAddresses[selAddressesCount];
+			DECLARE outSelectedAddressesRef REFERENCE TO CustomerAddressData.Abs:SelectedAddresses[selAddressesCount];
+			DECLARE selectedAddrsLastUpdateStr CHARACTER '';
+
+			SET outSelectedAddressesRef.Abs:AddressId =itemSelectedAddressesRef.ADDRESSID;
+			-- SET outSelectedAddressesRef.Abs:AddressId =itemSelectedAddressesRef.addressId;
+
+			SET outSelectedAddressesRef.Abs:BannerCd =itemSelectedAddressesRef.BANNER;
+			-- SET outSelectedAddressesRef.Abs:BannerCd =itemSelectedAddressesRef.banner;
+
+			DECLARE selectedAddrsLastUpdateTsMillisec CHARACTER itemSelectedAddressesRef.lastUpdatedTimestamp;
+			-- DECLARE selectedAddrsLastUpdateTsMillisec CHARACTER itemSelectedAddressesRef.lastUpdatedTimestamp;
+			DECLARE selectedAddrsLastUpdateTs TIMESTAMP epochTimeStamp + CAST(CAST(selectedAddrsLastUpdateTsMillisec AS FLOAT)/1000 AS INTERVAL SECOND);
+			SET selectedAddrsLastUpdateStr = CAST(selectedAddrsLastUpdateTs AS CHARACTER FORMAT pattern)||'.'||SUBSTRING(selectedAddrsLastUpdateTsMillisec FROM LENGTH(selectedAddrsLastUpdateTsMillisec) - 2 FOR LENGTH(selectedAddrsLastUpdateTsMillisec))||'Z';
+			SET outSelectedAddressesRef.Abs:SelectedAddrsLastUpdateTs = selectedAddrsLastUpdateStr;
+			SET selAddressesCount =selAddressesCount+1;
+
+			MOVE itemSelectedAddressesRef NEXTSIBLING REPEAT TYPE NAME;
+		END WHILE;
+		/*End Selected Array*/
+
+		CREATE FIELD CustomerAddressData.Abs:SourceAuditData;
+		DECLARE outSourceAuditDataRef REFERENCE TO CustomerAddressData.Abs:SourceAuditData;
+		DECLARE createTsStr, lstUpdTsStr, aggregateTsStr CHARACTER '';
+		SET outSourceAuditDataRef.Abs:SourceNm = _inputRootNode.AGGREGATETYPE;
+		-- SET outSourceAuditDataRef.Abs:SourceNm = _inputRootNode.aggregateType;
+
+		DECLARE createTsMillisec CHARACTER itemStateRef.CREATETIMESTAMP;
+		-- DECLARE createTsMillisec CHARACTER itemStateRef.createTimestamp;
+
+		DECLARE createTs TIMESTAMP epochTimeStamp + CAST(CAST(createTsMillisec AS FLOAT)/1000 AS INTERVAL SECOND);
+		SET createTsStr = CAST(createTs AS CHARACTER FORMAT pattern)||'.'||SUBSTRING(createTsMillisec FROM LENGTH(createTsMillisec) - 2 FOR LENGTH(createTsMillisec))||'Z';
+		SET outSourceAuditDataRef.Abs:CreateTs = createTsStr;
+
+		DECLARE lstUpdTsMillisec CHARACTER itemStateRef.LASTUPDATETIMESTAMP;
+		-- DECLARE lstUpdTsMillisec CHARACTER itemStateRef.lastUpdateTimestamp;
+		DECLARE lastUpdateTs TIMESTAMP epochTimeStamp + CAST(CAST(lstUpdTsMillisec AS FLOAT)/1000 AS INTERVAL SECOND);
+		SET lstUpdTsStr = CAST(lastUpdateTs AS CHARACTER FORMAT pattern)||'.'||SUBSTRING(lstUpdTsMillisec FROM LENGTH(lstUpdTsMillisec) - 2 FOR LENGTH(lstUpdTsMillisec))||'Z';
+		SET outSourceAuditDataRef.Abs:LastUpdateTs = lstUpdTsStr;
+
+		SET outSourceAuditDataRef.Abs:CreateClientId = itemStateRef.CREATECLIENTID;
+		-- SET outSourceAuditDataRef.Abs:CreateClientId = itemStateRef.createClientId;
+
+		SET outSourceAuditDataRef.Abs:CreateUserId = itemStateRef.CREATEUSERID;
+		-- SET outSourceAuditDataRef.Abs:CreateUserId = itemStateRef.createUserId;
+
+		SET outSourceAuditDataRef.Abs:LastUpdateClientId = itemStateRef.LASTUPDATECLIENTID;
+		-- SET outSourceAuditDataRef.Abs:LastUpdateClientId = itemStateRef.lastUpdateClientId;
+
+		SET outSourceAuditDataRef.Abs:LastUpdateUserId = itemStateRef.LASTUPDATEUSERID;
+		-- SET outSourceAuditDataRef.Abs:LastUpdateUserId = itemStateRef.lastUpdateUserId;
+
+		SET outSourceAuditDataRef.Abs:CreateHostNm =itemStateRef.CREATEHOSTNAME;
+		-- SET outSourceAuditDataRef.Abs:CreateHostNm =itemStateRef.createHostName;
+
+		SET outSourceAuditDataRef.Abs:LastUpdateHostNm =itemStateRef.LASTUPDATEHOSTNAME;
+		-- SET outSourceAuditDataRef.Abs:LastUpdateHostNm =itemStateRef.lastUpdateHostName;
+
+		SET outSourceAuditDataRef.Abs:SequenceNbr =itemStateRef.SEQUENCENUMBER;
+		-- SET outSourceAuditDataRef.Abs:SequenceNbr =itemStateRef.sequenceNumber;
+
+		DECLARE aggregateTsMillisec CHARACTER itemStateRef.TIMESTAMP;
+		-- DECLARE aggregateTsMillisec CHARACTER itemStateRef.timestamp;
+		DECLARE aggregateTs TIMESTAMP epochTimeStamp + CAST(CAST(aggregateTsMillisec AS FLOAT)/1000 AS INTERVAL SECOND);
+		SET aggregateTsStr = CAST(aggregateTs AS CHARACTER FORMAT pattern)||'.'||SUBSTRING(aggregateTsMillisec FROM LENGTH(aggregateTsMillisec) - 2 FOR LENGTH(aggregateTsMillisec))||'Z';
+		SET outSourceAuditDataRef.Abs:AggregateTs = aggregateTsStr;
+
+		SET outSourceAuditDataRef.Abs:AggregateRevisionNbr =itemStateRef.AGGREGATEREVISION;
+		-- SET outSourceAuditDataRef.Abs:AggregateRevisionNbr =itemStateRef.aggregateRevision;
+
+		SET outSourceAuditDataRef.Abs:PayloadVersionNbr =itemStateRef.VERSION;
+		-- SET outSourceAuditDataRef.Abs:PayloadVersionNbr =itemStateRef.version;
+
+		SET outSourceAuditDataRef.Abs:EventId =itemStateRef.EVENTID;
+		-- SET outSourceAuditDataRef.Abs:EventId =itemStateRef.eventId;
+
+		SET cmmCount = cmmCount + 1;
+
+		-- create kafka key:
+		CALL CreateKafkaKey();
+
+	 PROPAGATE TO TERMINAL 'out' DELETE NONE;
+
+	 IF (cmmCount <> 0) THEN
+	 SET Environment.Variables.MISC_DATA = COALESCE(cmmCount,' ');
+     PROPAGATE TO TERMINAL 'out' DELETE NONE;
+	 END IF;
+
+	 RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CreateKafkaKey() BEGIN
+		SET OutputLocalEnvironment.Destination.Kafka.Output.key = InputLocalEnvironment.Destination.Kafka.Input.key;
+
+	END;
+END MODULE;

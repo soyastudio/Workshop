@@ -7,9 +7,7 @@
    Name: /SFWY/Nouns/SwyShipment.xsd
 -->
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by  (Albertsons) -->
-<xs:schema xmlns:oa="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" 
-vc:minVersion="1.1"
-elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema xmlns:oa="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<!--!=============================================================================================-->
 	<!--!-->
 	<!--!-->
@@ -25,6 +23,7 @@ elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<!--V1.4 9/15/2020 - Alex Nunes - Added new elements at the header level as per SME: Route group, Comments and planned and dispatched dates..-->
 	<!--V1.5 9/24/2020 - Alex Nunes - Added Alternate Facility Id to stop data.-->
 	<!--V1.6 10/2/2020 - Alex Nunes - Added estimated mileage to stop data. -->
+		<!--V1.7 3/22/2021 - Alex Nunes - Increased length of Dispatch comment field to 300. -->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:element name="TransportationStatus" type="TransportationStatusType">
 		<xs:annotation>
@@ -159,7 +158,7 @@ elementFormDefault="qualified" attributeFormDefault="unqualified">
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="100"/>
+						<xs:maxLength value="300"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>

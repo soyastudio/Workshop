@@ -15,7 +15,10 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.*;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.Metric;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
@@ -35,6 +38,7 @@ import javax.xml.transform.*;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -54,7 +58,7 @@ import java.util.stream.Collectors;
 
 public class KafkaAdmin {
     private static Logger logger = LoggerFactory.getLogger("KafkaAdmin");
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS XXX");
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
     private static Properties defaultProperties;
 
@@ -63,17 +67,23 @@ public class KafkaAdmin {
     private static final String FILE = "file";
     private static final String DELETE = "delete";
 
-    private static final String CONSUME = "consume";
-    private static final String PRODUCE = "produce";
-
+    private static final String HELP = "help";
     private static final String METRICS = "metrics";
     private static final String TOPICS = "topics";
+    private static final String TOPIC = "topic";
+
+    private static final String PRODUCE = "produce";
+    private static final String CONSUME = "consume";
     private static final String LATEST = "latest";
-    private static final String PUB_AND_SUB = "pub-sub";
+    private static final String PUB_AND_SUB = "pubAndSub";
+
     private static final String APPLICATION = "application";
     private static final String STREAM = "stream";
     private static final String GROOVY = "groovy";
+
     private static final String UNDEPLOY = "undeploy";
+
+    private static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     private Properties producerProperties;
     private Properties consumerProperties;
@@ -99,8 +109,6 @@ public class KafkaAdmin {
     }
 
     private KafkaAdmin() {
-        System.out.println("Create KafkaAdmin for environment: " + env);
-
         // Producer properties:
         this.producerProperties = new Properties();
         producerProperties.setProperty(ProducerConfig.CLIENT_ID_CONFIG, getProperty(ProducerConfig.CLIENT_ID_CONFIG));
@@ -130,6 +138,7 @@ public class KafkaAdmin {
         consumerProperties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, getProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG));
         consumerProperties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, getProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG));
         consumerProperties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, getProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG));
+        consumerProperties.setProperty(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "60000");
 
         consumerProperties.setProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG));
         if ("SSL".equalsIgnoreCase(consumerProperties.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG))) {
@@ -138,7 +147,7 @@ public class KafkaAdmin {
             consumerProperties.setProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, getProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG));
             consumerProperties.setProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, getProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG));
 
-        } else if ("SASL_SSL".equalsIgnoreCase(producerProperties.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG))) {
+        } else if ("SASL_SSL".equalsIgnoreCase(consumerProperties.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG))) {
             consumerProperties.setProperty(SaslConfigs.SASL_MECHANISM, getProperty(SaslConfigs.SASL_MECHANISM));
             consumerProperties.setProperty(SaslConfigs.SASL_JAAS_CONFIG, getProperty(SaslConfigs.SASL_JAAS_CONFIG));
         }
@@ -154,7 +163,7 @@ public class KafkaAdmin {
             adminProperties.setProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, getProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG));
             adminProperties.setProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, getProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG));
 
-        } else if ("SASL_SSL".equalsIgnoreCase(producerProperties.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG))) {
+        } else if ("SASL_SSL".equalsIgnoreCase(adminProperties.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG))) {
             adminProperties.setProperty(SaslConfigs.SASL_MECHANISM, getProperty(SaslConfigs.SASL_MECHANISM));
             adminProperties.setProperty(SaslConfigs.SASL_JAAS_CONFIG, getProperty(SaslConfigs.SASL_JAAS_CONFIG));
         }
@@ -170,7 +179,7 @@ public class KafkaAdmin {
             streamProperties.setProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, getProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG));
             streamProperties.setProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, getProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG));
 
-        } else if ("SASL_SSL".equalsIgnoreCase(producerProperties.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG))) {
+        } else if ("SASL_SSL".equalsIgnoreCase(streamProperties.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG))) {
             streamProperties.setProperty(SaslConfigs.SASL_MECHANISM, getProperty(SaslConfigs.SASL_MECHANISM));
             streamProperties.setProperty(SaslConfigs.SASL_JAAS_CONFIG, getProperty(SaslConfigs.SASL_JAAS_CONFIG));
         }
@@ -233,7 +242,7 @@ public class KafkaAdmin {
 
         configuration = new Properties(defaultProperties);
         File configFile = new File(bin, "kafka-config.properties");
-        if(configFile.exists()) {
+        if (configFile.exists()) {
             try {
                 configuration.load(new FileInputStream(configFile));
             } catch (IOException e) {
@@ -245,7 +254,7 @@ public class KafkaAdmin {
         Options options = new Options();
         options.addOption(Option.builder("h")
                 .longOpt("help")
-                .hasArg(false)
+                .hasArg(true)
                 .desc("Help ([OPTIONAL])")
                 .required(false)
                 .build());
@@ -271,6 +280,13 @@ public class KafkaAdmin {
                 .required(false)
                 .build());
 
+        options.addOption(Option.builder("d")
+                .longOpt("dir")
+                .hasArg(true)
+                .desc("Directory")
+                .required(false)
+                .build());
+
         options.addOption(Option.builder("e")
                 .longOpt("action")
                 .hasArg(true)
@@ -292,6 +308,13 @@ public class KafkaAdmin {
                 .required(false)
                 .build());
 
+        options.addOption(Option.builder("k")
+                .longOpt("key")
+                .hasArg(true)
+                .desc("Kafka message key")
+                .required(false)
+                .build());
+
         options.addOption(Option.builder("m")
                 .longOpt("msg")
                 .hasArg(true)
@@ -303,6 +326,20 @@ public class KafkaAdmin {
                 .longOpt("count")
                 .hasArg(true)
                 .desc("Number of message to print out.")
+                .required(false)
+                .build());
+
+        options.addOption(Option.builder("O")
+                .longOpt("Offset")
+                .hasArg(true)
+                .desc("Offset.")
+                .required(false)
+                .build());
+
+        options.addOption(Option.builder("P")
+                .longOpt("partition")
+                .hasArg(true)
+                .desc("Partition.")
                 .required(false)
                 .build());
 
@@ -341,6 +378,13 @@ public class KafkaAdmin {
                 .required(false)
                 .build());
 
+        options.addOption(Option.builder("T")
+                .longOpt("timeout")
+                .hasArg(true)
+                .desc("Timeout ")
+                .required(false)
+                .build());
+
         options.addOption(Option.builder("x")
                 .longOpt("cleanHistory")
                 .hasArg(false)
@@ -355,12 +399,12 @@ public class KafkaAdmin {
             cmd = parser.parse(options, args);
 
         } catch (ParseException e) {
-            System.out.println(e.getMessage());
+            log(e.getMessage());
             System.exit(1);
         }
 
         // Environment:
-        if(cmd.hasOption("e")) {
+        if (cmd.hasOption("e")) {
             env = cmd.getOptionValue("e").toUpperCase();
         }
         System.setProperty("kafka." + CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, getProperty(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG));
@@ -375,7 +419,7 @@ public class KafkaAdmin {
         System.setProperty("kafka." + ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, getProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG));
         System.setProperty("kafka." + ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, getProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG));
 
-        if("SSL".equalsIgnoreCase(getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG))) {
+        if ("SSL".equalsIgnoreCase(getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG))) {
             System.setProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, getProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG));
             System.setProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, getProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG));
             System.setProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, getProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG));
@@ -387,22 +431,16 @@ public class KafkaAdmin {
         }
 
         // Context:
-        if (cmd.hasOption("b")) {
-            processBusinessObjectTask(cmd, new KafkaAdmin(), workspace);
-
-        } else {
-            processKafkaAdminTask(cmd, new KafkaAdmin());
-
-        }
+        executeCommandLine(cmd, new KafkaAdmin());
     }
 
     private static String getProperty(String propName) {
-        if(System.getProperty("kafka." + propName) != null) {
+        if (System.getProperty("kafka." + propName) != null) {
             return System.getProperty("kafka." + propName);
         }
 
         String key = env + "." + propName;
-        if(configuration.containsKey(key)) {
+        if (configuration.containsKey(key)) {
             return configuration.getProperty(key);
         }
 
@@ -410,83 +448,27 @@ public class KafkaAdmin {
     }
 
     // Global methods:
-    private static void processKafkaAdminTask(CommandLine cmd, KafkaAdmin kafkaAdmin) {
-        System.out.println();
-        String action = PRODUCE;
-        if (!cmd.hasOption("a")) {
-            if (cmd.hasOption("p")) {
-                if (cmd.hasOption("c")) {
-                    action = PUB_AND_SUB;
-
-                } else {
-                    action = PRODUCE;
-                }
-
-            } else if (cmd.hasOption("c")) {
-                if (cmd.hasOption("n")) {
-                    action = CONSUME;
-                } else {
-                    action = LATEST;
-                }
-            } else if (cmd.hasOption("Q")) {
-                action = TOPICS;
-
-            } else if (cmd.hasOption("q")) {
-                action = TOPICS;
-
-            }
-        } else {
-            action = cmd.getOptionValue("a");
-        }
-
-        switch (action) {
-            case METRICS:
-                metrics(cmd, kafkaAdmin);
-                break;
-
-            case TOPICS:
-                topics(cmd, kafkaAdmin);
-                break;
-
-            case PRODUCE:
-                kafkaProduce(cmd, kafkaAdmin);
-                break;
-
-            case LATEST:
-                latest(cmd, kafkaAdmin);
-                break;
-
-            case CONSUME:
-                kafkaConsume(cmd, kafkaAdmin);
-                break;
-
-            case PUB_AND_SUB:
-                pubAndSub(cmd, kafkaAdmin);
-                break;
-
-            case APPLICATION:
-                application(cmd, kafkaAdmin);
-                break;
-
-            case STREAM:
-                stream(cmd, kafkaAdmin);
-                break;
-
-            case GROOVY:
-                groovy(cmd, kafkaAdmin);
-        }
+    private static void log(String msg) {
+        System.out.println(msg);
     }
 
-    private static void metrics(CommandLine cmd, KafkaAdmin kafkaAdmin) {
-        System.out.println("==================== Metrics ====================");
+    public static void help(CommandLine cmd, KafkaAdmin kafkaAdmin) {
+        if (cmd.hasOption("a")) {
+
+
+        } else {
+
+        }
+
+    }
+
+    public static void metrics(CommandLine cmd, KafkaAdmin kafkaAdmin) {
         List<Metric> metricList = new ArrayList<>(kafkaAdmin.createAdminClient().metrics().values());
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        System.out.println(gson.toJson(metricList));
-        System.out.println();
+        log(gson.toJson(metricList));
     }
 
-    private static void topics(CommandLine cmd, KafkaAdmin kafkaAdmin) {
-        System.out.println("==================== List Topic Names ====================");
+    public static void topics(CommandLine cmd, KafkaAdmin kafkaAdmin) {
         String q = null;
         try {
             q = cmd.getOptionValue("q");
@@ -511,150 +493,451 @@ public class KafkaAdmin {
             Collections.sort(topics);
             topics.forEach(e -> {
                 if (query == null) {
-                    System.out.println(e);
+                    log(e);
 
                 } else if (e.startsWith(query)) {
-                    System.out.println(e);
+                    log(e);
 
                 }
             });
 
-            System.out.println();
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static RecordMetadata kafkaProduce(CommandLine cmd, KafkaAdmin kafkaAdmin) {
-        System.out.println("==================== Produce Message ====================");
+    public static void topic(CommandLine cmd, KafkaAdmin kafkaAdmin) {
+        if (!cmd.hasOption("c")) {
+            throw new IllegalArgumentException("Please specify topic name using command line argument '-c'");
+        }
 
-        String topicName = cmd.hasOption("p") ? cmd.getOptionValue("p") : null;
+        String topicName = cmd.getOptionValue("c");
+        KafkaConsumer<String, byte[]> kafkaConsumer = kafkaAdmin.createKafkaConsumer();
+
+        List<PartitionInfo> partitionInfoSet = kafkaConsumer.partitionsFor(topicName);
+        Collection<PartitionStatus> partitionStatuses = partitionInfoSet.stream()
+                .map(partitionInfo -> new PartitionStatus(partitionInfo))
+                .collect(Collectors.toList());
+
+        Collection<TopicPartition> partitions = partitionStatuses.stream()
+                .map(e -> e.topicPartition)
+                .collect(Collectors.toList());
+        kafkaConsumer.assign(partitions);
+
+        Map<TopicPartition, Long> beginOffsets = kafkaConsumer.beginningOffsets(partitions);
+        Map<TopicPartition, Long> endOffsets = kafkaConsumer.endOffsets(partitions);
+
+        partitionStatuses.forEach(e -> {
+            if (beginOffsets.containsKey(e.topicPartition)) {
+                e.offset.begin = beginOffsets.get(e.topicPartition);
+            }
+
+            if (endOffsets.containsKey(e.topicPartition)) {
+                e.offset.end = endOffsets.get(e.topicPartition);
+            }
+
+        });
+
+        log(GSON.toJson(partitionStatuses));
+    }
+
+    public static void partitions(CommandLine cmd, KafkaAdmin kafkaAdmin) {
+        if (!cmd.hasOption("c")) {
+            throw new IllegalArgumentException("Please specify topic name using command line argument '-c'");
+        }
+
+        String topicName = cmd.getOptionValue("c");
+        KafkaConsumer<String, byte[]> kafkaConsumer = kafkaAdmin.createKafkaConsumer();
+        List<PartitionInfo> partitionInfoSet = kafkaConsumer.partitionsFor(topicName);
+
+        log(GSON.toJson(partitionInfoSet));
+
+    }
+
+    public static void offsets(CommandLine cmd, KafkaAdmin kafkaAdmin) {
+        if (!cmd.hasOption("c")) {
+            throw new IllegalArgumentException("Please specify topic name using command line argument '-c'");
+        }
+
+        String topicName = cmd.getOptionValue("c");
+        KafkaConsumer<String, byte[]> kafkaConsumer = kafkaAdmin.createKafkaConsumer();
+        List<PartitionInfo> partitionInfoSet = kafkaConsumer.partitionsFor(topicName);
+        Collection<TopicPartition> partitions = partitionInfoSet.stream()
+                .map(partitionInfo -> new TopicPartition(partitionInfo.topic(),
+                        partitionInfo.partition()))
+                .collect(Collectors.toList());
+        kafkaConsumer.assign(partitions);
+
+        Map<TopicPartition, Long> beginOffsets = kafkaConsumer.beginningOffsets(partitions);
+        Map<TopicPartition, Long> endOffsets = kafkaConsumer.endOffsets(partitions);
+
+        endOffsets.entrySet().forEach(e -> {
+            log("Partition_" + e.getKey().partition() + ": " + beginOffsets.get(e.getKey()) + " - " + e.getValue());
+
+        });
+    }
+
+    public static void pubAndSub(CommandLine cmd, KafkaAdmin kafkaAdmin) throws Exception {
+        long timestamp = System.currentTimeMillis();
+
+        log("Producing message...");
+        produce(cmd, kafkaAdmin);
+        log("Message produced.");
+
+        log("Consuming message...");
+
+        Thread.sleep(300l);
+        String topicName = null;
+
+        if (cmd.hasOption("b")) {
+            File dir = new File(workspace, cmd.getOptionValue("b"));
+            File bod = new File(dir, "bod.properties");
+            if (!bod.exists()) {
+                log("File '" + bod + "' does not exit.");
+            }
+
+            Properties properties = new Properties();
+            properties.load(new FileInputStream(bod));
+
+            topicName = properties.containsKey(env + ".c") ? properties.getProperty(env + ".c") : properties.getProperty("c");
+        }
+
+        if (cmd.hasOption("c")) {
+            topicName = cmd.getOptionValue("c");
+        }
+
         if (topicName == null) {
-            System.out.println("ERROR: Topic is not set. Please set topic name using parameter 'p' or 't'");
+            log("ERROR: Topic is not set. Please set topic name using parameter 'c'.");
             System.exit(1);
         }
 
-        String message = "";
-        if (!cmd.hasOption("m")) {
-            System.out.println("ERROR: Message is not set. Please set message using parameter 'm'");
+        KafkaConsumer<String, byte[]> kafkaConsumer = kafkaAdmin.createKafkaConsumer();
+        List<PartitionInfo> partitionInfoSet = kafkaConsumer.partitionsFor(topicName);
+        Collection<TopicPartition> partitions = partitionInfoSet.stream()
+                .map(partitionInfo -> new TopicPartition(partitionInfo.topic(),
+                        partitionInfo.partition()))
+                .collect(Collectors.toList());
+
+        Map<TopicPartition, Long> latestOffsets = kafkaConsumer.endOffsets(partitions);
+
+        while (true) {
+            if (System.currentTimeMillis() - timestamp > 60000) {
+                throw new TimeoutException("Cannot get message from topic: " + topicName);
+            }
+
+            for (TopicPartition partition : partitions) {
+                List<TopicPartition> assignments = new ArrayList<>();
+                assignments.add(partition);
+                kafkaConsumer.assign(assignments);
+
+                Long latestOffset = Math.max(0, latestOffsets.get(partition) - 1);
+                kafkaConsumer.seek(partition, Math.max(0, latestOffset));
+                ConsumerRecords<String, byte[]> polled = kafkaConsumer.poll(Duration.ofMillis(300));
+
+                polled.forEach(rc -> {
+                    if (rc.timestamp() > timestamp) {
+                        log("Timestamp: " + DATE_FORMAT.format(new Date(rc.timestamp())));
+                        log("Topic: " + rc.topic());
+                        log("Partition: " + rc.partition());
+                        log("Offset: " + rc.offset());
+                        log("Headers: " + toString(rc.headers()));
+                        log("Key: " + rc.key());
+                        log("Message: ");
+                        log(prettyPrint(new String(rc.value())));
+
+                        log("Message consumed.");
+
+                        return;
+                    }
+                });
+            }
+        }
+    }
+
+    public static void pub(CommandLine cmd, KafkaAdmin kafkaAdmin) throws Exception {
+        produce(cmd, kafkaAdmin);
+    }
+
+    public static void publish(CommandLine cmd, KafkaAdmin kafkaAdmin) throws Exception {
+        produce(cmd, kafkaAdmin);
+    }
+
+    public static RecordMetadata produce(CommandLine cmd, KafkaAdmin kafkaAdmin) throws Exception {
+        String topicName = null;
+        String fileName = null;
+
+        if (cmd.hasOption("b")) {
+            Properties properties = getBodConfig(cmd);
+            topicName = getBodProperty("p", properties);
+            fileName = getBodProperty("f", properties);
+            if (fileName == null) {
+                fileName = "input.json";
+            }
+            fileName = "workspace/" + cmd.getOptionValue("b") + "/" + fileName;
+        }
+
+        if (cmd.hasOption("p")) {
+            topicName = cmd.getOptionValue("p");
+        }
+
+        if (topicName == null) {
+            log("ERROR: Topic is not set. Please set topic name using parameter 'p'.");
             System.exit(1);
+        }
+
+        if (cmd.hasOption("f")) {
+            fileName = cmd.getOptionValue("f");
+        }
+
+        if (fileName == null) {
+            log("ERROR: Message is not set. Please set file name using parameter 'f'.");
+            System.exit(1);
+        }
+
+        File file = new File(home, fileName);
+        if (!file.exists()) {
+            log("File does not exist: " + file.getAbsolutePath());
+            System.exit(1);
+        }
+
+        byte[] msg = FileUtils.readFileToByteArray(file);
+        String hs = cmd.hasOption("H") ? cmd.getOptionValue("H") : null;
+        String key = cmd.hasOption("k") ? cmd.getOptionValue("k") : UUID.randomUUID().toString();
+
+        return produce(kafkaAdmin, topicName, file, hs, key);
+
+    }
+
+    public static List<RecordInfo> list(CommandLine cmd, KafkaAdmin kafkaAdmin) throws Exception {
+        Set<RecordInfo> results = new HashSet<>();
+        String topicName = null;
+
+        if (cmd.hasOption("b")) {
+            File dir = new File(workspace, cmd.getOptionValue("b"));
+            File bod = new File(dir, "bod.properties");
+            if (!bod.exists()) {
+                log("File '" + bod + "' does not exit.");
+            }
+
+            Properties properties = new Properties();
+            properties.load(new FileInputStream(bod));
+
+            topicName = properties.containsKey(env + ".c") ? properties.getProperty(env + ".c") : properties.getProperty("c");
+        }
+
+        if (cmd.hasOption("c")) {
+            topicName = cmd.getOptionValue("c");
+        }
+
+        if (topicName == null) {
+            log("ERROR: Topic is not set. Please set topic name using parameter 'c'.");
+            System.exit(1);
+        }
+
+        KafkaConsumer<String, byte[]> kafkaConsumer = kafkaAdmin.createKafkaConsumer();
+        Collection<TopicPartition> partitions = null;
+        if (cmd.hasOption("P")) {
+            partitions = new ArrayList<>();
+            partitions.add(new TopicPartition(topicName, Integer.parseInt(cmd.getOptionValue("P"))));
 
         } else {
-            message = base64Decode(cmd.getOptionValue("m"));
+            List<PartitionInfo> partitionInfoSet = kafkaConsumer.partitionsFor(topicName);
+            partitions = partitionInfoSet.stream()
+                    .map(partitionInfo -> new TopicPartition(partitionInfo.topic(),
+                            partitionInfo.partition()))
+                    .collect(Collectors.toList());
+
         }
 
-        String hs = cmd.hasOption("H") ? cmd.getOptionValue("H") : null;
-
-        KafkaProducer kafkaProducer = kafkaAdmin.createKafkaProducer();
-        RecordBuilder builder = new RecordBuilder(topicName).generateKey().message(message);
-        if (hs != null) {
-            Headers headers = headers(hs);
-            headers.forEach(e -> {
-                builder.header(e.key(), new String(e.value()));
-            });
+        long timeout = 500L;
+        if(cmd.hasOption("T")) {
+            timeout = Long.parseLong(cmd.getOptionValue("T"));
         }
-        ProducerRecord<String, byte[]> record = builder.create();
 
-        Future<RecordMetadata> future = kafkaProducer.send(record);
-        while (!future.isDone()) {
-            try {
-                Thread.sleep(100L);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        int count = 1;
+        if (cmd.hasOption("n")) {
+            count = Math.max(1, Integer.parseInt(cmd.getOptionValue("n")));
+        }
+
+        kafkaConsumer.assign(partitions);
+        kafkaConsumer.seekToBeginning(partitions);
+
+        for (int i = 0; i < count; i++) {
+            for (TopicPartition partition : partitions) {
+                List<TopicPartition> assignments = new ArrayList<>();
+                assignments.add(partition);
+                kafkaConsumer.assign(assignments);
+                kafkaConsumer.seekToBeginning(assignments);
+                ConsumerRecords<String, byte[]> polled = kafkaConsumer.poll(Duration.ofMillis(timeout));
+
+                polled.forEach(rc -> {
+                    results.add(new RecordInfo(rc));
+                });
             }
         }
 
-        try {
-            RecordMetadata metadata = future.get();
+        kafkaConsumer.close();
 
-            System.out.println("Timestamp: " + DATE_FORMAT.format(new Date(metadata.timestamp())));
-            System.out.println("Topic: " + metadata.topic());
-            System.out.println("Partition: " + metadata.partition());
-            System.out.println("Offset: " + metadata.offset());
-            System.out.println("Headers: " + toString(record.headers()));
-            System.out.println("Key: " + record.key());
-            System.out.println("Message: " + new String(record.value()));
-            System.out.println();
+        List<RecordInfo> list = new ArrayList<>(results);
+        Collections.sort(list);
 
-            return metadata;
+        log("Total number: " + list.size());
+        log("");
 
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
-        }
-    }
+        log("| " + cellFormat("Timestamp", 24) + " | "
+                + cellFormat("Partition", 9) + " | "
+                + cellFormat("Offset", 6) + " | "
+                + cellFormat("Key", 32) + " | "
+                + cellFormat("Size", 8) + " | "
+                + cellFormat("Headers", 40) + " |");
+        log("  " + "------------------------"
+                + "   " + "---------"
+                + "   " + "------"
+                + "   " + "--------------------------------"
+                + "   " + "--------"
+                + "   " + "----------------------------------------");
 
-    private static void kafkaConsume(CommandLine cmd, KafkaAdmin kafkaAdmin) {
-        System.out.println("==================== Consume Message ====================");
+        list.forEach(e -> {
+            log("| " + cellFormat(e.timestamp, 24) + " | " + cellFormat("" + e.partition, 9) + " | "
+                    + cellFormat("" + e.offset, 6) + " | " + cellFormat(e.key, 32) + " | "
+                    + cellFormat("" + e.size, 8) + " | "
+                    + cellFormat(e.headers, 40) + " |");
+        });
 
-        String kafkaTopicName = cmd.getOptionValue("c");
-        int count = 20;
-        if (cmd.hasOption("n")) {
-            count = Integer.parseInt(cmd.getOptionValue("n"));
-        }
-
-        List<ConsumerRecord<String, byte[]>> results = consume(kafkaAdmin, kafkaTopicName, count);
-        if (results.size() > 0) {
-            results.forEach(rc -> {
-                //if(rc.timestamp() > timestamp) {
-                System.out.println("Timestamp: " + DATE_FORMAT.format(new Date(rc.timestamp())));
-                System.out.println("Topic: " + rc.topic());
-                System.out.println("Partition: " + rc.partition());
-                System.out.println("Offset: " + rc.offset());
-                System.out.println("Headers: " + toString(rc.headers()));
-                System.out.println("Key: " + rc.key());
-                System.out.println("Message: " + new String(rc.value()));
-                System.out.println();
-                //}
-            });
-        }
+        return list;
 
     }
 
-    private static void latest(CommandLine cmd, KafkaAdmin kafkaAdmin) {
-        System.out.println("==================== Consume Latest Message ====================");
+    public static ConsumerRecord<String, byte[]> latest(CommandLine cmd, KafkaAdmin kafkaAdmin) throws Exception {
+        String topicName = null;
 
-        String kafkaTopicName = cmd.getOptionValue("c");
-        int count = 2;
+        if (cmd.hasOption("b")) {
+            File dir = new File(workspace, cmd.getOptionValue("b"));
+            File bod = new File(dir, "bod.properties");
+            if (!bod.exists()) {
+                log("File '" + bod + "' does not exit.");
+            }
 
-        List<ConsumerRecord<String, byte[]>> results = consume(kafkaAdmin, kafkaTopicName, count);
-        if (results.size() > 0) {
-            ConsumerRecord<String, byte[]> rc = results.get(0);
+            Properties properties = new Properties();
+            properties.load(new FileInputStream(bod));
 
-            System.out.println("Timestamp: " + DATE_FORMAT.format(new Date(rc.timestamp())));
-            System.out.println("Topic: " + rc.topic());
-            System.out.println("Partition: " + rc.partition());
-            System.out.println("Offset: " + rc.offset());
-            System.out.println("Headers: " + toString(rc.headers()));
-            System.out.println("Key: " + rc.key());
-            System.out.println("Message: " + prettyPrint(new String(rc.value())));
-            System.out.println();
+            topicName = properties.containsKey(env + ".c") ? properties.getProperty(env + ".c") : properties.getProperty("c");
+        }
+
+        if (cmd.hasOption("c")) {
+            topicName = cmd.getOptionValue("c");
+        }
+
+        if (topicName == null) {
+            log("ERROR: Topic is not set. Please set topic name using parameter 'c'.");
+            System.exit(1);
+        }
+
+        KafkaConsumer<String, byte[]> kafkaConsumer = kafkaAdmin.createKafkaConsumer();
+        List<String> topics = new ArrayList<>();
+        topics.add(topicName);
+
+        Collection<TopicPartition> partitions = null;
+        if (cmd.hasOption("P")) {
+            partitions = new ArrayList<>();
+            partitions.add(new TopicPartition(topicName, Integer.parseInt(cmd.getOptionValue("P"))));
 
         } else {
-            System.out.println("There are no messages on topic " + kafkaTopicName);
-            System.out.println();
+            List<PartitionInfo> partitionInfoSet = kafkaConsumer.partitionsFor(topicName);
+            partitions = partitionInfoSet.stream()
+                    .map(partitionInfo -> new TopicPartition(partitionInfo.topic(),
+                            partitionInfo.partition()))
+                    .collect(Collectors.toList());
+
+        }
+
+        ConsumerRecord<String, byte[]> rc = latest(kafkaConsumer, topicName, partitions);
+        if (rc != null) {
+            log("Timestamp: " + DATE_FORMAT.format(new Date(rc.timestamp())));
+            log("Topic: " + rc.topic());
+            log("Partition: " + rc.partition());
+            log("Offset: " + rc.offset());
+            log("Key: " + rc.key());
+            log("Headers: " + toString(rc.headers()));
+            log("Message: ");
+            log(prettyPrint(new String(rc.value())));
+
+        } else {
+            log("Cannot get message from topic: " + topicName);
+        }
+
+        return rc;
+    }
+
+
+
+    public static void consume(CommandLine cmd, KafkaAdmin kafkaAdmin) throws Exception {
+        KafkaConsumer kafkaConsumer = kafkaAdmin.createKafkaConsumer();
+        String topicName = null;
+
+        if (cmd.hasOption("b")) {
+            File dir = new File(workspace, cmd.getOptionValue("b"));
+            File bod = new File(dir, "bod.properties");
+            if (!bod.exists()) {
+                log("File '" + bod + "' does not exit.");
+            }
+
+            Properties properties = new Properties();
+            properties.load(new FileInputStream(bod));
+
+            topicName = properties.containsKey(env + ".c") ? properties.getProperty(env + ".c") : properties.getProperty("c");
+        }
+
+        if (cmd.hasOption("c")) {
+            topicName = cmd.getOptionValue("c");
+        }
+
+        if (topicName == null) {
+            log("ERROR: Topic is not set. Please set topic name using parameter 'c'.");
+            System.exit(1);
+        }
+
+        long timeout = 1000;
+        if(cmd.hasOption("T")) {
+            timeout = Long.parseLong(cmd.getOptionValue("T"));
+        }
+
+        ConsumerRecord<String, byte[]> record = null;
+        if (cmd.hasOption("P")) {
+            if (cmd.hasOption("O")) {
+                record = consume(kafkaConsumer, topicName, Integer.parseInt(cmd.getOptionValue("P")), Long.parseLong(cmd.getOptionValue("O")), timeout);
+
+            } else {
+
+            }
+
+        } else {
+            latest(cmd, kafkaAdmin);
+        }
+
+        if (record != null) {
+            log("Timestamp: " + DATE_FORMAT.format(new Date(record.timestamp())));
+            log("Topic: " + record.topic());
+            log("Partition: " + record.partition());
+            log("Offset: " + record.offset());
+            log("Key: " + record.key());
+            log("Headers: " + toString(record.headers()));
+            log("Message: ");
+            log(prettyPrint(new String(record.value())));
+
+        } else {
+            log("Cannot get message from topic: " + topicName);
         }
     }
 
-    private static void pubAndSub(CommandLine cmd, KafkaAdmin kafkaAdmin) {
-        RecordMetadata metadata = kafkaProduce(cmd, kafkaAdmin);
-        try {
-            Thread.sleep(1000l);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        long timestamp = metadata.timestamp();
-        latest(cmd, kafkaAdmin);
-    }
-
-    private static void application(CommandLine cmd, KafkaAdmin kafkaAdmin) {
+    public static void application(CommandLine cmd, KafkaAdmin kafkaAdmin) {
         if (!cmd.hasOption("f")) {
-            System.out.println("Jar files for Kafka application need to be specified using argument 'f'");
+            log("Jar files for Kafka application need to be specified using argument 'f'");
             System.exit(1);
         }
 
         if (!cmd.hasOption("s")) {
-            System.out.println("Main class for Kafka application need to be specified using argument 's'");
+            log("Main class for Kafka application need to be specified using argument 's'");
             System.exit(1);
         }
 
@@ -685,9 +968,9 @@ public class KafkaAdmin {
         }
     }
 
-    private static void stream(CommandLine cmd, KafkaAdmin kafkaAdmin) {
+    public static void stream(CommandLine cmd, KafkaAdmin kafkaAdmin) {
         if (!cmd.hasOption("s")) {
-            System.out.println("Class for Kafka Stream task need to be specified using argument 's'");
+            log("Class for Kafka Stream task need to be specified using argument 's'");
             System.exit(1);
         }
 
@@ -728,7 +1011,7 @@ public class KafkaAdmin {
         }
     }
 
-    private static void groovy(CommandLine cmd, KafkaAdmin kafkaAdmin) {
+    public static void groovy(CommandLine cmd, KafkaAdmin kafkaAdmin) {
         GroovyShell shell = new GroovyShell();
         if (cmd.hasOption("f")) {
             try {
@@ -744,412 +1027,201 @@ public class KafkaAdmin {
         String script = "return 'hello world'";
 
         Object result = shell.evaluate(script);
-        System.out.println(result);
     }
 
-    // Business Object Tasks:
-    private static void processBusinessObjectTask(CommandLine cmd, KafkaAdmin kafkaAdmin, File home) {
+    // Utility methods:
+    private static void executeCommandLine(CommandLine cmd, KafkaAdmin kafkaAdmin) {
+        long timestamp = System.currentTimeMillis();
+        String action = HELP;
+        if (cmd.hasOption("h")) {
+            action = HELP;
 
-        File dir = new File(home, cmd.getOptionValue("b"));
-        File bod = new File(dir, "bod.properties");
-        String action = cmd.hasOption("a") ? cmd.getOptionValue("a") : null;
-        if (action == null) {
-            action = PRODUCE;
-
-        }
-
-        int exit = 0;
-
-        File logFile = new File(dir, "test.log");
-        boolean cleanLogHistory = cmd.hasOption("x");
-
-        StringBuilder logger = new StringBuilder();
-
-        System.out.println();
-        logger.append("==================== Executing '").append(action).append("' on ").append(new Date()).append(" ====================").append("\n");
-
-        try {
-            if (CREATE.equalsIgnoreCase(action)) {
-                createWorkspace(cmd, dir);
-
-            } else if (UPDATE.equalsIgnoreCase(action)) {
-                updateWorkspace(cmd, dir);
-
-            } else if (FILE.equalsIgnoreCase(action)) {
-                processFile(cmd, dir);
-
-            } else if (DELETE.equalsIgnoreCase(action)) {
-                deleteWorkspace(cmd, dir);
-
-            } else if (CONSUME.equalsIgnoreCase(action)) {
-                consume(cmd, dir, kafkaAdmin, logger);
-
-            } else if (PRODUCE.equalsIgnoreCase(action)) {
-                produce(cmd, dir, kafkaAdmin, logger);
-
-            } else {
-                System.out.println("Unknown action: " + action);
-
-            }
-        } catch (Exception e) {
-            logger.append("ERROR: " + e.getMessage()).append("\n");
-            logger.append("Root cause: " + e.getCause().getClass().getName()).append("\n");
-
-            System.out.println("Error: '" + e.getMessage() + "': Root cause: " + e.getCause().getClass().getName());
-            exit = 1;
-
-        } finally {
-            logger.append("\n").append("\n").append("\n");
-            String result = logger.toString();
-            System.out.println(result);
-
-            if (logFile.exists()) {
-                try {
-                    if (cmd.hasOption("x")) {
-                        Files.write(Paths.get(logFile.toURI()), result.getBytes(StandardCharsets.UTF_8));
-                    } else {
-                        Files.write(Paths.get(logFile.toURI()), result.getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND);
-                    }
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            System.exit(exit);
-        }
-    }
-
-    private static void createWorkspace(CommandLine cmd, File dir) throws IOException {
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-
-        File configFile = new File(dir, "bod.properties");
-        if (!configFile.exists()) {
-            configFile.createNewFile();
-        }
-
-        File logFile = new File(dir, "test.log");
-        if (!logFile.exists()) {
-            logFile.createNewFile();
-        }
-        String p = cmd.hasOption("p") ? cmd.getOptionValue("p") : "";
-        String c = cmd.hasOption("c") ? cmd.getOptionValue("c") : "";
-        String m = cmd.hasOption("m") ? cmd.getOptionValue("m") : "";
-
-        FileWriter writer = new FileWriter(configFile);
-        writer.write("c=" + c + "\n");
-        writer.write("p=" + p + "\n");
-        writer.write("m=" + m + "\n");
-
-        writer.flush();
-        writer.close();
-
-    }
-
-    private static void updateWorkspace(CommandLine cmd, File dir) throws IOException {
-        if (!dir.exists()) {
-            System.out.println("Directory '" + dir.getName() + "' does not exist.");
-            System.exit(1);
-        }
-
-        File configFile = new File(dir, "bod.properties");
-        if (!configFile.exists()) {
-            System.out.println("Business Object '" + dir.getName() + "' does not exist.");
-            System.exit(1);
-        }
-
-        Properties properties = new Properties();
-        properties.load(new FileInputStream(configFile));
-
-        String p = cmd.hasOption("p") ? cmd.getOptionValue("p") : properties.getProperty("p");
-        String c = cmd.hasOption("c") ? cmd.getOptionValue("c") : properties.getProperty("c");
-        String m = cmd.hasOption("m") ? cmd.getOptionValue("m") : properties.getProperty("m");
-
-        FileWriter writer = new FileWriter(configFile);
-        writer.write("c=" + c + "\n");
-        writer.write("p=" + p + "\n");
-        writer.write("m=" + m + "\n");
-
-        writer.flush();
-        writer.close();
-    }
-
-    private static void processFile(CommandLine cmd, File dir) throws IOException {
-        workspaceAvailable(dir);
-
-        String f = cmd.getOptionValue("f");
-        String m = cmd.getOptionValue("m");
-
-        File file = new File(dir, f);
-        if (!file.exists()) {
-            FileUtils.forceMkdirParent(file);
-            file.createNewFile();
-        }
-
-        if ("X".equalsIgnoreCase(m)) {
-            FileUtils.forceDelete(file);
+        } else if (cmd.hasOption("a")) {
+            action = cmd.getOptionValue("a");
 
         } else {
-            String contents = base64Decode(m);
-            FileWriter writer = new FileWriter(file);
-            writer.write(contents);
+            action = getDefaultAction(cmd);
+        }
 
-            writer.flush();
-            writer.close();
+        if (action == null) {
+            log("Cannot determine default action, please specify using '-c'");
+        }
 
+        log("############### Start executing '" + action + "' on environment '" + env + "' at " + DATE_FORMAT.format(new Date()) +
+                " ###############");
+        log("");
+
+        try {
+            Method method = KafkaAdmin.class.getMethod(action, new Class[]{CommandLine.class, KafkaAdmin.class});
+            method.invoke(null, new Object[]{cmd, kafkaAdmin});
+
+            log("");
+            log("-------------- Execution succeeded, using " + (System.currentTimeMillis() - timestamp) + "ms ---------------");
+            log("");
+
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            log(e.getMessage());
+            System.exit(1);
+            log("");
+            log("-------------- Execution failed at " + DATE_FORMAT.format(new Date()) + " ---------------");
         }
     }
 
-    private static void deleteWorkspace(CommandLine cmd, File dir) throws IOException {
-        FileUtils.forceDelete(dir);
+    private static String getDefaultAction(CommandLine cmd) {
+        String action = HELP;
+
+        if (cmd.hasOption("b")) {
+            Properties properties = getBodConfig(cmd);
+            if (properties.containsKey("p") && properties.containsKey("c")
+                    || cmd.hasOption("p") && properties.containsKey("c")
+                    || properties.containsKey("p") && cmd.hasOption("c")) {
+                action = PUB_AND_SUB;
+
+            } else if (properties.containsKey("p")) {
+                action = PRODUCE;
+
+            } else if (properties.containsKey("c")) {
+                action = LATEST;
+
+            }
+
+
+        } else if (cmd.hasOption("p")) {
+            if (cmd.hasOption("c")) {
+                action = PUB_AND_SUB;
+
+            } else {
+                action = PRODUCE;
+            }
+
+        } else if (cmd.hasOption("c")) {
+            if (cmd.hasOption("n")) {
+                action = CONSUME;
+            } else {
+                action = LATEST;
+            }
+        } else if (cmd.hasOption("Q")) {
+            action = TOPICS;
+
+        } else if (cmd.hasOption("q")) {
+            action = TOPICS;
+
+        }
+
+        return action;
     }
 
-    private static void consume(CommandLine cmd, File dir, KafkaAdmin kafkaAdmin, StringBuilder logger) throws IOException {
-        logger.append("Kafka Consumer:").append("\n");
+    private static RecordMetadata produce(KafkaAdmin kafkaAdmin, String topicName, File file, String hs, String key) throws Exception {
 
-        Properties bod = new Properties();
-        bod.load(new FileInputStream(new File(dir, "bod.properties")));
-        String topic = cmd.hasOption("c") ? cmd.getOptionValue("c") : bod.getProperty("c");
+        long timestamp = System.currentTimeMillis();
+        if (!file.exists()) {
+            log("File does not exist: " + file.getAbsolutePath());
+            System.exit(1);
+        }
+        byte[] msg = FileUtils.readFileToByteArray(file);
 
-        KafkaConsumer<String, byte[]> kafkaConsumer = new KafkaConsumer(kafkaAdmin.consumerProperties);
-        int count = 10;
+        KafkaProducer kafkaProducer = kafkaAdmin.createKafkaProducer();
+        RecordBuilder builder = new RecordBuilder(topicName).key(key).value(msg);
+        if (hs != null) {
+            Headers headers = headers(hs);
+            headers.forEach(e -> {
+                builder.header(e.key(), new String(e.value()));
+            });
+        }
+        ProducerRecord<String, byte[]> record = builder.create();
 
-        List<PartitionInfo> partitionInwriteret = kafkaConsumer.partitionsFor(topic);
-        Collection<TopicPartition> partitions = partitionInwriteret.stream()
-                .map(partitionInfo -> new TopicPartition(partitionInfo.topic(),
-                        partitionInfo.partition()))
-                .collect(Collectors.toList());
-        kafkaConsumer.assign(partitions);
+        Future<RecordMetadata> future = kafkaProducer.send(record);
+        while (!future.isDone()) {
+            if (System.currentTimeMillis() - timestamp > 60000) {
+                throw new TimeoutException("Fail to publish message to: " + topicName + " in 60 second.");
+            }
 
+            Thread.sleep(100L);
+        }
+
+        RecordMetadata metadata = future.get();
+
+        log("Timestamp: " + DATE_FORMAT.format(new Date(metadata.timestamp())));
+        log("Topic: " + metadata.topic());
+        log("Partition: " + metadata.partition());
+        log("Offset: " + metadata.offset());
+        log("Key: " + record.key());
+        log("Headers: " + toString(record.headers()));
+        log("Message: " + new String(record.value()));
+
+        return metadata;
+
+    }
+
+    private static ConsumerRecord<String, byte[]> latest(KafkaConsumer kafkaConsumer, String topicName, Collection<TopicPartition> partitions) throws Exception {
+        List<ConsumerRecord<String, byte[]>> records = new ArrayList<>();
         Map<TopicPartition, Long> latestOffsets = kafkaConsumer.endOffsets(partitions);
         for (TopicPartition partition : partitions) {
+            List<TopicPartition> assignments = new ArrayList<>();
+            assignments.add(partition);
+
+            kafkaConsumer.assign(assignments);
             Long latestOffset = Math.max(0, latestOffsets.get(partition) - 1);
-            kafkaConsumer.seek(partition, Math.max(0, latestOffset - count));
-        }
-
-        int totalCount = count * partitions.size();
-        final Map<TopicPartition, List<ConsumerRecord<String, byte[]>>> rawRecords
-                = partitions.stream().collect(Collectors.toMap(p -> p, p -> new ArrayList<>(count)));
-
-        boolean moreRecords = true;
-        while (rawRecords.size() < totalCount && moreRecords) {
+            kafkaConsumer.seek(partition, Math.max(0, latestOffset));
             ConsumerRecords<String, byte[]> polled = kafkaConsumer.poll(Duration.ofMillis(5000));
 
-            moreRecords = false;
-            for (TopicPartition partition : polled.partitions()) {
-                List<ConsumerRecord<String, byte[]>> records = polled.records(partition);
-                if (!records.isEmpty()) {
-                    rawRecords.get(partition).addAll(records);
-                    moreRecords = records.get(records.size() - 1).offset() < latestOffsets.get(partition) - 1;
-                }
-            }
-        }
-
-        List<ConsumerRecord<String, byte[]>> latestRecords = rawRecords
-                .values()
-                .stream()
-                .flatMap(Collection::stream)
-                .map(rec -> new ConsumerRecord<String, byte[]>(rec.topic(),
-                        rec.partition(),
-                        rec.offset(),
-                        rec.timestamp(),
-                        rec.timestampType(),
-                        0L,
-                        rec.serializedKeySize(),
-                        rec.serializedValueSize(),
-                        rec.key(),
-                        rec.value(),
-                        rec.headers(),
-                        rec.leaderEpoch()))
-                .collect(Collectors.toList());
-
-        if (latestRecords.size() > 0) {
-            latestRecords.forEach(rc -> {
-                //if(rc.timestamp() > timestamp) {
-                logger.append("Timestamp: ").append(DATE_FORMAT.format(new Date(rc.timestamp()))).append("\n");
-                logger.append("Topic: ").append(rc.topic()).append("\n");
-                logger.append("Partition: ").append(rc.partition()).append("\n");
-                logger.append("Offset: ").append(rc.offset()).append("\n");
-                logger.append("Headers: ").append(toString(rc.headers())).append("\n");
-                logger.append("Key: ").append(rc.key()).append("\n");
-                logger.append("Message: ").append(new String(rc.value())).append("\n");
-
-                logger.append("\n");
-                //}
+            polled.forEach(rc -> {
+                records.add(rc);
             });
         }
 
+        ConsumerRecord<String, byte[]> rc = null;
+        for (ConsumerRecord<String, byte[]> record : records) {
+            if (rc == null) {
+                rc = record;
+            } else if (record.timestamp() > rc.timestamp()) {
+                rc = record;
+            }
+        }
+
+        return rc;
     }
 
-    private static void produce(CommandLine cmd, File dir, KafkaAdmin kafkaAdmin, StringBuilder logger) throws IOException {
-        logger.append("Kafka Producer:").append("\n");
+    private static ConsumerRecord<String, byte[]> consume(KafkaConsumer kafkaConsumer, String topicName, int partition, long offset, long timeout) {
+        List<ConsumerRecord<String, byte[]>> records = new ArrayList<>();
+        TopicPartition topicPartition = new TopicPartition(topicName, partition);
 
-        long timestamp = System.currentTimeMillis();
-
-        Properties bod = new Properties();
-        bod.load(new FileInputStream(new File(dir, "bod.properties")));
-
-        String p = cmd.hasOption("p") ? cmd.getOptionValue("p") : bod.getProperty("p");
-        String c = cmd.hasOption("c") ? cmd.getOptionValue("c") : bod.getProperty("c");
-
-        if (p != null) {
-            String msg = null;
-            if (cmd.hasOption("f")) {
-                String f = cmd.getOptionValue("f");
-                msg = IOUtils.toString(new FileInputStream(new File(dir, f)), Charset.defaultCharset());
-            }
-
-            if (msg == null && cmd.hasOption("m")) {
-                msg = base64Decode(cmd.getOptionValue("m"));
-            }
-
-            if (msg == null && bod.getProperty("m") != null) {
-                msg = base64Decode(bod.getProperty("m"));
-            }
-
-            if (msg == null) {
-                System.out.println("No message to publish!");
-                System.exit(1);
-            }
-
-            String hs = cmd.hasOption("H") ? cmd.getOptionValue("H") : null;
-
-            KafkaProducer kafkaProducer = kafkaAdmin.createKafkaProducer();
-            RecordBuilder builder = new RecordBuilder(p).generateKey().message(msg);
-            if (hs != null) {
-                Headers headers = headers(hs);
-                headers.forEach(e -> {
-                    builder.header(e.key(), new String(e.value()));
-                });
-            }
-            ProducerRecord<String, byte[]> record = builder.create();
-
-            Future<RecordMetadata> future = kafkaProducer.send(record);
-            while (!future.isDone()) {
-                if(System.currentTimeMillis() - timestamp > 30000l) {
-                    throw new RuntimeException(new TimeoutException());
-                }
-
-                try {
-                    Thread.sleep(100L);
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            try {
-                RecordMetadata metadata = future.get();
-                timestamp = metadata.timestamp();
-
-                logger.append("Timestamp: ").append(DATE_FORMAT.format(new Date(metadata.timestamp()))).append("\n");
-                logger.append("Topic: ").append(metadata.topic()).append("\n");
-                logger.append("Partition: ").append(metadata.partition()).append("\n");
-                logger.append("Offset: ").append(metadata.offset()).append("\n");
-                logger.append("Headers: ").append(toString(record.headers())).append("\n");
-                logger.append("Key: ").append(record.key()).append("\n");
-                logger.append("Message: ").append(new String(record.value())).append("\n");
-
-                logger.append("\n");
-
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        try {
-            Thread.sleep(10000l);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        if (c != null) {
-            List<ConsumerRecord<String, byte[]>> list = consume(kafkaAdmin, c, 2);
-            ConsumerRecord<String, byte[]> rc = null;
-            if (timestamp > 0 && list.size() > 0 && list.get(0).timestamp() > timestamp) {
-                rc = list.get(0);
-                logger.append("Timestamp: ").append(DATE_FORMAT.format(new Date(rc.timestamp()))).append("\n");
-                logger.append("Topic: ").append(rc.topic()).append("\n");
-                logger.append("Partition: ").append(rc.partition()).append("\n");
-                logger.append("Offset: ").append(rc.offset()).append("\n");
-                logger.append("Headers: ").append(toString(rc.headers())).append("\n");
-                logger.append("Key: ").append(rc.key()).append("\n");
-                logger.append("Message: ").append(prettyPrint(new String(rc.value()))).append("\n");
-
-            } else {
-                logger.append("No recorder received.");
-            }
-
-            logger.append("\n");
-        }
-    }
-
-    // utility methods:
-    private static void workspaceAvailable(File dir) {
-        if (!dir.exists()) {
-            System.out.println();
-            System.out.println("Workspace is not created for business object '" + dir.getName() + "'.");
-            System.exit(1);
-        }
-    }
-
-    private static List<ConsumerRecord<String, byte[]>> consume(KafkaAdmin kafkaAdmin, String topicName, int count) {
-
-        KafkaConsumer<String, byte[]> kafkaConsumer = kafkaAdmin.createKafkaConsumer();
-
-        List<PartitionInfo> partitionInfoSet = kafkaConsumer.partitionsFor(topicName);
-        Collection<TopicPartition> partitions = partitionInfoSet.stream()
-                .map(partitionInfo -> new TopicPartition(partitionInfo.topic(),
-                        partitionInfo.partition()))
-                .collect(Collectors.toList());
+        Collection<TopicPartition> partitions = new ArrayList<>();
+        partitions.add(topicPartition);
         kafkaConsumer.assign(partitions);
+        kafkaConsumer.seekToBeginning(partitions);
 
-        Map<TopicPartition, Long> latestOffsets = kafkaConsumer.endOffsets(partitions);
-        for (TopicPartition partition : partitions) {
-            Long latestOffset = Math.max(0, latestOffsets.get(partition) - 1);
-            kafkaConsumer.seek(partition, Math.max(0, latestOffset - count));
-        }
-
-        int totalCount = count * partitions.size();
-        final Map<TopicPartition, List<ConsumerRecord<String, byte[]>>> rawRecords
-                = partitions.stream().collect(Collectors.toMap(p -> p, p -> new ArrayList<>(count)));
-
-        boolean moreRecords = true;
-        while (rawRecords.size() < totalCount && moreRecords) {
-            ConsumerRecords<String, byte[]> polled = kafkaConsumer.poll(Duration.ofMillis(200));
-
-            moreRecords = false;
-            for (TopicPartition partition : polled.partitions()) {
-                List<ConsumerRecord<String, byte[]>> records = polled.records(partition);
-                if (!records.isEmpty()) {
-                    rawRecords.get(partition).addAll(records);
-                    moreRecords = records.get(records.size() - 1).offset() < latestOffsets.get(partition) - 1;
-                }
+        ConsumerRecords<String, byte[]> polled = kafkaConsumer.poll(Duration.ofMillis(timeout));
+        polled.forEach(rc -> {
+            if(rc.offset() == offset) {
+                records.add(rc);
             }
+        });
+
+        return records.isEmpty()? null : records.get(0);
+    }
+
+    private static Properties getBodConfig(CommandLine cmd) {
+        File dir = new File(workspace, cmd.getOptionValue("b"));
+        File bod = new File(dir, "bod.properties");
+        if (!bod.exists()) {
+            log("File '" + bod + "' does not exit.");
         }
 
-        List<ConsumerRecord<String, byte[]>> results = rawRecords
-                .values()
-                .stream()
-                .flatMap(Collection::stream)
-                .map(rec -> new ConsumerRecord<String, byte[]>(rec.topic(),
-                        rec.partition(),
-                        rec.offset(),
-                        rec.timestamp(),
-                        rec.timestampType(),
-                        0L,
-                        rec.serializedKeySize(),
-                        rec.serializedValueSize(),
-                        rec.key(),
-                        rec.value(),
-                        rec.headers(),
-                        rec.leaderEpoch()))
-                .collect(Collectors.toList());
+        Properties properties = new Properties();
+        try {
+            properties.load(new FileInputStream(bod));
 
-        Collections.reverse(results);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-        return results;
+        return properties;
+    }
+
+    private static String getBodProperty(String propName, Properties properties) {
+        return properties.containsKey(env.toLowerCase() + "." + propName) ?
+                properties.getProperty(env.toLowerCase(Locale.ROOT) + "." + propName) : properties.getProperty(propName);
     }
 
     private static Headers headers(String headers) {
@@ -1157,12 +1229,30 @@ public class KafkaAdmin {
             return null;
         }
 
-        String token = base64Decode(headers);
-        JsonObject jsonObject = JsonParser.parseString(token).getAsJsonObject();
         RecordHeaders recordHeaders = new RecordHeaders();
-        jsonObject.entrySet().forEach(e -> {
-            recordHeaders.add(new RecordHeader(e.getKey(), e.getValue().getAsString().getBytes()));
-        });
+        if (headers.startsWith("[") && headers.endsWith("]")) {
+            String[] arr = headers.substring(1, headers.length() - 1).split(";");
+            for (String exp : arr) {
+                if (exp.contains("=")) {
+                    String[] kv = exp.split("=");
+                    String key = kv[0].trim();
+                    String value = kv[1].trim();
+                    if (value.startsWith("'") && value.endsWith("'") || value.startsWith("\"") && value.endsWith("\"")) {
+                        value = value.substring(1, value.length() - 1);
+                    }
+
+                    recordHeaders.add(key, value.getBytes());
+                }
+            }
+
+        } else {
+            String token = base64Decode(headers);
+            JsonObject jsonObject = JsonParser.parseString(token).getAsJsonObject();
+
+            jsonObject.entrySet().forEach(e -> {
+                recordHeaders.add(new RecordHeader(e.getKey(), e.getValue().getAsString().getBytes()));
+            });
+        }
 
         return recordHeaders;
     }
@@ -1216,7 +1306,84 @@ public class KafkaAdmin {
         return result.getWriter().toString();
     }
 
-    //
+    private static String cellFormat(String value, int len) {
+        char[] result = new char[len];
+        char[] arr = value == null ? "null".toCharArray() : value.toCharArray();
+        int size = arr.length;
+        int length = Math.max(size, len);
+        for (int i = 0; i < length; i++) {
+            if (i < size) {
+                result[i] = arr[i];
+            } else {
+                result[i] = ' ';
+            }
+        }
+        return new String(result);
+    }
+
+    // RecordBuilder
+    private static class PartitionStatus extends PartitionInfo {
+        private transient TopicPartition topicPartition;
+        private OffsetInfo offset = new OffsetInfo();
+
+        public PartitionStatus(PartitionInfo partitionInfo) {
+            super(partitionInfo.topic(), partitionInfo.partition(),
+                    partitionInfo.leader(), partitionInfo.replicas(), partitionInfo.inSyncReplicas(), partitionInfo.offlineReplicas());
+            this.topicPartition = new TopicPartition(partitionInfo.topic(), partitionInfo.partition());
+        }
+    }
+
+    private static class OffsetInfo {
+        private long begin;
+        private long end;
+    }
+
+    private static class RecordInfo implements Comparable<RecordInfo> {
+        private ConsumerRecord<String, byte[]> record;
+
+        private long ts;
+
+        private int partition;
+        private long offset;
+        private String timestamp;
+        private String key;
+        private int size;
+        private String headers;
+
+        private RecordInfo(ConsumerRecord<String, byte[]> record) {
+            this.ts = record.timestamp();
+            this.partition = record.partition();
+            this.offset = record.offset();
+            this.timestamp = DATE_FORMAT.format(new Date(record.timestamp()));
+            this.key = record.key();
+            this.size = record.serializedValueSize();
+            this.headers = record.headers() == null ? "" : KafkaAdmin.toString(record.headers());
+        }
+
+        @Override
+        public int compareTo(RecordInfo o) {
+            return (int) (ts - o.ts);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof RecordInfo)) return false;
+
+            RecordInfo that = (RecordInfo) o;
+
+            if (partition != that.partition) return false;
+            return offset == that.offset;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = partition;
+            result = 31 * result + (int) (offset ^ (offset >>> 32));
+            return result;
+        }
+    }
+
     private static class RecordBuilder {
         private String topic;
         private Integer partition = 0;
@@ -1280,6 +1447,5 @@ public class KafkaAdmin {
             return new ProducerRecord<String, byte[]>(topic, partition, key, value, recordHeaders);
         }
     }
-
 
 }

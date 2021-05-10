@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns="http://scoperetail.com/common/default.aspx"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
+           targetNamespace="http://scoperetail.com/common/default.aspx"
+           elementFormDefault="qualified"
+           attributeFormDefault="unqualified"
+           vc:minVersion="1.1">
+    <!-- scope common -->
+    <!--
+    Changelog #1
+    ============
+    Date: 07/04/2018
+    Changes:
+    1. Updated OrderTypeCodes enum
+    2. ProductStatusCode
+    3. Added uomCodeQty and uomCodeWgt
+    4. Added Product Restriction Code
+   Change Log#2
+   ============
+   Date: 07-09-2018
+   1. Updated Quantity Type to allow negative values
+   Change Log#3
+   ============
+   Date: 08-15-2018
+   1. Added minLength restriction for divisionId
+   2. Added additional options for prouductRestrictionCd
+   3. Added additional productStatusCd
+   Change Log#4 - SAM
+   ============
+   Date: 09-12-2018
+   1. Added string1 of size 1
+   2. Changed Enumeration of ProductCustomerStatusCode
+   3. Changed Enumeration of ProductSupplierStatusCode
+   4. Added new CustomerProductState
+   5. Added new SupplierProductState
+
+   Change Log#5 - NISAR
+   ============
+   Date: 11-13-2018
+   1. Added divisionId blank check
+
+   Changelog #6 (Tushar S) - SCOOP-5584
+   ==================
+   Date: 07-01-2019
+   1. Added transferOrderType enumeration
+
+   Changelog #7 (Rakshant) - SCOOP-7284
+   ==================
+   Date: 11-29-2019
+   1. Added new simpleType decimal114(11,4)
+
+   Changelog #8 (Rakshant) - SCOOP-8254
+   ==================
+   Date: 05-04-2020
+   1. Added new simpleType offSetDateTime
+   2. Added new simpleType offSetTime
+   Changelog #9 (Tushar) - SCOOP-13060
+   ==================
+   Date: 11-12-2020
+   1. Updated latest values for following enumerations:
+    a. OrderTypeCodes
+    b. OrderStatusCodes
+    c. OrderLineStatusCodes
+    d. OrderSchedStatusCodes
+
+   -->
+    <xs:simpleType name="OrderTypeCodes" final="restriction">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="REGULAR"/>
+            <xs:enumeration value="RUSH"/>
+            <xs:enumeration value="FIRM"/>
+            <xs:enumeration value="TRANSFER"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="OrderStatusCodes" final="restriction">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NEW"/>
+            <xs:enumeration value="ACTIVE"/>
+            <xs:enumeration value="ON_HOLD"/>
+            <xs:enumeration value="RELEASED_FOR_FULFILLMENT"/>
+            <xs:enumeration value="CANCELLED"/>
+            <xs:enumeration value="REJECTED"/>
+            <xs:enumeration value="ENRICHMENT_IN_PROGRESS"/>
+            <xs:enumeration value="READY_TO_RELEASE"/>
+            <xs:enumeration value="PENDING_ALLOCATION"/>
+            <xs:enumeration value="RELEASED"/>
+            <xs:enumeration value="HOLD"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="OrderLineStatusCodes" final="restriction">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NEW"/>
+            <xs:enumeration value="ACTIVE"/>
+            <xs:enumeration value="CANCELLED"/>
+            <xs:enumeration value="REJECTED"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="OrderSchedStatusCodes" final="restriction">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="SCHEDULED"/>
+            <xs:enumeration value="UNSCHEDULED"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ProductCustomerStatusCode" final="restriction">
+        <xs:restriction base="xs:string">
+           <xs:enumeration value="DISCONTINUED"/>
+            <xs:enumeration value="CHOSEN"/>
+            <xs:enumeration value="PRICED"/>
+            <xs:enumeration value="VALID"/>
+            <xs:enumeration value="NEW"/>
+            <xs:enumeration value="SEASONAL"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+
+    <xs:simpleType name="CustomerProductState" final="restriction">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ACTIVE"/>
+            <xs:enumeration value="INACTIVE">
+                <xs:annotation>
+                    <xs:documentation>INACTIVE Status is to mark a deleted record</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+
+	<xs:simpleType name="TransferOrderType" final="restriction">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="M2"/>
+            <xs:enumeration value="M3" />
+            <xs:enumeration value="M9" />
+        </xs:restriction>
+    </xs:simpleType>
+
+
+    <xs:simpleType name="ProductSupplierStatusCode" final="restriction">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="DISCONTINUED"/>
+            <xs:enumeration value="VALID"/>
+            <xs:enumeration value="NEW"/>
+            <xs:enumeration value="SEASONAL"/>
+            <xs:enumeration value="TEMP_OUT"/>
+            <xs:enumeration value="TO_BE_DISCONTINUED">
+                <xs:annotation>
+                    <xs:documentation>INACTIVE Status is to mark a deleted record</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="SupplierProductState" final="restriction">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="DISCONTINUED"/>
+            <xs:enumeration value="ACTIVE"/>
+            <xs:enumeration value="INACTIVE">
+                <xs:annotation>
+                    <xs:documentation>INACTIVE Status is to mark a deleted record</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="quantityType">
+        <xs:restriction base="xs:integer"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="decimal92">
+        <xs:restriction base="xs:decimal">
+            <xs:totalDigits value="9"/>
+            <xs:fractionDigits value="2"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="decimal114">
+        <xs:restriction base="xs:decimal">
+            <xs:totalDigits value="11"/>
+            <xs:fractionDigits value="4"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="integer6">
+        <xs:restriction base="xs:integer">
+            <xs:totalDigits value="6"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="integer5">
+        <xs:restriction base="xs:integer">
+            <xs:totalDigits value="5"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="weightType">
+        <xs:restriction base="xs:decimal">
+            <xs:totalDigits value="9"/>
+            <xs:fractionDigits value="2"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="lineNumberType">
+        <xs:restriction base="xs:unsignedInt">
+            <xs:minInclusive value="1"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="sequence999">
+        <xs:restriction base="xs:unsignedInt">
+            <xs:minInclusive value="1"/>
+            <xs:maxInclusive value="999"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="productIdType">
+        <xs:restriction base="xs:positiveInteger"/>
+    </xs:simpleType>
+    <xs:simpleType name="corpIdType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="3"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="divisionIdType">
+        <xs:restriction base="xs:string">
+         <xs:pattern value="[^\s]{2}"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="customerIdType">
+        <xs:restriction base="xs:positiveInteger"/>
+    </xs:simpleType>
+    <xs:simpleType name="supplierIdType">
+        <xs:restriction base="xs:positiveInteger"/>
+    </xs:simpleType>
+    <xs:simpleType name="xrefIdType">
+        <xs:restriction base="xs:integer">
+            <xs:pattern value="\d{10}"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!--BASE COMMON -->
+    <xs:simpleType name="string1">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="1"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="string2">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="2"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="string3">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="3"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="string4">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="4"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="string5">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="5"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="string6">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="6"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="string10">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="10"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="string14">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="14"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="string15">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="15"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="string18">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="18"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="string19">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="19"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="string20">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="20"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="string30">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="30"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="string40">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="40"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="string50">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="50"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="string60">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="60"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="string100">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="100"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="string256">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="256"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="string8">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="8"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="weekOfYear">
+        <xs:restriction base="xs:positiveInteger">
+            <xs:minExclusive value="1"/>
+            <xs:maxExclusive value="52"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="daysOfWeek">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="MONDAY"/>
+            <xs:enumeration value="TUESDAY"/>
+            <xs:enumeration value="WEDNESDAY"/>
+            <xs:enumeration value="THURSDAY"/>
+            <xs:enumeration value="FRIDAY"/>
+            <xs:enumeration value="SATURDAY"/>
+            <xs:enumeration value="SUNDAY"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="uomCodeQty" final="restriction">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="EACH"/>
+            <xs:enumeration value="CASE"/>
+            <xs:enumeration value="INNER_PACK"/>
+            <xs:enumeration value="PALLET"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="customerUomCodes" final="restriction">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="WH_UNIT"/>
+            <xs:enumeration value="EACH"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="uomCodeWgt" final="restriction">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="LB"/>
+            <xs:enumeration value="OZ"/>
+            <xs:enumeration value="KG"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="ProductRestrictionCode" final="restriction">
+        <xs:annotation>
+            <xs:documentation>It can be R, H, O or N. Same as mgr opt code in safeway</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="R">
+                <xs:annotation>
+                    <xs:documentation>ordering of this item is restricted to specific order type (For ex: Rush order)
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="H">
+                <xs:annotation>
+                    <xs:documentation>if ordered, put the item on hold</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="O">
+                <xs:annotation>
+                    <xs:documentation>ordering of this item is optional</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="N">
+                <xs:annotation>
+                    <xs:documentation>No Restrictions</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+
+        </xs:restriction>
+    </xs:simpleType>
+	<xs:simpleType name="offSetDateTime">
+		<xs:restriction base="xs:dateTime"></xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="offSetTime">
+		<xs:restriction base="xs:time"></xs:restriction>
+	</xs:simpleType>
+</xs:schema>

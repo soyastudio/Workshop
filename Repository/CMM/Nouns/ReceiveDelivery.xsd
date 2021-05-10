@@ -6,8 +6,9 @@
    Dsc: contains commonly used Albertson's Purchase order schema.
    Name: /ABS_CMM_Platform/Nouns/PurchaseOrder.xsd
 -->
-<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by Rosabel Macario (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.8 snuth00  04/08/2021   updated to include DSD BDR receivinngs-->
 	<!--V1.7 Rosabel Macario 02/01/2021: Set AccountingUnitId and ChartOfAccountNm as Optional-->
 	<!--V1.6 Rosabel Macario 12/21/20: Updated InvoiceNbr maxlen from 10 to 50 same as what is in Invoice noun. -->
 	<!--V1.5 Rosabel Macario 12/15/20: Added MatchQuantity and MatchUnitCostAmt and removed OpenToMatchQuantity. -->
@@ -273,6 +274,21 @@ then we have a warehouse Pack = 12 and a VEND-CONV-FCTR = 6.
 										<xs:documentation> The generic retail size of goods. It may be actual size
  Example: 340 g or a unit type (packet).                           
 </xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="ItemStorePackQty" type="xs:decimal" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Retail store item pack qty.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="ItemRetailPackQty" type="xs:decimal" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>retail sale pack qty in case of DSD BDR receivings</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="ItemSplitQty" type="xs:decimal" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>If only split qty is received in BDR.</xs:documentation>
 									</xs:annotation>
 								</xs:element>
 								<xs:element name="VendorUnitCostAmt" default="0" minOccurs="0">
@@ -670,6 +686,14 @@ N = No</xs:documentation>
 										</xs:sequence>
 									</xs:complexType>
 								</xs:element>
+								<xs:element name="SpecialOrderItemInd" type="xs:boolean" minOccurs="0"/>
+								<xs:element name="ItemUsageTypeCd" minOccurs="0">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="50"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
 							</xs:sequence>
 						</xs:extension>
 					</xs:complexContent>
@@ -686,6 +710,36 @@ N = No</xs:documentation>
 			<xs:element ref="DivisionId"/>
 			<xs:element ref="WarehouseId" minOccurs="0"/>
 			<xs:element ref="DistributionCenterId" minOccurs="0"/>
+			<xs:element name="FacilityType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Type of the facility like, DC,  warehouse, Retail Store, Office building, manufacturing plant..etc.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityID" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A four character code that is used with corporation
+ and division to uniquely identify a facility. A facility may "belong" to
+ only one corporation and one division. A building may house one or more
+facilities. There are two categories for facilities:
+ 1) Operating facility
+ - actively supports the business of the Company
+ - is a distinct business operation within a building
+  - examples: office, processing plant, retail store, truck service
+ shop, or warehouse building  (A warehouse facility includes all warehouse departments that exist within a single building.)
+ - each type of division/business has a different set of possible types of operating facilities: i.e.,
+ - Retail: retail outlets and offices.
+- Wholesale: warehouse facilities, truck service shop, and offices.
+- Processing/Manufacturing: processing plants and offices.
+ 2) Non-operating Facility                                                     
+ - not currently being operated by the Company.
+ - facilities </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element ref="PurchaseOrderNbr"/>
 			<xs:element ref="PurchaseOrderDt" minOccurs="0"/>
 			<xs:element name="PurchaseOrderSource" type="CodeWithDescription" minOccurs="0"/>
@@ -715,28 +769,18 @@ Values: Original, Adjustment</xs:documentation>
 -Received by Store from Warehouse.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="Invoice" minOccurs="0">
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element name="InvoiceNbr" minOccurs="0">
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="50"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="InvoiceDt" type="xs:date" minOccurs="0"/>
-						<xs:element name="InvoiceAmt" minOccurs="0">
-							<xs:simpleType>
-								<xs:restriction base="xs:decimal">
-									<xs:totalDigits value="14"/>
-									<xs:fractionDigits value="4"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-					</xs:sequence>
-				</xs:complexType>
+			<xs:element name="ReceiveDepartmentId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Facility department that is receiving the goods.
+ex retail dept nbr for DSD BDR receiving</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
 			</xs:element>
+			<xs:element name="Invoice" type="InvoiceType" minOccurs="0"/>
 			<xs:element name="ReferenceShipmentNbr" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
@@ -948,7 +992,158 @@ Values: Original, Adjustment</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="OrgMasterNameType" type="OrgMasterNameType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="AbsReceiveDeliveryDetailType"/>
+	<xs:complexType name="InvoiceType">
+		<xs:annotation>
+			<xs:documentation>Invoice details of the corresponding vendor delivaries received at a facility.
+ex:DSD vendor invoice details received in back door receiving system(BDR).</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="InvoiceType" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="InvoiceNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InvoiceDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="InvoiceAmt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="CurrencyCd" minOccurs="0"/>
+			<xs:element name="InvoiceStatus" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="VendorCost" type="VendorCostType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="VendorAllowance" type="AllowancesType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="InvoiceTax" type="InvoiceTaxType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="AdjustmentReason" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>various kinds of adjustment reason codes like invoice amount adjustment, or item qty discrepancies reasons.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ReasonTypeCd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ReasonTxt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="500"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AcceptanceBasis" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Invoice acceptance method cd.
+0-Not received yet (or unknown)
+ 1-if the invoice was accepted using the total accept menthod 
+ 2-if the invoice was accepted using the total count method 
+ 3-if the invoice was accepted using the details receiving method or 
+ the invoice is a Totals Only Receiver Scan Invoice 
+ 4-if the invoive was accepted using CRT invoice maintenance
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VerificationInd" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Manger veririfed and audited the invoice for payment.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Payment" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="VendorPaymentTerm" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Vendor Invoice payment terms like Collect on delivery (COD)</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:complexContent>
+									<xs:extension base="CodeWithDescription">
+										<xs:sequence>
+											<xs:element name="PaymentTermValueTxt" minOccurs="0">
+												<xs:simpleType>
+													<xs:restriction base="xs:string">
+														<xs:maxLength value="50"/>
+													</xs:restriction>
+												</xs:simpleType>
+											</xs:element>
+										</xs:sequence>
+									</xs:extension>
+								</xs:complexContent>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="FacilityPaymentTerm" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Receiving facility payment term.
+Ex Cash on Delivery COD</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:complexContent>
+									<xs:extension base="CodeWithDescription">
+										<xs:sequence>
+											<xs:element name="PaymentTermValueTxt" minOccurs="0">
+												<xs:simpleType>
+													<xs:restriction base="xs:string">
+														<xs:maxLength value="50"/>
+													</xs:restriction>
+												</xs:simpleType>
+											</xs:element>
+										</xs:sequence>
+									</xs:extension>
+								</xs:complexContent>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="CheckNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CheckAmt" type="xs:decimal" minOccurs="0"/>
+						<xs:element name="PaymentStatus" type="CodeWithDescription" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="VendorCostType">
+		<xs:sequence>
+			<xs:element name="VendorCostTypeCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CostAmt" type="xs:decimal" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InvoiceTaxType">
+		<xs:sequence>
+			<xs:element name="TaxTypeCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TaxAmt" type="xs:decimal" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
 </xs:schema>

@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2021 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://collab.safeway.com/it/architecture/AbsOmMaster" xmlns:ns2="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
-	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<!--V2.0 - Alex Nunes - 1/12/21 - Structure redesigned to accomodate business requirement changes and introduction of new system of record.-->
 	<!--V2.0 - Alex Nunes - 3/16/21 - Aisle Nbr to Aisle Id and Data type change on ScopeOrientationTxt to string.-->
+		<!--V2.0 - Alex Nunes - 3/26/21 - Namespace change.-->
 	<xs:complexType name="StoreSchematic">
 		<xs:annotation>
 			<xs:documentation>Defines the layout of various item placement structures in a retail store.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="Corporation" type="ns2:CorporationType"/>
-			<xs:element name="Division" type="ns2:DivisionType">
+			<xs:element name="Corporation" type="CorporationType"/>
+			<xs:element name="Division" type="DivisionType">
 				<xs:annotation>
 					<xs:documentation>Information related to the operating division. Ex Norcal with Div Id 25 </xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element ref="ns2:RetailStoreId"/>
+			<xs:element ref="RetailStoreId"/>
 			<xs:element name="StoreCheckstandsNbr" type="xs:int" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Number of check-stands in the store.</xs:documentation>
@@ -31,7 +32,7 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="OrgEntityType" type="ns2:OrgMasterNameType" minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="OrgEntityType" type="OrgMasterNameType" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:documentation>Generic type to capture different org structures.</xs:documentation>
 				</xs:annotation>
@@ -66,7 +67,7 @@ Note:
 								<xs:sequence>
 									<xs:element name="FixtureId" type="xs:integer" minOccurs="0"/>
 									<xs:element name="FixtureNm" type="xs:string" minOccurs="0"/>
-									<xs:element name="FixtureType" type="ns2:CodeWithDescription" minOccurs="0"/>
+									<xs:element name="FixtureType" type="CodeWithDescription" minOccurs="0"/>
 									<xs:element name="EffectiveStartDt" type="xs:date" minOccurs="0"/>
 									<xs:element name="EffectiveEndDt" type="xs:date" minOccurs="0"/>
 									<xs:element name="Coordinates" type="CoordinatesType" minOccurs="0"/>
@@ -116,7 +117,7 @@ Note:
 											<xs:documentation>Maximum number of bays within a shelf</xs:documentation>
 										</xs:annotation>
 									</xs:element>
-									<xs:element name="FixtureSection" type="ns2:CodeWithDescription" minOccurs="0"/>
+									<xs:element name="FixtureSection" type="CodeWithDescription" minOccurs="0"/>
 									<xs:element name="Dimensions" type="DimensionsType" minOccurs="0"/>
 								</xs:sequence>
 							</xs:complexType>

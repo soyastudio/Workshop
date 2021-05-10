@@ -1,0 +1,388 @@
+BROKER SCHEMA com.abs.uca.cams
+
+CREATE COMPUTE MODULE ESED_CAMS_CMM_Transformer_Compute
+
+	-- Declare UDPs
+	DECLARE SYSTEM_ENVIRONMENT_CODE EXTERNAL CHARACTER 'PROD';
+	DECLARE LOG_OUPUT_MSG EXTERNAL CHARACTER 'N';
+	DECLARE VERSION_ID EXTERNAL CHARACTER '3.1.10';
+
+	-- Declare Namespace
+	DECLARE Abs NAMESPACE 'https://collab.safeway.com/it/architecture/info/default.aspx';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- Declare Input Message Root
+		DECLARE _inputRootNode REFERENCE TO InputRoot.JSON.Data;
+
+		-- Declare Output Message Root
+		CREATE LASTCHILD OF OutputRoot DOMAIN 'XMLNSC';
+
+		DECLARE GetCustomerAddress_ REFERENCE TO OutputRoot.XMLNSC.GetCustomerAddress;
+		CREATE LASTCHILD OF OutputRoot.XMLNSC AS GetCustomerAddress_ TYPE XMLNSC.Folder NAME 'GetCustomerAddress';
+		SET OutputRoot.XMLNSC.GetCustomerAddress.(XMLNSC.NamespaceDecl)xmlns:Abs=Abs;
+
+			-- GetCustomerAddress/DocumentData
+			DECLARE DocumentData_ REFERENCE TO GetCustomerAddress_;
+			CREATE LASTCHILD OF GetCustomerAddress_ AS DocumentData_ TYPE XMLNSC.Folder NAME 'DocumentData';
+
+				-- GetCustomerAddress/DocumentData/Document
+				DECLARE Document_ REFERENCE TO DocumentData_;
+				CREATE LASTCHILD OF DocumentData_ AS Document_ TYPE XMLNSC.Folder NAME 'Document';
+
+					-- GetCustomerAddress/DocumentData/Document/@VersionId
+					SET Document_.(XMLNSC.Attribute)VersionId = VERSION_ID;
+
+					-- GetCustomerAddress/DocumentData/Document/@SystemEnvironmentCd
+					SET Document_.(XMLNSC.Attribute)SystemEnvironmentCd = SYSTEM_ENVIRONMENT_CODE;
+
+					-- GetCustomerAddress/DocumentData/Document/DocumentID
+					SET Document_.(XMLNSC.Field)Abs:DocumentID = InputLocalEnvironment.Kafka.Input.topicName;
+
+					-- GetCustomerAddress/DocumentData/Document/AlternateDocumentID
+					SET Document_.(XMLNSC.Field)Abs:AlternateDocumentID = InputLocalEnvironment.Kafka.Input.topicName ||'_'||InputLocalEnvironment.Kafka.Input.partition||'_'||InputLocalEnvironment.Kafka.Input.offset||'_'||CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT 'YYYYMMddHHmmssSSSSSS');
+
+					-- GetCustomerAddress/DocumentData/Document/DocumentNm
+					SET Document_.(XMLNSC.Field)Abs:DocumentNm = 'GetCustomerAddress';
+
+					-- GetCustomerAddress/DocumentData/Document/CreationDt
+					SET Document_.(XMLNSC.Field)Abs:CreationDt = CURRENT_TIMESTAMP;
+
+					-- GetCustomerAddress/DocumentData/Document/Description
+					SET Document_.(XMLNSC.Field)Abs:Description = 'status and purpose of various Retail customer address types  ';
+
+					-- GetCustomerAddress/DocumentData/Document/SourceApplicationCd
+					SET Document_.(XMLNSC.Field)Abs:SourceApplicationCd = 'CAMS';
+
+					-- GetCustomerAddress/DocumentData/Document/TargetApplicationCd
+					SET Document_.(XMLNSC.Field)Abs:TargetApplicationCd = 'EDIS';
+
+					-- GetCustomerAddress/DocumentData/Document/InternalFileTransferInd
+					SET Document_.(XMLNSC.Field)Abs:InternalFileTransferInd = 'Y';
+
+					-- GetCustomerAddress/DocumentData/Document/DataClassification
+					DECLARE DataClassification_ REFERENCE TO Document_;
+					CREATE LASTCHILD OF Document_ AS DataClassification_ TYPE XMLNSC.Folder NAME 'Abs:DataClassification';
+
+						-- GetCustomerAddress/DocumentData/Document/DataClassification/DataClassificationLevel
+						DECLARE DataClassificationLevel_ REFERENCE TO DataClassification_;
+						CREATE LASTCHILD OF DataClassification_ AS DataClassificationLevel_ TYPE XMLNSC.Folder NAME 'Abs:DataClassificationLevel';
+
+							-- GetCustomerAddress/DocumentData/Document/DataClassification/DataClassificationLevel/Code
+							SET DataClassificationLevel_.(XMLNSC.Field)Abs:Code = 'Internal';
+
+						-- GetCustomerAddress/DocumentData/Document/DataClassification/BusinessSensitivityLevel
+						DECLARE BusinessSensitivityLevel_ REFERENCE TO DataClassification_;
+						CREATE LASTCHILD OF DataClassification_ AS BusinessSensitivityLevel_ TYPE XMLNSC.Folder NAME 'Abs:BusinessSensitivityLevel';
+
+							-- GetCustomerAddress/DocumentData/Document/DataClassification/BusinessSensitivityLevel/Code
+							SET BusinessSensitivityLevel_.(XMLNSC.Field)Abs:Code = 'Medium';
+
+						-- GetCustomerAddress/DocumentData/Document/DataClassification/PHIdataInd
+						SET DataClassification_.(XMLNSC.Field)Abs:PHIdataInd = 'N';
+
+						-- GetCustomerAddress/DocumentData/Document/DataClassification/PCIdataInd
+						SET DataClassification_.(XMLNSC.Field)Abs:PCIdataInd = 'N';
+
+						-- GetCustomerAddress/DocumentData/Document/DataClassification/PIIdataInd
+						SET DataClassification_.(XMLNSC.Field)Abs:PIIdataInd = 'Y';
+
+				-- GetCustomerAddress/DocumentData/DocumentAction
+				DECLARE DocumentAction_ REFERENCE TO DocumentData_;
+				CREATE LASTCHILD OF DocumentData_ AS DocumentAction_ TYPE XMLNSC.Folder NAME 'DocumentAction';
+
+					-- GetCustomerAddress/DocumentData/DocumentAction/ActionTypeCd
+					SET DocumentAction_.(XMLNSC.Field)Abs:ActionTypeCd = 'UPDATE';
+
+					-- GetCustomerAddress/DocumentData/DocumentAction/RecordTypeCd
+					SET DocumentAction_.(XMLNSC.Field)Abs:RecordTypeCd = 'CHANGE';
+
+			-- GetCustomerAddress/CustomerAddressData
+			DECLARE CustomerAddressData_ REFERENCE TO GetCustomerAddress_;
+			CREATE LASTCHILD OF GetCustomerAddress_ AS CustomerAddressData_ TYPE XMLNSC.Folder NAME 'CustomerAddressData';
+
+				-- GetCustomerAddress/CustomerAddressData/CustomerId
+
+				-- LOOP FROM $.STATE.ADDRESSES[*] TO GetCustomerAddress/CustomerAddressData/Addresses:
+				DECLARE _lpv0 REFERENCE TO _inputRootNode.STATE.ADDRESSES.Item;
+				loop_lpv0 : WHILE LASTMOVE(_lpv0) DO
+
+					-- GetCustomerAddress/CustomerAddressData/Addresses
+					DECLARE Addresses_ REFERENCE TO CustomerAddressData_;
+					CREATE LASTCHILD OF CustomerAddressData_ AS Addresses_ TYPE XMLNSC.Folder NAME 'Abs:Addresses';
+
+						-- GetCustomerAddress/CustomerAddressData/Addresses/AddressId
+						SET Addresses_.(XMLNSC.Field)Abs:AddressId = _lpv0.ADDRESSID;
+
+						-- GetCustomerAddress/CustomerAddressData/Addresses/AddressNm
+						SET Addresses_.(XMLNSC.Field)Abs:AddressNm = _lpv0.ADDRESSNAME;
+
+						-- GetCustomerAddress/CustomerAddressData/Addresses/AddressTypeDsc
+						-- SET Addresses_.(XMLNSC.Field)Abs:AddressTypeDsc = _inputRootNode.state.addresses[*].addressTypes[*].description;
+
+						-- GetCustomerAddress/CustomerAddressData/Addresses/Address
+						DECLARE Address_ REFERENCE TO Addresses_;
+						CREATE LASTCHILD OF Addresses_ AS Address_ TYPE XMLNSC.Folder NAME 'Abs:Address';
+
+							-- GetCustomerAddress/CustomerAddressData/Addresses/Address/AddressUsageTypeCd
+
+							-- GetCustomerAddress/CustomerAddressData/Addresses/Address/AddressLine1txt
+							SET Address_.(XMLNSC.Field)Abs:AddressLine1txt = _lpv0.ADDRESS1;
+
+							-- GetCustomerAddress/CustomerAddressData/Addresses/Address/AddressLine2txt
+							SET Address_.(XMLNSC.Field)Abs:AddressLine2txt = _lpv0.ADDRESS2;
+
+							-- GetCustomerAddress/CustomerAddressData/Addresses/Address/CityNm
+							SET Address_.(XMLNSC.Field)Abs:CityNm = _lpv0.CITY;
+
+							-- GetCustomerAddress/CustomerAddressData/Addresses/Address/PostalZoneCd
+							SET Address_.(XMLNSC.Field)Abs:PostalZoneCd = _lpv0.POSTALCODE;
+
+							-- GetCustomerAddress/CustomerAddressData/Addresses/Address/StateCd
+							SET Address_.(XMLNSC.Field)Abs:StateCd = _lpv0.STATECODE;
+
+						-- GetCustomerAddress/CustomerAddressData/Addresses/CustomerName
+						DECLARE CustomerName_ REFERENCE TO Addresses_;
+						CREATE LASTCHILD OF Addresses_ AS CustomerName_ TYPE XMLNSC.Folder NAME 'Abs:CustomerName';
+
+							-- GetCustomerAddress/CustomerAddressData/Addresses/CustomerName/PreferredSalutationCd
+							SET CustomerName_.(XMLNSC.Field)Abs:PreferredSalutationCd = _lpv0.NAME.SALUTATION;
+
+							-- GetCustomerAddress/CustomerAddressData/Addresses/CustomerName/GivenNm
+							SET CustomerName_.(XMLNSC.Field)Abs:GivenNm = _lpv0.NAME.FIRSTNAME;
+
+							-- GetCustomerAddress/CustomerAddressData/Addresses/CustomerName/MiddleNm
+							SET CustomerName_.(XMLNSC.Field)Abs:MiddleNm = _lpv0.NAME.MIDDLENAME;
+
+							-- GetCustomerAddress/CustomerAddressData/Addresses/CustomerName/FamilyNm
+							SET CustomerName_.(XMLNSC.Field)Abs:FamilyNm = _lpv0.NAME.LASTNAME;
+
+							-- GetCustomerAddress/CustomerAddressData/Addresses/CustomerName/GenerationAffixCd
+							SET CustomerName_.(XMLNSC.Field)Abs:GenerationAffixCd = _lpv0.NAME.SUFFIX;
+
+						-- LOOP FROM _lpv0.notes[*] TO GetCustomerAddress/CustomerAddressData/Addresses/Notes:
+						DECLARE _lpv1 REFERENCE TO _lpv0.notes.Item;
+						loop_lpv1 : WHILE LASTMOVE(_lpv1) DO
+
+							-- GetCustomerAddress/CustomerAddressData/Addresses/Notes
+							DECLARE Notes_ REFERENCE TO Addresses_;
+							CREATE LASTCHILD OF Addresses_ AS Notes_ TYPE XMLNSC.Folder NAME 'Abs:Notes';
+
+								-- GetCustomerAddress/CustomerAddressData/Addresses/Notes/@typeCode
+								SET Notes_.(XMLNSC.Attribute)Abs:typeCode = _lpv1.TYPE;
+
+								-- GetCustomerAddress/CustomerAddressData/Addresses/Notes/NoteTxt
+								SET Notes_.(XMLNSC.Field)Abs:NoteTxt = _lpv1.VALUE;
+
+						MOVE _lpv1 NEXTSIBLING;
+						END WHILE loop_lpv1;
+
+						-- LOOP FROM _lpv0.NOTES[*] TO GetCustomerAddress/CustomerAddressData/Addresses/AddressPurposes:
+						DECLARE _lpv2 REFERENCE TO _lpv0.NOTES.Item;
+						loop_lpv2 : WHILE LASTMOVE(_lpv2) DO
+
+							-- GetCustomerAddress/CustomerAddressData/Addresses/AddressPurposes
+							DECLARE AddressPurposes_ REFERENCE TO Addresses_;
+							CREATE LASTCHILD OF Addresses_ AS AddressPurposes_ TYPE XMLNSC.Folder NAME 'Abs:AddressPurposes';
+
+								-- GetCustomerAddress/CustomerAddressData/Addresses/AddressPurposes/PurposeDsc
+								SET AddressPurposes_.(XMLNSC.Field)Abs:PurposeDsc = _lpv2.NAME;
+
+						MOVE _lpv2 NEXTSIBLING;
+						END WHILE loop_lpv2;
+
+						-- LOOP FROM _lpv0.STATUSES[*] TO GetCustomerAddress/CustomerAddressData/Addresses/AddressStatuses:
+						DECLARE _lpv3 REFERENCE TO _lpv0.STATUSES.Item;
+						loop_lpv3 : WHILE LASTMOVE(_lpv3) DO
+
+							-- GetCustomerAddress/CustomerAddressData/Addresses/AddressStatuses
+							DECLARE AddressStatuses_ REFERENCE TO Addresses_;
+							CREATE LASTCHILD OF Addresses_ AS AddressStatuses_ TYPE XMLNSC.Folder NAME 'Abs:AddressStatuses';
+
+								-- GetCustomerAddress/CustomerAddressData/Addresses/AddressStatuses/@typeCode
+								SET AddressStatuses_.(XMLNSC.Attribute)Abs:typeCode = _lpv3.TYPE;
+
+								-- GetCustomerAddress/CustomerAddressData/Addresses/AddressStatuses/AddressStatusCd
+								SET AddressStatuses_.(XMLNSC.Field)Abs:AddressStatusCd = _lpv3.CODES.CODE;
+
+								-- GetCustomerAddress/CustomerAddressData/Addresses/AddressStatuses/AddressStatusDsc
+								SET AddressStatuses_.(XMLNSC.Field)Abs:AddressStatusDsc = _lpv3.CODES.DESCRIPTION;
+
+								-- GetCustomerAddress/CustomerAddressData/Addresses/AddressStatuses/AddressStatusVal
+								SET AddressStatuses_.(XMLNSC.Field)Abs:AddressStatusVal = _lpv3.VALUE;
+
+								-- GetCustomerAddress/CustomerAddressData/Addresses/AddressStatuses/SourcePlatformDsc
+								SET AddressStatuses_.(XMLNSC.Field)Abs:SourcePlatformDsc = _lpv3.SOURCE.NAME;
+
+								-- GetCustomerAddress/CustomerAddressData/Addresses/AddressStatuses/BannerCd
+								SET AddressStatuses_.(XMLNSC.Field)Abs:BannerCd = _lpv3.SOURCE.BANNERID;
+
+								-- GetCustomerAddress/CustomerAddressData/Addresses/AddressStatuses/StoreId
+								SET AddressStatuses_.(XMLNSC.Field)Abs:StoreId = _lpv3.SOURCE.STOREID;
+
+								-- GetCustomerAddress/CustomerAddressData/Addresses/AddressStatuses/MessageTxt
+								SET AddressStatuses_.(XMLNSC.Field)Abs:MessageTxt = _lpv3.MESSAGE;
+
+								-- GetCustomerAddress/CustomerAddressData/Addresses/AddressStatuses/ReferenceId
+								SET AddressStatuses_.(XMLNSC.Field)Abs:ReferenceId = _lpv3.REFERENCEID;
+
+						MOVE _lpv3 NEXTSIBLING;
+						END WHILE loop_lpv3;
+
+						-- GetCustomerAddress/CustomerAddressData/Addresses/AddressLastUpdateTs
+						SET Addresses_.(XMLNSC.Field)Abs:AddressLastUpdateTs = _lpv0.LASTUPDATEDTIMESTAMP;
+
+				MOVE _lpv0 NEXTSIBLING;
+				END WHILE loop_lpv0;
+
+				-- LOOP FROM $.STATE.POSTALCODES[*] TO GetCustomerAddress/CustomerAddressData/PostalCodes:
+				DECLARE _lpv4 REFERENCE TO _inputRootNode.STATE.POSTALCODES.Item;
+				loop_lpv4 : WHILE LASTMOVE(_lpv4) DO
+
+					-- GetCustomerAddress/CustomerAddressData/PostalCodes
+					DECLARE PostalCodes_ REFERENCE TO CustomerAddressData_;
+					CREATE LASTCHILD OF CustomerAddressData_ AS PostalCodes_ TYPE XMLNSC.Folder NAME 'Abs:PostalCodes';
+
+						-- GetCustomerAddress/CustomerAddressData/PostalCodes/PostalCodeId
+						SET PostalCodes_.(XMLNSC.Field)Abs:PostalCodeId = _lpv4.ID;
+
+						-- GetCustomerAddress/CustomerAddressData/PostalCodes/PurposeDsc
+
+						-- GetCustomerAddress/CustomerAddressData/PostalCodes/PostalCd
+						SET PostalCodes_.(XMLNSC.Field)Abs:PostalCd = _lpv4.POSTALCODE;
+
+						-- GetCustomerAddress/CustomerAddressData/PostalCodes/BannerCd
+						SET PostalCodes_.(XMLNSC.Field)Abs:BannerCd = _lpv4.BANNER;
+
+						-- GetCustomerAddress/CustomerAddressData/PostalCodes/PostalCdLastUpdateTs
+						DECLARE postalCdLastUpdateTs CHARACTER '';
+						DECLARE postalCdLastUpdateTsLong INTEGER _lpv4.LASTUPDATEDTIMESTAMP;
+						CALL LONG_TO_TIMESTAMP(postalCdLastUpdateTsLong, postalCdLastUpdateTs);
+						SET PostalCodes_.(XMLNSC.Field)Abs:PostalCdLastUpdateTs = postalCdLastUpdateTs;
+
+				MOVE _lpv4 NEXTSIBLING;
+				END WHILE loop_lpv4;
+
+				-- LOOP FROM $.STATE.SELECTEDADDRESSES[*] TO GetCustomerAddress/CustomerAddressData/SelectedAddresses:
+				DECLARE _lpv5 REFERENCE TO _inputRootNode.STATE.SELECTEDADDRESSES.Item;
+				loop_lpv5 : WHILE LASTMOVE(_lpv5) DO
+
+					-- GetCustomerAddress/CustomerAddressData/SelectedAddresses
+					DECLARE SelectedAddresses_ REFERENCE TO CustomerAddressData_;
+					CREATE LASTCHILD OF CustomerAddressData_ AS SelectedAddresses_ TYPE XMLNSC.Folder NAME 'Abs:SelectedAddresses';
+
+						-- GetCustomerAddress/CustomerAddressData/SelectedAddresses/AddressId
+						SET SelectedAddresses_.(XMLNSC.Field)Abs:AddressId = _lpv5.ADDRESSID;
+
+						-- GetCustomerAddress/CustomerAddressData/SelectedAddresses/BannerCd
+						SET SelectedAddresses_.(XMLNSC.Field)Abs:BannerCd = _lpv5.BANNER;
+
+						-- GetCustomerAddress/CustomerAddressData/SelectedAddresses/SelectedAddrsLastUpdateTs
+						DECLARE selectedAddrsLastUpdateTs CHARACTER '';
+						DECLARE selectedAddrsLastUpdateTsLong INTEGER _lpv5.LASTUPDATEDTIMESTAMP;
+						CALL LONG_TO_TIMESTAMP(selectedAddrsLastUpdateTsLong, selectedAddrsLastUpdateTs);
+						SET SelectedAddresses_.(XMLNSC.Field)Abs:SelectedAddrsLastUpdateTs = selectedAddrsLastUpdateTs;
+
+				MOVE _lpv5 NEXTSIBLING;
+				END WHILE loop_lpv5;
+
+				-- GetCustomerAddress/CustomerAddressData/SourceAuditData
+				DECLARE SourceAuditData_ REFERENCE TO CustomerAddressData_;
+				CREATE LASTCHILD OF CustomerAddressData_ AS SourceAuditData_ TYPE XMLNSC.Folder NAME 'Abs:SourceAuditData';
+
+					-- GetCustomerAddress/CustomerAddressData/SourceAuditData/SourceNm
+					SET SourceAuditData_.(XMLNSC.Field)Abs:SourceNm = _inputRootNode.AGGREGATETYPE;
+
+					-- GetCustomerAddress/CustomerAddressData/SourceAuditData/CreateTs
+					DECLARE createTs CHARACTER '';
+					DECLARE createTsLong INTEGER _inputRootNode.STATE.CREATETIMESTAMP;
+					CALL LONG_TO_TIMESTAMP(createTsLong, createTs);
+					SET SourceAuditData_.(XMLNSC.Field)Abs:CreateTs = createTs;
+
+					-- GetCustomerAddress/CustomerAddressData/SourceAuditData/LastUpdateTs
+					DECLARE lastUpdateTs CHARACTER '';
+					DECLARE lastUpdateTsLong INTEGER _inputRootNode.STATE.LASTUPDATETIMESTAMP;
+					CALL LONG_TO_TIMESTAMP(lastUpdateTsLong, lastUpdateTs);
+					SET SourceAuditData_.(XMLNSC.Field)Abs:LastUpdateTs = lastUpdateTs;
+
+					-- GetCustomerAddress/CustomerAddressData/SourceAuditData/CreateClientId
+					SET SourceAuditData_.(XMLNSC.Field)Abs:CreateClientId = _inputRootNode.STATE.CREATECLIENTID;
+
+					-- GetCustomerAddress/CustomerAddressData/SourceAuditData/CreateUserId
+					SET SourceAuditData_.(XMLNSC.Field)Abs:CreateUserId = _inputRootNode.STATE.CREATEUSERID;
+
+					-- GetCustomerAddress/CustomerAddressData/SourceAuditData/LastUpdateClientId
+					SET SourceAuditData_.(XMLNSC.Field)Abs:LastUpdateClientId = _inputRootNode.STATE.LASTUPDATECLIENTID;
+
+					-- GetCustomerAddress/CustomerAddressData/SourceAuditData/LastUpdateUserId
+					SET SourceAuditData_.(XMLNSC.Field)Abs:LastUpdateUserId = _inputRootNode.STATE.LASTUPDATEUSERID;
+
+					-- GetCustomerAddress/CustomerAddressData/SourceAuditData/CreateHostNm
+					SET SourceAuditData_.(XMLNSC.Field)Abs:CreateHostNm = _inputRootNode.STATE.CREATEHOSTNAME;
+
+					-- GetCustomerAddress/CustomerAddressData/SourceAuditData/LastUpdateHostNm
+					SET SourceAuditData_.(XMLNSC.Field)Abs:LastUpdateHostNm = _inputRootNode.STATE.LASTUPDATEHOSTNAME;
+
+					-- GetCustomerAddress/CustomerAddressData/SourceAuditData/SequenceNbr
+					SET SourceAuditData_.(XMLNSC.Field)Abs:SequenceNbr = _inputRootNode.STATE.SEQUENCENUMBER;
+
+					-- GetCustomerAddress/CustomerAddressData/SourceAuditData/AggregateTs
+					DECLARE aggregateTs CHARACTER '';
+					DECLARE aggregateTsLong INTEGER _inputRootNode.STATE.TIMESTAMP;
+					CALL LONG_TO_TIMESTAMP(aggregateTsLong, aggregateTs);
+					SET SourceAuditData_.(XMLNSC.Field)Abs:AggregateTs = aggregateTs;
+
+					-- GetCustomerAddress/CustomerAddressData/SourceAuditData/AggregateRevisionNbr
+					SET SourceAuditData_.(XMLNSC.Field)Abs:AggregateRevisionNbr = _inputRootNode.STATE.AGGREGATEREVISION;
+
+					-- GetCustomerAddress/CustomerAddressData/SourceAuditData/PayloadVersionNbr
+					SET SourceAuditData_.(XMLNSC.Field)Abs:PayloadVersionNbr = _inputRootNode.STATE.VERSION;
+
+					-- GetCustomerAddress/CustomerAddressData/SourceAuditData/EventId
+					SET SourceAuditData_.(XMLNSC.Field)Abs:EventId = _inputRootNode.STATE.EVENTID;
+
+			-- create kafka key:
+			CALL CreateKafkaKey();
+
+			IF LOG_OUPUT_MSG = 'Y' THEN
+				PROPAGATE TO TERMINAL 'out' DELETE NONE;
+				SET Environment.Variables.MISC_DATA = 1;
+			END IF;
+
+		RETURN TRUE;
+	END;
+
+
+	CREATE PROCEDURE CreateKafkaKey() BEGIN
+		SET OutputLocalEnvironment.Destination.Kafka.Output.key = InputLocalEnvironment.Destination.Kafka.Input.key;
+
+	END;
+
+	CREATE PROCEDURE LONG_TO_TIMESTAMP(IN _inputTimeStamp INTEGER, OUT outputTimeStamp_ CHARACTER)
+		BEGIN
+   			-- For long to timestamp
+      		DECLARE pattern CHARACTER 'yyyy-MM-dd''T''HH:mm:ss';
+			DECLARE epochTimeStamp TIMESTAMP '1970-01-01 00:00:00';
+
+			DECLARE ts TIMESTAMP epochTimeStamp + CAST(_inputTimeStamp/1000 AS INTERVAL SECOND);
+			DECLARE ms INTEGER _inputTimeStamp - (_inputTimeStamp/1000)*1000;
+
+			DECLARE DT CHARACTER CAST(ts AS CHARACTER FORMAT pattern);
+			DECLARE MS CHARACTER CAST(ms AS CHARACTER);
+
+			IF ms = 0 THEN
+				SET outputTimeStamp_ = DT || '.000Z';
+
+			ELSEIF ms < 10 THEN
+				SET outputTimeStamp_ = DT || '.00' || MS || 'Z';
+
+			ELSEIF ms < 100 THEN
+				SET outputTimeStamp_ = DT || '.0' || MS || 'Z';
+
+			ELSE
+				SET outputTimeStamp_ = DT || '.' || MS || 'Z';
+
+			END IF;
+		END;
+
+END MODULE;

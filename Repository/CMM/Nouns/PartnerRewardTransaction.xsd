@@ -6,6 +6,12 @@
 	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
 	<!--V1.0 Patrick Oliver 02/21/21: Initial Draft-->
 	<!--V1.1 Patrick Oliver 03/17/21: Updated TransactionType to single occurrence; Removed attribute TransactionType; Added AltTransactionTs; Updated StatusTypeCd to StatusCd; Removed RewardTokenOfferedQty; Added RewardDollarPoints and RewardTokenPoints-->
+	<!--V1.2 Patrick Oliver 03/22/21: Updated TransactionTs to optional; Added RewardTokenOfferedQty;  Removed RewardDollarPoints and RewardTokenPoints-->
+	<!--V1.3 Patrick Oliver 04/01/21: • Changed AltTransaction cardinality to single occurrence
+• Removed PartnerContact, LocationAddress, Latitude, Longitude  (this will be part of master data BOD)
+• Renamed PartnerLocationData to PartnerData; SiteId to PartnerSiteId; Participated to PartnerParticipantId; RewardTransaction
+• Added PostalCd to PartnerData
+• Changed TransactionTs, AltTransactionTs, ExceptionTxnTs to dateTimeStamp-->
 	<xs:element name="PartnerRewardTransaction" type="PartnerRewardTransactionType">
 		<xs:annotation>
 			<xs:documentation>Root element. Business Object Document for Albertsons Partner Reward Transaction. Current Albertson’s partner reward programs include fuel discounts with partner’s such as Shell and Chevron where customers can redeem Deferred rewards which are earned over time. During fuel purchases customers are presented with their reward balances which they can choose to redeem, request additional information, or cancel. As partners capture this customer transactional data throughout the day it is sent back to Albertsons. This object will capture that partner transactional data which includes the customer’s rewards offered, rewards redeemed, total purchased amounts, discount limits and total savings. Furthermore when a customer transaction results in an error, such as a customer trying to exceed their purchase reward limits, these transactions will be sent back to the BOD as an exception transaction message.</xs:documentation>
@@ -43,7 +49,7 @@ Ex Partner transaction</xs:documentation>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
-						<xs:element name="TransactionTs" type="xs:dateTime">
+						<xs:element name="TransactionTs" type="xs:dateTime" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>This is the timestamp when the transaction was updated.</xs:documentation>
 							</xs:annotation>
@@ -63,7 +69,7 @@ Ex Partner transaction</xs:documentation>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
-						<xs:element name="AltTransaction" minOccurs="0" maxOccurs="5">
+						<xs:element name="AltTransaction" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>Alternate transaction Ids linked to the partner transaction.</xs:documentation>
 							</xs:annotation>
@@ -88,81 +94,10 @@ Ex Partner transaction</xs:documentation>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="PartnerContact" minOccurs="0">
-				<xs:complexType>
-					<xs:complexContent>
-						<xs:extension base="CodeWithDescription">
-							<xs:sequence>
-								<xs:element name="PartnerNm" minOccurs="0">
-									<xs:annotation>
-										<xs:documentation>Name of the business partner performing th event.
-Ex: Chevron, Doordash..etc</xs:documentation>
-									</xs:annotation>
-									<xs:simpleType>
-										<xs:restriction base="xs:string">
-											<xs:maxLength value="100"/>
-										</xs:restriction>
-									</xs:simpleType>
-								</xs:element>
-								<xs:element name="PhoneNbr" minOccurs="0">
-									<xs:annotation>
-										<xs:documentation>Partner Phone number</xs:documentation>
-									</xs:annotation>
-									<xs:simpleType>
-										<xs:restriction base="xs:string">
-											<xs:maxLength value="20"/>
-										</xs:restriction>
-									</xs:simpleType>
-								</xs:element>
-								<xs:element name="EmailAddresstxt" minOccurs="0">
-									<xs:annotation>
-										<xs:documentation>Partner email</xs:documentation>
-									</xs:annotation>
-									<xs:simpleType>
-										<xs:restriction base="xs:string">
-											<xs:maxLength value="100"/>
-										</xs:restriction>
-									</xs:simpleType>
-								</xs:element>
-								<xs:element name="PersonId" minOccurs="0">
-									<xs:annotation>
-										<xs:documentation>Id of the person performing the transaction.
-Ex: Partner Employee Id in case of fuel transaction.</xs:documentation>
-									</xs:annotation>
-									<xs:simpleType>
-										<xs:restriction base="xs:string">
-											<xs:maxLength value="50"/>
-										</xs:restriction>
-									</xs:simpleType>
-								</xs:element>
-								<xs:element name="PersonNm" minOccurs="0">
-									<xs:annotation>
-										<xs:documentation>Name of the person performing the transaction.
-Ex: Partner employee name in case of fuel transaction.</xs:documentation>
-									</xs:annotation>
-									<xs:simpleType>
-										<xs:restriction base="xs:string">
-											<xs:maxLength value="100"/>
-										</xs:restriction>
-									</xs:simpleType>
-								</xs:element>
-								<xs:element name="PersonIdType" type="CodeWithDescription" minOccurs="0">
-									<xs:annotation>
-										<xs:documentation>Type of the person Id, ex Employee, contractor ,etc. </xs:documentation>
-									</xs:annotation>
-								</xs:element>
-							</xs:sequence>
-						</xs:extension>
-					</xs:complexContent>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="PartnerLocationData" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Location of a partner</xs:documentation>
-				</xs:annotation>
+			<xs:element name="PartnerData" minOccurs="0">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="SiteId" minOccurs="0">
+						<xs:element name="PartnerSiteId" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>The partner site ID </xs:documentation>
 							</xs:annotation>
@@ -172,7 +107,7 @@ Ex: Partner employee name in case of fuel transaction.</xs:documentation>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
-						<xs:element name="ParticipantId" minOccurs="0">
+						<xs:element name="PartnerParticipantId" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>This is used for grouping of partner site_id's</xs:documentation>
 							</xs:annotation>
@@ -183,86 +118,22 @@ Ex: Partner employee name in case of fuel transaction.</xs:documentation>
 							</xs:simpleType>
 						</xs:element>
 						<xs:element ref="DivisionId" minOccurs="0"/>
-						<xs:element name="LocationAddress" type="AddressBaseType" minOccurs="0"/>
-						<xs:element name="LatitudeDegree" type="xs:decimal" nillable="true" minOccurs="0">
+						<xs:element name="PostalZoneCd" minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>Defines the angular distance north or south from the equator of a point on the earth&apos;s surface, measured on the meridian of the point. Half of a pair of coordinates (the other being longitude).&#10;&#10;A latitude can have negative values.&#10;</xs:documentation>
+								<xs:documentation>Partner Postal Code</xs:documentation>
 							</xs:annotation>
-						</xs:element>
-						<xs:element name="LongitudeDegree" type="xs:decimal" nillable="true" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Defines the angular distance east or west on the earth&apos;s surface, measured by the angle contained between the meridian of a given point and a prime meridian.  Half of a pair of coordinates (the other being latitude) assigned via a point geocoding procedure.  &#10;&#10;Unlike latitude, which has the equator as a natural starting position, there is no natural starting position for longitude&#10;&#10;Longitude can have negative values.&#10;&#10;</xs:documentation>
-							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
 						</xs:element>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
 			<xs:element name="CustomerData" type="PartnerRewardCustomerType" minOccurs="0"/>
 			<xs:element name="StatusType" type="PartnerRewardStatusType" minOccurs="0"/>
-			<xs:element name="RewardDollarPoints" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Represents the start and end of the Rewards dollar amount points.</xs:documentation>
-				</xs:annotation>
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element name="RewardDollarStartTs" type="xs:dateTime" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Timestamp of when the Reward dollar points starts.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="RewardDollarEndTs" type="xs:dateTime" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Timestamp of when the Reward dollar points ends.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="RewardDollarPointsQty" type="xs:integer" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>This will be the total transaction dollar points. This can be an integer, positive, negative or zero.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="RewardTokenPoints" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Represents the start and end of the Rewards token and token that will expire points.</xs:documentation>
-				</xs:annotation>
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element name="RewardTokenStartTs" type="xs:dateTime" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Timestamp of when the Reward token points starts.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="RewardTokenEndTs" type="xs:dateTime" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Timestamp of when the Reward token points ends.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="RewardTokenWilExpStartTs" type="xs:dateTime" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Timestamp of when the Reward token points will expire starts.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="RewardTokenWilExpEndTs" type="xs:dateTime" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Timestamp of when the Reward token points will expire ends.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="RewardTokenPointsQty" type="xs:integer" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>This will be the total reward token points. This can be an integer, positive, negative or zero.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="RewardTokenPointsExpireQty" type="xs:integer" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Total Rewards token points that will expire at the end of the month. . This can be an integer, positive, negative or zero.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="RewardTransaction" minOccurs="0">
+			<xs:element name="PartnerTransaction" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Customer Reward transaction data (rewards, amounts, purchases.).</xs:documentation>
 				</xs:annotation>
@@ -307,6 +178,12 @@ Ex: Partner employee name in case of fuel transaction.</xs:documentation>
 									<xs:maxLength value="50"/>
 								</xs:restriction>
 							</xs:simpleType>
+						</xs:element>
+						<xs:element name="RewardTokenOfferedQty" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is the total rewards offered which is a multiple of points.      
+Ex: 100 points equal 1 token, 300 points equal 3 token, etc. </xs:documentation>
+							</xs:annotation>
 						</xs:element>
 						<xs:element name="TotalPurchQty" minOccurs="0">
 							<xs:annotation>
@@ -368,7 +245,7 @@ Ex: Partner employee name in case of fuel transaction.</xs:documentation>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="RewardTransactionException" minOccurs="0">
+			<xs:element name="PartnerTransactionException" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Customer Reward transaction exception data (error codes, messages)</xs:documentation>
 				</xs:annotation>

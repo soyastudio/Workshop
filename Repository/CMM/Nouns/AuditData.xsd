@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<!-- edited with XMLSpy v2021 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<!--V1.0  Alex Nunes 5/4/2020 Initial version -->
 	<!--V1.1  Alex Nunes 6/3/2020 Business key indicator added and business value is now optional. Memo field is going to be moved to biz context. Audit date and time elements are now combined -->
 	<!--V1.2  Alex Nunes 6/2/2020 Added key-value pair to identify a record with business context - Business Key(s). -->
 	<!--V1.3 Rosabel Macario 11/05/2020 - Added tag to resolve dateTimeStamp issue-->
+	<!--V1.4 Alex Nunes 4/7/2021 - Length new and old values increased as well as user id -->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:element name="AuditData" type="AuditDataType">
 		<xs:annotation>
@@ -99,7 +100,7 @@ ex: 1,2,3</xs:documentation>
 							</xs:annotation>
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
-									<xs:maxLength value="100"/>
+									<xs:maxLength value="255"/>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
@@ -126,7 +127,7 @@ ex: 1,2,3</xs:documentation>
 							</xs:annotation>
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
-									<xs:maxLength value="1000"/>
+									<xs:maxLength value="4000"/>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
@@ -136,7 +137,7 @@ ex: 1,2,3</xs:documentation>
 							</xs:annotation>
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
-									<xs:maxLength value="1000"/>
+									<xs:maxLength value="4000"/>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>

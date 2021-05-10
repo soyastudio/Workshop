@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.0 Patrick Oliver 03/10/21 - Initial Version-->
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/CustomerPreferencesMaster.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="GetCustomerPreferences" type="GetCustomerPreferencesMaster">
+		<xs:annotation>
+			<xs:documentation>CustomerPreferencesMaster object will provide master data for retail Customer Preferences. The master data will show the acceptable values, frequency, effective time periods and options for both explicit and implicit customer preferences. Explicit Preferences are preferences where they are explicitly gathered from the customer based on the customer’s selection on Albertsons websites and include preferences such as products, brands, communication channels, and personalization. Implicit Preferences are preferences that are derived based on customer browse, search, and purchase behavior. These include preferences such as offers, promotions, marketing, and preferred modes of communication.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetCustomerPreferencesMaster">
+		<xs:annotation>
+			<xs:documentation>CustomerPreferencesMaster object will provide master data for retail Customer Preferences. The master data will show the acceptable values, frequency, effective time periods and options for both explicit and implicit customer preferences. Explicit Preferences are preferences where they are explicitly gathered from the customer based on the customer’s selection on Albertsons websites and include preferences such as products, brands, communication channels, and personalization. Implicit Preferences are preferences that are derived based on customer browse, search, and purchase behavior. These include preferences such as offers, promotions, marketing, and preferred modes of communication.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CustomerPreferencesMasterData" type="Abs:CustomerPreferencesMasterType"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

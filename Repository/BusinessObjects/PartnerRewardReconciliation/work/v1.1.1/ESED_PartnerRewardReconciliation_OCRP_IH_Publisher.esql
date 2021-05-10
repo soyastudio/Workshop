@@ -1,0 +1,304 @@
+BROKER SCHEMA com.abs.ocrp
+
+CREATE COMPUTE MODULE ESED_PartnerRewardReconciliation_Transformer_Compute
+
+	-- Declare UDPs
+	DECLARE SYSTEM_ENVIRONMENT_CODE EXTERNAL CHARACTER 'PROD';
+	DECLARE VERSION_ID EXTERNAL CHARACTER '1.1.1.007';
+
+	-- Declare Namespace
+	DECLARE Abs NAMESPACE 'https://collab.safeway.com/it/architecture/info/default.aspx';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- Declare Input Message Root
+		DECLARE _inputRootNode REFERENCE TO InputRoot.JSON.Data;
+
+		-- Declare Output Message Root
+		CREATE LASTCHILD OF OutputRoot DOMAIN 'XMLNSC';
+
+		DECLARE GetPartnerRewardReconciliation_ REFERENCE TO OutputRoot.XMLNSC.GetPartnerRewardReconciliation;
+		CREATE LASTCHILD OF OutputRoot.XMLNSC AS GetPartnerRewardReconciliation_ TYPE XMLNSC.Folder NAME 'GetPartnerRewardReconciliation';
+		SET OutputRoot.XMLNSC.GetPartnerRewardReconciliation.(XMLNSC.NamespaceDecl)xmlns:Abs=Abs;
+
+			-- GetPartnerRewardReconciliation/DocumentData
+			DECLARE DocumentData_ REFERENCE TO GetPartnerRewardReconciliation_;
+			CREATE LASTCHILD OF GetPartnerRewardReconciliation_ AS DocumentData_ TYPE XMLNSC.Folder NAME 'DocumentData';
+
+				-- GetPartnerRewardReconciliation/DocumentData/Document
+				DECLARE Document_ REFERENCE TO DocumentData_;
+				CREATE LASTCHILD OF DocumentData_ AS Document_ TYPE XMLNSC.Folder NAME 'Document';
+
+					-- GetPartnerRewardReconciliation/DocumentData/Document/@VersionId
+					SET Document_.(XMLNSC.Attribute)VersionId = VERSION_ID;
+
+					-- GetPartnerRewardReconciliation/DocumentData/Document/@SystemEnvironmentCd
+					SET Document_.(XMLNSC.Attribute)SystemEnvironmentCd = SYSTEM_ENVIRONMENT_CODE;
+
+					-- GetPartnerRewardReconciliation/DocumentData/Document/DocumentID
+					SET Document_.(XMLNSC.Field)Abs:DocumentID = InputLocalEnvironment.Kafka.Input.topicName;
+
+					-- GetPartnerRewardReconciliation/DocumentData/Document/AlternateDocumentID
+					SET Document_.(XMLNSC.Field)Abs:AlternateDocumentID = InputLocalEnvironment.Kafka.Input.topicName ||'_'||InputLocalEnvironment.Kafka.Input.partition||'_'||InputLocalEnvironment.Kafka.Input.offset||'_'||CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT 'YYYYMMddHHmmssSSSSSS');
+
+					-- GetPartnerRewardReconciliation/DocumentData/Document/DocumentNm
+					SET Document_.(XMLNSC.Field)Abs:DocumentNm = 'PartnerRewardReconciliation';
+
+					-- GetPartnerRewardReconciliation/DocumentData/Document/CreationDt
+					SET Document_.(XMLNSC.Field)Abs:CreationDt = CURRENT_TIMESTAMP;
+
+					-- GetPartnerRewardReconciliation/DocumentData/Document/Description
+					SET Document_.(XMLNSC.Field)Abs:Description = 'PartnerRewardReconciliationData';
+
+					-- GetPartnerRewardReconciliation/DocumentData/Document/SourceApplicationCd
+					SET Document_.(XMLNSC.Field)Abs:SourceApplicationCd = 'OCRP';
+
+					-- GetPartnerRewardReconciliation/DocumentData/Document/TargetApplicationCd
+					SET Document_.(XMLNSC.Field)Abs:TargetApplicationCd = 'EDIS';
+
+					-- GetPartnerRewardReconciliation/DocumentData/Document/InternalFileTransferInd
+					SET Document_.(XMLNSC.Field)Abs:InternalFileTransferInd = 'Y';
+
+					-- GetPartnerRewardReconciliation/DocumentData/Document/DataClassification
+					DECLARE DataClassification_ REFERENCE TO Document_;
+					CREATE LASTCHILD OF Document_ AS DataClassification_ TYPE XMLNSC.Folder NAME 'Abs:DataClassification';
+
+						-- GetPartnerRewardReconciliation/DocumentData/Document/DataClassification/DataClassificationLevel
+						DECLARE DataClassificationLevel_ REFERENCE TO DataClassification_;
+						CREATE LASTCHILD OF DataClassification_ AS DataClassificationLevel_ TYPE XMLNSC.Folder NAME 'Abs:DataClassificationLevel';
+
+							-- GetPartnerRewardReconciliation/DocumentData/Document/DataClassification/DataClassificationLevel/Code
+							SET DataClassificationLevel_.(XMLNSC.Field)Abs:Code = 'Internal';
+
+						-- GetPartnerRewardReconciliation/DocumentData/Document/DataClassification/BusinessSensitivityLevel
+						DECLARE BusinessSensitivityLevel_ REFERENCE TO DataClassification_;
+						CREATE LASTCHILD OF DataClassification_ AS BusinessSensitivityLevel_ TYPE XMLNSC.Folder NAME 'Abs:BusinessSensitivityLevel';
+
+							-- GetPartnerRewardReconciliation/DocumentData/Document/DataClassification/BusinessSensitivityLevel/Code
+							SET BusinessSensitivityLevel_.(XMLNSC.Field)Abs:Code = 'Low';
+
+						-- GetPartnerRewardReconciliation/DocumentData/Document/DataClassification/PHIdataInd
+						SET DataClassification_.(XMLNSC.Field)Abs:PHIdataInd = 'N';
+
+						-- GetPartnerRewardReconciliation/DocumentData/Document/DataClassification/PCIdataInd
+						SET DataClassification_.(XMLNSC.Field)Abs:PCIdataInd = 'Y';
+
+						-- GetPartnerRewardReconciliation/DocumentData/Document/DataClassification/PIIdataInd
+						SET DataClassification_.(XMLNSC.Field)Abs:PIIdataInd = 'Y';
+
+				-- GetPartnerRewardReconciliation/DocumentData/DocumentAction
+				DECLARE DocumentAction_ REFERENCE TO DocumentData_;
+				CREATE LASTCHILD OF DocumentData_ AS DocumentAction_ TYPE XMLNSC.Folder NAME 'DocumentAction';
+
+					-- GetPartnerRewardReconciliation/DocumentData/DocumentAction/ActionTypeCd
+					SET DocumentAction_.(XMLNSC.Field)Abs:ActionTypeCd = 'UPDATE';
+
+					-- GetPartnerRewardReconciliation/DocumentData/DocumentAction/RecordTypeCd
+					SET DocumentAction_.(XMLNSC.Field)Abs:RecordTypeCd = 'CHANGE';
+
+			-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData
+			DECLARE PartnerRewardReconciliationData_ REFERENCE TO GetPartnerRewardReconciliation_;
+			CREATE LASTCHILD OF GetPartnerRewardReconciliation_ AS PartnerRewardReconciliationData_ TYPE XMLNSC.Folder NAME 'PartnerRewardReconciliationData';
+
+				-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/PartnerId
+				SET PartnerRewardReconciliationData_.(XMLNSC.Field)Abs:PartnerId = _inputRootNode.partner_id;
+
+				-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/TransactionType
+				DECLARE TransactionType_ REFERENCE TO PartnerRewardReconciliationData_;
+				CREATE LASTCHILD OF PartnerRewardReconciliationData_ AS TransactionType_ TYPE XMLNSC.Folder NAME 'Abs:TransactionType';
+
+					-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/TransactionType/@typeCode
+					-- SET TransactionType_.(XMLNSC.Attribute)typeCode = ???;
+
+					-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/TransactionType/TransactionId
+					-- SET TransactionType_.(XMLNSC.Field)Abs:TransactionId = ???;
+
+				-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/SiteId
+				SET PartnerRewardReconciliationData_.(XMLNSC.Field)Abs:SiteId = _inputRootNode.site_id;
+
+				-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/ParticipantId
+				SET PartnerRewardReconciliationData_.(XMLNSC.Field)Abs:ParticipantId = _inputRootNode.participant_id;
+
+				-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/PostalZoneCd
+				SET PartnerRewardReconciliationData_.(XMLNSC.Field)Abs:PostalZoneCd = _inputRootNode.postal_cd;
+
+				-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/StatusType
+				DECLARE StatusType_ REFERENCE TO PartnerRewardReconciliationData_;
+				CREATE LASTCHILD OF PartnerRewardReconciliationData_ AS StatusType_ TYPE XMLNSC.Folder NAME 'Abs:StatusType';
+
+					-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/StatusType/StatusTypeCd
+					SET StatusType_.(XMLNSC.Field)Abs:StatusTypeCd = _inputRootNode.recon_status_cd;
+
+				-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation
+				DECLARE RewardReconciliation_ REFERENCE TO PartnerRewardReconciliationData_;
+				CREATE LASTCHILD OF PartnerRewardReconciliationData_ AS RewardReconciliation_ TYPE XMLNSC.Folder NAME 'Abs:RewardReconciliation';
+
+					-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/FuelPumpId
+					SET RewardReconciliation_.(XMLNSC.Field)Abs:FuelPumpId = _inputRootNode.fuel_pump_id;
+
+					-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/FuelGradeCd
+					DECLARE FuelGradeCd_ REFERENCE TO RewardReconciliation_;
+					CREATE LASTCHILD OF RewardReconciliation_ AS FuelGradeCd_ TYPE XMLNSC.Folder NAME 'Abs:FuelGradeCd';
+
+						-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/FuelGradeCd/Code
+						SET FuelGradeCd_.(XMLNSC.Field)Abs:Code = _inputRootNode.fuel_grade_cd;
+
+					-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/ReconErrorTypeCd
+					DECLARE ReconErrorTypeCd_ REFERENCE TO RewardReconciliation_;
+					CREATE LASTCHILD OF RewardReconciliation_ AS ReconErrorTypeCd_ TYPE XMLNSC.Folder NAME 'Abs:ReconErrorTypeCd';
+
+						-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/ReconErrorTypeCd/Code
+						SET ReconErrorTypeCd_.(XMLNSC.Field)Abs:Code = _inputRootNode.recon_error_type_cd_set;
+
+					-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/TotalPurchQty
+					SET RewardReconciliation_.(XMLNSC.Field)Abs:TotalPurchQty = _inputRootNode.total_purchase_qty;
+
+					-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/PurchUOMCd
+					DECLARE PurchUOMCd_ REFERENCE TO RewardReconciliation_;
+					CREATE LASTCHILD OF RewardReconciliation_ AS PurchUOMCd_ TYPE XMLNSC.Folder NAME 'Abs:PurchUOMCd';
+
+						-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/PurchUOMCd/Code
+						SET PurchUOMCd_.(XMLNSC.Field)Abs:Code = _inputRootNode.purchase_uom_cd;
+
+					-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/TenderTypeCd
+					DECLARE TenderTypeCd_ REFERENCE TO RewardReconciliation_;
+					CREATE LASTCHILD OF RewardReconciliation_ AS TenderTypeCd_ TYPE XMLNSC.Folder NAME 'Abs:TenderTypeCd';
+
+						-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/TenderTypeCd/Code
+						SET TenderTypeCd_.(XMLNSC.Field)Abs:Code = _inputRootNode.tender_type_code;
+
+					-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/PurchDiscLimitAmt
+					DECLARE PurchDiscLimitAmt_ REFERENCE TO RewardReconciliation_;
+					CREATE LASTCHILD OF RewardReconciliation_ AS PurchDiscLimitAmt_ TYPE XMLNSC.Folder NAME 'Abs:PurchDiscLimitAmt';
+
+						-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/PurchDiscLimitAmt/TransactionAmt
+						SET PurchDiscLimitAmt_.(XMLNSC.Field)Abs:TransactionAmt = CAST(_inputRootNode.purchase_discnt_limit_amt AS DECIMAL(14, 4));
+
+					-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/RegularPriceAmt
+					DECLARE RegularPriceAmt_ REFERENCE TO RewardReconciliation_;
+					CREATE LASTCHILD OF RewardReconciliation_ AS RegularPriceAmt_ TYPE XMLNSC.Folder NAME 'Abs:RegularPriceAmt';
+
+						-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/RegularPriceAmt/TransactionAmt
+						SET RegularPriceAmt_.(XMLNSC.Field)Abs:TransactionAmt = CAST(_inputRootNode.regular_price_amt AS DECIMAL(14, 4));
+
+					-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/PromoPriceAmt
+					DECLARE PromoPriceAmt_ REFERENCE TO RewardReconciliation_;
+					CREATE LASTCHILD OF RewardReconciliation_ AS PromoPriceAmt_ TYPE XMLNSC.Folder NAME 'Abs:PromoPriceAmt';
+
+						-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/PromoPriceAmt/TransactionAmt
+						SET PromoPriceAmt_.(XMLNSC.Field)Abs:TransactionAmt = CAST(_inputRootNode.promotion_price_amt AS DECIMAL(14, 4));
+
+					-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/TotalSavingsValAmt
+					DECLARE TotalSavingsValAmt_ REFERENCE TO RewardReconciliation_;
+					CREATE LASTCHILD OF RewardReconciliation_ AS TotalSavingsValAmt_ TYPE XMLNSC.Folder NAME 'Abs:TotalSavingsValAmt';
+
+						-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/TotalSavingsValAmt/TransactionAmt
+						SET TotalSavingsValAmt_.(XMLNSC.Field)Abs:TransactionAmt = CAST(_inputRootNode.total_savings_val_amt AS DECIMAL(14, 4));
+
+					-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/TotalFuelPurchAmt
+					DECLARE TotalFuelPurchAmt_ REFERENCE TO RewardReconciliation_;
+					CREATE LASTCHILD OF RewardReconciliation_ AS TotalFuelPurchAmt_ TYPE XMLNSC.Folder NAME 'Abs:TotalFuelPurchAmt';
+
+						-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/TotalFuelPurchAmt/TransactionAmt
+						SET TotalFuelPurchAmt_.(XMLNSC.Field)Abs:TransactionAmt = CAST(_inputRootNode.total_fuel_purchase_amt AS DECIMAL(14, 4));
+
+					-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/NonFuelPurchAmt
+					DECLARE NonFuelPurchAmt_ REFERENCE TO RewardReconciliation_;
+					CREATE LASTCHILD OF RewardReconciliation_ AS NonFuelPurchAmt_ TYPE XMLNSC.Folder NAME 'Abs:NonFuelPurchAmt';
+
+						-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/NonFuelPurchAmt/TransactionAmt
+						SET NonFuelPurchAmt_.(XMLNSC.Field)Abs:TransactionAmt = CAST(_inputRootNode.non_fuel_purchase_amt AS DECIMAL(14, 4));
+
+					-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/TotalPurchaseAmt
+					DECLARE TotalPurchaseAmt_ REFERENCE TO RewardReconciliation_;
+					CREATE LASTCHILD OF RewardReconciliation_ AS TotalPurchaseAmt_ TYPE XMLNSC.Folder NAME 'Abs:TotalPurchaseAmt';
+
+						-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/TotalPurchaseAmt/TransactionAmt
+						SET TotalPurchaseAmt_.(XMLNSC.Field)Abs:TransactionAmt = CAST(_inputRootNode.total_purchase_amt AS DECIMAL(14, 4));
+
+					-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/DiscountAmt
+					DECLARE DiscountAmt_ REFERENCE TO RewardReconciliation_;
+					CREATE LASTCHILD OF RewardReconciliation_ AS DiscountAmt_ TYPE XMLNSC.Folder NAME 'Abs:DiscountAmt';
+
+						-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/DiscountAmt/TransactionAmt
+						SET DiscountAmt_.(XMLNSC.Field)Abs:TransactionAmt = CAST(_inputRootNode.discnt_amt AS DECIMAL(14, 4));
+
+					-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/TxnFeeAmt
+					DECLARE TxnFeeAmt_ REFERENCE TO RewardReconciliation_;
+					CREATE LASTCHILD OF RewardReconciliation_ AS TxnFeeAmt_ TYPE XMLNSC.Folder NAME 'Abs:TxnFeeAmt';
+
+						-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/TxnFeeAmt/TransactionAmt
+						SET TxnFeeAmt_.(XMLNSC.Field)Abs:TransactionAmt = CAST(_inputRootNode.txn_fee_amt AS DECIMAL(14, 4));
+
+					-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/TxnNetPymtAmt
+					DECLARE TxnNetPymtAmt_ REFERENCE TO RewardReconciliation_;
+					CREATE LASTCHILD OF RewardReconciliation_ AS TxnNetPymtAmt_ TYPE XMLNSC.Folder NAME 'Abs:TxnNetPymtAmt';
+
+						-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/TxnNetPymtAmt/TransactionAmt
+						SET TxnNetPymtAmt_.(XMLNSC.Field)Abs:TransactionAmt = CAST(_inputRootNode.txn_net_payment_amt AS DECIMAL(14, 4));
+
+					-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/SettlementAmt
+					DECLARE SettlementAmt_ REFERENCE TO RewardReconciliation_;
+					CREATE LASTCHILD OF RewardReconciliation_ AS SettlementAmt_ TYPE XMLNSC.Folder NAME 'Abs:SettlementAmt';
+
+						-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/SettlementAmt/TransactionAmt
+						SET SettlementAmt_.(XMLNSC.Field)Abs:TransactionAmt = CAST(_inputRootNode.safeway_settlement_amt AS DECIMAL(14, 4));
+
+					-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/AccountData
+					DECLARE AccountData_ REFERENCE TO RewardReconciliation_;
+					CREATE LASTCHILD OF RewardReconciliation_ AS AccountData_ TYPE XMLNSC.Folder NAME 'Abs:AccountData';
+
+						-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/AccountData/AccountId
+						SET AccountData_.(XMLNSC.Field)Abs:AccountId = _inputRootNode.account_number;
+
+						-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/RewardReconciliation/AccountData/AccountingUnitId
+						SET AccountData_.(XMLNSC.Field)Abs:AccountingUnitId = _inputRootNode.account_unit_nbr;
+
+				-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/AuditData
+				DECLARE AuditData_ REFERENCE TO PartnerRewardReconciliationData_;
+				CREATE LASTCHILD OF PartnerRewardReconciliationData_ AS AuditData_ TYPE XMLNSC.Folder NAME 'Abs:AuditData';
+
+					-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/AuditData/CreateUserId
+					SET AuditData_.(XMLNSC.Field)Abs:CreateUserId = _inputRootNode.create_user;
+
+					-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/AuditData/UpdateTs
+					DECLARE updateTs CHARACTER '';
+					DECLARE updateTsLong INTEGER _inputRootNode.modified_ts;
+					CALL LONG_TO_TIMESTAMP(updateTsLong, updateTs);
+					SET AuditData_.(XMLNSC.Field)Abs:UpdateTs = updateTs;
+					-- SET AuditData_.(XMLNSC.Field)Abs:UpdateTs = _inputRootNode.modified_ts;
+
+					-- GetPartnerRewardReconciliation/PartnerRewardReconciliationData/AuditData/UpdateUserId
+					SET AuditData_.(XMLNSC.Field)Abs:UpdateUserId = _inputRootNode.modified_user;
+
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE LONG_TO_TIMESTAMP(IN _inputTimeStamp INTEGER, OUT outputTimeStamp_ CHARACTER)
+		BEGIN
+   			-- For long to timestamp
+      		DECLARE pattern CHARACTER 'yyyy-MM-dd''T''HH:mm:ss';
+			DECLARE epochTimeStamp TIMESTAMP '1970-01-01 00:00:00';
+
+			DECLARE ts TIMESTAMP epochTimeStamp + CAST(_inputTimeStamp/1000 AS INTERVAL SECOND);
+			DECLARE ms INTEGER _inputTimeStamp - (_inputTimeStamp/1000)*1000;
+
+			DECLARE DT CHARACTER CAST(ts AS CHARACTER FORMAT pattern);
+			DECLARE MS CHARACTER CAST(ms AS CHARACTER);
+
+			IF ms = 0 THEN
+				SET outputTimeStamp_ = DT || '.000Z';
+
+			ELSEIF ms < 10 THEN
+				SET outputTimeStamp_ = DT || '.00' || MS || 'Z';
+
+			ELSEIF ms < 100 THEN
+				SET outputTimeStamp_ = DT || '.0' || MS || 'Z';
+
+			ELSE
+				SET outputTimeStamp_ = DT || '.' || MS || 'Z';
+
+			END IF;
+		END;
+
+END MODULE;

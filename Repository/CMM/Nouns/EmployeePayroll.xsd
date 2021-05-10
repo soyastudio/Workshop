@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by Rosabel Macario (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.4 04/05/21: Rosabel Macario - Update BankAcctNbr from long to string(50) as this field is tokenized. -->
 	<!--V1.3 12/23/20: Rosabel Macario - Changed PayrollTransactionDt, PayrollTransactionAmt as Optional. Added ReconTransactionDt and ReconSequenceNbr. -->
 	<!--V1.2 12/11/20:  Patrick Oliver  - Changed PayrollTransactionAmt to complex type; added PaymentAmt to PayrollReconciliation-->
 	<!--v1.1 11/03/2020 - Rosabel M - Add tag to resolve issue on dateTimeStamp-->
@@ -160,11 +161,16 @@ Some scenarios are:
 								<xs:documentation>Bank location where the bank account is located. Source of payroll funds</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="BankAcctNbr" type="xs:long" minOccurs="0">
+						<xs:element name="BankAcctNbr" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>Designated new bank account number for source of funds for payroll. 
 </xs:documentation>
 							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
 						</xs:element>
 						<xs:element name="ReconTransactionDt" type="xs:date" minOccurs="0">
 							<xs:annotation>

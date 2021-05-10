@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2021 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--!=============================================================================================-->
+	<!--!-->
+	<!--!-->
+	<!--!      Noun: StoreOrderCatalog-->
+	<!--!                                     Business object that represents catalog of items used for ordering.-->
+	<!--!-->
+	<!--!=============================================================================================-->
+	<!--3/9/2021 - v1.0 - Alex Nunes - Initial version.-->
+	<!--3/10/2021 - v1.0 - Alex Nunes - CSC Optional, Wims vendor nbr added.-->
+	<!--3/11/2021 - v1.0 - Alex Nunes - UPC section needs to be unbounded due to the fact when CSC doesn't exist multiple UPCs can come in. -->
+	<!--3/17/2021 - v1.0 - Alex Nunes - UPC flag + UnitPack and other minor changes -->
+	<!--3/23/2021 - v1.0 - Alex Nunes - Added VendorConversionFctr and ROGcd. Removed PrimaryIndicator at UPC level.-->
+	<!--3/29/2021 - v1.0 - Alex Nunes - Added UPC Components. Reorganized groups. Removed Supplier type and added Corp/Div for SourceSupply WHSEs.-->
+	<xs:element name="StoreOrderCatalog" type="StoreOrderCatalogType">
+		<xs:annotation>
+			<xs:documentation>Root element.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="StoreOrderCatalogType">
+		<xs:annotation>
+			<xs:documentation>Represents catalog of items used for ordering also known as assortment data. Data is authored in FaR - Forecasting and Replenishment system which shows relationship amongst Consumer Selling Code (CSC) and Primary Orderable CIC and Representative UPC for the ROG and regardless if the item is on perpetual inventory or not.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporationId"/>
+			<xs:element ref="DivisionId"/>
+			<xs:element ref="ROGCd"/>
+			<xs:element name="FacilityId">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FacilityType" type="CodeWithDescription"/>
+			<xs:element name="CSCorRetailUPC">
+				<xs:annotation>
+					<xs:documentation>This group contains a CSC or a retail UPC when the retail UPC has no CSC.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:choice>
+						<xs:element name="ConsumerSellingCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Consumer Selling Code is a grouping of similar purchase-able items.
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="UPC" type="UPCType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Original UPC in case CSC is not present.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:choice>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CIC">
+				<xs:annotation>
+					<xs:documentation>Primary Orderable CIC.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="CorporateItemCd">
+							<xs:annotation>
+								<xs:documentation>This is the primary orderable CIC for the Store - CSC (Consumer Selling Code)</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CorporateItemDsc" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Corporate Item description.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="VendorConversionFctr" type="xs:int" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Vendor conversion factor, for Vendor Master Pack items</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="RepresentativeUPC" nillable="false">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="UPC" type="UPCType"/>
+									<xs:element name="UnitPackNbr">
+										<xs:annotation>
+											<xs:documentation>Retail Unit Pack representing the number of selling units in the Warehouse Unit Pack.  The RUP shows how the Warehouse Unit Pack can be broken down into different groupings of units; if an item has a warehouse unit pack of 24, for instance: 
+ - For the shelf UPC sold in singles, the RUP is 24 
+ - For the multipack sold in sixes, the RUP is 4 
+ - For the case sold in 24s, the RUP is 1 
+</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:int">
+												<xs:totalDigits value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AuthorizationEffectivePeriod" type="EffetiveDateTimeType">
+				<xs:annotation>
+					<xs:documentation>Effective dates and times for authorization purposes.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OnPI">
+				<xs:annotation>
+					<xs:documentation>Item is on PI and Physical count(s) were done some time in the past.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="PerpetualInventoryInd">
+							<xs:annotation>
+								<xs:documentation>Indicates whether Perpetual Inventory process applies to this item.  'Y' represents PI can be trusted and 'N' physical count has not been done.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PerpetualInventoryEffectivePeriod" type="EffetiveDateTimeType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Effective dates and times for perpetual inventory..</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="SourceSupply" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="CorporationId" minOccurs="0"/>
+						<xs:element ref="DivisionId" minOccurs="0"/>
+						<xs:element ref="WarehouseId" minOccurs="0"/>
+						<xs:element name="WarehouseIdAltId" type="xs:integer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Alternate identifier for a warehouse like old warehouse id.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element ref="ManufacturingPlantId" minOccurs="0"/>
+						<xs:element ref="DistributionCenterId" minOccurs="0"/>
+						<xs:element name="VendorId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="VendorSubAccountNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="WimsSubVendorNbr" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Identifies the WIMS Vendor number set up by the Buyer. The first character of the number indicates the location e.g. V - Vancouver, E - Edmonton.  Buyer/Merchandisers may break a Vendor outlet into different WIMS Vendors to suit their own purposes. Some of the reasons a Vendor may have several WIMS Vendor records are: 1. Several Buyers buying from the same Vendor. 2. A buyer buying different commodity groups from the same Vendor. 3. A Vendor offering different purchasing terms on different product lines. 4. A Buyer buying some products through a Broker and some directly from the Vendor.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="VendorBackdoorSubAccountNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DataBatch" type="DataBatchType" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="MinOrderableQty" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Minimum quantity that can be ordered.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="15"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MaxOrderableQty" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Maximum quantity that can be ordered.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="15"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InstructionsTxt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>General instruction of Facility Item catalog.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="500"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PriceLookUpCd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the PLU to be used for the paper coupon This is the PLU for the item in this ROG. It is used by stores to enter into the cashiers scanner instead of the UPC for items that have no UPC, such as produce items.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="5"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AuditData" type="AuditType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Audit data elements.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AuditType">
+		<xs:annotation>
+			<xs:documentation>This type represents auditing data related to the message at source.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0">
+			<xs:element name="CreateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Time stamp of when message was created at source.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LastUpdateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time stamp of when message was last modified at source.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CreateUserId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Id of the client that created the message at source.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LastUpdateUserId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>User Id of who last modified the message at source.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DataBatchType">
+		<xs:annotation>
+			<xs:documentation>Contains the data batch for this schedule</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DataBatchId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This identifies a particular type of transmission sent from a store      
+(destination facility) to the host. The first two characters of the      
+data batch specify the data category; ie. order, firm order, markdown,   
+inventory, etc. The second two characters specify the data type; ie.     
+grocery, tobacco, etc.                                                   
+------------------------------------------------------------             
+Business Definitions for specific table(s) and/or file(s)                
+------------------------------------------------------------             
+*** Batch Control Table (EXBATCTL table): The data batch is the          
+type associated with an item. ie: Databatch 0101 = GROCERY ORDER         </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FileVersionText" type="xs:string" minOccurs="0"/>
+			<xs:element name="MaxOrderLimitNbr" type="xs:int" minOccurs="0"/>
+			<xs:element name="MinOrderLimitNbr" type="xs:int" minOccurs="0"/>
+			<xs:element name="DataBatchDescription" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EffetiveDateTimeType">
+		<xs:annotation>
+			<xs:documentation>Common type for Retail Customer effective date and time.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0">
+			<xs:element ref="Abs:FirstEffectiveDt" minOccurs="0"/>
+			<xs:element ref="Abs:FirstEffectiveTm" minOccurs="0"/>
+			<xs:element ref="Abs:LastEffectiveDt" minOccurs="0"/>
+			<xs:element ref="Abs:LastEffectiveTm" minOccurs="0"/>
+			<xs:element name="InclusiveInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates whether or not the dates and times are inclusive or not.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="UPCType">
+		<xs:annotation>
+			<xs:documentation>UPC code and components type.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="UPC" type="UPC"/>
+			<xs:element name="UPCComponents" type="UPCComponentsType"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

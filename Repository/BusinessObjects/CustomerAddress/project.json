@@ -1,0 +1,50 @@
+{
+  "name": "CustomerAddress",
+  "application": "ESED_CustomerAddress_UCA_IH_Publisher",
+  "source": "UCA",
+  "consumer": "EDM",
+  "version": "v3.1.10",
+  "mappings": {
+    "schema": "CMM/BOD/GetCustomerAddress.xsd",
+    "mappingFile": "/requirement/CustomerAddress-v3.1.10.xlsx",
+    "mappingSheet": "Mapping CAMS  to Canonical",
+    "constructFile": "xpath-mapping.properties"
+  },
+  "xpathMappingFile": "xpath-mapping.properties",
+  "messageFlow": {
+    "name": "ESED_CustomerAddress_UCA_IH_Publisher",
+    "brokerSchema": "com.abs.uca.cams",
+    "input": {
+      "name": "KafkaConsumer",
+      "properties": {
+        "topicName": "IAUC_C02_PROD_CAMS_AGGREGATE"
+      }
+    },
+    "output": {
+      "name": "KafkaProducer",
+      "properties": {
+        "topicName": "ESED_C01_CustomerAddresss"
+      }
+    },
+    "transformer": {
+      "name": "ESED_CAMS_CMM_Transformer",
+      "properties": {
+
+      }
+    },
+    "inputAuditor": {
+      "name": "Audit_Validate_Input"
+    },
+    "outputAuditor": {
+      "name": "Audit_Validate_Output"
+    },
+    "exceptionHandler": {
+      "name": "ExceptionSubFlow",
+      "properties": {
+
+      }
+    }
+  },
+  "deployEgNumber": "10",
+  "createTestWorkspace": false
+}

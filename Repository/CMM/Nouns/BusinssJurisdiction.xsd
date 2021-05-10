@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<xs:schema xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.0  04/02/2021  SNUTH00 created initial version-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:complexType name="JurisdictionRuleType">
+		<xs:annotation>
+			<xs:documentation>Defines the rules applied with in a jurisdiction type.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="Abs:RuleCd"/>
+			<xs:element name="RuleDsc" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="500"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="JurisdictionRuleDsc" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="500"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RuleTypeCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines the type of jurisdiction rule.
+ex: Additinal payment to Vendor for local environmental disposal rules.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RuleTypeDsc" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RuleUseType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Defines various types of use types for a rule. It could be used to calculate IB cost, Inventory cost or Item Pricing...etc.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="UseTypeCd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="UseTypeValueTxt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="RuleCharges" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>describes financial charges and account info related to the jurisdiction rule.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="VendorPaymentCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates if the payment need to be made to the vendor as per the rule defined.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PaymentAmt" type="xs:decimal" minOccurs="0"/>
+						<xs:element name="PaymentRt" type="xs:decimal" minOccurs="0"/>
+						<xs:element name="AccountTypeCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Account type as liability, distribution..etc</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AccountId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SubAccountId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="RuleStatus" type="Abs:StatusType" minOccurs="0"/>
+			<xs:element name="ReasonType" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ReasonCd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ReasonDsc" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element ref="Abs:EffectiveStartDt" minOccurs="0"/>
+			<xs:element ref="Abs:EffectiveEndDt" minOccurs="0"/>
+			<xs:element name="CommentTxt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="500"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AuditData" type="Abs:RecordAuditData" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="JurisdictionAreaType">
+		<xs:annotation>
+			<xs:documentation>Geogrphic or Organization area that defines a jurisdiction. A jurisdiction is not restricted by corporate structure and may cross divisional boundaries</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Organization" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Defines Jurisdicton coverage area by organizaion.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="JurisdictionOrganizationCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Defines at what level the jurisdiction applies to.
+Division - if it applies at division level
+Facility - If it applies at facility level.
+ROG - if it applies at ROG level
+District - if it applies at district level.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element ref="Abs:CorporationId" minOccurs="0"/>
+						<xs:element ref="Abs:DivisionId" minOccurs="0"/>
+						<xs:element ref="Abs:ROGCd" minOccurs="0"/>
+						<xs:element name="DistrictId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="Facility" minOccurs="0" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="FacilityId" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="FacilityType" type="Abs:CodeWithDescription" minOccurs="0"/>
+									<xs:element ref="Abs:EffectiveStartDt" minOccurs="0"/>
+									<xs:element ref="Abs:EffectiveEndDt" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GeographicArea" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Defines Jurisdicton coverage area by geographic area.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="GeographicAreaType" type="Abs:CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Defines the type of Geographic area where a particular set of Jurisdiction rules applied. Ex: Country wide jurisdiction, State wide, County wide or City wide.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="AreaValueTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>values could be city names, state codes, country codes or zip codes..etc</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AreaValueDsc" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Describes the geographic area. ex state name, county name or a region name.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="200"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="BusinessJurisdictionItemType">
+		<xs:annotation>
+			<xs:documentation>Defines corporate items and corresponding jurisdiction rules applied at various levels of the organization. This BOD publishes eligible corporate items included in Juridiction level or Jurisdiction Rule level.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="JurisdictionItemSourceCd">
+				<xs:annotation>
+					<xs:documentation>defines the BOD data feed source, either as Jurisdiction level or JurisdictionRule level.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="Abs:CorporationId"/>
+			<xs:element ref="Abs:DivisionId"/>
+			<xs:element ref="Abs:JurisdictionCd"/>
+			<xs:element name="JurisdictionItem" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Corporate items eligible for a particular jurisdiction cd.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="Abs:JurisdictionRuleItemType">
+							<xs:sequence>
+								<xs:element name="UnitTypeCd" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>defines, each, multipack or case pack of items.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="10"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="JurisdictionDefinition" type="Abs:JurisdictionDefinitionType" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Defines various types of jurisdiction categories apllied with in a definition, ex taxes, sales restrictions, specail programs.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="POSAppliedInd" type="xs:boolean" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Rue for the item is eligible to apply at POS.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="JurisdictionRuleItem" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Corporate items eligible for a particular jurisdiction rule.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="Abs:RuleCd" minOccurs="0"/>
+						<xs:element name="RuleItem" type="Abs:JurisdictionRuleItemType" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AuditData" type="Abs:RecordAuditData" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="JurisdictionDefinitionType">
+		<xs:annotation>
+			<xs:documentation>Defines various types of jurisdiction categories apllied with in a definition, ex taxes, sales restrictions, specail programs.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="TaxDefinition" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Various types of tax codes and eligibility.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="TaxCd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="TaxRt" type="xs:decimal" minOccurs="0"/>
+						<xs:element name="AppliedInd" type="xs:boolean" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="RetrictionDefinition" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>defines restriction under the jurisdiction lie sales restriction on tobacco, liquor...etc</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="RestrictionCd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="RestrictionDsc" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="200"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AppliedInd" type="xs:boolean" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ProgramDefinition" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Defines various types of programs like Bottle deposit, WIC, FSA..etc
+WIC - Women Infant Children
+FSA - Flexible spending account</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ProgramCd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ProgramNm" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="200"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AppliedInd" type="xs:boolean" minOccurs="0"/>
+						<xs:element name="ProgramUPCId" type="Abs:UPC" minOccurs="0"/>
+						<xs:element name="ProgramLinkNbr" type="xs:integer" minOccurs="0"/>
+						<xs:element name="ProgramFeeAmt" type="xs:decimal" minOccurs="0"/>
+						<xs:element name="ProgramRetailRt" type="xs:decimal" minOccurs="0"/>
+						<xs:element name="ProgramRetailRateFctr" type="xs:decimal" minOccurs="0"/>
+						<xs:element name="PrintMessageInd" type="xs:boolean" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>print message about program on customer receipt in POS.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="BusinessJurisdictionType">
+		<xs:annotation>
+			<xs:documentation>Business object to define varius types of jurisdiction areas and rules applied on a business process like retail sales or online sales. The Jurisdiction rules include  local taxes applied, sales restrictions or any other type. A jurisdiction is not restricted by corporate structure and may cross divisional boundaries</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="Abs:JurisdictionCd"/>
+			<xs:element name="JurisdictionDsc" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Description for the jurisdiction of a business process.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="500"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="JurisdictionType" type="Abs:CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Describes the type of jurisdiction, ex tax jurisdiction, sales restriction..etc</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="JurisdictionStatus" type="Abs:StatusType" minOccurs="0"/>
+			<xs:element name="JurisdictionArea" type="Abs:JurisdictionAreaType" minOccurs="0"/>
+			<xs:element name="JurisdictionRule" type="Abs:JurisdictionRuleType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation> Defines each possible formula or rule for charge additions for the vendor, merchandising systems. 
+A rule is not restricted by corporate structure and may cross divisional boundaries. 
+There will be one row per rule using low and high date.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="JurisdictionDefinition" type="Abs:JurisdictionDefinitionType" minOccurs="0"/>
+			<xs:element name="CommentTxt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="500"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="Abs:EffectiveStartDt" minOccurs="0"/>
+			<xs:element ref="Abs:EffectiveEndDt" minOccurs="0"/>
+			<xs:element name="AuditData" type="Abs:RecordAuditData" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="EffectiveStartDt" type="xs:date"/>
+	<xs:element name="EffectiveEndDt" type="xs:date"/>
+	<xs:element name="JurisdictionCd">
+		<xs:annotation>
+			<xs:documentation>Unique identifier for a particular jurisdiction set up in a business process.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="20"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:complexType name="JurisdictionRuleItemType">
+		<xs:sequence>
+			<xs:element ref="Abs:CorporateItemCd"/>
+			<xs:element ref="Abs:EffectiveStartDt" minOccurs="0"/>
+			<xs:element ref="Abs:EffectiveEndDt" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="RuleCd">
+		<xs:annotation>
+			<xs:documentation>Unque identiifier for the rules defined with in jurisdiction</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="20"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>
