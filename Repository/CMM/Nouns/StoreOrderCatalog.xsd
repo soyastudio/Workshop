@@ -15,6 +15,7 @@
 	<!--3/17/2021 - v1.0 - Alex Nunes - UPC flag + UnitPack and other minor changes -->
 	<!--3/23/2021 - v1.0 - Alex Nunes - Added VendorConversionFctr and ROGcd. Removed PrimaryIndicator at UPC level.-->
 	<!--3/29/2021 - v1.0 - Alex Nunes - Added UPC Components. Reorganized groups. Removed Supplier type and added Corp/Div for SourceSupply WHSEs.-->
+		<!--4/13/2021 - v1.0 - Alex Nunes - Modified UnitPackNbr from Int to Decimal 7,2-->
 	<xs:element name="StoreOrderCatalog" type="StoreOrderCatalogType">
 		<xs:annotation>
 			<xs:documentation>Root element.</xs:documentation>
@@ -100,8 +101,9 @@
 </xs:documentation>
 										</xs:annotation>
 										<xs:simpleType>
-											<xs:restriction base="xs:int">
-												<xs:totalDigits value="10"/>
+											<xs:restriction base="xs:decimal">
+												<xs:totalDigits value="7"/>
+												<xs:fractionDigits value="2"/>
 											</xs:restriction>
 										</xs:simpleType>
 									</xs:element>

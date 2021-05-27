@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2021 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--!=============================================================================================-->
+	<!--!-->
+	<!--!-->
+	<!--!      Noun: VendorCostArea-->
+	<!--!                                     Business object that represents Vendor Cost Area.-->
+	<!--!-->
+	<!--!=============================================================================================-->
+	<!--v1.0 - 4/20/2021 - Alex Nunes - Initial version.-->
+	<!--v1.0 - 4/22/2021 - Alex Nunes - Renamed StoreGroup to ServiceAreaStoreGroup -->
+	<!--v1.0 - 4/28/2021 - Alex Nunes - Changes from Mapping review mtg -->
+	<xs:element name="VendorCostArea" type="VendorCostAreaType">
+		<xs:annotation>
+			<xs:documentation>Root element.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="VendorCostAreaType">
+		<xs:annotation>
+			<xs:documentation>Vendor Cost Area identifies the number of item/cost groupings that a vendor has within its division-level product line, and assigns one of those cost areas to each store that the vendor delivers products to (i.e., the Vendor Service Area).</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporationId"/>
+			<xs:element ref="DivisionId"/>
+			<xs:element name="CostAreaCd" type="xs:short">
+				<xs:annotation>
+					<xs:documentation>A cost area code defines an area that a DSD vendor supplies that has the same cost.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CostAreaDsc" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Description of the cost area.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="30"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorId">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorSubAccountNbr">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LastFileMaintenanceActionCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates the last file maintenance action done on the backdoor vendor related record</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="GlobalLocationNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The DSD Cost Area Global Location Number. An identifier, supplied by a distributor (DSD Vendor), that corresponds to a cost area. For distributors that use the Global Location Number (GLN) this is expected to be a GLN. For distributors that are not using the GLN, this is their location identifier that corresponds a company Distributor's Cost Area.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="13"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Facility" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Facilities serviced by vendor</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="CorporationId"/>
+						<xs:element ref="DivisionId"/>
+						<xs:element ref="RetailStoreId"/>
+						<xs:element name="ServiceAreaStoreGroup" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Additional grouping of stores as determined by user within a vendor service area in a division. For example, if there are 20 stores  within a vendor service area in a division and if user would like to treat 10 stores out of 20 differently in terms of authorizing an item they will group those stores by populating same store group code value (for example ‘KB’) to those 10 stores. The user have ability to authorize item by store group code, and by using this option they will only authorize that item to those 10 stores instead of ALL 20</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="OnHoldInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This element identifies if a store's status is on hold, that is, no authorizations will be applied to the store. Valid values: 'y' - on hold - no authorizations will take place for this store ' ' or 'n' - store is active - authorizations can take place for this store.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LastFileMaintenanceActionCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates the last file maintenance action done on the backdoor vendor related record</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AuditData" type="AuditType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Audit data elements.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AuditType">
+		<xs:annotation>
+			<xs:documentation>This type represents auditing data related to the message at source.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0">
+			<xs:element name="CreateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Time stamp of when message was created at source.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LastUpdateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time stamp of when message was last modified at source.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CreateUserId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Id of the client that created the message at source.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LastUpdateUserId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>User Id of who last modified the message at source.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

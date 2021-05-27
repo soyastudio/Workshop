@@ -12,6 +12,8 @@
 • Renamed PartnerLocationData to PartnerData; SiteId to PartnerSiteId; Participated to PartnerParticipantId; RewardTransaction
 • Added PostalCd to PartnerData
 • Changed TransactionTs, AltTransactionTs, ExceptionTxnTs to dateTimeStamp-->
+	<!--V1.4 Patrick Oliver - Updated datatype for RewardTokenOfferedQty,  PurchDiscLimitQty to integer-->
+	<!--V1.5 Patrick Oliver - Changed HHID, ClubCardNbr, and OldClubCard datatypes to string -->
 	<xs:element name="PartnerRewardTransaction" type="PartnerRewardTransactionType">
 		<xs:annotation>
 			<xs:documentation>Root element. Business Object Document for Albertsons Partner Reward Transaction. Current Albertson’s partner reward programs include fuel discounts with partner’s such as Shell and Chevron where customers can redeem Deferred rewards which are earned over time. During fuel purchases customers are presented with their reward balances which they can choose to redeem, request additional information, or cancel. As partners capture this customer transactional data throughout the day it is sent back to Albertsons. This object will capture that partner transactional data which includes the customer’s rewards offered, rewards redeemed, total purchased amounts, discount limits and total savings. Furthermore when a customer transaction results in an error, such as a customer trying to exceed their purchase reward limits, these transactions will be sent back to the BOD as an exception transaction message.</xs:documentation>
@@ -49,7 +51,7 @@ Ex Partner transaction</xs:documentation>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
-						<xs:element name="TransactionTs" type="xs:dateTime" minOccurs="0">
+						<xs:element name="TransactionTs" type="xs:dateTimeStamp" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>This is the timestamp when the transaction was updated.</xs:documentation>
 							</xs:annotation>
@@ -83,7 +85,7 @@ Ex Partner transaction</xs:documentation>
 										</xs:simpleType>
 									</xs:element>
 									<xs:element name="AltTransactionType" type="CodeWithDescription" minOccurs="0"/>
-									<xs:element name="AltTransactionTs" type="xs:dateTime" minOccurs="0">
+									<xs:element name="AltTransactionTs" type="xs:dateTimeStamp" minOccurs="0">
 										<xs:annotation>
 											<xs:documentation>This is the timestamp when the transaction was updated.</xs:documentation>
 										</xs:annotation>
@@ -179,7 +181,7 @@ Ex Partner transaction</xs:documentation>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
-						<xs:element name="RewardTokenOfferedQty" minOccurs="0">
+						<xs:element name="RewardTokenOfferedQty" type="xs:integer" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>This is the total rewards offered which is a multiple of points.      
 Ex: 100 points equal 1 token, 300 points equal 3 token, etc. </xs:documentation>
@@ -201,16 +203,10 @@ Ex: 100 points equal 1 token, 300 points equal 3 token, etc. </xs:documentation>
 								<xs:documentation>The code used to specify the units in which a value is being expressed, or manner in which a measurement has been taken.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="PurchDiscLimitQty" minOccurs="0">
+						<xs:element name="PurchDiscLimitQty" type="xs:integer" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>Gallon Quantity Limit allowed in the purchase.</xs:documentation>
 							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:decimal">
-									<xs:totalDigits value="18"/>
-									<xs:fractionDigits value="3"/>
-								</xs:restriction>
-							</xs:simpleType>
 						</xs:element>
 						<xs:element name="PurchDiscLimitAmt" type="AmountType" minOccurs="0">
 							<xs:annotation>
@@ -262,7 +258,7 @@ Ex: 100 points equal 1 token, 300 points equal 3 token, etc. </xs:documentation>
 							</xs:simpleType>
 						</xs:element>
 						<xs:element name="ExceptionTypeCd" type="CodeWithDescription" minOccurs="0"/>
-						<xs:element name="ExceptionTxnTs" type="xs:dateTime" minOccurs="0">
+						<xs:element name="ExceptionTxnTs" type="xs:dateTimeStamp" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>This is the timestamp when the the exception occurs.</xs:documentation>
 							</xs:annotation>
@@ -279,25 +275,18 @@ Ex: 100 points equal 1 token, 300 points equal 3 token, etc. </xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element ref="DivisionId" minOccurs="0"/>
-			<xs:element name="HouseholdId" minOccurs="0">
+			<xs:element name="HouseholdId" type="IDType" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Unique identifier assigned to a household.  Households are created by matching addresses and/or phone numbers across loyalty card accounts.</xs:documentation>
 				</xs:annotation>
-				<xs:simpleType>
-					<xs:restriction base="xs:decimal">
-						<xs:totalDigits value="14"/>
-						<xs:fractionDigits value="0"/>
-					</xs:restriction>
-				</xs:simpleType>
 			</xs:element>
 			<xs:element name="ClubCardNbr" nillable="true" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>A number which is embossed on a Loyalty Card and which uniquely identifies it.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
-					<xs:restriction base="xs:decimal">
-						<xs:totalDigits value="14"/>
-						<xs:fractionDigits value="0"/>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -306,9 +295,8 @@ Ex: 100 points equal 1 token, 300 points equal 3 token, etc. </xs:documentation>
 					<xs:documentation>Legacy club card numbers. For some old longer club card no, a conversion is done into current standard club card no. </xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
-					<xs:restriction base="xs:decimal">
-						<xs:totalDigits value="14"/>
-						<xs:fractionDigits value="0"/>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>

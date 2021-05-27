@@ -8,6 +8,7 @@
 -->
 <!-- edited with XMLSpy v2021 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
 <xs:schema xmlns:oa="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.6 Alex Nunes 4/21/2021 - Added FacilityId in PurchaseOrder section at header level. JIRA: EBC-14204 -->
 	<!--V1.5 Alex Nunes 3/19/2021 - Added DataBatchCd at detail level. JIRA: EBC-14130-->
 	<!--V1.4 Alex Nunes 10/27/2020 - Added BatchExtract timestamp at header level JIRA: 12626.-->
 	<!--V1.4 Rosabel Macario 11/05/2020 - Added tag to resolve dateTimeStamp issue-->
@@ -1292,6 +1293,22 @@ Databatch 0101 = GROCERY ORDER
 						<xs:maxLength value="20"/>
 					</xs:restriction>
 				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Facility" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Facility that created the Order.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="FacilityId" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Original Facility Id that created the Purchase Order.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element ref="CorporationId" minOccurs="0"/>
+						<xs:element ref="DivisionId" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>

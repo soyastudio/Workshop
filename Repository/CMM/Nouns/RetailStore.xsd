@@ -1,11 +1,100 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://collab.safeway.com/it/architecture/AbsOmMaster" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.6 04/22/2021 Patrick Oliver: 
+• Added complex types EcomBusinessHours , EcomAlternateBusinessHours  
+• Added EffectiveStartDt, EffectiveEndDt to FacilityProfileType
+• Added SlotForecastEndDt to SlotConfigurationType
+• Added ServiceFeeDsc to ServiceFeeType
+• Added complex type PickupAreaCoordinateType to PickUpLocation
+    o PickUpLocation.LatitudeDegree, PickUpLocationLongitudeDegree moved to PickUpLocation.PickupAreaCoordinate
+    o Added Altitude to PickUpLocation.PickupAreaCoordinate
+• Removed PartnerOrderLimitTypeType -->
 	<!--V1.5 02/24/2021 Sai N   Added Partner order limit type.-->
 	<!--V1.4 011821 Sai N Added override Type in eCom profileType-->
 	<!--V1.3 11/04/2020 Rosabel Macario- Added tag to resolve dateTimeStamp issue-->
 	<!--V1.2  08/14/2020  Sai Nuthakki  Added Faciity online profile type-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:complexType name="RetailStore">
+		<xs:sequence>
+			<xs:element name="Corporation" type="Abs:CorporationType" minOccurs="0"/>
+			<xs:element name="Division" type="Abs:DivisionType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Information related to the operating division. Ex Norcal with Div Id 25 </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReportingDivision" type="Abs:DivisionType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Information related to the accounts reporting division. Also known as Consolidation division for AP/AR.                            Ex Accounting division 17</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OperatingArea" type="Abs:OperatingAreaType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Organization layer within the operating division. Generally it contains one or more operating districts.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ParentOperatingArea" type="Abs:OperatingAreaType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Sometimes retail facilities may have a different reporting structure, generally a division.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="District" type="Abs:DistrictType" minOccurs="0"/>
+			<xs:element name="Banner" type="Abs:BannerType" minOccurs="0"/>
+			<xs:element name="RetailOrderGroup" type="Abs:RetailOrderGroupType" minOccurs="0"/>
+			<xs:element name="StoreData" type="Abs:RetailStoreType" minOccurs="0"/>
+			<xs:element name="StoreAddressData" type="Abs:AddressType" minOccurs="0"/>
+			<xs:element name="StoreDigitalAddressData" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Digital address for a retail store like url, facebook id, twitter account id, Instagram id, emial ..etc</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="DigitalAddressType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="DigitalAddressTxt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="500"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="StoreDepartmentData" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="Abs:StoreDepartmentType">
+							<xs:sequence>
+								<xs:element name="DepartmentHours" minOccurs="0" maxOccurs="unbounded">
+									<xs:complexType>
+										<xs:complexContent>
+											<xs:extension base="Abs:StoreDepartmentHourType"/>
+										</xs:complexContent>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="DepartmentHolidayHours" type="HolidayWorkHoursType" minOccurs="0" maxOccurs="unbounded">
+									<xs:annotation>
+										<xs:documentation>Work hours during public holidays</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="StoreDepartmentSectionType" type="Abs:StoreDepartmentSectionType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="StoreHoursData" type="Abs:RetailStoreHourType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="StoreHolidayHours" type="HolidayWorkHoursType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="StoreCheckStandData" type="Abs:StoreCheckStandType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="StoreControlData" type="RetailStoreControlType" minOccurs="0"/>
+			<xs:element name="FacilityOnlineProfileType" type="StoreOnlineProfileTypeType" minOccurs="0"/>
+			<xs:element name="OrgEntityType" type="Abs:OrgMasterNameType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Generic type to capture different org structures.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
 	<xs:complexType name="RetailStoreControlType">
 		<xs:annotation>
 			<xs:documentation>Store control data from SSSTOCTL table. Excluded store system related data for security reasons.</xs:documentation>
@@ -102,87 +191,10 @@
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
-	<xs:complexType name="RetailStore">
-		<xs:sequence>
-			<xs:element name="Corporation" type="Abs:CorporationType" minOccurs="0"/>
-			<xs:element name="Division" type="Abs:DivisionType" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Information related to the operating division. Ex Norcal with Div Id 25 </xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="ReportingDivision" type="Abs:DivisionType" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Information related to the accounts reporting division. Also known as Consolidation division for AP/AR.                            Ex Accounting division 17</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="OperatingArea" type="Abs:OperatingAreaType" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Organization layer within the operating division. Generally it contains one or more operating districts.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="ParentOperatingArea" type="Abs:OperatingAreaType" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Sometimes retail facilities may have a different reporting structure, generally a division.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="District" type="Abs:DistrictType" minOccurs="0"/>
-			<xs:element name="Banner" type="Abs:BannerType" minOccurs="0"/>
-			<xs:element name="RetailOrderGroup" type="Abs:RetailOrderGroupType" minOccurs="0"/>
-			<xs:element name="StoreData" type="Abs:RetailStoreType" minOccurs="0"/>
-			<xs:element name="StoreAddressData" type="Abs:AddressType" minOccurs="0"/>
-			<xs:element name="StoreDigitalAddressData" minOccurs="0" maxOccurs="unbounded">
-				<xs:annotation>
-					<xs:documentation>Digital address for a retail store like url, facebook id, twitter account id, Instagram id, emial ..etc</xs:documentation>
-				</xs:annotation>
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element name="DigitalAddressType" type="CodeWithDescription" minOccurs="0"/>
-						<xs:element name="DigitalAddressTxt" minOccurs="0">
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="500"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="StoreDepartmentData" minOccurs="0" maxOccurs="unbounded">
-				<xs:complexType>
-					<xs:complexContent>
-						<xs:extension base="Abs:StoreDepartmentType">
-							<xs:sequence>
-								<xs:element name="DepartmentHours" minOccurs="0" maxOccurs="unbounded">
-									<xs:complexType>
-										<xs:complexContent>
-											<xs:extension base="Abs:StoreDepartmentHourType"/>
-										</xs:complexContent>
-									</xs:complexType>
-								</xs:element>
-								<xs:element name="DepartmentHolidayHours" type="HolidayWorkHoursType" minOccurs="0" maxOccurs="unbounded">
-									<xs:annotation>
-										<xs:documentation>Work hours during public holidays</xs:documentation>
-									</xs:annotation>
-								</xs:element>
-							</xs:sequence>
-						</xs:extension>
-					</xs:complexContent>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="StoreDepartmentSectionType" type="Abs:StoreDepartmentSectionType" minOccurs="0" maxOccurs="unbounded"/>
-			<xs:element name="StoreHoursData" type="Abs:RetailStoreHourType" minOccurs="0" maxOccurs="unbounded"/>
-			<xs:element name="StoreHolidayHours" type="HolidayWorkHoursType" minOccurs="0" maxOccurs="unbounded"/>
-			<xs:element name="StoreCheckStandData" type="Abs:StoreCheckStandType" minOccurs="0" maxOccurs="unbounded"/>
-			<xs:element name="StoreControlData" type="RetailStoreControlType" minOccurs="0"/>
-			<xs:element name="FacilityOnlineProfileType" type="StoreOnlineProfileTypeType" minOccurs="0"/>
-			<xs:element name="OrgEntityType" type="Abs:OrgMasterNameType" minOccurs="0" maxOccurs="unbounded">
-				<xs:annotation>
-					<xs:documentation>Generic type to capture different org structures.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-		</xs:sequence>
-	</xs:complexType>
 	<xs:complexType name="StoreOnlineProfileTypeType">
+		<xs:annotation>
+			<xs:documentation> Represents online eCom attributes associated to a retail store</xs:documentation>
+		</xs:annotation>
 		<xs:sequence>
 			<xs:element name="EcommerceEnabledInd" type="xs:boolean" minOccurs="0">
 				<xs:annotation>
@@ -227,6 +239,16 @@ Ex: 3PL enabled store, Premium store, ERUM store..etc</xs:documentation>
 										</xs:restriction>
 									</xs:simpleType>
 								</xs:element>
+								<xs:element name="EffectiveStartDt" type="xs:date" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Date on which the store profile starts. </xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="EffectiveEndDt" type="xs:date" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Date on which the store profile starts. </xs:documentation>
+									</xs:annotation>
+								</xs:element>
 							</xs:sequence>
 						</xs:extension>
 					</xs:complexContent>
@@ -243,6 +265,16 @@ Ex: 3PL enabled store, Premium store, ERUM store..etc</xs:documentation>
 						<xs:element name="LastPickUpTm" type="xs:string" minOccurs="0"/>
 					</xs:sequence>
 				</xs:complexType>
+			</xs:element>
+			<xs:element name="EcomBusinessHours" type="EcomBusinessHoursType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Used to defined various types of eCom business hours.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EcomAlternateBusinessHours" type="EcomAlternateBusinessHoursType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Used to defined various types of eCom alternate business hours.</xs:documentation>
+				</xs:annotation>
 			</xs:element>
 			<xs:element name="PickupAreaType" type="CodeWithDescription" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
@@ -281,8 +313,18 @@ ex: Inside Locker,Outside Locker, Outside Kiosk.</xs:documentation>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
-						<xs:element name="LatitudeDegree" type="xs:decimal" minOccurs="0"/>
-						<xs:element name="LongitudeDegree" type="xs:decimal" minOccurs="0"/>
+						<xs:element name="PickupAreaCoordinateType" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Shows the pickup area coordinates. Note: A PickupAreaTypeCd can have multiple coordinates; Ex: Retail store may have multiple Parking Lot spaces for pick up where each has its own coordinates. </xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="LatitudeDegree" type="xs:decimal" minOccurs="0"/>
+									<xs:element name="LongitudeDegree" type="xs:decimal" minOccurs="0"/>
+									<xs:element name="Altitude" type="xs:decimal" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
 						<xs:element name="LocationCommentTxt" minOccurs="0">
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
@@ -343,6 +385,13 @@ ex: Inside Locker,Outside Locker, Outside Kiosk.</xs:documentation>
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
 									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ServiceFeeDsc" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
@@ -427,6 +476,7 @@ ex: scan cd for bag fee.</xs:documentation>
 							</xs:simpleType>
 						</xs:element>
 						<xs:element name="SlotForecastLaunchDt" type="xs:date" minOccurs="0"/>
+						<xs:element name="SlotForecastEndDt" type="xs:date" minOccurs="0"/>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
@@ -443,72 +493,279 @@ Ex: Store can be designated to manually override an automated 3PL delivery sched
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="PartnerOrderLimitType" minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="OnlineProfileAuditData" type="RecordAuditData" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EcomBusinessHoursType">
+		<xs:annotation>
+			<xs:documentation>Used to define types of eCom business hours.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="BusinessHrsType" type="CodeWithDescription" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>3rd party order limits managed at a store level.</xs:documentation>
+					<xs:documentation>Type of eCom business hours. Ex: Operation hours, Staffing hours, etc.</xs:documentation>
 				</xs:annotation>
+			</xs:element>
+			<xs:element name="BusinessHrsSubType" type="CodeWithDescription" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Sub type of the eCom business hours. Ex: Fulfillment, Delivery, etc. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BusinessHrs" minOccurs="0" maxOccurs="unbounded">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="PartnerId" minOccurs="0">
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="100"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="PartnerNm" minOccurs="0">
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="200"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="OrderLimitCnt" type="xs:integer" minOccurs="0">
+						<xs:element name="StartDt" type="xs:date" minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>purpose is to define threshold at which point we stop allocating orders to a given vendor for a given day for given store</xs:documentation>
+								<xs:documentation>Date on which the eCom business hours starts. </xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="MaximumItemCnt" type="xs:integer" minOccurs="0">
+						<xs:element name="EndDt" type="xs:date" minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>purpose is to define, by an order's item count, a threshold to qualify orders to be eligible for assigning to a 3PL (i.e. we will only assign an order to Shipt if the item count is between 1-70)</xs:documentation>
+								<xs:documentation>Date on which the eCom business hours ends.  </xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="MinimumItemCnt" type="xs:integer" minOccurs="0">
+						<xs:element name="DayOfWk" type="xs:string" minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>purpose is to define, by an order's item count, a threshold to qualify orders to be eligible for assigning to a 3PL (i.e. we will only assign an order to Shipt if the item count is between 1-70)</xs:documentation>
+								<xs:documentation>Day of week</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="MinimumToteCnt" type="xs:integer" minOccurs="0">
+						<xs:element name="StartHr" type="xs:time" nillable="false" minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>purpose is to define, by an order's tote count, a threshold to qualify orders to be eligible for assigning to a 3PL (i.e. we will only assign an order to Shipt if the tote count is between 10-20)
-
-</xs:documentation>
+								<xs:documentation>Starting hour of the eCom business operation.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="MaximumToteCnt" type="xs:integer" minOccurs="0">
+						<xs:element name="EndHr" type="xs:time" nillable="false" minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>purpose is to define, by an order's tote count, a threshold to qualify orders to be eligible for assigning to a 3PL (i.e. we will only assign an order to Shipt if the tote count is between 10-20)
-
-</xs:documentation>
+								<xs:documentation>Ending hour of the eCom business operation.</xs:documentation>
 							</xs:annotation>
-						</xs:element>
-						<xs:element name="OrderAllocationPct" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>purpose is to define percentage of orders to be delivered by a partner for a given store for a given day(this value will override the order count)
-
-</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:decimal">
-									<xs:totalDigits value="6"/>
-									<xs:fractionDigits value="3"/>
-								</xs:restriction>
-							</xs:simpleType>
 						</xs:element>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="OnlineProfileAuditData" type="RecordAuditData" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EcomAlternateBusinessHoursType">
+		<xs:annotation>
+			<xs:documentation>Used to define types of eCom alternate business hours.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="AlternateBusinessHrsType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Type of eCom alternate business hours. Ex: Emergency hours, Exception hours, etc.,</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AlternateBusinessHrsSubType" type="CodeWithDescription" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Sub type of the alternate eCom business hours. Ex: Fulfillment, Delivery, etc.         Note that the alternate business hours can apply to multiple sub types </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AlternateBusinessHrs" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="StartDt" type="xs:date" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Date on which the eCom alternate business hours starts. </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="EndDt" type="xs:date" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Date on which the eCom alternate business hours ends. </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="DayOfWk" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Day of week.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="StartHr" type="xs:time" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Starting hour of the eCom business operation.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="EndHr" type="xs:time" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Ending hour of the eCom business operation.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AlternateBusinessHrsReason" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Business reason for the eCom alternate business hours Ex: Holiday, Store clousure, etc. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AlternateBusinessHrsStatus" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Statuses of the eCom alternate business hours. Ex: Pending, Complete, etc.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="StatusType">
+							<xs:sequence>
+								<xs:element name="OfferRequestStatusTypeCd" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Each offer request may have multiple types of status based on type of offer. 
+Ex: overall offer rquest status, digital offer request, non-digital offer request.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="20"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="TimeZoneCd" minOccurs="0">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="20"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AlternateBusinessHrsComment" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute ref="typeCode"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="RequestedByType" type="RequestedByType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Business user who requested the eCom alternate business hours. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ApprovedByType" type="ApprovedByType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Business user who approved the eCom alternate business hours. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RequestedByType">
+		<xs:annotation>
+			<xs:documentation>Contains data for business users who request alternate eCom business hours.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="UserId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FirstNm" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LastNm" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RequestedByDtTm" type="xs:dateTime" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ApprovedByType">
+		<xs:annotation>
+			<xs:documentation>Contains data for business users who approve alternate eCom business hours. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="UserId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FirstNm" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LastNm" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ApprovedByDtTm" type="xs:dateTime" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PartnerOrderLimitTypeType">
+		<xs:annotation>
+			<xs:documentation>Details business partner identification and contractual order limts for store delivery and pickup </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PartnerId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PartnerNm" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OrderLimitCnt" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>purpose is to define threshold at which point we stop allocating orders to a given vendor for a given day for given store</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MaximumItemCnt" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>purpose is to define, by an order's item count, a threshold to qualify orders to be eligible for assigning to a 3PL (i.e. we will only assign an order to Shipt if the item count is between 1-70)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MinimumItemCnt" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>purpose is to define, by an order's item count, a threshold to qualify orders to be eligible for assigning to a 3PL (i.e. we will only assign an order to Shipt if the item count is between 1-70)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MinimumToteCnt" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>purpose is to define, by an order's tote count, a threshold to qualify orders to be eligible for assigning to a 3PL (i.e. we will only assign an order to Shipt if the tote count is between 10-20)
+
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MaximumToteCnt" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>purpose is to define, by an order's tote count, a threshold to qualify orders to be eligible for assigning to a 3PL (i.e. we will only assign an order to Shipt if the tote count is between 10-20)
+
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrderAllocationPct" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>purpose is to define percentage of orders to be delivered by a partner for a given store for a given day(this value will override the order count)
+
+</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="6"/>
+						<xs:fractionDigits value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
 </xs:schema>

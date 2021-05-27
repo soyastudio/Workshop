@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.10 snuth00 5/7/21 Added Business Unit in Merchandise Hierarchy.-->
 	<!--v1.9 - Alex Nunes - 3/1/2021 - System of record changed from SIMS to EXE for the following elements: ItemSizeNbr,WarehouseUnitWidth,WarehouseUnitLength,WarehouseUnitHeight,WarehouseCube,WarehouseUnitWt,PalletLayer,PalletHeight. Lengths adjusted accordingly.-->
 	<!--V1.8 Patrick Oliver 12/10/20: Updated LeadVendorInd to PrimaryVendorInd in ItemPriceAreaVendorType -->
 	<!--V1,7 Alex Nunes 8/10/2002 - Modified SizeRangeDsc from 200 to 300 string in CIG type.-->
@@ -948,6 +949,49 @@ Valid Ring Type Codes are:
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
+	<xs:complexType name="CorporateItemType">
+		<xs:annotation>
+			<xs:documentation>Contains basic item information as defined at corporate level so that it canbe applied to downstream item definitions.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporationId"/>
+			<xs:element ref="CorporateItemCd"/>
+			<xs:element name="CorporateItemDescription" type="ItemDscType" minOccurs="0"/>
+			<xs:element name="CorporateItemStatus" type="StatusType"/>
+			<xs:element name="CorporateItemLifeCycle">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="CreatedUserId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CreatedTs" type="xs:dateTime" minOccurs="0"/>
+						<xs:element name="ApprovedUserId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ApprovedTs" type="xs:dateTime" minOccurs="0"/>
+						<xs:element name="ApprovalCommentTxt" type="xs:string" minOccurs="0"/>
+						<xs:element name="RejectedUserId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="RejectedTs" type="xs:dateTime" minOccurs="0"/>
+						<xs:element name="RejectionCommentTxt" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
 	<xs:complexType name="SupplyChainItemType">
 		<xs:annotation>
 			<xs:documentation>Contains Item information from Supply Chain context. The information is at the level of products ordered and received from vendros into Warehouses, DCs and DSD.</xs:documentation>
@@ -1039,58 +1083,11 @@ Valid Ring Type Codes are:
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="CorpItemReference" minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="CorpItemReference" type="CorpItemReferenceType" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:documentation>CIC and UPC reference at Corporate level.
 from SSITMXRF</xs:documentation>
 				</xs:annotation>
-				<xs:complexType>
-					<xs:sequence maxOccurs="unbounded">
-						<xs:element name="UPCID" type="xs:string" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>UPC Cd used in retail systems and scanned during the sale transction at retail facility.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="UPCNbr" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>UPC as numeric field</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:decimal">
-									<xs:totalDigits value="14"/>
-									<xs:fractionDigits value="0"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="UPCComponents" type="UPCComponentsType" minOccurs="0"/>
-						<xs:element name="UPCType" type="CodeWithDescription" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Shows which of the Consumer, Multipack, or Case UPCs is used to make up the right 5 digitis of the UPC. One of these must be chosen.Called UNIT_TYPE in legacy systems.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="StatusCd" type="xs:string" minOccurs="0"/>
-						<xs:element name="PackNutrientInd" type="xs:string" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>This field indicates if the package contains all the nutrient information wanted on a label.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="NutriEnvirItemCd" type="xs:string" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>This indicates if the UPC is a nutritional or environmental item.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="PrefCICSeqNbr" type="xs:integer" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>The Preferred CIC (Corporate Item Cd) Sequential Nbr is used to identify a 1-1 UPC-CIC mapping. The CIC chosen as the 'preferred CIC' is the CIC with the lowest Sequential Nbr, an Integer. A unique index is applied to the UPC-Preferred CIC Sequential Nbr to ensure that there will always be one and only one lowest (Preferred) CIC to map to.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="PrefCICLockInd" type="xs:string" default="N" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>The Preferred CIC Lock Switch indicates if a Preferred CIC is 'locked' from being re-evaluated during the automated Preferred CIC upDt process or not. This control column provides a Business User the ability to 'lock' (permanently flag) a CIC as a particular Preferred CIC.  Valid Values: Y (locked), N (not locked) Default: N</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-					</xs:sequence>
-				</xs:complexType>
 			</xs:element>
 			<xs:element name="ROGItemReference" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
@@ -4150,6 +4147,55 @@ Delivery Item in a ROG and Price Area.                        </xs:documentation
 																	<xs:sequence>
 																		<xs:element name="ProductSubClassLevel2" type="IdWithNameType" minOccurs="0"/>
 																		<xs:element name="RollOut" type="CodeWithDescription" minOccurs="0"/>
+																		<xs:sequence/>
+																		<xs:element name="BusinessUnitType" minOccurs="0">
+																			<xs:annotation>
+																				<xs:documentation>Defines business units and groups(BUGM and BGGM) that owns and responsible for the procurement of items in a merchandise hierarchy level.</xs:documentation>
+																			</xs:annotation>
+																			<xs:complexType>
+																				<xs:sequence>
+																					<xs:element name="StockingSection" minOccurs="0">
+																						<xs:complexType>
+																							<xs:sequence>
+																								<xs:element ref="StockingSectionId" minOccurs="0"/>
+																								<xs:element ref="StockingSectionNm" minOccurs="0"/>
+																								<xs:element name="PrimaryStockingSectionInd" type="xs:boolean" minOccurs="0"/>
+																								<xs:element name="ParentStockingSection" minOccurs="0" maxOccurs="unbounded">
+																									<xs:complexType>
+																										<xs:sequence>
+																											<xs:element ref="StockingSectionId" minOccurs="0"/>
+																											<xs:element ref="StockingSectionNm" minOccurs="0"/>
+																										</xs:sequence>
+																									</xs:complexType>
+																								</xs:element>
+																							</xs:sequence>
+																						</xs:complexType>
+																					</xs:element>
+																					<xs:element name="BusinessUnitId" type="xs:integer" minOccurs="0"/>
+																					<xs:element name="BusinessUnitNm" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Business unit: a group of retail sections make up a business unit. E.G. the Cheese, Refrigerated, Milk, and Eggs retail sections make up the Dairy/Refrigerated business unit.</xs:documentation>
+																						</xs:annotation>
+																						<xs:simpleType>
+																							<xs:restriction base="xs:string">
+																								<xs:maxLength value="250"/>
+																							</xs:restriction>
+																						</xs:simpleType>
+																					</xs:element>
+																					<xs:element name="BusinessGroupId" type="xs:integer" minOccurs="0"/>
+																					<xs:element name="BusinessGroupNm" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Business group: a group of business units make up a business group. E.G. the Dairy/Refrigerated and Frozen business units make up the Dairy/Refrigerated/Frozen business group.</xs:documentation>
+																						</xs:annotation>
+																						<xs:simpleType>
+																							<xs:restriction base="xs:string">
+																								<xs:maxLength value="250"/>
+																							</xs:restriction>
+																						</xs:simpleType>
+																					</xs:element>
+																				</xs:sequence>
+																			</xs:complexType>
+																		</xs:element>
 																	</xs:sequence>
 																</xs:complexType>
 															</xs:element>
@@ -5339,14 +5385,20 @@ ex: FDA, State of CA, EPA</xs:documentation>
 			<xs:documentation>Various kinds of item descriptions.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
+			<xs:element name="CorporateItemDsc" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Item description defined at corporate level.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element name="WarehouseItemDsc" nillable="false" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>This is the Dsc of a warehoused item. It contains the brand and Dsc of the item. The brand occurs first. The space after the brand is located using the column brand end position. The space before the flavor/type in the Dsc is located using the column SUFFIXPOS.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="40"/>
-					</xs:restriction>
+					<xs:restriction base="xs:string"/>
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="InternetItemDsc" type="xs:string" minOccurs="0">
@@ -6238,4 +6290,66 @@ O - other expenses (non-wrap) - expense items that are used in the store (e.g. f
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
+	<xs:complexType name="CorpItemReferenceType">
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="UPCID" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>UPC Cd used in retail systems and scanned during the sale transction at retail facility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UPCNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>UPC as numeric field</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="UPCComponents" type="UPCComponentsType" minOccurs="0"/>
+			<xs:element name="UPCType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Shows which of the Consumer, Multipack, or Case UPCs is used to make up the right 5 digitis of the UPC. One of these must be chosen.Called UNIT_TYPE in legacy systems.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StatusCd" type="xs:string" minOccurs="0"/>
+			<xs:element name="PackNutrientInd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field indicates if the package contains all the nutrient information wanted on a label.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NutriEnvirItemCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This indicates if the UPC is a nutritional or environmental item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PrefCICSeqNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The Preferred CIC (Corporate Item Cd) Sequential Nbr is used to identify a 1-1 UPC-CIC mapping. The CIC chosen as the 'preferred CIC' is the CIC with the lowest Sequential Nbr, an Integer. A unique index is applied to the UPC-Preferred CIC Sequential Nbr to ensure that there will always be one and only one lowest (Preferred) CIC to map to.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PrefCICLockInd" type="xs:string" default="N" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The Preferred CIC Lock Switch indicates if a Preferred CIC is 'locked' from being re-evaluated during the automated Preferred CIC upDt process or not. This control column provides a Business User the ability to 'lock' (permanently flag) a CIC as a particular Preferred CIC.  Valid Values: Y (locked), N (not locked) Default: N</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="StockingSectionId" type="xs:integer">
+		<xs:annotation>
+			<xs:documentation>Stocking section of a SMIC item in a warehouse.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="StockingSectionNm">
+		<xs:annotation>
+			<xs:documentation>Super sections of stocking section in a warehouse.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="250"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
 </xs:schema>

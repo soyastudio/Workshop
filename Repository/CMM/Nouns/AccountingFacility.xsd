@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
 <xs:schema xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://collab.safeway.com/it/architecture/AbsOmMaster" xmlns:ns2="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
-	<!--V 1.6 Patrick Oliver 04/02/21: Added BannerId to Banner-->
+	<!--V 1.6 Patrick Oliver 04/02/21: Added DigitalBannerId, DigitalBannerNm to BannerType-->
 	<!--V1.5 Patrick Oliver 12/03/20: Added BannerDivisionCd to Banner segment ; removed GLCombinationId as this for GL bods only-->
 	<!--V1.4 Patrick Oliver 11/12/20: Added ParentEcomHierarchyCd, LicensorCd and AdditionalData to Site segement -->
 	<!--V1.3 Rosabel Macario 11/05/2020 - Added tag to resolve dateTimeStamp issue-->
@@ -38,10 +38,38 @@
 					<xs:documentation>A district is a group of facilities. </xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="Banner" type="Abs:BannerType" minOccurs="0">
+			<xs:element name="Banner" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Defines Banner and related information. Banner is the marketing identifer in a particular georgraphic area of the division or region.</xs:documentation>
 				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="Abs:BannerType">
+							<xs:sequence>
+								<xs:element name="DigitalBannerId" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Digital BannerId</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="20"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="DigitalBannerNm" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Digital banner name</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="50"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
 			</xs:element>
 			<xs:element name="FacilityData" type="Abs:FacilityType">
 				<xs:annotation>

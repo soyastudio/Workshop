@@ -15,6 +15,7 @@
 	<!--v1.3 Alex Nunes 2/5/2021 - Rename //element(*,StoreOrderVendor)/WarehouseVendorId to //element(*,StoreOrderVendor)/BackdoorVendorSubAccountId-->
 	<!--v1.4 Alex Nunes 3/19/2021 - Added Offset days and estimated available date. CR57 -->
 	<!--v1.4 Alex Nunes 4/7/2021 - wtUOM element renamed to its original name due to typo -->
+		<!--v1.5 Alex Nunes 4/14/2021 - Added PurchaseOrderEdiTs at Header level -->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:element name="StoreOrder" type="StoreOrderType">
 		<xs:annotation>
@@ -845,6 +846,11 @@ It is sometimes referred to as Division Item Code.
 			<xs:element name="PurchaseOrderReleaseDt" type="xs:dateTime" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Date of which the order has been transmitted (specifically for DSD Vendor orders).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PurchaseOrderEdiTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date the order was submitted to EDI.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="StoreOrderAltNbr" type="xs:string" minOccurs="0">

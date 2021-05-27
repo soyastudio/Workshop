@@ -70,9 +70,14 @@ ex: Additinal payment to Vendor for local environmental disposal rules.</xs:docu
 				</xs:annotation>
 				<xs:complexType>
 					<xs:sequence>
+						<xs:element name="VendorPaymentIncludeInd" type="xs:boolean" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates if the rule charges need ot be included in vendor payment.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
 						<xs:element name="VendorPaymentCd" minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>Indicates if the payment need to be made to the vendor as per the rule defined.</xs:documentation>
+								<xs:documentation>It indicates the type of product charge addition. Same on all rows used by STORCH. 'BD' = Bottle Deposit 'CD' = Case Deposit 'ST' = Sales Tax 'OT' = Other Tax 'TC' = Transfer Charge</xs:documentation>
 							</xs:annotation>
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
@@ -190,6 +195,11 @@ District - if it applies at district level.</xs:documentation>
 									<xs:element name="FacilityType" type="Abs:CodeWithDescription" minOccurs="0"/>
 									<xs:element ref="Abs:EffectiveStartDt" minOccurs="0"/>
 									<xs:element ref="Abs:EffectiveEndDt" minOccurs="0"/>
+									<xs:element name="TaxDefinition" type="Abs:TaxDefinitionType" minOccurs="0" maxOccurs="unbounded">
+										<xs:annotation>
+											<xs:documentation>applicable tax rates at jurisdiction and facility level.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
 								</xs:sequence>
 							</xs:complexType>
 						</xs:element>
@@ -239,7 +249,7 @@ District - if it applies at district level.</xs:documentation>
 		<xs:sequence>
 			<xs:element name="JurisdictionItemSourceCd">
 				<xs:annotation>
-					<xs:documentation>defines the BOD data feed source, either as Jurisdiction level or JurisdictionRule level.</xs:documentation>
+					<xs:documentation>defines the BOD data feed source, either as Jurisdiction level or JurisdictionRule level or for TareItem.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
@@ -273,14 +283,36 @@ District - if it applies at district level.</xs:documentation>
 										<xs:documentation>Defines various types of jurisdiction categories apllied with in a definition, ex taxes, sales restrictions, specail programs.</xs:documentation>
 									</xs:annotation>
 								</xs:element>
-								<xs:element name="POSAppliedInd" type="xs:boolean" minOccurs="0">
-									<xs:annotation>
-										<xs:documentation>Rue for the item is eligible to apply at POS.</xs:documentation>
-									</xs:annotation>
-								</xs:element>
+								<xs:element ref="Abs:POSAppliedInd" minOccurs="0"/>
 							</xs:sequence>
 						</xs:extension>
 					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="JurisdictionTareItem" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Defines jurisdictional fields for point of                  
+sale items which deal with tare processing. 
+Prepack,  service, code, and percent are the tare items stored here.                      
+  </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="RetailScanCd" type="Abs:UPC" minOccurs="0"/>
+						<xs:element ref="Abs:EffectiveStartDt" minOccurs="0"/>
+						<xs:element ref="Abs:EffectiveEndDt" minOccurs="0"/>
+						<xs:element ref="Abs:POSAppliedInd" minOccurs="0"/>
+						<xs:element name="TareCd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="TarePct" type="xs:decimal" minOccurs="0"/>
+						<xs:element name="PrepackTareQty" type="xs:decimal" minOccurs="0"/>
+						<xs:element name="ServicetareQty" type="xs:decimal" minOccurs="0"/>
+					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
 			<xs:element name="JurisdictionRuleItem" minOccurs="0" maxOccurs="unbounded">
@@ -302,23 +334,10 @@ District - if it applies at district level.</xs:documentation>
 			<xs:documentation>Defines various types of jurisdiction categories apllied with in a definition, ex taxes, sales restrictions, specail programs.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="TaxDefinition" minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="TaxDefinition" type="Abs:TaxDefinitionType" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:documentation>Various types of tax codes and eligibility.</xs:documentation>
 				</xs:annotation>
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element name="TaxCd" minOccurs="0">
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="50"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="TaxRt" type="xs:decimal" minOccurs="0"/>
-						<xs:element name="AppliedInd" type="xs:boolean" minOccurs="0"/>
-					</xs:sequence>
-				</xs:complexType>
 			</xs:element>
 			<xs:element name="RetrictionDefinition" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
@@ -453,5 +472,31 @@ There will be one row per rule using low and high date.</xs:documentation>
 				<xs:maxLength value="20"/>
 			</xs:restriction>
 		</xs:simpleType>
+	</xs:element>
+	<xs:complexType name="TaxDefinitionType">
+		<xs:sequence>
+			<xs:element name="TaxCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>different kinds of tax codes applicable for a jurisdiction, facility or region.
+Ex Tax-A Tax-B,Tax-C, Tax-D..etc</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TaxRt" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="TaxTierAppliedInd" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>indicates if  a particular tax type is applicable for a jurisdiction.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="POSAppliedInd" type="xs:boolean">
+		<xs:annotation>
+			<xs:documentation>indicates if item is eligible for the rule to apply at POS.</xs:documentation>
+		</xs:annotation>
 	</xs:element>
 </xs:schema>

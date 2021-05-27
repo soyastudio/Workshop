@@ -1,0 +1,51 @@
+{
+  "home": "C:/github/Workshop/Repository",
+  "name": "GroceryOrderFulfillment",
+  "application": "ESED_GroceryOrderFulfillment_IH_Publisher",
+  "source": "AcuPick",
+  "consumer": "EDM",
+  "version": "v1.3.3",
+  "mappings": {
+    "schema": "CMM/BOD/GetGroceryOrderFulfillment.xsd",
+    "mappingFile": "/requirement/GroceryOrderFulfillment_OMS_to_Canonical_Mapping_v1.3.3.xlsx",
+    "mappingSheet": "Map_Source to Canonical_CMM",
+    "constructFile": "xpath-mapping.properties"
+  },
+  "xpathMappingFile": "xpath-mapping.properties",
+  "messageFlow": {
+    "name": "ESED_GroceryOrderFulfillment_IH_Publisher",
+    "brokerSchema": "com.abs.azure.groceryOrderFulfillment",
+    "input": {
+      "name": "KafkaConsumer",
+      "properties": {
+        "topicName": "OSPK_ESED_C02_PICKLIST_DETAIL"
+      }
+    },
+    "output": {
+      "name": "KafkaProducer",
+      "properties": {
+        "topicName": "ESED_C01_GroceryOrderFulfillment"
+      }
+    },
+    "transformer": {
+      "name": "ESED_GroceryOrderFulfillment_IH_SF",
+      "properties": {
+
+      }
+    },
+    "inputAuditor": {
+      "name": "Audit_Validate_Input"
+    },
+    "outputAuditor": {
+      "name": "Audit_Validate_Output"
+    },
+    "exceptionHandler": {
+      "name": "EncryptedExceptionSubFlow",
+      "properties": {
+
+      }
+    }
+  },
+  "deployEgNumber": "05",
+  "createTestWorkspace": false
+}

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<!--V1.0 Jayson Leo Soliman 08/14/19 Initial Version-->
 	<!--V1.1 Alex Nunes 4/14/2020 Changes during review with system of record stakeholder: Remove Person Delivery: In Order Capture there is no such data available. This is part of downstram applications. Shorten complex types such as Customer and Facility. Add customer order addresses which are different from customer addresses master data.-->
@@ -18,59 +18,12 @@ Add promo info at header level also
 	<!--V1.8   02/18/21 Added RefundId for refund and cancellation transactions.-->
 	<!--V1.9   03/15/21 Added SellByWeight in Delivereditem and ARO attributes in order line.-->
 	<!--V1.10  03/23/2021  Added Auto replenishment for delivered item, return item-->
-	<!--V1.11 Patrick O. 04/10/21: Added RefundByType, CancelByType for a user who did the refund and/or cancellation. -->
+	<!--V1.11 Patrick O. 04/10/21: Added RefundByType, CancelByType to capture user data for refund and/or cancellation. Re-named ReturnedItem.AutoReplenishmentType to ReturnedItem.AutoReplenishmentOrderType-->
+	<!--V1.12 Patrick Oliver 05/17/21:  1) Added OfferId to CustomerSavings (2) Added PricePerAmt (3) Updated length for UserId in RefundByType, CancelByType (4) Added CustomerPreferredSubstituteItem (5) Added ARLinkPLUNbr to AutoReplenishmentOrderType-->
 	<xs:include schemaLocation="../Global/AbsGlobalComponents.xsd"/>
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:include schemaLocation="RetailCustomer.xsd"/>
 	<xs:include schemaLocation="ItemMaster.xsd"/>
-	<xs:complexType name="GroceryItemType">
-		<xs:annotation>
-			<xs:documentation>Retail Item identifiers generally used in albertsons ecommerce business.</xs:documentation>
-		</xs:annotation>
-		<xs:sequence>
-			<xs:element name="UPC" minOccurs="0">
-				<xs:complexType>
-					<xs:complexContent>
-						<xs:extension base="Abs:UPC"/>
-					</xs:complexContent>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="UPCComponents" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>UPC ID broken into individual Components.</xs:documentation>
-				</xs:annotation>
-				<xs:complexType>
-					<xs:complexContent>
-						<xs:extension base="UPCComponentsType"/>
-					</xs:complexContent>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="GTINID" type="xs:string" minOccurs="0"/>
-			<xs:element name="VendorProductID" type="xs:string" minOccurs="0"/>
-			<xs:element name="SystemSpecificItemId" type="xs:string" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Like NDA id for Drugs.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="InternalItemId" minOccurs="0">
-				<xs:simpleType>
-					<xs:restriction base="xs:string"/>
-				</xs:simpleType>
-			</xs:element>
-			<xs:element ref="BaseProductNbr" minOccurs="0"/>
-			<xs:element name="PLUCd" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Product look up code.</xs:documentation>
-				</xs:annotation>
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="20"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
-			<xs:element name="ItemDescription" type="xs:string" minOccurs="0"/>
-		</xs:sequence>
-	</xs:complexType>
 	<xs:complexType name="GroceryOrder">
 		<xs:annotation>
 			<xs:documentation>Represents Albertsons Grocery Order. Grocery Order can either be a regular  Delivery order or In-store Pickup/Drive Up and Go (DUG). order The recipient of the delivery is usually a Retail Customer and the orders are normally placed online (either via Web Site or Mobile App) through the e-Commerce system of Albertsons. Furthermore, the customer can opt for either an Attended delivery where the customer has to be there to receive the delivery, or Unattended delivery where the delivery can be done even in the customer's absence.  This also captures the customer's payments (and type of payment), applicable delivery details (such as charges, delivery slot, etc), applicable delivery promotions, and customer savings through club cards and other instruments.</xs:documentation>
@@ -135,7 +88,7 @@ Ex: Created, delivered, rescheduled.</xs:documentation>
 									<xs:element ref="UnitPriceAmt" minOccurs="0"/>
 									<xs:element ref="ItemPriceAmt" minOccurs="0"/>
 									<xs:element name="CurrencyCd" type="xs:string" minOccurs="0"/>
-									<xs:element name="AutoReplenishmentType" type="AutoReplenishmentOrderType" minOccurs="0"/>
+									<xs:element name="AutoReplenishmentOrderType" type="AutoReplenishmentOrderType" minOccurs="0"/>
 								</xs:sequence>
 							</xs:complexType>
 						</xs:element>
@@ -193,6 +146,113 @@ Ex: Created, delivered, rescheduled.</xs:documentation>
 						<xs:element name="GrocerySubOrderExceptionType" type="OrderExceptionType" minOccurs="0" maxOccurs="unbounded"/>
 					</xs:sequence>
 				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="GroceryItemType">
+		<xs:annotation>
+			<xs:documentation>Retail Item identifiers generally used in albertsons ecommerce business.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="UPC" minOccurs="0">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="Abs:UPC"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="UPCComponents" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>UPC ID broken into individual Components.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="UPCComponentsType"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GTINID" type="xs:string" minOccurs="0"/>
+			<xs:element name="VendorProductID" type="xs:string" minOccurs="0"/>
+			<xs:element name="SystemSpecificItemId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Like NDA id for Drugs.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InternalItemId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="BaseProductNbr" minOccurs="0"/>
+			<xs:element name="PLUCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Product look up code.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ItemDescription" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="GrocerySubstituteItemType">
+		<xs:annotation>
+			<xs:documentation>Details for substitute Item that is used in place of an out of stock ordered item. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="UPC" minOccurs="0">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="Abs:UPC"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="UPCComponents" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>UPC ID broken into individual Components.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="UPCComponentsType"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GTINID" type="xs:string" minOccurs="0"/>
+			<xs:element name="VendorProductID" type="xs:string" minOccurs="0"/>
+			<xs:element name="SystemSpecificItemId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Like NDA id for Drugs.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BaseProductNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Popularly known as BPN number in eCommerce world. Identifier generated in eCom for a group of similar elements. BPN can represent multiple CICs or UPCs. BPN is used to dispaly items in safeway.com online sales site.
+ Ex Seedless red grapes will have one BPN but there may be multiple varities with in red grapes like crimson red, dark red or light red with different cic/upcs.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PLUCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Product look up code.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ItemDescription" type="xs:string" minOccurs="0"/>
+			<xs:element name="SubstituteItemRankNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Priority number field that is used to rank customer's substitute items. </xs:documentation>
+				</xs:annotation>
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
@@ -597,32 +657,6 @@ Ex: WYSIWYG type order (what you see is what you get)</xs:documentation>
 			<xs:element ref="ExtendedUnitPriceAmt" minOccurs="0"/>
 			<xs:element ref="ItemPriceAmt" minOccurs="0"/>
 			<xs:element ref="ExtendedItemPriceAmt" minOccurs="0"/>
-			<xs:element ref="PriceEffectiveStartDtTm" minOccurs="0"/>
-			<xs:element ref="PriceEffectiveEndDtTm" minOccurs="0"/>
-			<xs:element ref="Quantity" minOccurs="0"/>
-			<xs:element ref="UOM" minOccurs="0"/>
-			<xs:element ref="SellByWeightType" minOccurs="0"/>
-			<xs:element ref="DiscountAllowedInd" minOccurs="0"/>
-			<xs:element ref="RewardAllowedInd" minOccurs="0"/>
-			<xs:element name="SubstitutionType" type="CodeWithDescription" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Contains information about the item substitution.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="SubstitutionPreferenceNm" type="xs:string" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Customer substitution preference in case the item is not available. For example, for an item called: 
-
-Gerber Graduates Wagon Wheels Puffed Grains Apple Harvest - 1.48 Oz
-
-Customer can opt to have a substitution preference that says "Same Size Diff Brand"</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="CurrencyCd" type="xs:string" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Currency used for the price of the item.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
 			<xs:element name="TotalPriceAmt" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Total price derived by ItemPriceAmt X Quantity.</xs:documentation>
@@ -644,6 +678,132 @@ Customer can opt to have a substitution preference that says "Same Size Diff Bra
 						<xs:fractionDigits value="4"/>
 					</xs:restriction>
 				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PricePerAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Price per amount for random weight items displayed as eaches.  </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CurrencyCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Currency used for the price of the item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="PriceEffectiveStartDtTm" minOccurs="0"/>
+			<xs:element ref="PriceEffectiveEndDtTm" minOccurs="0"/>
+			<xs:element ref="Quantity" minOccurs="0"/>
+			<xs:element ref="UOM" minOccurs="0"/>
+			<xs:element ref="SellByWeightType" minOccurs="0"/>
+			<xs:element ref="DiscountAllowedInd" minOccurs="0"/>
+			<xs:element ref="RewardAllowedInd" minOccurs="0"/>
+			<xs:element name="SubstitutionType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains information about the item substitution.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SubstitutionPreferenceNm" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Customer substitution preference in case the item is not available. For example, for an item called: 
+
+Gerber Graduates Wagon Wheels Puffed Grains Apple Harvest - 1.48 Oz
+
+Customer can opt to have a substitution preference that says "Same Size Diff Brand"</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CustomerPreferredSubstituteItem" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Customers preferred substitute item(s) to be used in place of an out of stock ordered item. Note that customer can choose multiple preferred substitute items or may not choose any preferred substitute items.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="SubstituteItemLineNbr" type="xs:int" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Line sequence nbr of the customer preferred substitute item.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SubstituteItem" type="GrocerySubstituteItemType" minOccurs="0"/>
+						<xs:element name="Department" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Contains department infomation such as:
+International Cuisine
+Fruits and Vegetables
+Frozen Food etc
+
+</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element ref="Quantity" minOccurs="0"/>
+						<xs:element ref="UOM" minOccurs="0"/>
+						<xs:element ref="SellByWeightType" minOccurs="0"/>
+						<xs:element ref="BasePriceAmt" minOccurs="0"/>
+						<xs:element ref="UnitPriceAmt" minOccurs="0"/>
+						<xs:element ref="ExtendedUnitPriceAmt" minOccurs="0"/>
+						<xs:element ref="ItemPriceAmt" minOccurs="0"/>
+						<xs:element ref="ExtendedItemPriceAmt" minOccurs="0"/>
+						<xs:element name="PricePerAmt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Price per amount for random weight items displayed as eaches.  </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element ref="PriceEffectiveStartDtTm" minOccurs="0"/>
+						<xs:element ref="PriceEffectiveEndDtTm" minOccurs="0"/>
+						<xs:element name="ItemTaxAmt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AppliedDiscountAmt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CurrencyCd" type="xs:string" minOccurs="0"/>
+						<xs:element name="RegulatedItemInd" type="xs:boolean" minOccurs="0"/>
+						<xs:element name="PromotionTxt" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Contains any promotional text for this item</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PromotionalDsc" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Promotional description</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PromotionType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element ref="PromotionTriggerCd" minOccurs="0"/>
+						<xs:element ref="PromotionId" minOccurs="0"/>
+						<xs:element ref="LinkPLUNbr" minOccurs="0"/>
+						<xs:element ref="CouponPLUNbr" minOccurs="0"/>
+						<xs:element ref="PromotionPriceAmt" minOccurs="0"/>
+						<xs:element ref="CustomerOffers" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Eligible offers for a ordered/substitute item</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element ref="RewardAllowedInd" minOccurs="0"/>
+						<xs:element ref="DiscountAllowedInd" minOccurs="0"/>
+						<xs:element ref="WICItemInd" minOccurs="0"/>
+						<xs:element ref="CustomerSavings" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
 			</xs:element>
 			<xs:element name="RegulatedItemInd" type="xs:boolean" minOccurs="0">
 				<xs:annotation>
@@ -769,6 +929,17 @@ Frozen Food etc
 						<xs:element ref="ExtendedUnitPriceAmt" minOccurs="0"/>
 						<xs:element ref="ItemPriceAmt" minOccurs="0"/>
 						<xs:element ref="ExtendedItemPriceAmt" minOccurs="0"/>
+						<xs:element name="PricePerAmt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Price per amount for random weight items displayed as eaches.  </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
 						<xs:element ref="PriceEffectiveStartDtTm" minOccurs="0"/>
 						<xs:element ref="PriceEffectiveEndDtTm" minOccurs="0"/>
 						<xs:element name="ItemTaxAmt" minOccurs="0">
@@ -1804,6 +1975,11 @@ Frozen Food etc
 				</xs:annotation>
 				<xs:complexType>
 					<xs:sequence>
+						<xs:element name="OfferId" type="xs:long" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Unique Id generated for an offer with in offer authorizing system.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
 						<xs:element name="SavingsCategoryId" type="xs:long" minOccurs="0"/>
 						<xs:element name="SavingsCategoryNm" type="xs:string" minOccurs="0"/>
 						<xs:element name="SavingsAmt" minOccurs="0">
@@ -2419,6 +2595,11 @@ ex: not enough stock, or offer not valid</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element ref="ItemPriceAmt" minOccurs="0"/>
+			<xs:element name="ARLinkPLUNbr" type="xs:long" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the link PLU number assigned for Auto Replenishment Savings.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="RefundByType">
@@ -2429,7 +2610,7 @@ ex: not enough stock, or offer not valid</xs:documentation>
 			<xs:element name="UserId" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="20"/>
+						<xs:maxLength value="255"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -2460,7 +2641,7 @@ ex: not enough stock, or offer not valid</xs:documentation>
 			<xs:element name="UserId" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="20"/>
+						<xs:maxLength value="255"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>

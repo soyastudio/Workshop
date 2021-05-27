@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
+<!-- edited with XMLSpy v2021 rel. 2 sp1 (x64) (http://www.altova.com) by poliv02 (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<!--V1.0  02142020  Sai Nuthakki   Initial Version-->
 	<!--V1.1  06092020  Sai Nuthakki   Added ShoppingCartType-->
@@ -9,6 +9,8 @@
 (2) Added complex type ShoppingCartProfileType to EcomMaster.xsd
 (3) Added ShoppingCartProfile to ShoppingCartType in EcomMaster.xsd-->
 	<!--V1.5 012221 Sai Added ShiftNbr in BusinessEventType-->
+	<!--V1.6 05/10/21: Added EventOverrideType to BusinessEventType-->
+	<!--V1.7 05/12/21 Patrick Oliver: Updated EventStartTs and EventEndTs to dateTimeStamp-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:complexType name="ShoppingCartType">
 		<xs:annotation>
@@ -231,14 +233,28 @@ ex: delivery truck nbr</xs:documentation>
 					</xs:complexContent>
 				</xs:complexType>
 			</xs:element>
+			<xs:element name="EventOverrideType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Various event override profiles (ex: Override partner.)</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="EventOverrideCd" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="EventOverrideType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="EventOverrideInd" type="xs:boolean" minOccurs="0"/>
+						<xs:element name="EventOverrideStatus" type="StatusType" minOccurs="0"/>
+						<xs:element name="EventOverrideReasonType" type="CodeWithDescription" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
 			<xs:element name="EventPhaseType" type="CodeWithDescription" minOccurs="0"/>
 			<xs:element name="EventStatusType" minOccurs="0">
 				<xs:complexType>
 					<xs:complexContent>
 						<xs:extension base="StatusType">
 							<xs:sequence>
-								<xs:element name="EventStartTs" type="xs:dateTime" minOccurs="0"/>
-								<xs:element name="EventEndTs" type="xs:dateTime" minOccurs="0"/>
+								<xs:element name="EventStartTs" type="xs:dateTimeStamp" minOccurs="0"/>
+								<xs:element name="EventEndTs" type="xs:dateTimeStamp" minOccurs="0"/>
 								<xs:element name="TimeZoneCd" minOccurs="0">
 									<xs:simpleType>
 										<xs:restriction base="xs:string">

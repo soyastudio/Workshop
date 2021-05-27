@@ -5,6 +5,8 @@
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<!--V1.0  Patrick Oliver 03/21/21: Initial Version-->
 	<!--V1.1 Patrick Oliver 04/09/21: Moved cardnality for PreferenceBanner to the sequence.  -->
+	<!--V1.2 Patrick Oliver 04/2/21: Changed datatype for MaxOccurenceNbr to integer -->
+	<!--V1.3 Changed datatype for SequenceNbr to long-->
 	<xs:element name="CustomerPreferencesMaster" type="CustomerPreferencesMasterType">
 		<xs:annotation>
 			<xs:documentation>Root element</xs:documentation>
@@ -109,12 +111,12 @@ Hidden categories - Baby Care is referred to as 1, Pet Care as 18, Tobacco as 33
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	<xs:element name="MaxOccurenceNbr" type="xs:long">
+	<xs:element name="MaxOccurenceNbr" type="xs:integer">
 		<xs:annotation>
 			<xs:documentation>This determines whether this preference exists only once per customer or repeats (ex:  once per banner). If not defined, it means it repeats.</xs:documentation>
 		</xs:annotation>
 	</xs:element>
-	<xs:element name="SequenceNbr" type="xs:integer">
+	<xs:element name="SequenceNbr" type="xs:long">
 		<xs:annotation>
 			<xs:documentation>Order in which this preference is to be displayed among the list of preferences under a category/subCategory combination. Used specifically for marketing promotional preferences.</xs:documentation>
 		</xs:annotation>
