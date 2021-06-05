@@ -6,6 +6,7 @@
 	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
 	<!--V1.0 Patrick Oliver 04/08/21: Initial Draft-->
 	<!--V1.2 Patrick Oliver 05/05/21: Added NotesType -->
+	<!--V1.3 Parick Oliver 05/18/21: Moved PartnerNm and PartnerTypeCd to ProfileType; Added PartnerProfileEffectiveTimePeriod and ServiceAreaCoordinateType; Changed AccountPayableVendorNbr to VendorNbr-->
 	<xs:element name="BusinessPartner">
 		<xs:annotation>
 			<xs:documentation>Root element. </xs:documentation>
@@ -21,39 +22,20 @@
 			<xs:documentation>Albertsons object to show the attributes associated to an Albertsons business partner entity. A business partner can be a supplier, a vendor, a customer or any other third party from which a business alliance has been associated. </xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element ref="PartnerId">
+			<xs:element ref="PartnerId" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Business Partner identification. </xs:documentation>
+					<xs:documentation>Business Partner identification. 
+For source without PartnerId use PartnerNm for EDW (LU_DELIVERY_PARTNER).</xs:documentation>
 				</xs:annotation>
-			</xs:element>
-			<xs:element name="PartnerNm" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Name of a business partner.</xs:documentation>
-				</xs:annotation>
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="250"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
-			<xs:element name="PartnerTypeCd" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Business partner types (Fuel partner, Delivery partner, Fullfillment partner, Picker partner, etc. ). </xs:documentation>
-				</xs:annotation>
-				<xs:complexType>
-					<xs:complexContent>
-						<xs:extension base="CodeWithDescription"/>
-					</xs:complexContent>
-				</xs:complexType>
 			</xs:element>
 			<xs:element name="InternalParnterInd" type="xs:boolean" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Flag to indicate if partner is internal to Albertsons.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="APVendorNbr" nillable="false" minOccurs="0">
+			<xs:element name="VendorNbr" nillable="false" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Accounts Payable Vendor. This can be set when business partner associated to an accounts payable vendor.</xs:documentation>
+					<xs:documentation>Vendor number used for accounts payable.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
@@ -61,12 +43,8 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="ARCustomerAccountNbr" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Accounts Receivable Customer number. This can be set when business partner associated to an accounts receivable customer.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="ARCustomerSiteNbr" minOccurs="0">
+			<xs:element ref="CustomerAccountNbr" minOccurs="0"/>
+			<xs:element name="CustomerSiteNbr" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Accounts Receivable Customer Site number. This is can be set when business partner associated to an accounts receivable customer.</xs:documentation>
 				</xs:annotation>
@@ -117,6 +95,21 @@
 			<xs:documentation>Object used for business Partner attributes like contract details, SLAs, status, limit thresholds, fees, and overrides. The profile data for business partner can be associated to different organization levels. </xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
+			<xs:element name="PartnerNm" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Business Partner name. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PartnerTypeCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Business partner types (Fuel partner, Delivery partner, Fullfillment partner, Picker partner, etc. ). </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="CodeWithDescription"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
 			<xs:element name="OrganizationType" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:documentation>Organization type to show where partner profiles are active within the organization. </xs:documentation>
@@ -159,7 +152,13 @@
 									</xs:element>
 									<xs:element name="ContactNm" type="xs:string" minOccurs="0"/>
 									<xs:element name="PhoneNbr" type="xs:string" minOccurs="0"/>
-									<xs:element name="EmailAddresstxt" type="xs:string" minOccurs="0"/>
+									<xs:element name="EmailAddresstxt" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="400"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
 								</xs:sequence>
 							</xs:complexType>
 						</xs:element>
@@ -337,9 +336,21 @@ ex: scan cd for bag fee.</xs:documentation>
 							</xs:annotation>
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
-									<xs:maxLength value="20"/>
+									<xs:maxLength value="100"/>
 								</xs:restriction>
 							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ServiceAreaCoordinateType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Shows the service area coordinates for a business partner. </xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="LatitudeDegree" type="xs:decimal" minOccurs="0"/>
+									<xs:element name="LongitudeDegree" type="xs:decimal" minOccurs="0"/>
+									<xs:element name="Altitude" type="xs:decimal" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
 						</xs:element>
 					</xs:sequence>
 				</xs:complexType>
@@ -388,6 +399,7 @@ Ex: Store can be designated to manually override an automated 3PL delivery sched
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
+			<xs:element name="PartnerProfileEffectiveTimePeriod" type="ParterEffectiveDateTimeType" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="PartnerSiteType">

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
+<!-- edited with XMLSpy v2021 rel. 2 sp1 (x64) (http://www.altova.com) by poliv02 (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://collab.safeway.com/it/architecture/AbsOmMaster" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<!--V1.6 04/22/2021 Patrick Oliver: 
-• Added complex types EcomBusinessHours , EcomAlternateBusinessHours  
+Added complex types EcomBusinessHours , EcomAlternateBusinessHours  
 • Added EffectiveStartDt, EffectiveEndDt to FacilityProfileType
 • Added SlotForecastEndDt to SlotConfigurationType
 • Added ServiceFeeDsc to ServiceFeeType
-• Added complex type PickupAreaCoordinateType to PickUpLocation
-    o PickUpLocation.LatitudeDegree, PickUpLocationLongitudeDegree moved to PickUpLocation.PickupAreaCoordinate
-    o Added Altitude to PickUpLocation.PickupAreaCoordinate
-• Removed PartnerOrderLimitTypeType -->
+• Added PickUpLocationDetail to PickUpLocation   
+• Added typeCd to PickUpSchedule
+• Removed PartnerOrderLimitTypeType
+• Added FulfillmentStoreId -->
 	<!--V1.5 02/24/2021 Sai N   Added Partner order limit type.-->
 	<!--V1.4 011821 Sai N Added override Type in eCom profileType-->
 	<!--V1.3 11/04/2020 Rosabel Macario- Added tag to resolve dateTimeStamp issue-->
@@ -41,7 +41,26 @@
 			<xs:element name="District" type="Abs:DistrictType" minOccurs="0"/>
 			<xs:element name="Banner" type="Abs:BannerType" minOccurs="0"/>
 			<xs:element name="RetailOrderGroup" type="Abs:RetailOrderGroupType" minOccurs="0"/>
-			<xs:element name="StoreData" type="Abs:RetailStoreType" minOccurs="0"/>
+			<xs:element name="StoreData" minOccurs="0">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="Abs:RetailStoreType">
+							<xs:sequence>
+								<xs:element name="FulfillmentStoreId" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>For online Ecommerce orders an alternate store may be used to fulfill orders.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="10"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
 			<xs:element name="StoreAddressData" type="Abs:AddressType" minOccurs="0"/>
 			<xs:element name="StoreDigitalAddressData" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
@@ -225,7 +244,7 @@
 			<xs:element name="FacilityProfileType" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:documentation>Defines different types of store profiles to serve online business.
-Ex: 3PL enabled store, Premium store, ERUM store..etc</xs:documentation>
+Ex: 3PL enabled store, Premium store, ERUM store, Auto Replenishment store, .etc</xs:documentation>
 				</xs:annotation>
 				<xs:complexType>
 					<xs:complexContent>
@@ -264,6 +283,13 @@ Ex: 3PL enabled store, Premium store, ERUM store..etc</xs:documentation>
 						<xs:element name="FirstPickUpTm" type="xs:string" minOccurs="0"/>
 						<xs:element name="LastPickUpTm" type="xs:string" minOccurs="0"/>
 					</xs:sequence>
+					<xs:attribute name="typeCode">
+						<xs:annotation>
+							<xs:documentation>Attribute used to describe what is the type of the associated entity. This allows for extension of the model without the need for pre-defining a static ID element.
+			
+Examples here are: Pick Up time, Last Pick Uo time, etc.  </xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
 				</xs:complexType>
 			</xs:element>
 			<xs:element name="EcomBusinessHours" type="EcomBusinessHoursType" minOccurs="0" maxOccurs="unbounded">
@@ -313,18 +339,8 @@ ex: Inside Locker,Outside Locker, Outside Kiosk.</xs:documentation>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
-						<xs:element name="PickupAreaCoordinateType" minOccurs="0" maxOccurs="unbounded">
-							<xs:annotation>
-								<xs:documentation>Shows the pickup area coordinates. Note: A PickupAreaTypeCd can have multiple coordinates; Ex: Retail store may have multiple Parking Lot spaces for pick up where each has its own coordinates. </xs:documentation>
-							</xs:annotation>
-							<xs:complexType>
-								<xs:sequence>
-									<xs:element name="LatitudeDegree" type="xs:decimal" minOccurs="0"/>
-									<xs:element name="LongitudeDegree" type="xs:decimal" minOccurs="0"/>
-									<xs:element name="Altitude" type="xs:decimal" minOccurs="0"/>
-								</xs:sequence>
-							</xs:complexType>
-						</xs:element>
+						<xs:element name="LatitudeDegree" type="xs:decimal" minOccurs="0"/>
+						<xs:element name="LongitudeDegree" type="xs:decimal" minOccurs="0"/>
 						<xs:element name="LocationCommentTxt" minOccurs="0">
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
@@ -343,6 +359,33 @@ ex: Inside Locker,Outside Locker, Outside Kiosk.</xs:documentation>
 										</xs:simpleType>
 									</xs:element>
 									<xs:element name="InstructionsTxt" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="2000"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="PickUpLocationDetail" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Used to show additional details about pick up store locations. For example the pickup area may be in the back of a store and the location details can  specify the allocated parking lots for customers, vendors, etc.. </xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence minOccurs="0" maxOccurs="unbounded">
+									<xs:element name="LocationTypeCd" minOccurs="0"/>
+									<xs:element name="PickupLocationAreaNm" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="LatitudeDegree" type="xs:decimal" minOccurs="0"/>
+									<xs:element name="LongitudeDegree" type="xs:decimal" minOccurs="0"/>
+									<xs:element name="Altitude" type="xs:decimal" minOccurs="0"/>
+									<xs:element name="CommentTxt" minOccurs="0">
 										<xs:simpleType>
 											<xs:restriction base="xs:string">
 												<xs:maxLength value="2000"/>
@@ -577,16 +620,40 @@ Ex: Store can be designated to manually override an automated 3PL delivery sched
 								<xs:documentation>Day of week.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="StartHr" type="xs:time" nillable="false" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Starting hour of the eCom business operation.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="EndHr" type="xs:time" nillable="false" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Ending hour of the eCom business operation.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
+						<xs:sequence minOccurs="0" maxOccurs="unbounded">
+							<xs:element name="StartHr" nillable="false" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Starting hour of the eCom business operation.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:time">
+											<xs:attribute name="typeCode">
+												<xs:annotation>
+													<xs:documentation>Ex: OperationStartHr, StaffingStartHr, etc.</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="EndHr" nillable="false" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Ending hour of the eCom business operation.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:time">
+											<xs:attribute name="typeCode">
+												<xs:annotation>
+													<xs:documentation>Ex: OperationEndHr, StaffingEndHr, etc.</xs:documentation>
+												</xs:annotation>
+											</xs:attribute>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>

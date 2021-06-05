@@ -8,6 +8,7 @@
 -->
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.9 Patrick O. 05/27/21: Updated UnitOfMeasurement, OrderQty to optional-->
 	<!--V1.8 snuth00  04/08/2021   updated to include DSD BDR receivinngs-->
 	<!--V1.7 Rosabel Macario 02/01/2021: Set AccountingUnitId and ChartOfAccountNm as Optional-->
 	<!--V1.6 Rosabel Macario 12/21/20: Updated InvoiceNbr maxlen from 10 to 50 same as what is in Invoice noun. -->
@@ -32,7 +33,7 @@
 						<xs:extension base="AbsReceiveDeliveryDetailType">
 							<xs:sequence>
 								<xs:element name="LineNbr" type="xs:integer" default="0"/>
-								<xs:element name="OrderQty" default="0">
+								<xs:element name="OrderQty" default="0" minOccurs="0">
 									<xs:annotation>
 										<xs:documentation>Total Nbr of units ordered.
 </xs:documentation>
@@ -191,7 +192,7 @@ X = Special      </xs:documentation>
 								</xs:element>
 								<xs:element name="CaseUPCID" type="UPC" minOccurs="0"/>
 								<xs:element name="GTINID" type="xs:string" minOccurs="0"/>
-								<xs:element name="UnitOfMeasurement" default="" maxOccurs="unbounded">
+								<xs:element name="UnitOfMeasurement" default="" minOccurs="0" maxOccurs="unbounded">
 									<xs:annotation>
 										<xs:documentation>Ex: Cases, Each</xs:documentation>
 									</xs:annotation>

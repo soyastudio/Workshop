@@ -14,10 +14,7 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.Metric;
 import org.apache.kafka.common.PartitionInfo;
@@ -369,9 +366,9 @@ public class KafkaAdmin {
                 .build());
 
         options.addOption(Option.builder("t")
-                .longOpt("task")
+                .longOpt("timestamp")
                 .hasArg(true)
-                .desc("Task method of Kafka streams class.")
+                .desc("Timestamp for polling records after or before")
                 .required(false)
                 .build());
 
@@ -491,19 +488,6 @@ public class KafkaAdmin {
 
         } else {
             printHelp();
-        }
-    }
-
-    private static void printHelp() {
-        log("Options Details:");
-        options.getOptions().forEach(o -> {
-            printOption(o);
-        });
-
-        log("");
-        log("Command Details:");
-        for (Method e : commands) {
-            printCommandMethod(e);
         }
     }
 
@@ -701,6 +685,10 @@ public class KafkaAdmin {
                 log("File '" + bod + "' does not exit.");
             }
 
+
+
+
+
             Properties properties = new Properties();
             properties.load(new FileInputStream(bod));
 
@@ -875,7 +863,7 @@ public class KafkaAdmin {
         String hs = cmd.hasOption("H") ? cmd.getOptionValue("H") : null;
         String key = cmd.hasOption("k") ? cmd.getOptionValue("k") : UUID.randomUUID().toString();
 
-        return produce(kafkaAdmin, topicName, file, hs, key);
+        return send(kafkaAdmin, topicName, file, hs, key);
 
     }
 
@@ -1013,6 +1001,212 @@ public class KafkaAdmin {
                     "java -jar kafkaya.jar -a list -b BOD_NAME -e dev"
             })
     public static List<RecordInfo> list(CommandLine cmd, KafkaAdmin kafkaAdmin) throws Exception {
+        Set<RecordInfo> results = new HashSet<>();
+        String topicName = null;
+
+        if (cmd.hasOption("b")) {
+            File dir = new File(workspace, cmd.getOptionValue("b"));
+            File bod = new File(dir, "bod.properties");
+            if (!bod.exists()) {
+                log("File '" + bod + "' does not exit.");
+            }
+
+            Properties properties = new Properties();
+            properties.load(new FileInputStream(bod));
+
+            topicName = properties.containsKey(env + ".c") ? properties.getProperty(env + ".c") : properties.getProperty("c");
+        }
+
+        if (cmd.hasOption("c")) {
+            topicName = cmd.getOptionValue("c");
+        }
+
+        if (topicName == null) {
+            log("ERROR: Topic is not set. Please set topic name using parameter 'c'.");
+            System.exit(1);
+        }
+
+        KafkaConsumer<String, byte[]> kafkaConsumer = kafkaAdmin.createKafkaConsumer();
+        Collection<TopicPartition> partitions = null;
+        if (cmd.hasOption("P")) {
+            partitions = new ArrayList<>();
+            partitions.add(new TopicPartition(topicName, Integer.parseInt(cmd.getOptionValue("P"))));
+
+        } else {
+            List<PartitionInfo> partitionInfoSet = kafkaConsumer.partitionsFor(topicName);
+            partitions = partitionInfoSet.stream()
+                    .map(partitionInfo -> new TopicPartition(partitionInfo.topic(),
+                            partitionInfo.partition()))
+                    .collect(Collectors.toList());
+
+        }
+
+        long timeout = 500L;
+        if (cmd.hasOption("T")) {
+            timeout = Long.parseLong(cmd.getOptionValue("T"));
+        }
+
+        for (TopicPartition partition : partitions) {
+            List<TopicPartition> assignments = new ArrayList<>();
+            assignments.add(partition);
+            kafkaConsumer.assign(assignments);
+            kafkaConsumer.seekToBeginning(assignments);
+            ConsumerRecords<String, byte[]> polled = kafkaConsumer.poll(Duration.ofMillis(timeout));
+
+            polled.forEach(rc -> {
+                results.add(new RecordInfo(rc));
+            });
+        }
+
+        List<RecordInfo> list = new ArrayList<>(results);
+        Collections.sort(list);
+
+        log("Total number: " + list.size());
+        log("");
+
+        log("| " + cellFormat("Timestamp", 24) + " | "
+                + cellFormat("Partition", 9) + " | "
+                + cellFormat("Offset", 6) + " | "
+                + cellFormat("Size", 8) + " | "
+                + cellFormat("Key", 64) + " | "
+                + cellFormat("Headers", 40) + " |");
+        log("  " + "------------------------"
+                + "   " + "---------"
+                + "   " + "------"
+                + "   " + "--------"
+                + "   " + "----------------------------------------------------------------"
+                + "   " + "----------------------------------------");
+
+        list.forEach(e -> {
+            log("| " + cellFormat(e.timestamp, 24) + " | " + cellFormat("" + e.partition, 9) + " | "
+                    + cellFormat("" + e.offset, 6) + " | "
+                    + cellFormat("" + e.size, 8) + " | "
+                    + cellFormat(e.key, 64) + " | "
+                    + cellFormat(e.headers, 40) + " |");
+        });
+
+        return list;
+
+    }
+
+    @Command(desc = "List messages from kafka topic of all or special partition",
+            options = {
+                    "-a list",
+                    "-b business object name, if provided, options '-c' will be read from the bod.properties file.",
+                    "-c consumer topic name",
+                    "-e environment",
+                    "-P partition",
+                    "-T timeout in millisecond"
+            },
+            cases = {
+                    "java -jar kafkaya.jar -a list -h",
+                    "java -jar kafkaya.jar -a list -c CONSUMER_TOPIC -P 1 -e dev -T 5000",
+                    "java -jar kafkaya.jar -a list -b BOD_NAME -e dev"
+            })
+    public static List<RecordInfo> pollToEnd(CommandLine cmd, KafkaAdmin kafkaAdmin) throws Exception {
+        Set<RecordInfo> results = new HashSet<>();
+        String topicName = null;
+
+        if (cmd.hasOption("b")) {
+            File dir = new File(workspace, cmd.getOptionValue("b"));
+            File bod = new File(dir, "bod.properties");
+            if (!bod.exists()) {
+                log("File '" + bod + "' does not exit.");
+            }
+
+            Properties properties = new Properties();
+            properties.load(new FileInputStream(bod));
+
+            topicName = properties.containsKey(env + ".c") ? properties.getProperty(env + ".c") : properties.getProperty("c");
+        }
+
+        if (cmd.hasOption("c")) {
+            topicName = cmd.getOptionValue("c");
+        }
+
+        if (topicName == null) {
+            log("ERROR: Topic is not set. Please set topic name using parameter 'c'.");
+            System.exit(1);
+        }
+
+        KafkaConsumer<String, byte[]> kafkaConsumer = kafkaAdmin.createKafkaConsumer();
+        Collection<TopicPartition> partitions = null;
+        if (cmd.hasOption("P")) {
+            partitions = new ArrayList<>();
+            partitions.add(new TopicPartition(topicName, Integer.parseInt(cmd.getOptionValue("P"))));
+
+        } else {
+            List<PartitionInfo> partitionInfoSet = kafkaConsumer.partitionsFor(topicName);
+            partitions = partitionInfoSet.stream()
+                    .map(partitionInfo -> new TopicPartition(partitionInfo.topic(),
+                            partitionInfo.partition()))
+                    .collect(Collectors.toList());
+
+        }
+
+        long timeout = 500L;
+        if (cmd.hasOption("T")) {
+            timeout = Long.parseLong(cmd.getOptionValue("T"));
+        }
+
+        for (TopicPartition partition : partitions) {
+            List<TopicPartition> assignments = new ArrayList<>();
+            assignments.add(partition);
+            kafkaConsumer.assign(assignments);
+            kafkaConsumer.seekToBeginning(assignments);
+            ConsumerRecords<String, byte[]> polled = kafkaConsumer.poll(Duration.ofMillis(timeout));
+
+            polled.forEach(rc -> {
+                results.add(new RecordInfo(rc));
+            });
+        }
+
+        List<RecordInfo> list = new ArrayList<>(results);
+        Collections.sort(list);
+
+        log("Total number: " + list.size());
+        log("");
+
+        log("| " + cellFormat("Timestamp", 24) + " | "
+                + cellFormat("Partition", 9) + " | "
+                + cellFormat("Offset", 6) + " | "
+                + cellFormat("Size", 8) + " | "
+                + cellFormat("Key", 64) + " | "
+                + cellFormat("Headers", 40) + " |");
+        log("  " + "------------------------"
+                + "   " + "---------"
+                + "   " + "------"
+                + "   " + "--------"
+                + "   " + "----------------------------------------------------------------"
+                + "   " + "----------------------------------------");
+
+        list.forEach(e -> {
+            log("| " + cellFormat(e.timestamp, 24) + " | " + cellFormat("" + e.partition, 9) + " | "
+                    + cellFormat("" + e.offset, 6) + " | "
+                    + cellFormat("" + e.size, 8) + " | "
+                    + cellFormat(e.key, 64) + " | "
+                    + cellFormat(e.headers, 40) + " |");
+        });
+
+        return list;
+
+    }
+
+    @Command(desc = "List messages from kafka topic of all or special partition",
+            options = {
+                    "-a list",
+                    "-b business object name, if provided, options '-c' will be read from the bod.properties file.",
+                    "-c consumer topic name",
+                    "-e environment",
+                    "-P partition",
+                    "-T timeout in millisecond"
+            },
+            cases = {
+                    "java -jar kafkaya.jar -a list -h",
+                    "java -jar kafkaya.jar -a list -c CONSUMER_TOPIC -P 1 -e dev -T 5000",
+                    "java -jar kafkaya.jar -a list -b BOD_NAME -e dev"
+            })
+    public static List<RecordInfo> since(CommandLine cmd, KafkaAdmin kafkaAdmin) throws Exception {
         Set<RecordInfo> results = new HashSet<>();
         String topicName = null;
 
@@ -1396,11 +1590,24 @@ public class KafkaAdmin {
         return action;
     }
 
+    private static void printHelp() {
+        log("Options Details:");
+        options.getOptions().forEach(o -> {
+            printOption(o);
+        });
+
+        log("");
+        log("Command Details:");
+        for (Method e : commands) {
+            printCommandMethod(e);
+        }
+    }
+
     private static void log(String msg) {
         System.out.println(msg);
     }
 
-    private static RecordMetadata produce(KafkaAdmin kafkaAdmin, String topicName, File file, String hs, String key) throws Exception {
+    private static RecordMetadata send(KafkaAdmin kafkaAdmin, String topicName, File file, String hs, String key) throws Exception {
 
         long timestamp = System.currentTimeMillis();
         if (!file.exists()) {
@@ -1439,6 +1646,46 @@ public class KafkaAdmin {
         log("Message: " + new String(record.value()));
 
         return metadata;
+
+    }
+
+    private static void send(KafkaAdmin kafkaAdmin, String topicName, File file, String hs, String key, Callback callback) throws Exception {
+
+        long timestamp = System.currentTimeMillis();
+        if (!file.exists()) {
+            log("File does not exist: " + file.getAbsolutePath());
+            System.exit(1);
+        }
+        byte[] msg = FileUtils.readFileToByteArray(file);
+
+        KafkaProducer kafkaProducer = kafkaAdmin.createKafkaProducer();
+        RecordBuilder builder = new RecordBuilder(topicName).key(key).value(msg);
+        if (hs != null) {
+            Headers headers = headers(hs);
+            headers.forEach(e -> {
+                builder.header(e.key(), new String(e.value()));
+            });
+        }
+        ProducerRecord<String, byte[]> record = builder.create();
+
+        Future<RecordMetadata> future = kafkaProducer.send(record, callback);
+        while (!future.isDone()) {
+            if (System.currentTimeMillis() - timestamp > 60000) {
+                throw new TimeoutException("Fail to publish message to: " + topicName + " in 60 second.");
+            }
+
+            Thread.sleep(100L);
+        }
+
+        RecordMetadata metadata = future.get();
+
+        log("Timestamp: " + DATE_FORMAT.format(new Date(metadata.timestamp())));
+        log("Topic: " + metadata.topic());
+        log("Partition: " + metadata.partition());
+        log("Offset: " + metadata.offset());
+        log("Key: " + record.key());
+        log("Headers: " + toString(record.headers()));
+        log("Message: " + new String(record.value()));
 
     }
 
