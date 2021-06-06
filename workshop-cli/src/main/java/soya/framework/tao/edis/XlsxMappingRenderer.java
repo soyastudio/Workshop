@@ -16,6 +16,7 @@ import soya.framework.tao.xs.XsNode;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -119,9 +120,13 @@ public class XlsxMappingRenderer extends EdisRenderer {
                     KnowledgeTreeNode<XsNode> parent = (KnowledgeTreeNode<XsNode>) node.getParent();
 
                     while (parent != null && parent.getAnnotation(NAMESPACE_CONSTRUCTION) == null) {
+
                         Construction construction = new Construction();
                         construction.setAlias(getAlias(parent.getName()));
                         construction.setLevel(getLevel(parent));
+                        if(!BigInteger.ONE.equals(parent.origin().getMaxOccurs())) {
+                            construction.setArray(true);
+                        }
                         parent.annotate(NAMESPACE_CONSTRUCTION, construction);
 
                         parent = (KnowledgeTreeNode<XsNode>) parent.getParent();

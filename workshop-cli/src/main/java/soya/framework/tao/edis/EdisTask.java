@@ -140,6 +140,8 @@ public class EdisTask {
     static class Construction {
         private String alias;
         private int level;
+
+        private boolean array;
         private LinkedHashSet<Function> functions = new LinkedHashSet<>();
 
         public String getAlias() {
@@ -156,6 +158,14 @@ public class EdisTask {
 
         public void setLevel(int level) {
             this.level = level;
+        }
+
+        public boolean isArray() {
+            return array;
+        }
+
+        public void setArray(boolean array) {
+            this.array = array;
         }
 
         public Construction add(Function... function) {
@@ -177,7 +187,13 @@ public class EdisTask {
 
         @Override
         public String toString() {
-            StringBuilder builder = new StringBuilder("construct()");
+            StringBuilder builder = new StringBuilder();
+            if(array) {
+                builder.append("constructs()");
+            } else {
+                builder.append("construct()");
+            }
+
             functions.forEach(e -> {
                 builder.append(".").append(e.toString());
             });

@@ -12,6 +12,7 @@ import org.apache.xmlbeans.SchemaTypeSystem;
 import soya.framework.tao.KnowledgeTree;
 import soya.framework.tao.KnowledgeTreeNode;
 import soya.framework.tao.util.JsonUtils;
+import soya.framework.tao.xs.XmlToAvroSchema;
 import soya.framework.tao.xs.XsKnowledgeBase;
 import soya.framework.tao.xs.XsNode;
 
@@ -274,6 +275,37 @@ public class EdisProject {
             prDeployDescriptor.createNewFile();
             mustache(prDeployDescriptor, new File(homeDir, "Templates/deploy.pr.mustache"), project);
         }
+    }
+
+    public static void avro(String bod, CommandLine cmd) throws Exception {
+        System.out.println("Generate mappings for business object: " + bod + "...");
+
+        File workspace = new File(boDir, bod);
+        String buildFile = cmd.hasOption("f") ? cmd.getOptionValue("f") : "project.json";
+
+        File projectFile = new File(workspace, buildFile);
+        EdisProject project = GSON.fromJson(new FileReader(projectFile), EdisProject.class);
+        Mappings mappings = project.mappings;
+
+        File work = new File(workspace, WORK_DIR);
+        File version = new File(work, project.version);
+
+        File avsc = new File(version, project.name + ".avsc");
+        if (avsc.exists()) {
+            System.out.println("File '" + avsc + "' already exist.");
+            System.exit(0);
+        }
+
+        // Knowledge Tree:
+        File xsd = new File(homeDir, mappings.schema);
+        KnowledgeTree<SchemaTypeSystem, XsNode> knowledgeTree = XsKnowledgeBase.builder()
+                .file(xsd)
+                .create().knowledge();
+
+        avsc.createNewFile();
+        FileUtils.writeByteArrayToFile(avsc,
+                GSON.toJson(JsonParser.parseString(XmlToAvroSchema.fromXmlSchema(knowledgeTree.origin()).toString())).getBytes());
+
     }
 
     public static void mapping(String bod, CommandLine cmd) throws Exception {
