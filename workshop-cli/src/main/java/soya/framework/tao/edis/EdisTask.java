@@ -187,11 +187,9 @@ public class EdisTask {
 
         @Override
         public String toString() {
-            StringBuilder builder = new StringBuilder();
+            StringBuilder builder = new StringBuilder("construct()");
             if(array) {
-                builder.append("constructs()");
-            } else {
-                builder.append("construct()");
+                builder.append(".array()");
             }
 
             functions.forEach(e -> {

@@ -75,7 +75,6 @@ public class EdisProject {
         EXCEPTION_HANDLER_PROPERTIES = new LinkedHashMap<>();
     }
 
-
     public static void main(String[] args) throws Exception {
         File cd = new File(Paths.get("").toAbsolutePath().toString());
         homeDir = cd.getParentFile();
@@ -342,7 +341,127 @@ public class EdisProject {
 
     }
 
-    public static void construct(String bod, CommandLine cmd) throws Exception {
+    public static void xmlGenerator(String bod, CommandLine cmd) throws Exception {
+        System.out.println("Building business object: " + bod + "...");
+
+        File workspace = new File(boDir, bod);
+        String buildFile = cmd.hasOption("f") ? cmd.getOptionValue("f") : "project.json";
+
+        File projectFile = new File(workspace, buildFile);
+        EdisProject project = GSON.fromJson(new FileReader(projectFile), EdisProject.class);
+
+        KnowledgeTree<SchemaTypeSystem, XsNode> knowledgeTree = XsKnowledgeBase.builder()
+                .file(new File(homeDir, project.mappings.schema))
+                .create().knowledge();
+
+        File xlsx = new File(workspace, project.mappings.mappingFile);
+        if (!xlsx.exists()) {
+            throw new NullPointerException("File " + xlsx.getAbsolutePath() + " does not exist.");
+        }
+        new XlsxMappingAnnotator()
+                .mappingFile(xlsx)
+                .mappingSheet(project.mappings.mappingSheet)
+                .annotate(knowledgeTree);
+
+        // Build
+        File work = new File(workspace, "work");
+        if (!work.exists()) {
+            System.out.println("Making work dir...");
+            work.mkdirs();
+        }
+        File version = new File(work, project.version);
+        if (!version.exists()) {
+            System.out.println("Making " + version + " dir...");
+            version.mkdirs();
+        }
+
+        File xpathMappingFile = new File(version, project.mappings.constructFile);
+        if (!xpathMappingFile.exists()) {
+            System.out.println("Construct file " + project.mappings.constructFile + " does not exist.");
+            System.exit(0);
+        }
+
+        new XPathAssignmentAnnotator()
+                .file(xpathMappingFile.getAbsolutePath())
+                .annotate(knowledgeTree);
+
+
+        // ESQL
+        File esql = new File(version, project.application + ".esql");
+        if (!esql.exists()) {
+            System.out.println("Generating esql file: " + project.application + ".esql...");
+            esql.createNewFile();
+            FileUtils.writeByteArrayToFile(esql, new ConstructEsqlRenderer()
+                    .brokerSchema(project.messageFlow.brokerSchema)
+                    .moduleName(project.messageFlow.transformer.name + "_Compute")
+                    .inputRootVariable("_inputRootNode")
+                    .inputRootReference("InputRoot.JSON.Data")
+                    .render(knowledgeTree).getBytes());
+        }
+
+    }
+
+    public static void jsonGenerator(String bod, CommandLine cmd) throws Exception {
+        System.out.println("Building business object: " + bod + "...");
+
+        File workspace = new File(boDir, bod);
+        String buildFile = cmd.hasOption("f") ? cmd.getOptionValue("f") : "project.json";
+
+        File projectFile = new File(workspace, buildFile);
+        EdisProject project = GSON.fromJson(new FileReader(projectFile), EdisProject.class);
+
+        KnowledgeTree<SchemaTypeSystem, XsNode> knowledgeTree = XsKnowledgeBase.builder()
+                .file(new File(homeDir, project.mappings.schema))
+                .create().knowledge();
+
+        File xlsx = new File(workspace, project.mappings.mappingFile);
+        if (!xlsx.exists()) {
+            throw new NullPointerException("File " + xlsx.getAbsolutePath() + " does not exist.");
+        }
+        new XlsxMappingAnnotator()
+                .mappingFile(xlsx)
+                .mappingSheet(project.mappings.mappingSheet)
+                .annotate(knowledgeTree);
+
+        // Build
+        File work = new File(workspace, "work");
+        if (!work.exists()) {
+            System.out.println("Making work dir...");
+            work.mkdirs();
+        }
+        File version = new File(work, project.version);
+        if (!version.exists()) {
+            System.out.println("Making " + version + " dir...");
+            version.mkdirs();
+        }
+
+        File xpathMappingFile = new File(version, project.mappings.constructFile);
+        if (!xpathMappingFile.exists()) {
+            System.out.println("Construct file " + project.mappings.constructFile + " does not exist.");
+            System.exit(0);
+        }
+
+        new XPathAssignmentAnnotator()
+                .file(xpathMappingFile.getAbsolutePath())
+                .annotate(knowledgeTree);
+
+
+        // ESQL
+        File esql = new File(version, project.application + ".esql");
+        if (!esql.exists()) {
+            System.out.println("Generating esql file: " + project.application + ".esql...");
+            esql.createNewFile();
+            FileUtils.writeByteArrayToFile(esql, new ConstructEsqlRenderer()
+                    .brokerSchema(project.messageFlow.brokerSchema)
+                    .moduleName(project.messageFlow.transformer.name + "_Compute")
+                    .inputRootVariable("_inputRootNode")
+                    .inputRootReference("InputRoot.JSON.Data")
+                    .render(knowledgeTree).getBytes());
+        }
+
+    }
+
+    public static void toJsonConverter(String bod, CommandLine cmd) throws Exception {
         System.out.println("Building business object: " + bod + "...");
 
         File workspace = new File(boDir, bod);

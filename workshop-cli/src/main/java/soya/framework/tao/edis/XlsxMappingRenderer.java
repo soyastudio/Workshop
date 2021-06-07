@@ -48,11 +48,11 @@ public class XlsxMappingRenderer extends EdisRenderer {
     public String render(KnowledgeTree<SchemaTypeSystem, XsNode> knowledge) throws T123W.FlowExecutionException {
         XSSFWorkbook workbook = null;
 
-        if(mappingFile == null) {
+        if (mappingFile == null) {
             throw new IllegalStateException("Mapping file is not set.");
         }
 
-        if(!mappingFile.exists()) {
+        if (!mappingFile.exists()) {
             throw new IllegalStateException("Can not find mapping file: " + mappingFile.toString());
         }
 
@@ -78,7 +78,7 @@ public class XlsxMappingRenderer extends EdisRenderer {
 
             KnowledgeTreeNode<XsNode> node = knowledge.get(e);
             String value = getAssignment(node);
-            if(value != null) {
+            if (value != null) {
                 builder.append(value);
             }
 
@@ -124,7 +124,7 @@ public class XlsxMappingRenderer extends EdisRenderer {
                         Construction construction = new Construction();
                         construction.setAlias(getAlias(parent.getName()));
                         construction.setLevel(getLevel(parent));
-                        if(!BigInteger.ONE.equals(parent.origin().getMaxOccurs())) {
+                        if (!BigInteger.ONE.equals(parent.origin().getMaxOccurs())) {
                             construction.setArray(true);
                         }
                         parent.annotate(NAMESPACE_CONSTRUCTION, construction);
@@ -219,7 +219,7 @@ public class XlsxMappingRenderer extends EdisRenderer {
         String token = baseName + "_";
         int count = 0;
         while (aliasSet.contains(token)) {
-            count ++;
+            count++;
             token = baseName + count + "_";
         }
         aliasSet.add(token);
@@ -238,15 +238,15 @@ public class XlsxMappingRenderer extends EdisRenderer {
         return level;
     }
 
-    private  String getAssignment(KnowledgeTreeNode<XsNode> node) {
+    private String getAssignment(KnowledgeTreeNode<XsNode> node) {
         if (XsNode.XsNodeType.Folder.equals(node.origin().getNodeType()) && node.getAnnotation(NAMESPACE_CONSTRUCTION) != null) {
             Construction construction = node.getAnnotation(NAMESPACE_CONSTRUCTION, Construction.class);
-
             return construction.toString();
 
         } else {
             Assignment assignment = node.getAnnotation(NAMESPACE_ASSIGNMENT, Assignment.class);
-            return assignment == null? "":assignment.toString();
+            return assignment == null ? "" : assignment.toString();
+
         }
     }
 
