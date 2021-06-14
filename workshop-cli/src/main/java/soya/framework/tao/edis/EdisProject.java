@@ -10,7 +10,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.SchemaTypeSystem;
 import soya.framework.tao.KnowledgeTree;
-import soya.framework.tao.KnowledgeTreeNode;
 import soya.framework.tao.util.JsonUtils;
 import soya.framework.tao.xs.XmlToAvroSchema;
 import soya.framework.tao.xs.XsKnowledgeBase;
@@ -391,7 +390,7 @@ public class EdisProject {
         if (!esql.exists()) {
             System.out.println("Generating esql file: " + project.application + ".esql...");
             esql.createNewFile();
-            FileUtils.writeByteArrayToFile(esql, new ConstructEsqlRenderer()
+            FileUtils.writeByteArrayToFile(esql, new XmlEsqlRenderer()
                     .brokerSchema(project.messageFlow.brokerSchema)
                     .moduleName(project.messageFlow.transformer.name + "_Compute")
                     .inputRootVariable("_inputRootNode")
@@ -402,7 +401,6 @@ public class EdisProject {
     }
 
     public static void jsonGenerator(String bod, CommandLine cmd) throws Exception {
-        System.out.println("Building business object: " + bod + "...");
 
         File workspace = new File(boDir, bod);
         String buildFile = cmd.hasOption("f") ? cmd.getOptionValue("f") : "project.json";
@@ -447,71 +445,11 @@ public class EdisProject {
 
 
         // ESQL
-        File esql = new File(version, project.application + ".esql");
+        File esql = new File(version, project.name + "_JSON_TRANSFORMER_Compute.esql");
         if (!esql.exists()) {
             System.out.println("Generating esql file: " + project.application + ".esql...");
             esql.createNewFile();
-            FileUtils.writeByteArrayToFile(esql, new ConstructEsqlRenderer()
-                    .brokerSchema(project.messageFlow.brokerSchema)
-                    .moduleName(project.messageFlow.transformer.name + "_Compute")
-                    .inputRootVariable("_inputRootNode")
-                    .inputRootReference("InputRoot.JSON.Data")
-                    .render(knowledgeTree).getBytes());
-        }
-
-    }
-
-    public static void toJsonConverter(String bod, CommandLine cmd) throws Exception {
-        System.out.println("Building business object: " + bod + "...");
-
-        File workspace = new File(boDir, bod);
-        String buildFile = cmd.hasOption("f") ? cmd.getOptionValue("f") : "project.json";
-
-        File projectFile = new File(workspace, buildFile);
-        EdisProject project = GSON.fromJson(new FileReader(projectFile), EdisProject.class);
-
-        KnowledgeTree<SchemaTypeSystem, XsNode> knowledgeTree = XsKnowledgeBase.builder()
-                .file(new File(homeDir, project.mappings.schema))
-                .create().knowledge();
-
-        File xlsx = new File(workspace, project.mappings.mappingFile);
-        if (!xlsx.exists()) {
-            throw new NullPointerException("File " + xlsx.getAbsolutePath() + " does not exist.");
-        }
-        new XlsxMappingAnnotator()
-                .mappingFile(xlsx)
-                .mappingSheet(project.mappings.mappingSheet)
-                .annotate(knowledgeTree);
-
-        // Build
-        File work = new File(workspace, "work");
-        if (!work.exists()) {
-            System.out.println("Making work dir...");
-            work.mkdirs();
-        }
-        File version = new File(work, project.version);
-        if (!version.exists()) {
-            System.out.println("Making " + version + " dir...");
-            version.mkdirs();
-        }
-
-        File xpathMappingFile = new File(version, project.mappings.constructFile);
-        if (!xpathMappingFile.exists()) {
-            System.out.println("Construct file " + project.mappings.constructFile + " does not exist.");
-            System.exit(0);
-        }
-
-        new XPathAssignmentAnnotator()
-                .file(xpathMappingFile.getAbsolutePath())
-                .annotate(knowledgeTree);
-
-
-        // ESQL
-        File esql = new File(version, project.application + ".esql");
-        if (!esql.exists()) {
-            System.out.println("Generating esql file: " + project.application + ".esql...");
-            esql.createNewFile();
-            FileUtils.writeByteArrayToFile(esql, new ConstructEsqlRenderer()
+            FileUtils.writeByteArrayToFile(esql, new JsonEsqlRenderer()
                     .brokerSchema(project.messageFlow.brokerSchema)
                     .moduleName(project.messageFlow.transformer.name + "_Compute")
                     .inputRootVariable("_inputRootNode")
@@ -645,7 +583,7 @@ public class EdisProject {
         if (!esql.exists()) {
             System.out.println("Generating esql file: " + project.application + ".esql...");
             esql.createNewFile();
-            FileUtils.writeByteArrayToFile(esql, new ConstructEsqlRenderer()
+            FileUtils.writeByteArrayToFile(esql, new XmlEsqlRenderer()
                     .brokerSchema(project.messageFlow.brokerSchema)
                     .moduleName(project.messageFlow.transformer.name + "_Compute")
                     .inputRootVariable("_inputRootNode")

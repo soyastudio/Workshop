@@ -182,7 +182,6 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 
 				END IF;
 
-
 				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer
 				DECLARE RetailCustomer_ REFERENCE TO GroceryOrderHeader_;
 				CREATE LASTCHILD OF GroceryOrderHeader_ AS RetailCustomer_ TYPE XMLNSC.Folder NAME 'Abs:RetailCustomer';
@@ -678,8 +677,6 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 				MOVE _exception NEXTSIBLING;
 				END WHILE exception_loop;
 
-
-
 			-- LOOP FROM subOrders[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder:
 			DECLARE _subOrder REFERENCE TO _inputRootNode.subOrders.Item;
 			subOrder : WHILE LASTMOVE(_subOrder) DO
@@ -913,7 +910,6 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 								SET AutoReplenishmentOrderType_.(XMLNSC.Field)Abs:ItemPriceAmt = CAST(_orderLine.itemPrice.arPrice AS DECIMAL(14, 4));
 								-- SET AutoReplenishmentOrderType_.(XMLNSC.Field)Abs:ItemPriceAmt = CAST(_orderLine.arPrice AS DECIMAL(14, 4));
 
-
 							-- LOOP FROM subOrders[*]/orderLines[*]/fulfilledUpc[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem:
 							DECLARE _fulfilled_upc REFERENCE TO _orderLine.fulfilledUpc.Item;
 							fulfilled_upc_loop : WHILE LASTMOVE(_fulfilled_upc) DO
@@ -939,10 +935,8 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 											-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item/UPC/UPCNbr
 											SET UPC_.(XMLNSC.Field)Abs:UPCNbr = _fulfilled_upc.upcId;
 
-
 										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item/SystemSpecificItemId
 										SET Item_.(XMLNSC.Field)Abs:SystemSpecificItemId = _orderLine.itemId;
-
 
 										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item/InternalItemId
 										SET Item_.(XMLNSC.Field)Abs:InternalItemId = _fulfilled_upc.itemPrice.itemCode;
@@ -950,7 +944,6 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 										-- Since V 1.7.1
 										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item/PLUCd
 										SET Item_.(XMLNSC.Field)Abs:PLUCd = _fulfilled_upc.itemPrice.itemPluNumber;
-
 
 										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item/BaseProductNbr
 										SET Item_.(XMLNSC.Field)Abs:BaseProductNbr = _orderLine.itemId;
@@ -998,10 +991,6 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 									-- Since v1.12.1
 									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/PricePerAmt
 									SET DeliveredItem_.(XMLNSC.Field)Abs:PricePerAmt = CAST(_fulfilled_upc.itemPrice.pricePer AS DECIMAL(14, 4));
-
-
-
-
 
 									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/PriceEffectiveStartDtTm
 									SET DeliveredItem_.(XMLNSC.Field)Abs:PriceEffectiveStartDtTm = _fulfilled_upc.itemPrice.startDate;
@@ -1234,7 +1223,6 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 					MOVE _orderLine NEXTSIBLING;
 					END WHILE orderLine;
 
-
 					-- Since v1.8.1
 					-- LOOP FROM subOrders[*]/refundedOrderLines[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem:
 					DECLARE _refundedOrderLine REFERENCE TO _subOrder.refundedOrderLines.Item;
@@ -1275,13 +1263,13 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 						CREATE LASTCHILD OF ReturnedItem_ AS ReturnedItem_UOM_ TYPE XMLNSC.Folder NAME 'Abs:UOM';
 
 							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/UOM/UOMCd
-							SET ReturnedItem_.(XMLNSC.Field)Abs:Quantity = _refundedOrderLine.unitOfMeasure;
+							SET ReturnedItem_UOM_.(XMLNSC.Field)Abs:Quantity = _refundedOrderLine.unitOfMeasure;
 
-							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/UnitPriceAmt
-							SET ReturnedItem_.(XMLNSC.Field)Abs:UnitPriceAmt = CAST(_refundedOrderLine.unitPrice.amount AS DECIMAL(14, 2));
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/UOM/UnitPriceAmt
+							SET ReturnedItem_UOM_.(XMLNSC.Field)Abs:UnitPriceAmt = CAST(_refundedOrderLine.unitPrice.amount AS DECIMAL(14, 2));
 
-							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/CurrencyCd
-							SET ReturnedItem_.(XMLNSC.Field)Abs:CurrencyCd = _refundedOrderLine.unitPrice.currency;
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/UOM/CurrencyCd
+							SET ReturnedItem_UOM_.(XMLNSC.Field)Abs:CurrencyCd = _refundedOrderLine.unitPrice.currency;
 
 						-- Since v1.11.1
 						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/AutoReplenishmentOrderType
@@ -1299,7 +1287,6 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 
 					MOVE _refundedOrderLine NEXTSIBLING;
 					END WHILE refundedOrderLine_loop;
-
 
 					-- LOOP FROM subOrders[*]/promoCodes[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail:
 					DECLARE _promoCode REFERENCE TO _subOrder.promoCodes.Item;
@@ -1485,7 +1472,13 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 				orderLine2 : WHILE LASTMOVE(_orderLine2) DO
 
 					-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/InstructionTxt
-					CREATE LASTCHILD OF GrocerySubOrder_ TYPE NameValue NAME 'Abs:InstructionTxt' VALUE _orderLine2.comments;
+					IF _orderLine2.comments IS NULL THEN
+						CREATE LASTCHILD OF GrocerySubOrder_ TYPE NameValue NAME 'Abs:InstructionTxt' VALUE '';
+
+					ELSE
+						CREATE LASTCHILD OF GrocerySubOrder_ TYPE NameValue NAME 'Abs:InstructionTxt' VALUE _orderLine2.comments;
+
+					END IF;
 
 				MOVE _orderLine2 NEXTSIBLING;
 				END WHILE orderLine2;
@@ -1517,7 +1510,6 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 
 				MOVE _subOrderException NEXTSIBLING;
 				END WHILE suborder_exception_loop;
-
 
 			MOVE _subOrder NEXTSIBLING;
 			END WHILE subOrder;
