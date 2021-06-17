@@ -7,205 +7,209 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 	
 	CREATE FUNCTION Main() RETURNS BOOLEAN
 	BEGIN
-		-- Declare Array Index Variables:
+		
 		DECLARE i INTEGER;
 		DECLARE j INTEGER;
 		DECLARE k INTEGER;
 		DECLARE l INTEGER;
 		DECLARE m INTEGER;
 		DECLARE n INTEGER;
-
+		
 		-- Declare Input Message Root
 		DECLARE _inputRootNode REFERENCE TO InputRoot.JSON.Data;
+		
+		CREATE LASTCHILD OF OutputRoot DOMAIN 'JSON';
+		
+		-- Create root Data field
+        CREATE FIELD OutputRoot.JSON.Data;
+        DECLARE jsonDocRoot REFERENCE TO OutputRoot.JSON.Data;
+        
+        -- GetGroceryOrder/DocumentData
+		DECLARE DocumentData_ REFERENCE TO jsonDocRoot;
+		CREATE LASTCHILD OF jsonDocRoot AS DocumentData_ TYPE XMLNSC.Folder NAME 'DocumentData';
 
-		-- Declare Output Message Root
-		CREATE FIELD OutputRoot.JSON.Data;
-		DECLARE GetGroceryOrder_ REFERENCE TO OutputRoot.JSON.Data;
+			-- GetGroceryOrder/DocumentData/Document
+			DECLARE Document_ REFERENCE TO DocumentData_;
+			CREATE LASTCHILD OF DocumentData_ AS Document_ TYPE XMLNSC.Folder NAME 'Document';
 
-			-- GetGroceryOrder/DocumentData
-			CREATE FIELD GetGroceryOrder_.DocumentData;
-			DECLARE DocumentData_ REFERENCE TO GetGroceryOrder_.DocumentData;
+				-- GetGroceryOrder/DocumentData/Document/@VersionId
+				SET Document_.VersionId = VERSION_ID;
 
-				-- GetGroceryOrder/DocumentData/Document
-				CREATE FIELD DocumentData_.Document;
-				DECLARE Document_ REFERENCE TO DocumentData_.Document;
+				-- GetGroceryOrder/DocumentData/Document/@SystemEnvironmentCd
+				SET Document_.SystemEnvironmentCd = SYSTEM_ENVIRONMENT_CODE;
 
-					-- GetGroceryOrder/DocumentData/Document/@VersionId
-					SET Document_.VersionId = VERSION_ID;
+				-- GetGroceryOrder/DocumentData/Document/DocumentID
+				SET Document_.DocumentID = 'GROCERY_ORDER';
 
-					-- GetGroceryOrder/DocumentData/Document/@SystemEnvironmentCd
-					SET Document_.SystemEnvironmentCd = SYSTEM_ENVIRONMENT_CODE;
+				-- GetGroceryOrder/DocumentData/Document/AlternateDocumentID
+				SET Document_.AlternateDocumentID = InputLocalEnvironment.Kafka.Input.topicName ||'_'||InputLocalEnvironment.Kafka.Input.partition||'_'||InputLocalEnvironment.Kafka.Input.offset||'_'||CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT 'YYYYMMddHHmmssSSSSSS');
 
-					-- GetGroceryOrder/DocumentData/Document/DocumentID
-				    SET Document_.DocumentID = 'GROCERY_ORDER';
+				-- GetGroceryOrder/DocumentData/Document/DocumentNm
+				SET Document_.DocumentNm = 'GroceryOrder';
 
-					-- GetGroceryOrder/DocumentData/Document/AlternateDocumentID
-					SET Document_.AlternateDocumentID = InputLocalEnvironment.Kafka.Input.topicName ||'_'||InputLocalEnvironment.Kafka.Input.partition||'_'||InputLocalEnvironment.Kafka.Input.offset||'_'||CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT 'YYYYMMddHHmmssSSSSSS');
+				-- GetGroceryOrder/DocumentData/Document/CreationDt
+				SET Document_.CreationDt = CURRENT_TIMESTAMP;
 
-					-- GetGroceryOrder/DocumentData/Document/DocumentNm
-					SET Document_.DocumentNm = 'GroceryOrder';
+				-- GetGroceryOrder/DocumentData/Document/Description
+				SET Document_.Description = 'GroceryOrderDetail';
 
-					-- GetGroceryOrder/DocumentData/Document/CreationDt
-					SET Document_.CreationDt = CURRENT_TIMESTAMP;
+				-- GetGroceryOrder/DocumentData/Document/SourceApplicationCd
+				SET Document_.SourceApplicationCd = 'OMS';
 
-					-- GetGroceryOrder/DocumentData/Document/Description
-					SET Document_.Description = 'GroceryOrderDetail';
+				-- GetGroceryOrder/DocumentData/Document/TargetApplicationCd
+				SET Document_.TargetApplicationCd = 'EDIS';
 
-					-- GetGroceryOrder/DocumentData/Document/SourceApplicationCd
-					SET Document_.SourceApplicationCd = 'OMS';
+				-- GetGroceryOrder/DocumentData/Document/SenderId
+				SET Document_.SenderId = _inputRootNode.id;
 
-					-- GetGroceryOrder/DocumentData/Document/TargetApplicationCd
-					SET Document_.TargetApplicationCd = 'EDIS';
+				-- GetGroceryOrder/DocumentData/Document/InternalFileTransferInd
+				SET Document_.InternalFileTransferInd = 'Y';
 
-					-- GetGroceryOrder/DocumentData/Document/SenderId
-					SET Document_.SenderId = _inputRootNode.id;
+				-- GetGroceryOrder/DocumentData/Document/DataClassification
+				DECLARE DataClassification_ REFERENCE TO Document_;
+				CREATE LASTCHILD OF Document_ AS DataClassification_ TYPE XMLNSC.Folder NAME 'DataClassification';
 
-					-- GetGroceryOrder/DocumentData/Document/InternalFileTransferInd
-					SET Document_.InternalFileTransferInd = 'Y';
+					-- GetGroceryOrder/DocumentData/Document/DataClassification/DataClassificationLevel
+					DECLARE DataClassificationLevel_ REFERENCE TO DataClassification_;
+					CREATE LASTCHILD OF DataClassification_ AS DataClassificationLevel_ TYPE XMLNSC.Folder NAME 'DataClassificationLevel';
 
-					-- GetGroceryOrder/DocumentData/Document/DataClassification
-					CREATE FIELD Document_.DataClassification;
-					DECLARE DataClassification_ REFERENCE TO Document_.DataClassification;
+						-- GetGroceryOrder/DocumentData/Document/DataClassification/DataClassificationLevel/Code
+						SET DataClassificationLevel_.Code = 'Internal';
 
-						-- GetGroceryOrder/DocumentData/Document/DataClassification/DataClassificationLevel
-						CREATE FIELD DataClassification_.DataClassificationLevel;
-						DECLARE DataClassificationLevel_ REFERENCE TO DataClassification_.DataClassificationLevel;
+					-- GetGroceryOrder/DocumentData/Document/DataClassification/BusinessSensitivityLevel
+					DECLARE BusinessSensitivityLevel_ REFERENCE TO DataClassification_;
+					CREATE LASTCHILD OF DataClassification_ AS BusinessSensitivityLevel_ TYPE XMLNSC.Folder NAME 'BusinessSensitivityLevel';
 
-							-- GetGroceryOrder/DocumentData/Document/DataClassification/DataClassificationLevel/Code
-							SET DataClassificationLevel_.Code = 'Internal';
+						-- GetGroceryOrder/DocumentData/Document/DataClassification/BusinessSensitivityLevel/Code
+						SET BusinessSensitivityLevel_.Code = 'Low';
 
-						-- GetGroceryOrder/DocumentData/Document/DataClassification/BusinessSensitivityLevel
-						CREATE FIELD DataClassification_.BusinessSensitivityLevel;
-						DECLARE BusinessSensitivityLevel_ REFERENCE TO DataClassification_.BusinessSensitivityLevel;
+					-- GetGroceryOrder/DocumentData/Document/DataClassification/PHIdataInd
+					SET DataClassification_.PHIdataInd = 'N';
 
-							-- GetGroceryOrder/DocumentData/Document/DataClassification/BusinessSensitivityLevel/Code
-							SET BusinessSensitivityLevel_.Code = 'Low';
+					-- GetGroceryOrder/DocumentData/Document/DataClassification/PCIdataInd
+					SET DataClassification_.PCIdataInd = 'Y';
 
-						-- GetGroceryOrder/DocumentData/Document/DataClassification/PHIdataInd
-						SET DataClassification_.PHIdataInd = 'N';
+					-- GetGroceryOrder/DocumentData/Document/DataClassification/PIIdataInd
+					SET DataClassification_.PIIdataInd = 'Y';
 
-						-- GetGroceryOrder/DocumentData/Document/DataClassification/PCIdataInd
-						SET DataClassification_.PCIdataInd = 'Y';
+			-- GetGroceryOrder/DocumentData/DocumentAction
+			DECLARE DocumentAction_ REFERENCE TO DocumentData_;
+			CREATE LASTCHILD OF DocumentData_ AS DocumentAction_ TYPE XMLNSC.Folder NAME 'DocumentAction';
 
-						-- GetGroceryOrder/DocumentData/Document/DataClassification/PIIdataInd
-						SET DataClassification_.PIIdataInd = 'Y';
+				-- GetGroceryOrder/DocumentData/DocumentAction/ActionTypeCd
+				SET DocumentAction_.ActionTypeCd = 'UPDATE';
 
-				-- GetGroceryOrder/DocumentData/DocumentAction
-				CREATE FIELD DocumentData_.DocumentAction;
-				DECLARE DocumentAction_ REFERENCE TO DocumentData_.DocumentAction;
+				-- GetGroceryOrder/DocumentData/DocumentAction/RecordTypeCd
+				SET DocumentAction_.RecordTypeCd = 'CHANGE';
 
-					-- GetGroceryOrder/DocumentData/DocumentAction/ActionTypeCd
-					SET DocumentAction_.ActionTypeCd = 'UPDATE';
+		-- GetGroceryOrder/GroceryOrderData
+		DECLARE GroceryOrderData_ REFERENCE TO jsonDocRoot;
+		CREATE LASTCHILD OF jsonDocRoot AS GroceryOrderData_ TYPE XMLNSC.Folder NAME 'GroceryOrderData';
 
-					-- GetGroceryOrder/DocumentData/DocumentAction/RecordTypeCd
-					SET DocumentAction_.RecordTypeCd = 'CHANGE';
+			-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader
+			DECLARE GroceryOrderHeader_ REFERENCE TO GroceryOrderData_;
+			CREATE LASTCHILD OF GroceryOrderData_ AS GroceryOrderHeader_ TYPE XMLNSC.Folder NAME 'GroceryOrderHeader';
 
-			-- GetGroceryOrder/GroceryOrderData
-			CREATE FIELD GetGroceryOrder_.GroceryOrderData;
-			DECLARE GroceryOrderData_ REFERENCE TO GetGroceryOrder_.GroceryOrderData;
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderId
+				SET GroceryOrderHeader_.OrderId = _inputRootNode.orderNumber;
 
-				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader
-				CREATE FIELD GroceryOrderData_.GroceryOrderHeader;
-				DECLARE GroceryOrderHeader_ REFERENCE TO GroceryOrderData_.GroceryOrderHeader;
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderCreateTS
+				SET GroceryOrderHeader_.OrderCreateTS = _inputRootNode.orderCreatedDate;
 
-					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderId
-					SET GroceryOrderHeader_.OrderId = _inputRootNode.orderNumber;
+				-- Since v1.7.2
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderModifyTS
+				SET GroceryOrderHeader_.OrderModifyTS = _inputRootNode.modifiedDate;
 
-					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderCreateTS
-					SET GroceryOrderHeader_.OrderCreateTS = _inputRootNode.orderCreatedDate;
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CompanyId
+				SET GroceryOrderHeader_.CompanyId = _inputRootNode.companyId;
 
-					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderModifyTS
-					SET GroceryOrderHeader_.OrderModifyTS = _inputRootNode.modifiedDate;
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/VersionNbr
+				SET GroceryOrderHeader_.VersionNbr = _inputRootNode.versionNumber;
 
-					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CompanyId
-					SET GroceryOrderHeader_.CompanyId = _inputRootNode.companyId;
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderStatus
+				DECLARE OrderStatus_ REFERENCE TO GroceryOrderHeader_;
+				CREATE LASTCHILD OF GroceryOrderHeader_ AS OrderStatus_ TYPE XMLNSC.Folder NAME 'OrderStatus';
 
-					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/VersionNbr
-					SET GroceryOrderHeader_.VersionNbr = _inputRootNode.versionNumber;
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderStatus/StatusTypeCd
+					SET OrderStatus_.StatusTypeCd = _inputRootNode.orderStatus;
 
-					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderStatus
-					CREATE FIELD GroceryOrderHeader_.OrderStatus;
-					DECLARE OrderStatus_ REFERENCE TO GroceryOrderHeader_.OrderStatus;
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderStatusReasonType
+				DECLARE OrderStatusReasonType_ REFERENCE TO GroceryOrderHeader_;
+				CREATE LASTCHILD OF GroceryOrderHeader_ AS OrderStatusReasonType_ TYPE XMLNSC.Folder NAME 'OrderStatusReasonType';
 
-						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderStatus/StatusTypeCd
-						SET OrderStatus_.StatusTypeCd = _inputRootNode.orderStatus;
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderStatusReasonType/Code
+					SET OrderStatusReasonType_.Code = _inputRootNode.orderStatusReasonCode;
 
-					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderStatusReasonType
-					CREATE FIELD GroceryOrderHeader_.OrderStatusReasonType;
-					DECLARE OrderStatusReasonType_ REFERENCE TO GroceryOrderHeader_.OrderStatusReasonType;
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderActionStatus
+				DECLARE OrderActionStatus_ REFERENCE TO GroceryOrderHeader_;
+				CREATE LASTCHILD OF GroceryOrderHeader_ AS OrderActionStatus_ TYPE XMLNSC.Folder NAME 'OrderActionStatus';
 
-						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderStatusReasonType/Code
-						SET OrderStatusReasonType_.Code = _inputRootNode.orderStatusReasonCode;
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderActionStatus/StatusTypeCd
+					SET OrderActionStatus_.StatusTypeCd = _inputRootNode.messageAction;
 
-					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderActionStatus
-					CREATE FIELD GroceryOrderHeader_.OrderActionStatus;
-					DECLARE OrderActionStatus_ REFERENCE TO GroceryOrderHeader_.OrderActionStatus;
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderActionStatus/Description
+					SET OrderActionStatus_.Description = _inputRootNode.messageActionReason;
 
-						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderActionStatus/StatusTypeCd
-						SET OrderActionStatus_.StatusTypeCd = _inputRootNode.messageAction;
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/EditCutoffDtTm
+				SET GroceryOrderHeader_.EditCutoffDtTm = _inputRootNode.orderEditCutoffDate;
 
-						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderActionStatus/Description
-						SET OrderActionStatus_.Description = _inputRootNode.messageActionReason;
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/EditReasonType
+				DECLARE EditReasonType_ REFERENCE TO GroceryOrderHeader_;
+				CREATE LASTCHILD OF GroceryOrderHeader_ AS EditReasonType_ TYPE XMLNSC.Folder NAME 'EditReasonType';
 
-					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/EditCutoffDtTm
-					SET GroceryOrderHeader_.EditCutoffDtTm = _inputRootNode.orderEditCutoffDate;
-
-					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/EditReasonType
-					CREATE FIELD GroceryOrderHeader_.EditReasonType;
-					DECLARE EditReasonType_ REFERENCE TO GroceryOrderHeader_.EditReasonType;
-
-						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/EditReasonType/Code
-						SET EditReasonType_.Code = _inputRootNode.modifiedReasonCode;
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/EditReasonType/Code
+					SET EditReasonType_.Code = _inputRootNode.modifiedReasonCode;
 
 				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility
 				DECLARE FulfillingFacility_ REFERENCE TO GroceryOrderHeader_;
 				CREATE LASTCHILD OF GroceryOrderHeader_ AS FulfillingFacility_ TYPE XMLNSC.Folder NAME 'FulfillingFacility';
 
 				CALL ConstructFulfillingFacility(_inputRootNode, FulfillingFacility_, GroceryOrderHeader_);
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer
+				DECLARE RetailCustomer_ REFERENCE TO GroceryOrderHeader_;
+				CREATE LASTCHILD OF GroceryOrderHeader_ AS RetailCustomer_ TYPE XMLNSC.Folder NAME 'RetailCustomer';
 
-					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer
-					CREATE FIELD GroceryOrderHeader_.RetailCustomer;
-					DECLARE RetailCustomer_ REFERENCE TO GroceryOrderHeader_.RetailCustomer;
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerId
+					SET RetailCustomer_.CustomerId = _inputRootNode.customer.customerId;
 
-						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerId
-						SET RetailCustomer_.CustomerId = _inputRootNode.customer.customerId;
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerAlternateId
+					DECLARE CustomerAlternateId_ REFERENCE TO RetailCustomer_;
+					CREATE LASTCHILD OF RetailCustomer_ AS CustomerAlternateId_ TYPE XMLNSC.Folder NAME 'CustomerAlternateId';
 
-						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerAlternateId
-						CREATE FIELD RetailCustomer_.CustomerAlternateId IDENTITY (JSON.Array)CustomerAlternateId;
-						DECLARE arr_CustomerAlternateId_ REFERENCE TO RetailCustomer_.CustomerAlternateId;
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerAlternateId/@sequenceNbr
+						SET CustomerAlternateId_.sequenceNbr = _inputRootNode.customer.memberId;
 
-						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerNm
-						CREATE FIELD RetailCustomer_.CustomerNm;
-						DECLARE CustomerNm_ REFERENCE TO RetailCustomer_.CustomerNm;
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerNm
+					DECLARE CustomerNm_ REFERENCE TO RetailCustomer_;
+					CREATE LASTCHILD OF RetailCustomer_ AS CustomerNm_ TYPE XMLNSC.Folder NAME 'CustomerNm';
 
-							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerNm/GivenNm
-							SET CustomerNm_.GivenNm = _inputRootNode.customer.name.firstName;
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerNm/GivenNm
+						SET CustomerNm_.GivenNm = _inputRootNode.customer.name.firstName;
 
-							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerNm/MiddleNm
-							SET CustomerNm_.MiddleNm = _inputRootNode.customer.name.middleName;
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerNm/MiddleNm
+						SET CustomerNm_.MiddleNm = _inputRootNode.customer.name.middleName;
 
-							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerNm/FamilyNm
-							SET CustomerNm_.FamilyNm = _inputRootNode.customer.name.lastName;
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerNm/FamilyNm
+						SET CustomerNm_.FamilyNm = _inputRootNode.customer.name.lastName;
 
-						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact
-						CREATE FIELD RetailCustomer_.Contact IDENTITY (JSON.Array)Contact;
-						DECLARE arr_Contact_ REFERENCE TO RetailCustomer_.Contact;
+					CREATE FIELD RetailCustomer_.Contact IDENTITY (JSON.Array)Contact;
+					DECLARE Contact_ REFERENCE TO RetailCustomer_.Contact;
 
-						DECLARE _contact REFERENCE TO _inputRootNode.customer.contact.Item;
+					-- LOOP FROM customer/contact[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact:
+					DECLARE _contact REFERENCE TO _inputRootNode.customer.contact.Item;
 
-						SET i = 1;
-						contact_to_Contact : WHILE LASTMOVE(_contact) DO
-							DECLARE Contact_ REFERENCE TO arr_RetailCustomer_.Contact.Item[i];
+					SET i = 1;
+					contact : WHILE LASTMOVE(_contact) DO
 
-								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact
-								CREATE FIELD Contact_.PhoneFaxContact;
-								DECLARE PhoneFaxContact_ REFERENCE TO Contact_.PhoneFaxContact;
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact
+							DECLARE PhoneFaxContact_ REFERENCE TO Contact_.Item[i];
+							CREATE LASTCHILD OF Contact_.Item[i] AS PhoneFaxContact_ TYPE XMLNSC.Folder NAME 'PhoneFaxContact';
 
-									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/@TypeCode
-									SET PhoneFaxContact_.TypeCode = _contact.type;
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/@TypeCode
+								SET PhoneFaxContact_.TypeCode = _contact.type;
 
-									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/PhoneNbrTxt
-									SET PhoneFaxContact_.PhoneNbrTxt = _contact.number;
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/PhoneNbrTxt
+								SET PhoneFaxContact_.PhoneNbrTxt = _contact.number;
 
 								-- removed in v1.6.2
 								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/PhonePurposes

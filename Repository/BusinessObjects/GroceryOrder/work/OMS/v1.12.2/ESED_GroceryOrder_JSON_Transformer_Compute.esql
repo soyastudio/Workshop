@@ -7,33 +7,28 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 	
 	CREATE FUNCTION Main() RETURNS BOOLEAN
 	BEGIN
-		
+		-- Declare Array Index Variables:
 		DECLARE i INTEGER;
 		DECLARE j INTEGER;
 		DECLARE k INTEGER;
 		DECLARE l INTEGER;
 		DECLARE m INTEGER;
 		DECLARE n INTEGER;
-		
+
 		-- Declare Input Message Root
 		DECLARE _inputRootNode REFERENCE TO InputRoot.JSON.Data;
-		
-		CREATE LASTCHILD OF OutputRoot DOMAIN 'JSON';
-		
-		-- Create root Data field
-        CREATE FIELD OutputRoot.JSON.Data;
-        DECLARE jsonDocRoot REFERENCE TO OutputRoot.JSON.Data;
-        
-        -- GetGroceryOrder/DocumentData
-		DECLARE DocumentData_ REFERENCE TO jsonDocRoot;
-		CREATE LASTCHILD OF jsonDocRoot AS DocumentData_ TYPE XMLNSC.Folder NAME 'DocumentData';
 
-			-- GetGroceryOrder/DocumentData/Document
-			DECLARE Document_ REFERENCE TO DocumentData_;
-			CREATE LASTCHILD OF DocumentData_ AS Document_ TYPE XMLNSC.Folder NAME 'Document';
+		-- Declare Output Message Root
+		CREATE FIELD OutputRoot.JSON.Data;
+		DECLARE GetGroceryOrder_ REFERENCE TO OutputRoot.JSON.Data;
 
-				-- GetGroceryOrder/DocumentData/Document/@VersionId
-				SET Document_.VersionId = VERSION_ID;
+			-- GetGroceryOrder/DocumentData
+			CREATE FIELD GetGroceryOrder_.DocumentData;
+			DECLARE DocumentData_ REFERENCE TO GetGroceryOrder_.DocumentData;
+
+				-- GetGroceryOrder/DocumentData/Document
+				CREATE FIELD DocumentData_.Document;
+				DECLARE Document_ REFERENCE TO DocumentData_.Document;
 
 				-- GetGroceryOrder/DocumentData/Document/@SystemEnvironmentCd
 				SET Document_.SystemEnvironmentCd = SYSTEM_ENVIRONMENT_CODE;

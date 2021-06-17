@@ -20,8 +20,10 @@ public class EdisTask {
     public static String FUNCTION_DEFAULT = "DEFAULT";
     public static String FUNCTION_ASSIGN = "ASSIGN";
 
-    public static String FUNCTION_LOOP_ASSIGN = "LOOP_ASSIGN";
+    public static String FUNCTION_ARRAY = "array";
+    public static String FUNCTION_PROCEDURE = "procedure";
 
+    public static String FUNCTION_LOOP_ASSIGN = "LOOP_ASSIGN";
     public static String FUNCTION_LOOP = "loop";
 
     protected static Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -140,8 +142,8 @@ public class EdisTask {
     static class Construction {
         private String alias;
         private int level;
-
         private boolean array;
+
         private LinkedHashSet<Function> functions = new LinkedHashSet<>();
 
         public String getAlias() {
@@ -188,20 +190,47 @@ public class EdisTask {
         @Override
         public String toString() {
             StringBuilder builder = new StringBuilder("construct()");
-            if(array) {
-                builder.append(".array()");
-            }
-
             functions.forEach(e -> {
                 builder.append(".").append(e.toString());
             });
+
             return builder.toString();
+        }
+    }
+
+    static class Array {
+        protected String src;
+        protected String name;
+        protected String var;
+        protected String assignment;
+
+        Function toFunction() {
+            return Function.newInstance(FUNCTION_ARRAY, new String[]{name, var, assignment});
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Array)) return false;
+
+            Array array = (Array) o;
+
+            if (!src.equals(array.src)) return false;
+            return name.equals(array.name);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = src.hashCode();
+            result = 31 * result + name.hashCode();
+            return result;
         }
     }
 
     static class Assignment {
         protected String rule;
         protected String source;
+
         protected LinkedHashSet<Function> functions = new LinkedHashSet<>();
 
         public Assignment add(Function... function) {

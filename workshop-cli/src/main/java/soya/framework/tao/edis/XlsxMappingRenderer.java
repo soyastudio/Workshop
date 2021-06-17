@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Set;
 
 public class XlsxMappingRenderer extends EdisRenderer {
@@ -33,6 +34,8 @@ public class XlsxMappingRenderer extends EdisRenderer {
     private transient int sourceIndex;
 
     private Set<String> aliasSet = new HashSet<>();
+
+    private LinkedHashMap<String, Array> arrays = new LinkedHashMap();
 
     public XlsxMappingRenderer mappingFile(File mappingFile) {
         this.mappingFile = mappingFile;
@@ -113,23 +116,60 @@ public class XlsxMappingRenderer extends EdisRenderer {
                     assignment.rule = mappingRule;
                     assignment.source = sourcePath;
 
-                    if (assignment.rule != null || sourcePath != null && sourcePath.trim().length() > 0) {
-                        node.annotate(NAMESPACE_ASSIGNMENT, assignment);
-                    }
-
                     KnowledgeTreeNode<XsNode> parent = (KnowledgeTreeNode<XsNode>) node.getParent();
+                    while (parent != null) {
 
-                    while (parent != null && parent.getAnnotation(NAMESPACE_CONSTRUCTION) == null) {
-
-                        Construction construction = new Construction();
+                        Construction construction = parent.getAnnotation(NAMESPACE_CONSTRUCTION) == null ? new Construction() : parent.getAnnotation(NAMESPACE_CONSTRUCTION, Construction.class);
                         construction.setAlias(getAlias(parent.getName()));
                         construction.setLevel(getLevel(parent));
+
                         if (!BigInteger.ONE.equals(parent.origin().getMaxOccurs())) {
                             construction.setArray(true);
-                        }
-                        parent.annotate(NAMESPACE_CONSTRUCTION, construction);
+                            if (sourcePath != null && sourcePath.contains("[*]")) {
+                                String sp = sourcePath.substring(0, sourcePath.lastIndexOf("[*]") + 3);
 
+                                String var = sp.contains("/") ? sp.substring(sp.lastIndexOf("/") + 1, sp.lastIndexOf("[*]"))
+                                        : sp.substring(0, sp.lastIndexOf("[*]"));
+
+                                Array array = new Array();
+                                array.src = sp;
+                                array.name = var + "_to_" + parent.getName();
+                                array.var = "_" + var;
+
+                                if (sp.contains("/")) {
+                                    String token = sp.substring(0, sp.lastIndexOf("/"));
+                                    if (token.contains("[*]")) {
+                                        token = token.substring(0, token.lastIndexOf("[*]") + 3);
+                                        if (arrays.containsKey(token)) {
+                                            array.assignment = arrays.get(token).var + sp.substring(token.length()).replaceAll("/", ".");
+
+                                        }
+                                    } else {
+                                        array.assignment = "$." + sp.replaceAll("/", ".");
+                                    }
+                                } else {
+                                    array.assignment = "$." + sp;
+                                }
+
+                                if (!arrays.containsKey(sp)) {
+                                    arrays.put(sp, array);
+                                    construction.getFunctions().add(array.toFunction());
+                                }
+
+                                if (assignment.source.startsWith(array.src)) {
+                                    assignment.add(Function.newInstance(FUNCTION_ASSIGN,
+                                            new String[]{array.var + assignment.source.substring(array.src.length()).replaceAll("/", ".")}
+                                    ));
+                                }
+                            }
+                        }
+
+                        parent.annotate(NAMESPACE_CONSTRUCTION, construction);
                         parent = (KnowledgeTreeNode<XsNode>) parent.getParent();
+                    }
+
+                    if (assignment.rule != null || sourcePath != null && sourcePath.trim().length() > 0) {
+                        node.annotate(NAMESPACE_ASSIGNMENT, assignment);
                     }
                 }
 
@@ -245,6 +285,7 @@ public class XlsxMappingRenderer extends EdisRenderer {
 
         } else {
             Assignment assignment = node.getAnnotation(NAMESPACE_ASSIGNMENT, Assignment.class);
+
             return assignment == null ? "" : assignment.toString();
 
         }

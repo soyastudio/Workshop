@@ -1,6 +1,7 @@
 package soya.framework.tao.edis;
 
 import org.apache.xmlbeans.SchemaTypeSystem;
+import org.checkerframework.checker.units.qual.A;
 import soya.framework.tao.KnowledgeTree;
 import soya.framework.tao.KnowledgeTreeNode;
 import soya.framework.tao.TreeNode;
@@ -8,9 +9,7 @@ import soya.framework.tao.util.StringBuilderUtils;
 import soya.framework.tao.xs.XsNode;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
+import java.util.*;
 
 public abstract class EsqlRenderer extends EdisRenderer {
 
@@ -28,6 +27,7 @@ public abstract class EsqlRenderer extends EdisRenderer {
     protected KnowledgeTree<SchemaTypeSystem, XsNode> knowledgeBase;
 
     protected int currentArrayDepth = -1;
+    protected Stack<Array> arrayStack = new Stack<>();
 
     //protected Set<Procedure> procedures = new LinkedHashSet<>();
     //protected Map<String, Object> constructions = new LinkedHashMap<>();
@@ -80,8 +80,16 @@ public abstract class EsqlRenderer extends EdisRenderer {
 
         } else if (node.getAnnotation(NAMESPACE_CONSTRUCTION) != null) {
             Construction construction = node.getAnnotation(NAMESPACE_CONSTRUCTION, Construction.class);
+
             if (BigInteger.ONE.equals(node.origin().getMaxOccurs())) {
-                printSimpleFolder(node, builder, indent);
+                if (construction.getFunctions().size() == 0) {
+                    printSimpleFolder(node, builder, indent);
+
+                } else {
+                    StringBuilderUtils.println("-- " + node.getPath(), builder, construction.getLevel() + indent);
+                    StringBuilderUtils.println("-- TODO: ", builder, construction.getLevel() + indent);
+                    StringBuilderUtils.println(builder);
+                }
 
             } else {
                 printArrayFolder(node, builder, indent);
@@ -140,10 +148,6 @@ public abstract class EsqlRenderer extends EdisRenderer {
         currentArrayDepth++;
         String indexVar = INDEX[currentArrayDepth];
 
-        String arr = "arr";
-        String var = "_arr";
-        String src = "src";
-
         Construction construction = node.getAnnotation(NAMESPACE_CONSTRUCTION, Construction.class);
         Construction parentConstruction = ((KnowledgeTreeNode<XsNode>) node.getParent()).getAnnotation(NAMESPACE_CONSTRUCTION, Construction.class);
 
@@ -153,24 +157,61 @@ public abstract class EsqlRenderer extends EdisRenderer {
         StringBuilderUtils.println("DECLARE " + "arr_" + construction.getAlias() + " REFERENCE TO " + parentConstruction.getAlias() + "." + node.getName() + ";", builder, construction.getLevel() + indent);
         StringBuilderUtils.println(builder);
 
-        StringBuilderUtils.println("-- DECLARE input-variable", builder, construction.getLevel() + indent);
-        StringBuilderUtils.println(builder);
+        construction.getFunctions().forEach(e -> {
 
-        StringBuilderUtils.println("SET " + indexVar + " = 1;", builder, construction.getLevel() + indent);
-        StringBuilderUtils.println("arr" + " : WHILE LASTMOVE(_arr) DO", builder, construction.getLevel() + indent);
+            if (FUNCTION_ARRAY.equals(e.name) && e.parameters.length == 3) {
+                Array array = new Array();
+                array.name = e.parameters[0];
+                array.var = e.parameters[1];
+                array.assignment = e.parameters[2];
+                boolean print = false;
+                if (array.assignment.startsWith("$.")) {
+                    print = true;
 
-        StringBuilderUtils.println("DECLARE " + construction.getAlias() + " REFERENCE TO " + "arr_" + parentConstruction.getAlias() + "." + node.getName() + ".Item[" + indexVar + "];", builder, construction.getLevel() + indent + 1);
-        StringBuilderUtils.println(builder);
+                } else {
+                    String parentVar = array.assignment.substring(0, array.assignment.indexOf("."));
+                    Iterator<Array> iterator = arrayStack.iterator();
+                    while (iterator.hasNext()) {
+                        if (array.var.equals(iterator.next().var)) {
+                            print = true;
+                            break;
+                        }
+                    }
+                }
 
-        node.getChildren().forEach(n -> {
-            printNode((KnowledgeTreeNode<XsNode>) n, builder, indent + 1);
+                if (print) {
+                    arrayStack.push(array);
+
+                    String assign = array.assignment.replace("[*]", ".Item");
+                    if (assign.startsWith("$.")) {
+                        assign = inputRootVariable + assign.substring(1);
+                    }
+                    StringBuilderUtils.println("DECLARE " + array.var + " REFERENCE TO " + assign + ";",
+                            builder, construction.getLevel() + indent);
+                    StringBuilderUtils.println(builder);
+
+                    StringBuilderUtils.println("SET " + indexVar + " = 1;", builder, construction.getLevel() + indent);
+                    StringBuilderUtils.println(array.name + " : WHILE LASTMOVE(" + array.var + ") DO", builder, construction.getLevel() + indent);
+
+                    StringBuilderUtils.println("DECLARE " + construction.getAlias() + " REFERENCE TO " + "arr_" + parentConstruction.getAlias() + "." + node.getName() + ".Item[" + indexVar + "];", builder, construction.getLevel() + indent + 1);
+                    StringBuilderUtils.println(builder);
+
+                    node.getChildren().forEach(n -> {
+                        printNode((KnowledgeTreeNode<XsNode>) n, builder, indent + 1);
+                    });
+
+                    StringBuilderUtils.println("SET " + indexVar + " = " + indexVar + " + 1;", builder, construction.getLevel() + indent);
+                    StringBuilderUtils.println("MOVE " + array.var + " NEXTSIBLING;", builder, construction.getLevel() + indent);
+                    StringBuilderUtils.println("END WHILE " + array.name + ";", builder, construction.getLevel() + indent);
+
+                    StringBuilderUtils.println(builder);
+
+                    arrayStack.pop();
+
+                }
+            }
         });
 
-        StringBuilderUtils.println("SET " + indexVar + " = " + indexVar + " + 1;", builder, construction.getLevel() + indent);
-        StringBuilderUtils.println("MOVE _arr NEXTSIBLING;", builder, construction.getLevel() + indent);
-        StringBuilderUtils.println("END WHILE arr;", builder, construction.getLevel() + indent);
-
-        StringBuilderUtils.println(builder);
         currentArrayDepth--;
 
     }
@@ -197,15 +238,43 @@ public abstract class EsqlRenderer extends EdisRenderer {
         Construction construction = ((KnowledgeTreeNode<XsNode>) node.getParent()).getAnnotation(NAMESPACE_CONSTRUCTION, Construction.class);
 
         //String assignment = getAssignment(mapping, inputRootVariable);
-        if (assignment != null) {
-            StringBuilderUtils.println("-- " + node.getPath(), builder, construction.getLevel() + indent + 1);
-            if (assignment.functions.size() == 1) {
-                Function function = assignment.getFirst();
-                StringBuilderUtils.println("SET " + construction.getAlias()
-                        + "." + node.origin().getName().getLocalPart()
-                        + " = " + getAssignment(function) + ";", builder, construction.getLevel() + indent + 1);
+        if (assignment != null && !assignment.functions.isEmpty()) {
+            boolean print = true;
+
+            System.out.println("================= " + assignment.functions);
+/*
+
+            if () {
+                // FIXME
+
+            } else if (assignment.source.startsWith("$.")) {
+                print = true;
+
+            } else if (assignment.source.indexOf(".") > 0) {
+                String parentVar = assignment.source.substring(0, assignment.source.indexOf("."));
+                Iterator<Array> iterator = arrayStack.iterator();
+                while (iterator.hasNext()) {
+                    if (parentVar.equals(iterator.next().var)) {
+                        print = true;
+                        break;
+                    }
+                }
+            } else {
+                print = true;
             }
-            StringBuilderUtils.println(builder);
+*/
+
+            if (print) {
+                StringBuilderUtils.println("-- " + node.getPath(), builder, construction.getLevel() + indent + 1);
+                if (assignment.functions.size() == 1) {
+                    Function function = assignment.getFirst();
+                    StringBuilderUtils.println("SET " + construction.getAlias()
+                            + "." + node.origin().getName().getLocalPart()
+                            + " = " + getAssignment(function) + ";", builder, construction.getLevel() + indent + 1);
+                }
+                StringBuilderUtils.println(builder);
+
+            }
         }
     }
 
@@ -221,7 +290,6 @@ public abstract class EsqlRenderer extends EdisRenderer {
             return assignment;
 
         } else if (FUNCTION_LOOP_ASSIGN.equals(function.name)) {
-            System.out.println("==================== function: " + function.toString());
             return function.parameters[1];
         }
 
