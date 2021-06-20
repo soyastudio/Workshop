@@ -207,82 +207,75 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/PhoneNbrTxt
 									SET PhoneFaxContact_.PhoneNbrTxt = _contact.number;
 
-								-- removed in v1.6.2
-								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/PhonePurposes
-								-- DECLARE PhonePurposes_ REFERENCE TO PhoneFaxContact_;
-								-- CREATE LASTCHILD OF PhoneFaxContact_ AS PhonePurposes_ TYPE XMLNSC.Folder NAME 'PhonePurposes';
+						SET i = i + 1;
+						MOVE _contact NEXTSIBLING;
+						END WHILE contact_to_Contact;
 
-									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/PhonePurposes/PurposeDsc
-									-- SET PhonePurposes_.PurposeDsc = _contact.number;
+						DECLARE _email REFERENCE TO _inputRootNode.customer.email.Item;
 
-					SET i = i + 1;
-					MOVE _contact NEXTSIBLING;
-					END WHILE contact;
+						email_to_Contact : WHILE LASTMOVE(_email) DO
+							DECLARE Contact_ REFERENCE TO arr_RetailCustomer_.Contact.Item[i];
 
-					-- LOOP FROM customer/email[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact:
-					DECLARE _email REFERENCE TO _inputRootNode.customer.email.Item;
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact
+								CREATE FIELD Contact_.DigitalContact;
+								DECLARE DigitalContact_ REFERENCE TO Contact_.DigitalContact;
 
-					email : WHILE LASTMOVE(_email) DO
+									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact/DigitalAddress
+									SET DigitalContact_.DigitalAddress = _email.id;
 
-							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact
-							DECLARE DigitalContact_ REFERENCE TO Contact_.Item[i];
-							CREATE LASTCHILD OF Contact_.Item[i] AS DigitalContact_ TYPE XMLNSC.Folder NAME 'DigitalContact';
+									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact/EmailStatuses
+									CREATE FIELD DigitalContact_.EmailStatuses;
+									DECLARE EmailStatuses_ REFERENCE TO DigitalContact_.EmailStatuses;
 
-								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact/DigitalAddress
-								SET DigitalContact_.DigitalAddress = _email.id;
+										-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact/EmailStatuses/@typeCode
+										SET EmailStatuses_.typeCode = _email.type;
 
-								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact/EmailStatuses
-								DECLARE EmailStatuses_ REFERENCE TO DigitalContact_;
-								CREATE LASTCHILD OF DigitalContact_ AS EmailStatuses_ TYPE XMLNSC.Folder NAME 'EmailStatuses';
+						SET i = i + 1;
+						MOVE _email NEXTSIBLING;
+						END WHILE email_to_Contact;
 
-									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact/EmailStatuses/@typeCode
-									SET EmailStatuses_.typeCode = _email.type;
+						DECLARE _address REFERENCE TO _inputRootNode.customer.address.Item;
 
-					SET i = i + 1;
-					MOVE _email NEXTSIBLING;
-					END WHILE email;
+						address_to_Contact : WHILE LASTMOVE(_address) DO
+							DECLARE Contact_ REFERENCE TO arr_RetailCustomer_.Contact.Item[i];
 
-					-- LOOP FROM customer/address[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact:
-					DECLARE _address REFERENCE TO _inputRootNode.customer.address.Item;
-					address : WHILE LASTMOVE(_address) DO
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address
+								CREATE FIELD Contact_.Address;
+								DECLARE Address_ REFERENCE TO Contact_.Address;
 
-							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address
-							DECLARE Address_ REFERENCE TO Contact_.Item[i];
-							CREATE LASTCHILD OF Contact_.Item[i] AS Address_ TYPE XMLNSC.Folder NAME 'Address';
+									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/AddressUsageTypeCd
+									SET Address_.AddressUsageTypeCd = _address.addressType;
 
-								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/AddressUsageTypeCd
-								SET Address_.AddressUsageTypeCd = _address.addressType;
+									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/AddressLine1txt
+									SET Address_.AddressLine1txt = _address.addressLine1;
 
-								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/AddressLine1txt
-								SET Address_.AddressLine1txt = _address.addressLine1;
+									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/AddressLine2txt
+									SET Address_.AddressLine2txt = _address.addressLine2;
 
-								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/AddressLine2txt
-								SET Address_.AddressLine2txt = _address.addressLine2;
+									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/CityNm
+									SET Address_.CityNm = _address.city;
 
-								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/CityNm
-								SET Address_.CityNm = _address.city;
+									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/PostalZoneCd
+									SET Address_.PostalZoneCd = _address.zipcode;
 
-								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/PostalZoneCd
-								SET Address_.PostalZoneCd = _address.zipCode;
+									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/StateCd
+									SET Address_.StateCd = _address.state;
 
-								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/StateCd
-								SET Address_.StateCd = _address.state;
+									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/CountryCd
+									SET Address_.CountryCd = _address.country;
 
-								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/CountryCd
-								SET Address_.CountryCd = _address.country;
+						SET i = i + 1;
+						MOVE _address NEXTSIBLING;
+						END WHILE address_to_Contact;
 
-					SET i = i + 1;
-					MOVE _address NEXTSIBLING;
-					END WHILE address;
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/ClubCardNbr
+						SET RetailCustomer_.ClubCardNbr = _inputRootNode.customer.clubCardNumber;
 
-					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/ClubCardNbr
-					SET RetailCustomer_.ClubCardNbr = _inputRootNode.customer.clubCardNumber;
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerPreference
+						CREATE FIELD RetailCustomer_.CustomerPreference IDENTITY (JSON.Array)CustomerPreference;
+						DECLARE arr_CustomerPreference_ REFERENCE TO RetailCustomer_.CustomerPreference;
 
-					-- LOOP FROM customer/preference/optIn[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerPreference:
-					CREATE FIELD RetailCustomer_.CustomerPreference IDENTITY (JSON.Array)CustomerPreference;
-					DECLARE CustomerPreference_ REFERENCE TO RetailCustomer_.CustomerPreference;
-
-					DECLARE _optIn REFERENCE TO _inputRootNode.customer.preference.optIn.Item;
+						DECLARE _optIn REFERENCE TO _inputRootNode.customer.preference.optIn.Item;
 
 					SET i = 1;
 					optIn : WHILE LASTMOVE(_optIn) DO
@@ -326,36 +319,30 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 
 					END IF;
 
-				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CurrencyCd
-				SET GroceryOrderHeader_.CurrencyCd = _inputRootNode.orderTotal.currency;
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CurrencyCd
+					SET GroceryOrderHeader_.CurrencyCd = _inputRootNode.orderTotal.currency;
 
-				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/TotalAmt
-				SET GroceryOrderHeader_.TotalAmt = CAST(_inputRootNode.orderTotal.amount AS DECIMAL(10, 2));
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/TotalAmt
+					SET GroceryOrderHeader_.TotalAmt = CAST(_inputRootNode.orderTotal.amount AS DECIMAL(10, 2));
 
-				-- LOOP FROM orderTotal/txnLevelSavings[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerOffers:
-				CREATE FIELD GroceryOrderHeader_.CustomerOffers IDENTITY (JSON.Array)CustomerOffers;
-				DECLARE CustomerOffers_ REFERENCE TO GroceryOrderHeader_.CustomerOffers;
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerOffers
+					CREATE FIELD GroceryOrderHeader_.CustomerOffers IDENTITY (JSON.Array)CustomerOffers;
+					DECLARE arr_CustomerOffers_ REFERENCE TO GroceryOrderHeader_.CustomerOffers;
 
-				DECLARE _txnLevelSaving REFERENCE TO _inputRootNode.orderTotal.txnLevelSavings.Item;
+					DECLARE _txnLevelSavings REFERENCE TO _inputRootNode.orderTotal.txnLevelSavings.Item;
 
-				SET i = 1;
-				txnLevelSaving : WHILE LASTMOVE(_txnLevelSaving) DO
+					SET i = 1;
+					txnLevelSavings_to_CustomerOffers : WHILE LASTMOVE(_txnLevelSavings) DO
+						DECLARE CustomerOffers_ REFERENCE TO arr_GroceryOrderHeader_.CustomerOffers.Item[i];
 
-						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerOffers/OfferId
-						SET CustomerOffers_.Item[i].OfferId = _txnLevelSaving.offerId;
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerOffers/OfferId
+							SET CustomerOffers_.OfferId = _txnLevelSavings.offerId;
 
-						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerOffers/ReferenceOfferId
-						SET CustomerOffers_.Item[i].ReferenceOfferId = _txnLevelSaving.externalOfferId;
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerOffers/ReferenceOfferId
+							SET CustomerOffers_.ReferenceOfferId = _txnLevelSavings.externalOfferId;
 
-						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerOffers/OfferDiscountAmt
-						SET CustomerOffers_.Item[i].OfferDiscountAmt = CAST(_txnLevelSaving.discountAmount AS DECIMAL(10, 2));
-
-
-						-- LOOP FROM orderTotal/txnLevelSavings[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerOffers/CustomerRewards:
-						CREATE FIELD CustomerOffers_.Item[i].CustomerRewards IDENTITY (JSON.Array)CustomerRewards;
-						DECLARE CustomerRewards_ REFERENCE TO CustomerOffers_.Item[i].CustomerRewards;
-
-						DECLARE _txnLevelSavingPoint REFERENCE TO _txnLevelSaving.points.Item;
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerOffers/OfferDiscountAmt
+							SET CustomerOffers_.OfferDiscountAmt = _txnLevelSavings.discountAmount;
 
 						SET j = 1;
 						txnLevelSavingPoint : WHILE LASTMOVE(_txnLevelSavingPoint) DO
@@ -373,89 +360,90 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 						MOVE _txnLevelSavingPoint NEXTSIBLING;
 						END WHILE txnLevelSavingPoint;
 
-				SET i = i + 1;
-				MOVE _txnLevelSaving NEXTSIBLING;
-				END WHILE txnLevelSaving;
-
-				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment
-				DECLARE CustomerPayment_ REFERENCE TO GroceryOrderHeader_;
-				CREATE LASTCHILD OF GroceryOrderHeader_ AS CustomerPayment_ TYPE XMLNSC.Folder NAME 'CustomerPayment';
-
-					-- LOOP FROM paymentDetails[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender:
-					CREATE FIELD CustomerPayment_.Tender IDENTITY (JSON.Array)Tender;
-					DECLARE Tender_ REFERENCE TO CustomerPayment_.Tender;
-
-					DECLARE _paymentDetails REFERENCE TO _inputRootNode.paymentDetails.Item;
-
-					SET i = 1;
-					paymentDetails : WHILE LASTMOVE(_paymentDetails) DO
-
-							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/TenderId
-							SET Tender_.Item[i].TenderId = _paymentDetails.tokenNumber;
-
-							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/TenderTypeCd
-							SET Tender_.Item[i].TenderTypeCd = _paymentDetails.paymentType;
-
-							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/TenderSubTypeCd
-							SET Tender_.Item[i].TenderSubTypeCd = _paymentDetails.paymentSubType;
-
-							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/HolderNm
-							SET Tender_.Item[i].HolderNm = _paymentDetails.cardHolderName;
-
-							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/ExpireMonthYearTxt
-							SET Tender_.Item[i].ExpireMonthYearTxt = _paymentDetails.cardExpiryMonth;
-
-							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/BillingAddress
-							DECLARE BillingAddress_ REFERENCE TO Tender_.Item[i];
-							CREATE LASTCHILD OF Tender_.Item[i] AS BillingAddress_ TYPE XMLNSC.Folder NAME 'BillingAddress';
-
-								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/BillingAddress/AddressLine1txt
-								SET BillingAddress_.AddressLine1txt = _paymentDetails.address.addressLine1;
-
-								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/BillingAddress/AddressLine2txt
-								SET BillingAddress_.AddressLine2txt = _paymentDetails.address.addressLine2;
-
-								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/BillingAddress/CityNm
-								SET BillingAddress_.CityNm = _paymentDetails.address.city;
-
-								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/BillingAddress/PostalZoneCd
-								SET BillingAddress_.PostalZoneCd = _paymentDetails.address.zipCode;
-
-								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/BillingAddress/StateCd
-								SET BillingAddress_.StateCd = _paymentDetails.address.state;
-
-							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/PostalCd
-							SET Tender_.Item[i].PostalCd = _paymentDetails.zipcode;
-
-							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Token
-							DECLARE Token_ REFERENCE TO Tender_.Item[i];
-							CREATE LASTCHILD OF Tender_.Item[i] AS Token_ TYPE XMLNSC.Folder NAME 'Token';
-
-								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Token/TokenId
-								SET Token_.TokenId = _paymentDetails.tokenNumber;
-
-								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Token/TokenTypeCd
-								SET Token_.TokenTypeCd = _paymentDetails.paymentType;
-
-							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Status
-							DECLARE Status_ REFERENCE TO Tender_.Item[i];
-							CREATE LASTCHILD OF Tender_.Item[i] AS Status_ TYPE XMLNSC.Folder NAME 'Status';
-
-								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Status/StatusCd
-								SET Status_.StatusCd = _paymentDetails.paymentStatus.status;
-
-							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/RequiredAuthAmt
-							SET Tender_.Item[i].RequiredAuthAmt = CAST(_paymentDetails.reqAuthorizationAmount AS DECIMAL(10, 2));
-
-							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/AuthCd
-							SET Tender_.Item[i].AuthCd = _paymentDetails.paymentStatus.authorizationCode;
-
-							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/AuthDt
-							SET Tender_.Item[i].AuthDt = _paymentDetails.paymentStatus.authorizationDate;
-
 					SET i = i + 1;
-					MOVE _paymentDetails NEXTSIBLING;
-					END WHILE paymentDetails;
+					MOVE _txnLevelSavings NEXTSIBLING;
+					END WHILE txnLevelSavings_to_CustomerOffers;
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment
+					CREATE FIELD GroceryOrderHeader_.CustomerPayment;
+					DECLARE CustomerPayment_ REFERENCE TO GroceryOrderHeader_.CustomerPayment;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender
+						CREATE FIELD CustomerPayment_.Tender IDENTITY (JSON.Array)Tender;
+						DECLARE arr_Tender_ REFERENCE TO CustomerPayment_.Tender;
+
+						DECLARE _paymentDetails REFERENCE TO _inputRootNode.paymentDetails.Item;
+
+						SET i = 1;
+						paymentDetails_to_Tender : WHILE LASTMOVE(_paymentDetails) DO
+							DECLARE Tender_ REFERENCE TO arr_CustomerPayment_.Tender.Item[i];
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/TenderId
+								SET Tender_.TenderId = _paymentDetails.tokenNumber;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/TenderTypeCd
+								SET Tender_.TenderTypeCd = _paymentDetails.paymentType;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/TenderSubTypeCd
+								SET Tender_.TenderSubTypeCd = _paymentDetails.paymentSubType;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/HolderNm
+								SET Tender_.HolderNm = _paymentDetails.cardHolderName;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/ExpireMonthYearTxt
+								SET Tender_.ExpireMonthYearTxt = _paymentDetails.cardExpiryYear;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/BillingAddress
+								CREATE FIELD Tender_.BillingAddress;
+								DECLARE BillingAddress_ REFERENCE TO Tender_.BillingAddress;
+
+									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/BillingAddress/AddressLine1txt
+									SET BillingAddress_.AddressLine1txt = _paymentDetails.address.addressLine1;
+
+									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/BillingAddress/AddressLine2txt
+									SET BillingAddress_.AddressLine2txt = _paymentDetails.address.addressLine2;
+
+									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/BillingAddress/CityNm
+									SET BillingAddress_.CityNm = _paymentDetails.address.city;
+
+									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/BillingAddress/PostalZoneCd
+									SET BillingAddress_.PostalZoneCd = _paymentDetails.address.zipCode;
+
+									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/BillingAddress/StateCd
+									SET BillingAddress_.StateCd = _paymentDetails.address.state;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/PostalCd
+								SET Tender_.PostalCd = _paymentDetails.zipcode;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Token
+								CREATE FIELD Tender_.Token;
+								DECLARE Token_ REFERENCE TO Tender_.Token;
+
+									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Token/TokenId
+									SET Token_.TokenId = _paymentDetails.tokenNumber;
+
+									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Token/TokenTypeCd
+									SET Token_.TokenTypeCd = _paymentDetails.paymentType;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Status
+								CREATE FIELD Tender_.Status;
+								DECLARE Status_ REFERENCE TO Tender_.Status;
+
+									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Status/StatusCd
+									SET Status_.StatusCd = _paymentDetails.paymentStatus.status;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/RequiredAuthAmt
+								SET Tender_.RequiredAuthAmt = CAST(_paymentDetails.reqAuthorizationAmount AS DECIMAL(10, 2));
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/AuthCd
+								SET Tender_.AuthCd = _paymentDetails.paymentStatus.authorizationCode;
+
+							    -- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/AuthDt
+							    SET Tender_.AuthDt = _paymentDetails.paymentStatus.authorizationDate;
+
+						SET i = i + 1;
+						MOVE _paymentDetails NEXTSIBLING;
+						END WHILE paymentDetails_to_Tender;
 
 					-- LOOP FROM tender[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender:
 					DECLARE _tender REFERENCE TO _inputRootNode.tender.Item;
@@ -530,70 +518,65 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 					END WHILE tender;
 
 
-				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerSavings
-				DECLARE CustomerSavings_ REFERENCE TO GroceryOrderHeader_;
-				CREATE LASTCHILD OF GroceryOrderHeader_ AS CustomerSavings_ TYPE XMLNSC.Folder NAME 'CustomerSavings';
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerSavings
+					CREATE FIELD GroceryOrderHeader_.CustomerSavings;
+					DECLARE CustomerSavings_ REFERENCE TO GroceryOrderHeader_.CustomerSavings;
 
-					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerSavings/TotalCustomerSavingsAmt
-					SET CustomerSavings_.TotalCustomerSavingsAmt = CAST(_inputRootNode.orderTotal.totalCardSavings AS DECIMAL(10, 2));
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerSavings/TotalCustomerSavingsAmt
+						SET CustomerSavings_.TotalCustomerSavingsAmt = _inputRootNode.orderTotal.totalCardSavings;
 
-					-- LOOP FROM orderTotal/cardSavings[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerSavings/SavingsCategoryType:
-					CREATE FIELD CustomerSavings_.SavingsCategoryType IDENTITY (JSON.Array)SavingsCategoryType;
-					DECLARE SavingsCategoryType_ REFERENCE TO CustomerSavings_.SavingsCategoryType;
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerSavings/SavingsCategoryType
+						CREATE FIELD CustomerSavings_.SavingsCategoryType IDENTITY (JSON.Array)SavingsCategoryType;
+						DECLARE arr_SavingsCategoryType_ REFERENCE TO CustomerSavings_.SavingsCategoryType;
 
-					DECLARE _card_savings REFERENCE TO _inputRootNode.orderTotal.cardSavings.Item;
+						DECLARE _cardSavings REFERENCE TO _inputRootNode.orderTotal.cardSavings.Item;
 
-					SET i = 1;
-					card_savings : WHILE LASTMOVE(_card_savings) DO
+						SET i = 1;
+						cardSavings_to_SavingsCategoryType : WHILE LASTMOVE(_cardSavings) DO
+							DECLARE SavingsCategoryType_ REFERENCE TO arr_CustomerSavings_.SavingsCategoryType.Item[i];
 
-							-- Since v1.12.1
-							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerSavings/SavingsCategoryType/OfferId
-							-- SET SavingsCategoryType_.OfferId = _card_savings.offerId;
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerSavings/SavingsCategoryType/SavingsCategoryId
+								SET SavingsCategoryType_.SavingsCategoryId = _cardSavings.savingsCategoryId;
 
-							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerSavings/SavingsCategoryType/SavingsCategoryId
-							SET SavingsCategoryType_.Item[i].SavingsCategoryId = _card_savings.savingsCategoryId;
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerSavings/SavingsCategoryType/SavingsCategoryNm
+								SET SavingsCategoryType_.SavingsCategoryNm = _cardSavings.savingsCategoryName;
 
-							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerSavings/SavingsCategoryType/SavingsCategoryNm
-							SET SavingsCategoryType_.Item[i].SavingsCategoryNm = _card_savings.savingsCategoryName;
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerSavings/SavingsCategoryType/SavingsAmt
+								SET SavingsCategoryType_.SavingsAmt = _cardSavings.savingsAmount;
 
-							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerSavings/SavingsCategoryType/SavingsAmt
-							SET SavingsCategoryType_.Item[i].SavingsAmt = CAST(_card_savings.savingsAmount AS DECIMAL(10, 2));
+						SET i = i + 1;
+						MOVE _cardSavings NEXTSIBLING;
+						END WHILE cardSavings_to_SavingsCategoryType;
 
-					SET i = i + 1;
-					MOVE _card_savings NEXTSIBLING;
-					END WHILE card_savings;
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderRecordDateInfo
+					CREATE FIELD GroceryOrderHeader_.OrderRecordDateInfo;
+					DECLARE OrderRecordDateInfo_ REFERENCE TO GroceryOrderHeader_.OrderRecordDateInfo;
 
-				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderRecordDateInfo
-				DECLARE OrderRecordDateInfo_ REFERENCE TO GroceryOrderHeader_;
-				CREATE LASTCHILD OF GroceryOrderHeader_ AS OrderRecordDateInfo_ TYPE XMLNSC.Folder NAME 'OrderRecordDateInfo';
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderRecordDateInfo/CreateDtTm
+						SET OrderRecordDateInfo_.CreateDtTm = _inputRootNode.audit.createDate;
 
-					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderRecordDateInfo/CreateDtTm
-					SET OrderRecordDateInfo_.CreateDtTm = _inputRootNode.audit.createDate;
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderRecordDateInfo/CreateUserId
+						SET OrderRecordDateInfo_.CreateUserId = _inputRootNode.sourceInfo.enteredBy;
 
-					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderRecordDateInfo/CreateUserId
-					SET OrderRecordDateInfo_.CreateUserId = _inputRootNode.sourceInfo.enteredBy;
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderRecordDateInfo/UpdateDtTm
+						SET OrderRecordDateInfo_.UpdateDtTm = _inputRootNode.audit.modifiedDate;
 
-					-- Since v1.7.2
-					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderRecordDateInfo/UpdateDtTm
-					-- SET OrderRecordDateInfo_.UpdateDtTm = _inputRootNode.audit.modifiedDate;
-					SET OrderRecordDateInfo_.UpdateDtTm = _inputRootNode.modifiedDate;
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderRecordDateInfo/UpdateUserId
+						SET OrderRecordDateInfo_.UpdateUserId = _inputRootNode.audit.modifiedBy;
 
-					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderRecordDateInfo/UpdateUserId
-					SET OrderRecordDateInfo_.UpdateUserId = _inputRootNode.audit.modifiedBy;
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/Device
+					CREATE FIELD GroceryOrderHeader_.Device;
+					DECLARE Device_ REFERENCE TO GroceryOrderHeader_.Device;
 
-				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/Device
-				DECLARE Device_ REFERENCE TO GroceryOrderHeader_;
-				CREATE LASTCHILD OF GroceryOrderHeader_ AS Device_ TYPE XMLNSC.Folder NAME 'Device';
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/Device/Code
+						SET Device_.Code = _inputRootNode.sourceInfo.deviceType;
 
-					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/Device/Code
-					SET Device_.Code = _inputRootNode.sourceInfo.deviceType;
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderCreatedDeviceType
+					CREATE FIELD GroceryOrderHeader_.OrderCreatedDeviceType;
+					DECLARE OrderCreatedDeviceType_ REFERENCE TO GroceryOrderHeader_.OrderCreatedDeviceType;
 
-				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderCreatedDeviceType
-				DECLARE OrderCreatedDeviceType_ REFERENCE TO GroceryOrderHeader_;
-				CREATE LASTCHILD OF GroceryOrderHeader_ AS OrderCreatedDeviceType_ TYPE XMLNSC.Folder NAME 'OrderCreatedDeviceType';
-
-					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderCreatedDeviceType/Code
-					SET OrderCreatedDeviceType_.Code = _inputRootNode.sourceInfo.deviceType;
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderCreatedDeviceType/Code
+						SET OrderCreatedDeviceType_.Code = _inputRootNode.sourceInfo.deviceType;
 
 				-- LOOP FROM orderInfo/data[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerNotesTxt:
 				CREATE FIELD GroceryOrderHeader_.CustomerNotesTxt IDENTITY (JSON.Array)CustomerNotesTxt;

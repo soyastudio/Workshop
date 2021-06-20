@@ -283,11 +283,20 @@ public class XlsxMappingRenderer extends EdisRenderer {
             Construction construction = node.getAnnotation(NAMESPACE_CONSTRUCTION, Construction.class);
             return construction.toString();
 
-        } else {
+        } else if (node.getAnnotation(NAMESPACE_ASSIGNMENT) != null) {
             Assignment assignment = node.getAnnotation(NAMESPACE_ASSIGNMENT, Assignment.class);
+            if (assignment.getFirst() != null) {
+                Function function = assignment.getFirst();
 
-            return assignment == null ? "" : assignment.toString();
+                return function.toString();
 
+            } else {
+                return assignment.toString();
+            }
+
+
+        } else {
+            return null;
         }
     }
 

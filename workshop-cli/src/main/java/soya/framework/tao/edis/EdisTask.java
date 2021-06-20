@@ -14,12 +14,17 @@ public class EdisTask {
     public static String NAMESPACE_GLOBAL_VARIABLE = "GLOBAL_VARIABLE";
     public static String GLOBAL_VARIABLE_PREFIX = "$GLOBAL_VARIABLE.";
 
+    public static String ARRAY_VARIABLE_PREFIX = "Arr_";
+
     public static String NAMESPACE_CONSTRUCTION = "construction";
     public static String NAMESPACE_ASSIGNMENT = "assignment";
 
     public static String FUNCTION_DEFAULT = "DEFAULT";
     public static String FUNCTION_ASSIGN = "ASSIGN";
+    public static String FUNCTION_ASSIGN_FOR = "ASSIGN_FOR";
 
+    public static String FUNCTION_SKIP = "skip";
+    public static String FUNCTION_FOR = "for";
     public static String FUNCTION_ARRAY = "array";
     public static String FUNCTION_PROCEDURE = "procedure";
 
@@ -143,7 +148,6 @@ public class EdisTask {
         private String alias;
         private int level;
         private boolean array;
-
         private LinkedHashSet<Function> functions = new LinkedHashSet<>();
 
         public String getAlias() {
@@ -245,6 +249,7 @@ public class EdisTask {
             if (iterator.hasNext()) {
                 return iterator.next();
             }
+
             return null;
         }
 
@@ -308,6 +313,13 @@ public class EdisTask {
                 return null;
             }
         }
+    }
+
+    static class Evaluation {
+        String var;
+        String assignment;
+
+
     }
 
     static class Function {

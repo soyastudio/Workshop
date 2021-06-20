@@ -12,6 +12,7 @@ import soya.framework.tao.KnowledgeTree;
 import soya.framework.tao.KnowledgeTreeNode;
 import soya.framework.tao.T123W;
 import soya.framework.tao.TreeNode;
+import soya.framework.tao.xs.XmlBeansUtils;
 import soya.framework.tao.xs.XsNode;
 
 import java.io.File;
@@ -192,7 +193,7 @@ public class XlsxMappingAnnotator extends EdisAnnotator {
         String token = baseName + "_";
         int count = 0;
         while (aliasSet.contains(token)) {
-            count ++;
+            count++;
             token = baseName + count + "_";
         }
         aliasSet.add(token);

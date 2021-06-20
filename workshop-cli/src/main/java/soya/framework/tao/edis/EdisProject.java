@@ -433,12 +433,12 @@ public class EdisProject {
             version.mkdirs();
         }
 
+        // Annotate from xpath-mapping file
         File xpathMappingFile = new File(version, project.mappings.constructFile);
         if (!xpathMappingFile.exists()) {
             System.out.println("Construct file " + project.mappings.constructFile + " does not exist.");
             System.exit(0);
         }
-
         new XPathAssignmentAnnotator()
                 .file(xpathMappingFile.getAbsolutePath())
                 .annotate(knowledgeTree);
@@ -447,7 +447,6 @@ public class EdisProject {
         // ESQL
         File esql = new File(version, project.name + "_JSON_TRANSFORMER_Compute.esql");
         if (!esql.exists()) {
-            System.out.println("Generating esql file: " + project.application + ".esql...");
             esql.createNewFile();
             FileUtils.writeByteArrayToFile(esql, new JsonEsqlRenderer()
                     .brokerSchema(project.messageFlow.brokerSchema)

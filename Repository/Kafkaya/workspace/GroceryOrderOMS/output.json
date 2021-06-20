@@ -5,7 +5,7 @@
       "SystemEnvironmentCd": "PROD",
       "DocumentID": "GROCERY_ORDER",
       "DocumentNm": "GroceryOrder",
-      "CreationDt": "2021-06-10 10:16:53.962443",
+      "CreationDt": "2021-06-19 09:58:02.791010",
       "Description": "GroceryOrderDetail",
       "SourceApplicationCd": "OMS",
       "TargetApplicationCd": "EDIS",
@@ -29,92 +29,112 @@
   },
   "GroceryOrderData": {
     "GroceryOrderHeader": {
-      "OrderId": "20065392A",
-      "OrderCreateTS": "2020-12-28T19:04:06.090Z",
-      "OrderModifyTS": "2020-12-28T19:25:02.753",
+      "OrderId": "20064781R",
+      "OrderCreateTS": "2020-12-23T20:43:33.351-08:00",
+      "OrderModifyTS": "2020-12-23T20:57:38.722-08:00",
       "CompanyId": "1",
-      "VersionNbr": 2,
+      "VersionNbr": 1,
       "OrderStatus": {
-        "StatusTypeCd": "COMPLETED"
+        "StatusTypeCd": "PAYMENT_REQUESTED"
       },
       "OrderStatusReasonType": {},
       "OrderActionStatus": {},
-      "EditReasonType": {},
+      "EditCutoffDtTm": "2020-12-23T13:00:00.000-08:00",
+      "EditReasonType": {
+        "Code": "PAYMENT_REQUESTED"
+      },
       "FulfillingFacility": {
-        "RetailStoreId": "2941",
-        "BannerCd": "Safeway"
+        "RetailStoreId": "1739",
+        "BannerCd": "carrsqc",
+        "HybridStoreInd": "Y",
+        "MFCInd": "N",
+        "ERUMSEnabledInd": "Y",
+        "PremiumStoreInd": "Y",
+        "ThirdPartyDeliveryOnlyInd": "Y"
       },
-      "GroceryOrderProfileType": {
-        "ProfileType": {
-          "Code": "WYSIWYG"
+      "GroceryOrderProfileType": [
+        {
+          "ProfileType": {
+            "Code": "WYSIWYG"
+          },
+          "ProfileValueInd": "Y"
         },
-        "ProfileValueInd": "N"
-      },
-      "GroceryOrderProfileType": {
-        "ProfileType": {
-          "Code": "taxExempt"
+        {
+          "ProfileType": {
+            "Code": "taxExempt"
+          }
+        },
+        {
+          "ProfileType": {
+            "Code": "AutoReplenishment"
+          },
+          "ProfileValueInd": "N"
         }
-      },
-      "GroceryOrderProfileType": {
-        "ProfileType": {
-          "Code": "AutoReplenishment"
-        },
-        "ProfileValueInd": "N"
-      },
+      ],
       "RetailCustomer": {
-        "CustomerId": "557-145-1597354036238",
-        "CustomerAlternateId": {},
+        "CustomerId": "557-252-1597275418806",
+        "CustomerAlternateId": {
+          "sequenceNbr": "903040848134"
+        },
         "CustomerNm": {
-          "GivenNm": "adithya",
-          "FamilyNm": "patha"
+          "GivenNm": "Prameela",
+          "FamilyNm": "Medarametla"
         },
         "Contact": [
           {
-            "PhoneFaxContact": {
-              "TypeCode": "MOBILE",
-              "PhoneNbrTxt": "6513097229"
+            "TypeCode": "MOBILE",
+            "PhoneNbrTxt": "5109962550"
+          },
+          {
+            "EmailStatuses": {
+              "typeCode": "PERSONAL"
             }
           },
           {
-            "DigitalContact": {
-              "DigitalAddress": "apath08@safeway.com",
-              "EmailStatuses": {
-                "typeCode": "PERSONAL"
-              }
-            }
-          },
-          {
-            "Address": {
-              "AddressUsageTypeCd": "SHIP-TO",
-              "AddressLine1txt": "707 Contra Costa Blvd",
-              "CityNm": "Pleasant Hill",
-              "PostalZoneCd": "94523",
-              "StateCd": "CA",
-              "CountryCd": "USA"
-            }
+            "AddressUsageTypeCd": "SHIPTO",
+            "AddressLine1txt": "664 W Evergreen Ave",
+            "CityNm": "Palmer",
+            "StateCd": "AK",
+            "CountryCd": "USA"
           }
         ],
-        "ClubCardNbr": "49291215654",
-        "CustomerPreference": [],
+        "ClubCardNbr": "49372835334",
+        "CustomerPreference": [
+          {
+            "Code": "TEXT"
+          },
+          true
+        ],
         "CustomerSubscription": {
-          "OptInInd": "false"
+          "SubscriptionTypeCd": "Subscription",
+          "OptInInd": "true"
         }
       },
       "CurrencyCd": "USD",
-      "TotalAmt": 130.32,
+      "TotalAmt": 33.98,
       "CustomerOffers": [],
       "CustomerPayment": {
         "Tender": [
           {
-            "Refund": {
-              "RefundId": 8630,
-              "TenderTypeCd": "credit_on_account",
-              "TotalRefundAmt": 28.90,
-              "CurrencyCd": "USD",
-              "RefundByType": {
-                "RefundByReasonType": {}
-              }
-            }
+            "TenderId": "9407672750270035",
+            "TenderTypeCd": "CREDITCARD",
+            "TenderSubTypeCd": "MASTERCARD",
+            "HolderNm": "Master card",
+            "ExpireMonthYearTxt": "12",
+            "BillingAddress": {
+              "PostalZoneCd": "19713"
+            },
+            "PostalCd": "19713",
+            "Token": {
+              "TokenId": "9407672750270035",
+              "TokenTypeCd": "CREDITCARD"
+            },
+            "Status": {
+              "StatusCd": "NOTAUTHORIZED"
+            },
+            "RequiredAuthAmt": 33.98,
+            "AuthCd": "ET101537",
+            "AuthDt": "2020-12-24T04:43:33.375Z"
           }
         ]
       },
@@ -122,8 +142,10 @@
         "SavingsCategoryType": []
       },
       "OrderRecordDateInfo": {
+        "CreateDtTm": "2020-12-23T20:43:33.351-08:00",
         "CreateUserId": "CUSTOMER",
-        "UpdateDtTm": "2020-12-28T19:25:02.753"
+        "UpdateDtTm": "2020-12-23T20:57:38.722-08:00",
+        "UpdateUserId": "MANHATTAN_FEED"
       },
       "Device": {
         "Code": "WEB"
@@ -134,398 +156,188 @@
       "CustomerNotesTxt": [],
       "AffiliatePartnerType": {},
       "OrderSourceSystemType": {
-        "Code": "ECHO"
+        "Code": "ECOMMERCE"
       },
-      "FulFillmentSystemType": {},
+      "FulFillmentSystemType": {
+        "Code": "MANHATTAN"
+      },
       "GroceryOrderHeaderExceptionType": []
     },
     "GrocerySubOrder": [
       {
         "SubOrderNbr": 1,
         "SubOrderStatus": {
-          "StatusTypeCd": "COMPLETED"
+          "StatusTypeCd": "CREATED"
         },
         "StatusReasonType": {},
-        "SubOrderActionStatus": {
-          "StatusTypeCd": "COMPLETED"
+        "SubOrderActionStatus": {},
+        "SubOrderServiceLevelType": {
+          "Code": "EXPRESS"
         },
-        "SubOrderServiceLevelType": {},
         "GroceryOrderDetail": [
           {
+            "CartLineNbr": 1,
             "ItemId": {
-              "SystemSpecificItemId": "85016200821",
-              "BaseProductNbr": 85016200821,
-              "ItemDescription": "10 Barrel Out Of Office Hoppy Pilsner In Cans - 6-12 Fl. Oz."
+              "SystemSpecificItemId": "188560212",
+              "InternalItemId": "0002113015828",
+              "BaseProductNbr": 188560212,
+              "PLUCd": "0",
+              "ItemDescription": "Signature SELECT Bacon Hickory Smoked Thick Cut Value Pack - 48 Oz"
             },
+            "BasePriceAmt": 16.9900,
+            "UnitPriceAmt": 16.9900,
+            "ExtendedUnitPriceAmt": 2.9900,
+            "ItemPriceAmt": 48.5600,
+            "ExtendedItemPriceAmt": 3.1100,
+            "PricePerAmt": 5.6600,
             "Quantity": 2.0000,
             "UOM": {
-              "UOMCd": "UNIT"
+              "UOMCd": "LB"
             },
-            "SellByWeightType": {},
+            "SellByWeightType": {
+              "Code": "I"
+            },
+            "DiscountAllowedInd": true,
+            "RewardAllowedInd": true,
             "SubstitutionType": {
+              "Code": "2",
               "Description": "Same Brand Diff Size"
             },
-            "RegulatedItemInd": true,
+            "CurrencyCd": "USD",
+            "RegulatedItemInd": false,
+            "CouponPLUNbr": "0",
             "CustomerOffers": [],
-            "Department": {},
-            "AutoReplenishmentOrderType": {},
-            "DeliveredItem": [],
+            "Department": {
+              "Code": 333
+            },
+            "WICItemInd": false,
+            "AutoReplenishmentOrderType": {
+              "AROItemInd": true,
+              "AROLineInd": true,
+              "ItemPriceAmt": 1.8800
+            },
+            "DeliveredItem": [
+              {
+                "DeliveredItemLineNbr": 5001,
+                "FulfillmentOrderId": "20064781011",
+                "Item": {
+                  "UPC": {
+                    "UPCNbr": "002113015828"
+                  },
+                  "SystemSpecificItemId": "188560212",
+                  "InternalItemId": "0002113015828",
+                  "PLUCd": "0",
+                  "BaseProductNbr": "188560212"
+                },
+                "SubstitutedItemInd": false,
+                "Quantity": 2,
+                "UOM": {
+                  "UOMCd": "EA"
+                },
+                "SellByWeightType": {
+                  "Code": "I"
+                },
+                "BasePriceAmt": 16.9900,
+                "UnitPriceAmt": 16.9900,
+                "ExtendedUnitPriceAmt": 16.9900,
+                "ItemPriceAmt": 16.9900,
+                "ExtendedItemPriceAmt": 33.9800,
+                "PricePerAmt": 5.6600,
+                "RegulatedItemInd": false,
+                "CouponPLUNbr": "0",
+                "CustomerOffers_1": [],
+                "OfferId": "string",
+                "ReferenceOfferId": "string",
+                "OfferSourceType": {
+                  "Code": "string"
+                },
+                "CustomerRewards_1": [],
+                "RewardAllowedInd": true,
+                "DiscountAllowedInd": true,
+                "WICItemInd": false,
+                "CustomerSavings": {
+                  "SavingsCategoryType": [],
+                  "SavingsCategoryType": {
+                    "Item": {
+                      "OfferId": "string",
+                      "SavingsCategoryId": 0,
+                      "SavingsCategoryNm": "String",
+                      "SavingsAmt": 0.00
+                    }
+                  }
+                },
+                "DeliveredItemExceptionType": [
+                  {
+                    "ExceptionType": {
+                      "Code": "EPE"
+                    }
+                  },
+                  "EPE_PROMOTIONS_ERROR",
+                  "EPE system error.",
+                  "2020-12-25T20:57:37.610-08:00"
+                ],
+                "AutoReplenishmentOrderType": {
+                  "AROItemInd": true,
+                  "AROLineInd": true,
+                  "ItemPriceAmt": 2.3300
+                }
+              }
+            ],
             "OrderQty": 2.0000,
-            "CustomerSavings": {
-              "SavingsCategoryType": []
-            },
-            "OrderLineExceptionType": []
-          },
-          {
-            "ItemId": {
-              "SystemSpecificItemId": "03800033360",
-              "BaseProductNbr": 3800033360,
-              "ItemDescription": "Eggo Frozen Waffles Blueberry Family Pack - 29.6 Oz"
-            },
-            "Quantity": 1.0000,
-            "UOM": {
-              "UOMCd": "UNIT"
-            },
-            "SellByWeightType": {},
-            "SubstitutionType": {
-              "Description": "Same Brand Diff Size"
-            },
-            "RegulatedItemInd": false,
-            "CustomerOffers": [],
-            "Department": {},
-            "AutoReplenishmentOrderType": {},
-            "DeliveredItem": [],
-            "OrderQty": 1.0000,
-            "CustomerSavings": {
-              "SavingsCategoryType": []
-            },
-            "OrderLineExceptionType": []
-          },
-          {
-            "ItemId": {
-              "SystemSpecificItemId": "05210000428",
-              "BaseProductNbr": 5210000428,
-              "ItemDescription": "McCormick Chili Powder - 2.5 Oz"
-            },
-            "Quantity": 2.0000,
-            "UOM": {
-              "UOMCd": "UNIT"
-            },
-            "SellByWeightType": {},
-            "SubstitutionType": {
-              "Description": "Same Brand Diff Size"
-            },
-            "RegulatedItemInd": false,
-            "CustomerOffers": [],
-            "Department": {},
-            "AutoReplenishmentOrderType": {},
-            "DeliveredItem": [],
-            "OrderQty": 2.0000,
-            "CustomerSavings": {
-              "SavingsCategoryType": []
-            },
-            "OrderLineExceptionType": []
-          },
-          {
-            "ItemId": {
-              "SystemSpecificItemId": "03800033360",
-              "BaseProductNbr": 3800033360,
-              "ItemDescription": "Eggo Frozen Waffles Blueberry Family Pack - 29.6 Oz"
-            },
-            "Quantity": 1.0000,
-            "UOM": {
-              "UOMCd": "UNIT"
-            },
-            "SellByWeightType": {},
-            "SubstitutionType": {
-              "Description": "Same Brand Diff Size"
-            },
-            "RegulatedItemInd": false,
-            "CustomerOffers": [],
-            "Department": {},
-            "AutoReplenishmentOrderType": {},
-            "DeliveredItem": [],
-            "OrderQty": 1.0000,
-            "CustomerSavings": {
-              "SavingsCategoryType": []
-            },
-            "OrderLineExceptionType": []
-          },
-          {
-            "ItemId": {
-              "SystemSpecificItemId": "00000004070",
-              "BaseProductNbr": 4070,
-              "ItemDescription": "Celery - 1 Bunch"
-            },
-            "Quantity": 5.0000,
-            "UOM": {
-              "UOMCd": "UNIT"
-            },
-            "SellByWeightType": {},
-            "SubstitutionType": {
-              "Description": "Same Brand Diff Size"
-            },
-            "RegulatedItemInd": false,
-            "CustomerOffers": [],
-            "Department": {},
-            "AutoReplenishmentOrderType": {},
-            "DeliveredItem": [],
-            "OrderQty": 5.0000,
-            "CustomerSavings": {
-              "SavingsCategoryType": []
-            },
-            "OrderLineExceptionType": []
-          },
-          {
-            "ItemId": {
-              "SystemSpecificItemId": "00000004070",
-              "BaseProductNbr": 4070,
-              "ItemDescription": "Cilantro Organic"
-            },
-            "Quantity": 1.0000,
-            "UOM": {
-              "UOMCd": "UNIT"
-            },
-            "SellByWeightType": {},
-            "SubstitutionType": {
-              "Description": "Same Brand Diff Size"
-            },
-            "RegulatedItemInd": false,
-            "CustomerOffers": [],
-            "Department": {},
-            "AutoReplenishmentOrderType": {},
-            "DeliveredItem": [],
-            "OrderQty": 1.0000,
-            "CustomerSavings": {
-              "SavingsCategoryType": []
-            },
-            "OrderLineExceptionType": []
-          },
-          {
-            "ItemId": {
-              "SystemSpecificItemId": "03452",
-              "BaseProductNbr": 3452,
-              "ItemDescription": "Green Seedless Grapes - 2 Lb"
-            },
-            "Quantity": 1.0000,
-            "UOM": {
-              "UOMCd": "UNIT"
-            },
-            "SellByWeightType": {},
-            "SubstitutionType": {
-              "Description": "Same Brand Diff Size"
-            },
-            "RegulatedItemInd": false,
-            "CustomerOffers": [],
-            "Department": {},
-            "AutoReplenishmentOrderType": {},
-            "DeliveredItem": [],
-            "OrderQty": 1.0000,
-            "CustomerSavings": {
-              "SavingsCategoryType": []
-            },
-            "OrderLineExceptionType": []
-          },
-          {
-            "ItemId": {
-              "SystemSpecificItemId": "03452",
-              "BaseProductNbr": 3452,
-              "ItemDescription": "Green Seedless Grapes - 2 Lb"
-            },
-            "Quantity": 1.0000,
-            "UOM": {
-              "UOMCd": "UNIT"
-            },
-            "SellByWeightType": {},
-            "SubstitutionType": {
-              "Description": "Same Brand Diff Size"
-            },
-            "RegulatedItemInd": false,
-            "CustomerOffers": [],
-            "Department": {},
-            "AutoReplenishmentOrderType": {},
-            "DeliveredItem": [],
-            "OrderQty": 1.0000,
-            "CustomerSavings": {
-              "SavingsCategoryType": []
-            },
-            "OrderLineExceptionType": []
-          },
-          {
-            "ItemId": {
-              "SystemSpecificItemId": "26052690964",
-              "BaseProductNbr": 26052690964,
-              "ItemDescription": "Foster Farms Organic Chicken Breast Fillets Boneless Skinless - 1.00 LB"
-            },
-            "Quantity": 1.0000,
-            "UOM": {
-              "UOMCd": "UNIT"
-            },
-            "SellByWeightType": {},
-            "SubstitutionType": {
-              "Description": "Same Brand Diff Size"
-            },
-            "RegulatedItemInd": false,
-            "CustomerOffers": [],
-            "Department": {},
-            "AutoReplenishmentOrderType": {},
-            "DeliveredItem": [],
-            "OrderQty": 1.0000,
-            "CustomerSavings": {
-              "SavingsCategoryType": []
-            },
-            "OrderLineExceptionType": []
-          },
-          {
-            "ItemId": {
-              "SystemSpecificItemId": "26080590158",
-              "BaseProductNbr": 26080590158,
-              "ItemDescription": "Foster Farms Fresh & Natural Whole Chicken - 3.5 Lbs."
-            },
-            "Quantity": 1.0000,
-            "UOM": {
-              "UOMCd": "UNIT"
-            },
-            "SellByWeightType": {},
-            "SubstitutionType": {
-              "Description": "Same Brand Diff Size"
-            },
-            "RegulatedItemInd": false,
-            "CustomerOffers": [],
-            "Department": {},
-            "AutoReplenishmentOrderType": {},
-            "DeliveredItem": [],
-            "OrderQty": 1.0000,
-            "CustomerSavings": {
-              "SavingsCategoryType": []
-            },
-            "OrderLineExceptionType": []
-          },
-          {
-            "ItemId": {
-              "SystemSpecificItemId": "08158445262",
-              "BaseProductNbr": 8158445262,
-              "ItemDescription": "Kendall-Jackson Vintners Reserve Wine White Chardonnay - 750 Ml"
-            },
-            "Quantity": 1.0000,
-            "UOM": {
-              "UOMCd": "UNIT"
-            },
-            "SellByWeightType": {},
-            "SubstitutionType": {
-              "Description": "Same Brand Diff Size"
-            },
-            "RegulatedItemInd": true,
-            "CustomerOffers": [],
-            "Department": {},
-            "AutoReplenishmentOrderType": {},
-            "DeliveredItem": [],
-            "OrderQty": 1.0000,
+            "FulfilledQty": 2.0000,
             "CustomerSavings": {
               "SavingsCategoryType": []
             },
             "OrderLineExceptionType": []
           }
         ],
-        "ReturnedItem": [
-          {
-            "ReferenceOrderId": "20065392",
-            "Item": {
-              "UPC": {
-                "UPCNbr": "85016200821",
-                "UPCTxt": "85016200821"
-              },
-              "BaseProductNbr": "85016200821",
-              "ItemDescription": "10 BARREL PROFUSE "
-            },
-            "Quantity": 1,
-            "UOM": {
-              "UnitPriceAmt": 25.98,
-              "CurrencyCd": "USD"
-            },
-            "AutoReplenishmentOrderType": {}
-          },
-          {
-            "ReferenceOrderId": "20065392",
-            "Item": {
-              "UPC": {
-                "UPCNbr": "03800033360",
-                "UPCTxt": "03800033360"
-              },
-              "BaseProductNbr": "03800033360",
-              "ItemDescription": "KLLGG EGGO WAFFLES"
-            },
-            "Quantity": 1,
-            "UOM": {
-              "UnitPriceAmt": 0.00,
-              "CurrencyCd": "USD"
-            },
-            "AutoReplenishmentOrderType": {}
-          },
-          {
-            "ReferenceOrderId": "20065392",
-            "Item": {
-              "UPC": {
-                "UPCNbr": "05210000428",
-                "UPCTxt": "05210000428"
-              },
-              "BaseProductNbr": "05210000428",
-              "ItemDescription": "MCRMCK CHILI PWDR "
-            },
-            "Quantity": 1,
-            "UOM": {
-              "UnitPriceAmt": 9.58,
-              "CurrencyCd": "USD"
-            },
-            "AutoReplenishmentOrderType": {}
-          }
-        ],
+        "ReturnedItem": [],
         "FullFillmentType": {
-          "Code": "DUG"
+          "Code": "DELIVERY"
         },
         "PickupInfo": {
-          "ShortOrderNbr": 493,
-          "PickupSlot": {
-            "Code": "2941"
-          },
-          "PickupSlotType": {
-            "Code": "STORE"
-          },
-          "DisplayEndDttm": "2020-12-29T04:00:00.000Z"
+          "PickupSlot": {},
+          "PickupSlotType": {}
         },
         "DeliveryInfo": {
-          "CustomerType": {},
-          "DeliverySlotId": "42925a6b-98fb-4e61-ac7e-a5ba9c85fdb3",
+          "CustomerType": {
+            "Code": "RESIDENTIAL"
+          },
+          "DeliverySlotId": "94c70f71-746c-4c68-99e0-b5e0b079950a",
           "DeliverySlotType": {
             "Code": "ONEHR"
           },
-          "DeliveryServiceType": {},
+          "DeliveryServiceType": {
+            "Code": "ATTENDED"
+          },
           "SlotPlan": {
             "Code": "STANDARD"
           },
-          "StartDttm": "2020-12-28T23:00:00.000Z",
-          "EndDttm": "2020-12-29T00:00:00.000Z",
-          "SlotExpiryDttm": "2020-12-29T00:00:00.000Z",
-          "StageByDttm": "2020-12-28T21:00:00.000Z",
-          "EditCutoffDtTm": "2020-12-28T20:00:00.000Z",
+          "StartDttm": "2020-12-23T22:02:00.000-08:00",
+          "EndDttm": "2020-12-23T23:00:00.000-08:00",
+          "SlotExpiryDttm": "2020-12-23T23:00:00.000-08:00",
+          "StageByDttm": "2020-12-23T23:00:00.000-08:00",
+          "EditCutoffDtTm": "2020-12-23T13:00:00.000-08:00",
           "CustomerInstructionTxt": "",
-          "DeliveryTimeZoneCd": "America\/Los_Angeles"
+          "DeliveryTimeZoneCd": "America\/Anchorage"
         },
-        "ChargeInfo": [],
+        "ChargeInfo": [
+          {
+            "Description": "BagFee"
+          },
+          {
+            "Code": "ServiceFee"
+          },
+          {
+            "ChargeAmt": 0.10,
+            "CurrencyCd": "USD"
+          }
+        ],
         "CustomerService": [
           {
             "PhoneFaxContact": {
               "TypeCode": "PHONE",
-              "PhoneNbrTxt": "7298374987",
-              "PhonePurposes": {
-                "PurposeDsc": "DUG_VIRTUAL_PHONE"
-              }
-            }
-          },
-          {
-            "PhoneFaxContact": {
-              "TypeCode": "PHONE",
-              "PhoneNbrTxt": "7932874987",
+              "PhoneNbrTxt": "7983274987",
               "PhonePurposes": {
                 "PurposeDsc": "CUST_SERV_PHONE"
               }
@@ -533,19 +345,18 @@
           }
         ],
         "InstructionTxt": [
-          "",
-          "",
-          "",
-          "",
-          "",
-          "",
-          "",
-          "",
-          "",
-          "",
           ""
         ],
-        "GrocerySubOrderExceptionType": []
+        "GrocerySubOrderExceptionType": [
+          {
+            "ExceptionType": {
+              "Code": "EPE"
+            },
+            "ExceptionCd": "EPE_PROMOTIONS_ERROR",
+            "ExceptionDsc": "EPE system error.",
+            "ExceptionCreateTs": "2020-12-23T20:57:37.610-08:00"
+          }
+        ]
       }
     ]
   }

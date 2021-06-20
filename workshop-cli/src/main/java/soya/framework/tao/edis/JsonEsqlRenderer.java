@@ -50,12 +50,8 @@ public class JsonEsqlRenderer extends EsqlRenderer {
 
         // UDP:
         StringBuilderUtils.println("-- Declare UDPs", builder, 1);
-        JsonObject variables = knowledgeBase.getAnnotation(NAMESPACE_GLOBAL_VARIABLE, JsonObject.class);
-        if(variables != null) {
-            variables.entrySet().forEach(e -> {
-                StringBuilderUtils.println("DECLARE " + e.getKey() + " EXTERNAL CHARACTER " + e.getValue().getAsString() + ";", builder, 1);
-            });
-        }
+        StringBuilderUtils.println("DECLARE VERSION_ID EXTERNAL CHARACTER '1.0.0';", builder, 1);
+        StringBuilderUtils.println("DECLARE SYSTEM_ENVIRONMENT_CODE EXTERNAL CHARACTER 'PROD';", builder, 1);
         StringBuilderUtils.println(builder);
 
         StringBuilderUtils.println("CREATE FUNCTION Main() RETURNS BOOLEAN", builder, 1);

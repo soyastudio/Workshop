@@ -1,7 +1,6 @@
 package soya.framework.tao.edis;
 
 import org.apache.xmlbeans.SchemaTypeSystem;
-import org.checkerframework.checker.units.qual.A;
 import soya.framework.tao.KnowledgeTree;
 import soya.framework.tao.KnowledgeTreeNode;
 import soya.framework.tao.TreeNode;
@@ -80,10 +79,47 @@ public abstract class EsqlRenderer extends EdisRenderer {
 
         } else if (node.getAnnotation(NAMESPACE_CONSTRUCTION) != null) {
             Construction construction = node.getAnnotation(NAMESPACE_CONSTRUCTION, Construction.class);
+            Function[] functions = construction.getFunctionArray();
+            int len = functions.length;
+            if(len == 0) {
+                printSimpleFolder(node, builder, indent);
 
-            if (BigInteger.ONE.equals(node.origin().getMaxOccurs())) {
+            } else if(FUNCTION_SKIP.equals(functions[len - 1].name)) {
+                // skip
+
+            } else if (FUNCTION_FOR.equalsIgnoreCase(construction.getFunctionArray()[0].name)) {
+                Function function = construction.getFunctionArray()[0];
+                String arrName = function.parameters[0];
+                Iterator<Array> iterator = arrayStack.iterator();
+                while (iterator.hasNext()) {
+                    if(arrName.equals(iterator.next().name)) {
+                        printSimpleFolder(node, builder, indent);
+                        break;
+                    }
+                }
+            } else if (FUNCTION_ARRAY.equals(functions[0].name)) {
+                printArrayFolder(node, builder, indent);
+
+            } else {
+                StringBuilderUtils.println("-- " + node.getPath(), builder, construction.getLevel() + indent);
+                StringBuilderUtils.println("-- TODO: ", builder, construction.getLevel() + indent);
+                StringBuilderUtils.println(builder);
+            }
+
+            /*if (BigInteger.ONE.equals(node.origin().getMaxOccurs())) {
                 if (construction.getFunctions().size() == 0) {
                     printSimpleFolder(node, builder, indent);
+
+                } else if (FUNCTION_FOR.equalsIgnoreCase(construction.getFunctionArray()[0].name)) {
+                    Function function = construction.getFunctionArray()[0];
+                    String arrName = function.parameters[0];
+                    Iterator<Array> iterator = arrayStack.iterator();
+                    while (iterator.hasNext()) {
+                        if(arrName.equals(iterator.next().name)) {
+                            printSimpleFolder(node, builder, indent);
+                            break;
+                        }
+                    }
 
                 } else {
                     StringBuilderUtils.println("-- " + node.getPath(), builder, construction.getLevel() + indent);
@@ -93,7 +129,7 @@ public abstract class EsqlRenderer extends EdisRenderer {
 
             } else {
                 printArrayFolder(node, builder, indent);
-            }
+            }*/
 
         } else {
             return;
@@ -133,7 +169,6 @@ public abstract class EsqlRenderer extends EdisRenderer {
         StringBuilderUtils.println(builder);
 
         for (TreeNode child : node.getChildren()) {
-            System.out.println("============== " + node.getPath());
             printNode((KnowledgeTreeNode<XsNode>) child, builder, indent + offset);
         }
 
@@ -145,8 +180,7 @@ public abstract class EsqlRenderer extends EdisRenderer {
     }
 
     protected void printArrayFolder(KnowledgeTreeNode<XsNode> node, StringBuilder builder, int indent) {
-        currentArrayDepth++;
-        String indexVar = INDEX[currentArrayDepth];
+
 
         Construction construction = node.getAnnotation(NAMESPACE_CONSTRUCTION, Construction.class);
         Construction parentConstruction = ((KnowledgeTreeNode<XsNode>) node.getParent()).getAnnotation(NAMESPACE_CONSTRUCTION, Construction.class);
@@ -154,16 +188,17 @@ public abstract class EsqlRenderer extends EdisRenderer {
         StringBuilderUtils.println("-- " + node.getPath(), builder, construction.getLevel() + indent);
         StringBuilderUtils.println("CREATE FIELD " + parentConstruction.getAlias() + "." + node.getName() + " IDENTITY (JSON.Array)" + node.getName() + ";"
                 , builder, construction.getLevel() + indent);
-        StringBuilderUtils.println("DECLARE " + "arr_" + construction.getAlias() + " REFERENCE TO " + parentConstruction.getAlias() + "." + node.getName() + ";", builder, construction.getLevel() + indent);
+        StringBuilderUtils.println("DECLARE " + ARRAY_VARIABLE_PREFIX + construction.getAlias() + " REFERENCE TO " + parentConstruction.getAlias() + "." + node.getName() + ";", builder, construction.getLevel() + indent);
         StringBuilderUtils.println(builder);
 
-        construction.getFunctions().forEach(e -> {
-
+        for (Function e : construction.getFunctions()) {
             if (FUNCTION_ARRAY.equals(e.name) && e.parameters.length == 3) {
+
                 Array array = new Array();
                 array.name = e.parameters[0];
                 array.var = e.parameters[1];
                 array.assignment = e.parameters[2];
+
                 boolean print = false;
                 if (array.assignment.startsWith("$.")) {
                     print = true;
@@ -172,7 +207,7 @@ public abstract class EsqlRenderer extends EdisRenderer {
                     String parentVar = array.assignment.substring(0, array.assignment.indexOf("."));
                     Iterator<Array> iterator = arrayStack.iterator();
                     while (iterator.hasNext()) {
-                        if (array.var.equals(iterator.next().var)) {
+                        if (parentVar.equals(iterator.next().var)) {
                             print = true;
                             break;
                         }
@@ -180,6 +215,8 @@ public abstract class EsqlRenderer extends EdisRenderer {
                 }
 
                 if (print) {
+                    currentArrayDepth++;
+                    String indexVar = INDEX[currentArrayDepth];
                     arrayStack.push(array);
 
                     String assign = array.assignment.replace("[*]", ".Item");
@@ -193,7 +230,7 @@ public abstract class EsqlRenderer extends EdisRenderer {
                     StringBuilderUtils.println("SET " + indexVar + " = 1;", builder, construction.getLevel() + indent);
                     StringBuilderUtils.println(array.name + " : WHILE LASTMOVE(" + array.var + ") DO", builder, construction.getLevel() + indent);
 
-                    StringBuilderUtils.println("DECLARE " + construction.getAlias() + " REFERENCE TO " + "arr_" + parentConstruction.getAlias() + "." + node.getName() + ".Item[" + indexVar + "];", builder, construction.getLevel() + indent + 1);
+                    StringBuilderUtils.println("DECLARE " + construction.getAlias() + " REFERENCE TO " + ARRAY_VARIABLE_PREFIX + construction.getAlias() + ".Item[" + indexVar + "];", builder, construction.getLevel() + indent + 1);
                     StringBuilderUtils.println(builder);
 
                     node.getChildren().forEach(n -> {
@@ -207,12 +244,11 @@ public abstract class EsqlRenderer extends EdisRenderer {
                     StringBuilderUtils.println(builder);
 
                     arrayStack.pop();
+                    currentArrayDepth--;
 
                 }
             }
-        });
-
-        currentArrayDepth--;
+        }
 
     }
 
@@ -238,40 +274,36 @@ public abstract class EsqlRenderer extends EdisRenderer {
         Construction construction = ((KnowledgeTreeNode<XsNode>) node.getParent()).getAnnotation(NAMESPACE_CONSTRUCTION, Construction.class);
 
         //String assignment = getAssignment(mapping, inputRootVariable);
-        if (assignment != null && !assignment.functions.isEmpty()) {
-            boolean print = true;
+        if (assignment != null && assignment.getFirst() != null) {
+            Function function = assignment.getFirst();
+            boolean print = false;
 
-            System.out.println("================= " + assignment.functions);
-/*
+            if (FUNCTION_ASSIGN.equals(function.name) && function.parameters[0].contains(".")) {
+                String eval = function.parameters[0];
+                if (eval.startsWith("$.")) {
+                    print = true;
 
-            if () {
-                // FIXME
-
-            } else if (assignment.source.startsWith("$.")) {
-                print = true;
-
-            } else if (assignment.source.indexOf(".") > 0) {
-                String parentVar = assignment.source.substring(0, assignment.source.indexOf("."));
-                Iterator<Array> iterator = arrayStack.iterator();
-                while (iterator.hasNext()) {
-                    if (parentVar.equals(iterator.next().var)) {
-                        print = true;
-                        break;
+                } else if (eval.contains(".")) {
+                    String parentVar = eval.substring(0, eval.indexOf("."));
+                    Iterator<Array> iterator = arrayStack.iterator();
+                    while (iterator.hasNext()) {
+                        if (parentVar.equals(iterator.next().var)) {
+                            print = true;
+                            break;
+                        }
                     }
                 }
+            } else if(FUNCTION_ASSIGN_FOR.equals(function.name)) {
+
             } else {
                 print = true;
             }
-*/
 
             if (print) {
                 StringBuilderUtils.println("-- " + node.getPath(), builder, construction.getLevel() + indent + 1);
-                if (assignment.functions.size() == 1) {
-                    Function function = assignment.getFirst();
-                    StringBuilderUtils.println("SET " + construction.getAlias()
-                            + "." + node.origin().getName().getLocalPart()
-                            + " = " + getAssignment(function) + ";", builder, construction.getLevel() + indent + 1);
-                }
+                StringBuilderUtils.println("SET " + construction.getAlias()
+                        + "." + node.origin().getName().getLocalPart()
+                        + " = " + getAssignment(function) + ";", builder, construction.getLevel() + indent + 1);
                 StringBuilderUtils.println(builder);
 
             }
