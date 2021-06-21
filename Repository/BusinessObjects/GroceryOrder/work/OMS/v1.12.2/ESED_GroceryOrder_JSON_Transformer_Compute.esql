@@ -18,17 +18,22 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 		-- Declare Input Message Root
 		DECLARE _inputRootNode REFERENCE TO InputRoot.JSON.Data;
 
-		-- Declare Output Message Root
-		CREATE FIELD OutputRoot.JSON.Data;
-		DECLARE GetGroceryOrder_ REFERENCE TO OutputRoot.JSON.Data;
+		CREATE LASTCHILD OF OutputRoot DOMAIN 'JSON';
 
-			-- GetGroceryOrder/DocumentData
-			CREATE FIELD GetGroceryOrder_.DocumentData;
-			DECLARE DocumentData_ REFERENCE TO GetGroceryOrder_.DocumentData;
+		-- Create root Data field
+        CREATE FIELD OutputRoot.JSON.Data;
+        DECLARE jsonDocRoot REFERENCE TO OutputRoot.JSON.Data;
 
-				-- GetGroceryOrder/DocumentData/Document
-				CREATE FIELD DocumentData_.Document;
-				DECLARE Document_ REFERENCE TO DocumentData_.Document;
+        -- GetGroceryOrder/DocumentData
+		DECLARE DocumentData_ REFERENCE TO jsonDocRoot;
+		CREATE LASTCHILD OF jsonDocRoot AS DocumentData_ TYPE XMLNSC.Folder NAME 'DocumentData';
+
+			-- GetGroceryOrder/DocumentData/Document
+			DECLARE Document_ REFERENCE TO DocumentData_;
+			CREATE LASTCHILD OF DocumentData_ AS Document_ TYPE XMLNSC.Folder NAME 'Document';
+
+				-- GetGroceryOrder/DocumentData/Document/@VersionId
+				SET Document_.VersionId = VERSION_ID;
 
 				-- GetGroceryOrder/DocumentData/Document/@SystemEnvironmentCd
 				SET Document_.SystemEnvironmentCd = SYSTEM_ENVIRONMENT_CODE;
@@ -160,25 +165,6 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 				CREATE LASTCHILD OF GroceryOrderHeader_ AS FulfillingFacility_ TYPE XMLNSC.Folder NAME 'FulfillingFacility';
 
 				CALL ConstructFulfillingFacility(_inputRootNode, FulfillingFacility_, GroceryOrderHeader_);
-
-				IF FIELDTYPE(_inputRootNode.customer.tax.taxExempt) IS NOT NULL THEN
-
-					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType
-					DECLARE GroceryOrderProfileType_ REFERENCE TO GroceryOrderHeader_;
-					CREATE LASTCHILD OF GroceryOrderHeader_ AS GroceryOrderProfileType_ TYPE XMLNSC.Folder NAME 'GroceryOrderProfileType';
-
-						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType/ProfileType
-						DECLARE ProfileType_ REFERENCE TO GroceryOrderProfileType_;
-						CREATE LASTCHILD OF GroceryOrderProfileType_ AS ProfileType_ TYPE XMLNSC.Folder NAME 'ProfileType';
-
-							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType/ProfileType/Code
-							SET ProfileType_.Code = 'taxExempt';
-
-							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType/ProfileType/Description
-							SET ProfileType_.Description = _inputRootNode.customer.tax.taxExempt;
-
-				END IF;
-
 				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer
 				DECLARE RetailCustomer_ REFERENCE TO GroceryOrderHeader_;
 				CREATE LASTCHILD OF GroceryOrderHeader_ AS RetailCustomer_ TYPE XMLNSC.Folder NAME 'RetailCustomer';
@@ -208,10 +194,10 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 
 					CREATE FIELD RetailCustomer_.Contact IDENTITY (JSON.Array)Contact;
 					DECLARE Contact_ REFERENCE TO RetailCustomer_.Contact;
-					
+
 					-- LOOP FROM customer/contact[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact:
 					DECLARE _contact REFERENCE TO _inputRootNode.customer.contact.Item;
-					
+
 					SET i = 1;
 					contact : WHILE LASTMOVE(_contact) DO
 
@@ -239,7 +225,7 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 
 					-- LOOP FROM customer/email[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact:
 					DECLARE _email REFERENCE TO _inputRootNode.customer.email.Item;
-					
+
 					email : WHILE LASTMOVE(_email) DO
 
 							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact
@@ -299,9 +285,9 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 					-- LOOP FROM customer/preference/optIn[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerPreference:
 					CREATE FIELD RetailCustomer_.CustomerPreference IDENTITY (JSON.Array)CustomerPreference;
 					DECLARE CustomerPreference_ REFERENCE TO RetailCustomer_.CustomerPreference;
-					
+
 					DECLARE _optIn REFERENCE TO _inputRootNode.customer.preference.optIn.Item;
-					
+
 					SET i = 1;
 					optIn : WHILE LASTMOVE(_optIn) DO
 
@@ -352,10 +338,10 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 
 				-- LOOP FROM orderTotal/txnLevelSavings[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerOffers:
 				CREATE FIELD GroceryOrderHeader_.CustomerOffers IDENTITY (JSON.Array)CustomerOffers;
-				DECLARE CustomerOffers_ REFERENCE TO GroceryOrderHeader_.CustomerOffers;					
-					
+				DECLARE CustomerOffers_ REFERENCE TO GroceryOrderHeader_.CustomerOffers;
+
 				DECLARE _txnLevelSaving REFERENCE TO _inputRootNode.orderTotal.txnLevelSavings.Item;
-				
+
 				SET i = 1;
 				txnLevelSaving : WHILE LASTMOVE(_txnLevelSaving) DO
 
@@ -372,9 +358,9 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 						-- LOOP FROM orderTotal/txnLevelSavings[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerOffers/CustomerRewards:
 						CREATE FIELD CustomerOffers_.Item[i].CustomerRewards IDENTITY (JSON.Array)CustomerRewards;
 						DECLARE CustomerRewards_ REFERENCE TO CustomerOffers_.Item[i].CustomerRewards;
-				
+
 						DECLARE _txnLevelSavingPoint REFERENCE TO _txnLevelSaving.points.Item;
-						
+
 						SET j = 1;
 						txnLevelSavingPoint : WHILE LASTMOVE(_txnLevelSavingPoint) DO
 
@@ -401,10 +387,10 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 
 					-- LOOP FROM paymentDetails[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender:
 					CREATE FIELD CustomerPayment_.Tender IDENTITY (JSON.Array)Tender;
-					DECLARE Tender_ REFERENCE TO CustomerPayment_.Tender;					
-					
+					DECLARE Tender_ REFERENCE TO CustomerPayment_.Tender;
+
 					DECLARE _paymentDetails REFERENCE TO _inputRootNode.paymentDetails.Item;
-					
+
 					SET i = 1;
 					paymentDetails : WHILE LASTMOVE(_paymentDetails) DO
 
@@ -623,10 +609,10 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 
 				-- LOOP FROM orderInfo/data[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerNotesTxt:
 				CREATE FIELD GroceryOrderHeader_.CustomerNotesTxt IDENTITY (JSON.Array)CustomerNotesTxt;
-				DECLARE CustomerNotesTxt_ REFERENCE TO GroceryOrderHeader_.CustomerNotesTxt;					
-				
+				DECLARE CustomerNotesTxt_ REFERENCE TO GroceryOrderHeader_.CustomerNotesTxt;
+
 				DECLARE _order_info_data REFERENCE TO _inputRootNode.orderInfo.data.Item;
-				
+
 				SET i = 1;
 				order_info_data : WHILE LASTMOVE(_order_info_data) DO
 
@@ -665,9 +651,9 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 				-- LOOP FROM exceptions[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderHeaderExceptionType:
 				CREATE FIELD GroceryOrderHeader_.GroceryOrderHeaderExceptionType IDENTITY (JSON.Array)GroceryOrderHeaderExceptionType;
 				DECLARE GroceryOrderHeaderExceptionType_ REFERENCE TO GroceryOrderHeader_.GroceryOrderHeaderExceptionType;
-				
+
 				DECLARE _exception REFERENCE TO _inputRootNode.exceptions.Item;
-				
+
 				SET i = 1;
 				exception_loop : WHILE LASTMOVE(_exception) DO
 
@@ -695,9 +681,9 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 			-- LOOP FROM subOrders[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder:
 			CREATE FIELD GroceryOrderData_.GrocerySubOrder IDENTITY (JSON.Array)GrocerySubOrder;
 			DECLARE GrocerySubOrder_ REFERENCE TO GroceryOrderData_.GrocerySubOrder;
-			
+
 			DECLARE _subOrder REFERENCE TO _inputRootNode.subOrders.Item;
-			
+
 			SET i = 1;
 			subOrder : WHILE LASTMOVE(_subOrder) DO
 
@@ -748,14 +734,14 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 
 					-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CancelByDtTm
 					SET GrocerySubOrder_.Item[i].CancelByDtTm = _subOrder.cancelByDate;
-					
+
 
 					-- LOOP FROM subOrders[*]/orderLines[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail:
 					CREATE FIELD GrocerySubOrder_.Item[i].GroceryOrderDetail IDENTITY (JSON.Array)GroceryOrderDetail;
 					DECLARE GroceryOrderDetail_ REFERENCE TO GrocerySubOrder_.Item[i].GroceryOrderDetail;
-			
+
 					DECLARE _orderLine REFERENCE TO _subOrder.orderLines.Item;
-					
+
 					SET j = 1;
 					orderLine : WHILE LASTMOVE(_orderLine) DO
 
@@ -941,9 +927,9 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 							-- LOOP FROM subOrders[*]/orderLines[*]/itemPrice/savings[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers:
 							CREATE FIELD GroceryOrderDetail_.Item[j].CustomerOffers IDENTITY (JSON.Array)CustomerOffers;
 							DECLARE CustomerOffers_1 REFERENCE TO GroceryOrderDetail_.Item[j].CustomerOffers;
-					
+
 							DECLARE _customer_savings REFERENCE TO _orderLine.itemPrice.savings.Item;
-							
+
 							SET k = 1;
 							customer_savings_loop : WHILE LASTMOVE(_customer_savings) DO
 
@@ -961,11 +947,11 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 										SET OfferSourceType_1.Code = _customer_savings.source;
 
 									-- LOOP FROM subOrders[*]/orderLines[*]/itemPrice/savings[*]/points[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/CustomerRewards:
-									CREATE FIELD CustomerOffers_1.Item[k].CustomerRewards_1 IDENTITY (JSON.Array)CustomerRewards_1;
-									DECLARE CustomerRewards_1 REFERENCE TO CustomerOffers_1.Item[k].CustomerRewards_1;									
-									
+									CREATE FIELD CustomerOffers_1.Item[k].CustomerRewards_1 IDENTITY (JSON.Array)CustomerRewards;
+									DECLARE CustomerRewards_1 REFERENCE TO CustomerOffers_1.Item[k].CustomerRewards_1;
+
 									DECLARE _point REFERENCE TO _customer_savings.points.Item;
-									
+
 									SET l = 1;
 									points_loop : WHILE LASTMOVE(_point) DO
 
@@ -1024,9 +1010,9 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 							-- LOOP FROM subOrders[*]/orderLines[*]/fulfilledUpc[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem:
 							CREATE FIELD GroceryOrderDetail_.Item[j].DeliveredItem IDENTITY (JSON.Array)DeliveredItem;
 							DECLARE DeliveredItem_ REFERENCE TO GroceryOrderDetail_.Item[j].DeliveredItem;
-														
+
 							DECLARE _fulfilled_upc REFERENCE TO _orderLine.fulfilledUpc.Item;
-							
+
 							SET k = 1;
 							fulfilled_upc_loop : WHILE LASTMOVE(_fulfilled_upc) DO
 
@@ -1145,12 +1131,12 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/PromotionPriceAmt
 									SET DeliveredItem_.Item[k].PromotionPriceAmt = CAST(_fulfilled_upc.itemPrice.netPromotionAmount AS DECIMAL(14, 2));
 
-									-- LOOP FROM subOrders[*]/orderLines[*]/fulfilledUpc[*]/itemPrice/savings[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerOffers:			
-									CREATE FIELD DeliveredItem_.Item[k].CustomerOffers IDENTITY (JSON.Array)CustomerOffers_1;
+									-- LOOP FROM subOrders[*]/orderLines[*]/fulfilledUpc[*]/itemPrice/savings[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerOffers:
+									CREATE FIELD DeliveredItem_.Item[k].CustomerOffers IDENTITY (JSON.Array)CustomerOffers;
 									DECLARE CustomerOffers_1 REFERENCE TO DeliveredItem_.Item[k].CustomerOffers;
-									
+
 									DECLARE _delivered_item_savings REFERENCE TO _fulfilled_upc.itemPrice.savings.Item;
-									
+
 									SET l = 1;
 									delivered_item_savings_loop : WHILE LASTMOVE(_delivered_item_savings) DO
 
@@ -1168,11 +1154,11 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 												SET OfferSourceType_1.Code = _delivered_item_savings.source;
 
 											-- LOOP FROM subOrders[*]/orderLines[*]/fulfilledUpc[*]/itemPrice/savings[*]/points[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerOffers/CustomerRewards:
-											CREATE FIELD CustomerOffers_1.Item[l].CustomerRewards IDENTITY (JSON.Array)CustomerRewards_1;
+											CREATE FIELD CustomerOffers_1.Item[l].CustomerRewards IDENTITY (JSON.Array)CustomerRewards;
 											DECLARE CustomerRewards_1 REFERENCE TO CustomerOffers_1.Item[l].CustomerRewards;
-									
+
 											DECLARE _delivered_item_savings_point REFERENCE TO _delivered_item_savings.points.Item;
-											
+
 											SET m = 1;
 											delivered_item_savings_points_loop : WHILE LASTMOVE(_delivered_item_savings_point) DO
 
@@ -1219,16 +1205,16 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 
 										-- Since V 1.7.3
 										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerSavings/SavingsCategoryType
-										CREATE FIELD DeliveredItem_CustomerSavings_.CustomerRewards IDENTITY (JSON.Array)SavingsCategoryType;
-										DECLARE SavingsCatType_ REFERENCE TO DeliveredItem_CustomerSavings_.CustomerRewards;
-									
+										CREATE FIELD DeliveredItem_CustomerSavings_.SavingsCategoryType IDENTITY (JSON.Array)SavingsCategoryType;
+										DECLARE SavingsCatType_ REFERENCE TO DeliveredItem_CustomerSavings_.SavingsCategoryType;
+
 										DECLARE _fulfilled_upc_savings REFERENCE TO _fulfilled_upc.itemPrice.savings.Item;
-										
+
 										SET l = 1;
 										fulfilled_upc_savings_loop : WHILE LASTMOVE(_fulfilled_upc_savings) DO
 
-											DECLARE SavingsCatType_ REFERENCE TO DeliveredItem_.Item[k];
-											CREATE LASTCHILD OF DeliveredItem_CustomerSavings_ AS SavingsCatType_ TYPE XMLNSC.Folder NAME 'SavingsCategoryType';
+											-- DECLARE SavingsCatType_ REFERENCE TO DeliveredItem_.Item[k];
+											-- CREATE LASTCHILD OF DeliveredItem_CustomerSavings_ AS SavingsCatType_ TYPE XMLNSC.Folder NAME 'SavingsCategoryType';
 
 												-- Since v1.12.1
 												-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerSavings/SavingsCategoryType/OfferId
@@ -1251,9 +1237,9 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 									-- LOOP FROM subOrders[*]/orderLines[*]/fulfilledUpc[*]/itemPrice/exceptions[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/DeliveredItemExceptionType:
 									CREATE FIELD DeliveredItem_.Item[k].DeliveredItemExceptionType IDENTITY (JSON.Array)DeliveredItemExceptionType;
 									DECLARE DeliveredItemExceptionType_ REFERENCE TO DeliveredItem_.Item[k].DeliveredItemExceptionType;
-									
+
 									DECLARE _deliveredItemException REFERENCE TO _fulfilled_upc.itemPrice.exceptions.Item;
-									
+
 									SET l = 1;
 									delivereditem_exception_loop : WHILE LASTMOVE(_deliveredItemException) DO
 
@@ -1265,13 +1251,13 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 												SET ExceptionType2_.Code = _deliveredItemException.exceptionType;
 
 											-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/DeliveredItemExceptionType/ExceptionCd
-											SET DeliveredItemExceptionType_.ExceptionCd = _deliveredItemException.exceptionCode;
+											SET DeliveredItemExceptionType_.Item[l].ExceptionCd = _deliveredItemException.exceptionCode;
 
 											-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/DeliveredItemExceptionType/ExceptionDsc
-											SET DeliveredItemExceptionType_.ExceptionDsc = _deliveredItemException.exceptionDesc;
+											SET DeliveredItemExceptionType_.Item[l].ExceptionDsc = _deliveredItemException.exceptionDesc;
 
 											-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/DeliveredItemExceptionType/ExceptionCreateTs
-											SET DeliveredItemExceptionType_.ExceptionCreateTs = _deliveredItemException.exceptionTime;
+											SET DeliveredItemExceptionType_.Item[l].ExceptionCreateTs = _deliveredItemException.exceptionTime;
 
 									SET l = l + 1;
 									MOVE _deliveredItemException NEXTSIBLING;
@@ -1312,12 +1298,12 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerSavings/SavingsCategoryType
 								CREATE FIELD CustomerSavings_.SavingsCategoryType IDENTITY (JSON.Array)SavingsCategoryType;
 								DECLARE SavingsCategoryType_ REFERENCE TO CustomerSavings_.SavingsCategoryType;
-						
+
 								DECLARE _orderline_savings REFERENCE TO _orderLine.itemPrice.savings.Item;
-								
+
 								SET l = 1;
 								orderline_savings_loop : WHILE LASTMOVE(_orderline_savings) DO
-									
+
 									-- DECLARE SavingsCategoryType_ REFERENCE TO CustomerSavings_;
 									-- CREATE LASTCHILD OF CustomerSavings_ AS SavingsCategoryType_ TYPE XMLNSC.Folder NAME 'SavingsCategoryType';
 
@@ -1342,9 +1328,9 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 						-- LOOP FROM subOrders[*]/orderLines[*]/exceptions[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/OrderLineExceptionType:
 						CREATE FIELD GroceryOrderDetail_.Item[j].OrderLineExceptionType IDENTITY (JSON.Array)OrderLineExceptionType;
 						DECLARE OrderLineExceptionType_ REFERENCE TO GroceryOrderDetail_.Item[j].OrderLineExceptionType;
-						
+
 						DECLARE _orderlineException REFERENCE TO _orderLine.exceptions.Item;
-									
+
 						SET k = 1;
 						orderline_exception_loop : WHILE LASTMOVE(_orderlineException) DO
 
@@ -1376,9 +1362,9 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 					-- LOOP FROM subOrders[*]/refundedOrderLines[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem:
 					CREATE FIELD GrocerySubOrder_.Item[i].ReturnedItem IDENTITY (JSON.Array)ReturnedItem;
 					DECLARE ReturnedItem_ REFERENCE TO GrocerySubOrder_.Item[i].ReturnedItem;
-					
+
 					DECLARE _refundedOrderLine REFERENCE TO _subOrder.refundedOrderLines.Item;
-					
+
 					SET j = 1;
 					refundedOrderLine_loop : WHILE LASTMOVE(_refundedOrderLine) DO
 
@@ -1442,9 +1428,9 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 					-- LOOP FROM subOrders[*]/promoCodes[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail:
 					CREATE FIELD GrocerySubOrder_.Item[i].GroceryOrderDetail IDENTITY (JSON.Array)GroceryOrderDetail;
 					DECLARE GroceryOrderDetail_1 REFERENCE TO GrocerySubOrder_.Item[i].GroceryOrderDetail;
-					
+
 					DECLARE _promoCode REFERENCE TO _subOrder.promoCodes.Item;
-					
+
 					SET j = 1;
 					promoCode : WHILE LASTMOVE(_promoCode) DO
 
@@ -1560,15 +1546,15 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 					-- LOOP FROM subOrders[*]/charges[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ChargeInfo:
 					CREATE FIELD GrocerySubOrder_.Item[i].ChargeInfo IDENTITY (JSON.Array)ChargeInfo;
 					DECLARE ChargeInfo_ REFERENCE TO GrocerySubOrder_.Item[i].ChargeInfo;
-					
+
 					DECLARE _charge REFERENCE TO _subOrder.charges.Item;
-					
+
 					SET j = 1;
 					charge : WHILE LASTMOVE(_charge) DO
 
 							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ChargeInfo/Charge
 							DECLARE Charge_ REFERENCE TO ChargeInfo_.Item[j];
-							CREATE LASTCHILD OF ChargeInfo_ AS Charge_ TYPE XMLNSC.Folder NAME 'Charge';
+							CREATE LASTCHILD OF ChargeInfo_.Item[j] AS Charge_ TYPE XMLNSC.Folder NAME 'Charge';
 
 								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ChargeInfo/Charge/Code
 								SET Charge_.Code = _charge.id;
@@ -1578,7 +1564,7 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 
 							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ChargeInfo/ChargeCategory
 							DECLARE ChargeCategory_ REFERENCE TO ChargeInfo_.Item[j];
-							CREATE LASTCHILD OF ChargeInfo_ AS ChargeCategory_ TYPE XMLNSC.Folder NAME 'ChargeCategory';
+							CREATE LASTCHILD OF ChargeInfo_.Item[j] AS ChargeCategory_ TYPE XMLNSC.Folder NAME 'ChargeCategory';
 
 								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ChargeInfo/ChargeCategory/Code
 								SET ChargeCategory_.Code = _charge.category;
@@ -1596,9 +1582,9 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 					-- LOOP FROM subOrders[*]/customerService/contact[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService:
 					CREATE FIELD GrocerySubOrder_.Item[i].CustomerService IDENTITY (JSON.Array)CustomerService;
 					DECLARE CustomerService_ REFERENCE TO GrocerySubOrder_.Item[i].CustomerService;
-					
+
 					DECLARE _service_contact REFERENCE TO _subOrder.customerService.contact.Item;
-					
+
 					SET j = 1;
 					service_contact : WHILE LASTMOVE(_service_contact) DO
 
@@ -1626,13 +1612,13 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 
 				-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ShoppingBagCnt
 				SET GrocerySubOrder_.Item[i].ShoppingBagCnt = _subOrder.tote.totalNumberOfBagsUsed;
-				
+
 				-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/InstructionTxt
 				CREATE FIELD GrocerySubOrder_.Item[i].InstructionTxt IDENTITY (JSON.Array)InstructionTxt;
 				DECLARE InstructionTxt_ REFERENCE TO GrocerySubOrder_.Item[i].InstructionTxt;
-				
+
 				DECLARE _orderLine2 REFERENCE TO _subOrder.orderLines.Item;
-				
+
 				SET j = 1;
 				orderLine2 : WHILE LASTMOVE(_orderLine2) DO
 
@@ -1640,12 +1626,12 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 					-- CREATE LASTCHILD OF GrocerySubOrder_ TYPE NameValue NAME 'InstructionTxt' VALUE _orderLine2.comments;
 					IF _orderLine2.comments IS NULL THEN
 						SET InstructionTxt_.Item[j] = '';
-					
+
 					ELSE
-						SET InstructionTxt_.Item[j] = _orderLine2.comments;	
-						
+						SET InstructionTxt_.Item[j] = _orderLine2.comments;
+
 					END IF;
-					
+
 				SET j = j + 1;
 				MOVE _orderLine2 NEXTSIBLING;
 				END WHILE orderLine2;
@@ -1654,9 +1640,9 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 				-- LOOP FROM subOrders[*]/exceptions[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GrocerySubOrderExceptionType:
 				CREATE FIELD GrocerySubOrder_.Item[i].GrocerySubOrderExceptionType IDENTITY (JSON.Array)GrocerySubOrderExceptionType;
 				DECLARE GrocerySubOrderExceptionType_ REFERENCE TO GrocerySubOrder_.Item[i].GrocerySubOrderExceptionType;
-				
+
 				DECLARE _subOrderException REFERENCE TO _subOrder.exceptions.Item;
-				
+
 				SET j = 1;
 				suborder_exception_loop : WHILE LASTMOVE(_subOrderException) DO
 
@@ -1683,7 +1669,7 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 			SET i = i + 1;
 			MOVE _subOrder NEXTSIBLING;
 			END WHILE subOrder;
-							
+
 		RETURN TRUE;
 	END;
 
@@ -1691,6 +1677,7 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 	CREATE PROCEDURE ConstructFulfillingFacility(IN _inputRootNode REFERENCE, IN FulfillingFacility_ REFERENCE, IN GroceryOrderHeader_ REFERENCE)
 		BEGIN
 
+					DECLARE x INTEGER;
 					DECLARE WYSIWYG_VALUE CHAR 'N';
 
 					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility/RetailStoreId
@@ -1756,46 +1743,64 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 					END WHILE store_info;
 
 					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType
-					DECLARE GroceryOrderProfileType_ REFERENCE TO GroceryOrderHeader_;
-					CREATE LASTCHILD OF GroceryOrderHeader_ AS GroceryOrderProfileType_ TYPE XMLNSC.Folder NAME 'GroceryOrderProfileType';
+					CREATE Field GroceryOrderHeader_.GroceryOrderProfileType IDENTITY (JSON.Array)GroceryOrderProfileType;
+					DECLARE GroceryOrderProfileType_ REFERENCE TO GroceryOrderHeader_.GroceryOrderProfileType;
+					SET x = 1;
 
 						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType/ProfileType
-						DECLARE ProfileType_WYSIWYG_ REFERENCE TO GroceryOrderProfileType_;
-						CREATE LASTCHILD OF GroceryOrderProfileType_ AS ProfileType_WYSIWYG_ TYPE XMLNSC.Folder NAME 'ProfileType';
+						DECLARE ProfileType_WYSIWYG_ REFERENCE TO GroceryOrderProfileType_.Item[x];
+						CREATE LASTCHILD OF GroceryOrderProfileType_.Item[x] AS ProfileType_WYSIWYG_ TYPE XMLNSC.Folder NAME 'ProfileType';
 
 							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType/ProfileType/Code
 							SET ProfileType_WYSIWYG_.Code = 'WYSIWYG';
 
 						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType/ProfileValueInd
-						SET GroceryOrderProfileType_.ProfileValueInd = WYSIWYG_VALUE;
+						SET GroceryOrderProfileType_.Item[x].ProfileValueInd = WYSIWYG_VALUE;
 
-					CREATE LASTCHILD OF GroceryOrderHeader_ AS GroceryOrderProfileType_ TYPE XMLNSC.Folder NAME 'GroceryOrderProfileType';
+					SET x = x + 1;
 
-						DECLARE ProfileType_TAXEXEMPT_ REFERENCE TO GroceryOrderProfileType_;
-						CREATE LASTCHILD OF GroceryOrderProfileType_ AS ProfileType_TAXEXEMPT_ TYPE XMLNSC.Folder NAME 'ProfileType';
+						DECLARE ProfileType_TAXEXEMPT_ REFERENCE TO GroceryOrderProfileType_.Item[x];
+						CREATE LASTCHILD OF GroceryOrderProfileType_.Item[x] AS ProfileType_TAXEXEMPT_ TYPE XMLNSC.Folder NAME 'ProfileType';
 
 							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType/ProfileType/Code
 							SET ProfileType_TAXEXEMPT_.Code = 'taxExempt';
 
 						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType/ProfileType/Description
-						SET GroceryOrderProfileType_.Description = _inputRootNode.customer.tax.taxExempt.type;
+						SET GroceryOrderProfileType_.Item[x].Description = _inputRootNode.customer.tax.taxExempt.type;
 
-					CREATE LASTCHILD OF GroceryOrderHeader_ AS GroceryOrderProfileType_ TYPE XMLNSC.Folder NAME 'GroceryOrderProfileType';
+					SET x = x + 1;
 
-						DECLARE ProfileType_AUTOREPLAN_ REFERENCE TO GroceryOrderProfileType_;
-						CREATE LASTCHILD OF GroceryOrderProfileType_ AS ProfileType_AUTOREPLAN_ TYPE XMLNSC.Folder NAME 'ProfileType';
+						DECLARE ProfileType_AUTOREPLAN_ REFERENCE TO GroceryOrderProfileType_.Item[x];
+						CREATE LASTCHILD OF GroceryOrderProfileType_.Item[x] AS ProfileType_AUTOREPLAN_ TYPE XMLNSC.Folder NAME 'ProfileType';
 
 							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType/ProfileType/Code
 							SET ProfileType_AUTOREPLAN_.Code = 'AutoReplenishment';
 
 						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType/ProfileType/ProfileValueInd
 						IF _inputRootNode.orderType.isAutoReplenishment = 'true' THEN
-							SET GroceryOrderProfileType_.ProfileValueInd = 'Y';
+							SET GroceryOrderProfileType_.Item[x].ProfileValueInd = 'Y';
 
 						ELSE
-							SET GroceryOrderProfileType_.ProfileValueInd = 'N';
+							SET GroceryOrderProfileType_.Item[x].ProfileValueInd = 'N';
 
 						END IF;
+
+
+				IF FIELDTYPE(_inputRootNode.customer.tax.taxExempt) IS NOT NULL THEN
+
+					SET x = x + 1;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType/ProfileType
+						DECLARE ProfileType_ REFERENCE TO GroceryOrderProfileType_.Item[x];
+						CREATE LASTCHILD OF GroceryOrderProfileType_.Item[x] AS ProfileType_ TYPE XMLNSC.Folder NAME 'ProfileType';
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType/ProfileType/Code
+							SET ProfileType_.Code = 'taxExempt';
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType/ProfileType/Description
+							SET ProfileType_.Description = _inputRootNode.customer.tax.taxExempt;
+
+				END IF;
 
 		END;
 
