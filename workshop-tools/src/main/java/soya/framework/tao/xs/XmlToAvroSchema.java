@@ -1,6 +1,7 @@
 package soya.framework.tao.xs;
 
 import org.apache.avro.Schema;
+import org.apache.avro.Schema.Type;
 import org.apache.avro.SchemaBuilder;
 import org.apache.xmlbeans.SchemaProperty;
 import org.apache.xmlbeans.SchemaType;
@@ -35,32 +36,57 @@ public class XmlToAvroSchema {
     }
 
     private static SchemaBuilder.FieldAssembler assemble(SchemaType schemaType, SchemaBuilder.FieldAssembler assembler) {
+        for (SchemaProperty ap : schemaType.getAttributeProperties()) {
+            assemble(ap, assembler);
+        }
+
+        for (SchemaProperty sp : schemaType.getElementProperties()) {
+            assemble(sp, assembler);
+        }
+
+        return assembler;
+    }
+
+
+    private static SchemaBuilder.FieldAssembler assemble(SchemaProperty schemaProperty, SchemaBuilder.FieldAssembler assembler) {
+
+        SchemaType schemaType = schemaProperty.getType();
+        for (SchemaProperty ap : schemaType.getAttributeProperties()) {
+            assembleSimpleProperty(ap, assembler);
+        }
+
         for (SchemaProperty sp : schemaType.getElementProperties()) {
             SchemaType st = sp.getType();
             if (st.isSimpleType()) {
-                Schema.Type pt = BuildInTypeMapping.fromXmlTypeCode(XmlBeansUtils.getXMLBuildInType(sp.getType()).getCode());
+                Type pt = BuildInTypeMapping.fromXmlTypeCode(XmlBeansUtils.getXMLBuildInType(sp.getType()).getCode());
                 if (sp.getMaxOccurs() == null || sp.getMaxOccurs().intValue() > 1) {
                     // Array of Simple Type:
-                    assembler.name(sp.getName().getLocalPart()).type(Schema.createArray(Schema.create(pt)));
+                    assembler.name(sp.getName().getLocalPart()).type(Schema.createArray(Schema.create(pt))).noDefault();
 
-                } else if (sp.getMinOccurs() == null || sp.getMinOccurs().intValue() == 0) {
-                    assembler.name(sp.getName().getLocalPart()).type(Schema.create(pt))
-                            .noDefault();
                 } else {
-                    assembler.name(sp.getName().getLocalPart()).type(Schema.create(pt))
-                            .noDefault();
+                    assembleSimpleProperty(sp, assembler);
                 }
             } else {
                 String name = st.isAnonymousType() ? sp.getName().getLocalPart() : sp.getType().getName().getLocalPart();
                 SchemaBuilder.FieldAssembler sub = SchemaBuilder.record(name).namespace(DEFAULT_NAMESPACE).fields();
-                if (sp.getMaxOccurs() == null || sp.getMaxOccurs().intValue() > 1) {
-                    // Array of Complex Type:
-                    assemble(sp.getType(), sub);
-                    assembler.name(sp.getName().getLocalPart()).type(Schema.createArray((Schema) sub.endRecord())).noDefault();
+                Schema subSchema = null;
+                try {
+                    subSchema = (Schema) assemble(sp.getType(), sub).endRecord();
 
-                } else {
-                    assemble(sp.getType(), sub);
-                    assembler.name(sp.getName().getLocalPart()).type((Schema) sub.endRecord()).noDefault();
+                } catch (Exception e) {
+
+                }
+                if(subSchema != null) {
+                    if (sp.getMaxOccurs() == null || sp.getMaxOccurs().intValue() > 1) {
+                        // Array of Complex Type:
+                        assemble(sp.getType(), sub);
+                        assembler.name(sp.getName().getLocalPart()).type(Schema.createArray(subSchema)).noDefault();
+
+                    } else {
+                        assemble(sp.getType(), sub);
+                        assembler.name(sp.getName().getLocalPart()).type(subSchema).noDefault();
+
+                    }
 
                 }
             }
@@ -69,61 +95,137 @@ public class XmlToAvroSchema {
         return assembler;
     }
 
+    private static SchemaBuilder.FieldAssembler assembleSimpleProperty(SchemaProperty sp, SchemaBuilder.FieldAssembler assembler) {
+        boolean nullable = sp.getMaxOccurs() == null || sp.getMinOccurs().intValue() == 0;
+        String defaultText = sp.getDefaultText();
+
+        SchemaType st = sp.getType();
+        Type pt = BuildInTypeMapping.fromXmlTypeCode(XmlBeansUtils.getXMLBuildInType(sp.getType()).getCode());
+
+        SchemaBuilder.FieldTypeBuilder builder = assembler.name(sp.getName().getLocalPart()).type();
+
+        if (sp.getMinOccurs() == null && sp.getMinOccurs().intValue() == 0) {
+            builder.nullable();
+        }
+
+        switch (pt) {
+            case BOOLEAN:
+                SchemaBuilder.BooleanDefault booleanDefault = builder.booleanType();
+                if (defaultText != null) {
+                    booleanDefault.booleanDefault(Boolean.parseBoolean(defaultText));
+
+                } else {
+                    booleanDefault.noDefault();
+                }
+                break;
+
+            case BYTES:
+                SchemaBuilder.BytesDefault bytesDefault = builder.bytesType();
+                if (defaultText != null) {
+                    bytesDefault.bytesDefault(defaultText);
+                } else {
+                    bytesDefault.noDefault();
+                }
+            case INT:
+                SchemaBuilder.IntDefault intDefault = builder.intType();
+                if (defaultText != null) {
+                    intDefault.intDefault(Integer.parseInt(defaultText));
+                } else {
+                    intDefault.noDefault();
+                }
+                break;
+            case LONG:
+                SchemaBuilder.LongDefault longDefault = builder.longType();
+                if (defaultText != null) {
+                    longDefault.longDefault(Long.parseLong(defaultText));
+                } else {
+                    longDefault.noDefault();
+                }
+                break;
+            case FLOAT:
+                SchemaBuilder.FloatDefault floatDefault = builder.floatType();
+                if (defaultText != null) {
+                    floatDefault.floatDefault(Float.parseFloat(defaultText));
+                } else {
+                    floatDefault.noDefault();
+                }
+                break;
+            case DOUBLE:
+                SchemaBuilder.DoubleDefault doubleDefault = builder.doubleType();
+                if (defaultText != null) {
+                    doubleDefault.doubleDefault(Double.parseDouble(defaultText));
+                } else {
+                    doubleDefault.noDefault();
+                }
+                break;
+            default:
+                SchemaBuilder.StringDefault stringDefault = builder.stringType();
+                if(defaultText != null) {
+                    stringDefault.stringDefault(defaultText);
+
+                } else {
+                    stringDefault.noDefault();
+                }
+        }
+
+        return assembler;
+    }
+
     public static enum BuildInTypeMapping {
-        BOOLEAN(XmlBeansUtils.XMLBuildInType.BOOLEAN, Schema.Type.BOOLEAN),
-        BASE_64_BINARY(XmlBeansUtils.XMLBuildInType.BASE_64_BINARY, Schema.Type.BYTES),
-        HEX_BINARY(XmlBeansUtils.XMLBuildInType.HEX_BINARY, Schema.Type.BYTES),
-        ANY_URI(XmlBeansUtils.XMLBuildInType.ANY_URI, Schema.Type.STRING),
-        QNAME(XmlBeansUtils.XMLBuildInType.QNAME, Schema.Type.STRING),
-        NOTATION(XmlBeansUtils.XMLBuildInType.NOTATION, Schema.Type.STRING),
-        FLOAT(XmlBeansUtils.XMLBuildInType.FLOAT, Schema.Type.FLOAT),
-        DOUBLE(XmlBeansUtils.XMLBuildInType.DOUBLE, Schema.Type.DOUBLE),
-        DECIMAL(XmlBeansUtils.XMLBuildInType.DECIMAL, Schema.Type.DOUBLE),
-        STRING(XmlBeansUtils.XMLBuildInType.STRING, Schema.Type.STRING),
-        DURATION(XmlBeansUtils.XMLBuildInType.DURATION, Schema.Type.LONG),
-        DATE_TIME(XmlBeansUtils.XMLBuildInType.DATE_TIME, Schema.Type.STRING),
-        TIME(XmlBeansUtils.XMLBuildInType.TIME, Schema.Type.STRING),
-        DATE(XmlBeansUtils.XMLBuildInType.DATE, Schema.Type.STRING),
-        G_YEAR_MONTH(XmlBeansUtils.XMLBuildInType.G_YEAR_MONTH, Schema.Type.STRING),
-        G_YEAR(XmlBeansUtils.XMLBuildInType.G_YEAR, Schema.Type.STRING),
-        G_MONTH_DAY(XmlBeansUtils.XMLBuildInType.G_MONTH_DAY, Schema.Type.STRING),
-        G_DAY(XmlBeansUtils.XMLBuildInType.G_DAY, Schema.Type.STRING),
-        G_MONTH(XmlBeansUtils.XMLBuildInType.G_MONTH, Schema.Type.STRING),
-        INTEGER(XmlBeansUtils.XMLBuildInType.INTEGER, Schema.Type.LONG),
-        LONG(XmlBeansUtils.XMLBuildInType.LONG, Schema.Type.LONG),
-        INT(XmlBeansUtils.XMLBuildInType.INT, Schema.Type.INT),
-        SHORT(XmlBeansUtils.XMLBuildInType.SHORT, Schema.Type.INT),
-        BYTE(XmlBeansUtils.XMLBuildInType.HEX_BINARY, Schema.Type.STRING),
-        NON_POSITIVE_INTEGER(XmlBeansUtils.XMLBuildInType.NON_POSITIVE_INTEGER, Schema.Type.LONG),
-        NEGATIVE_INTEGER(XmlBeansUtils.XMLBuildInType.NEGATIVE_INTEGER, Schema.Type.LONG),
-        NON_NEGATIVE_INTEGER(XmlBeansUtils.XMLBuildInType.NON_NEGATIVE_INTEGER, Schema.Type.LONG),
-        POSITIVE_INTEGER(XmlBeansUtils.XMLBuildInType.POSITIVE_INTEGER, Schema.Type.LONG),
-        UNSIGNED_LONG(XmlBeansUtils.XMLBuildInType.UNSIGNED_LONG, Schema.Type.LONG),
-        UNSIGNED_INT(XmlBeansUtils.XMLBuildInType.UNSIGNED_INT, Schema.Type.LONG),
-        UNSIGNED_SHORT(XmlBeansUtils.XMLBuildInType.UNSIGNED_SHORT, Schema.Type.INT),
-        UNSIGNED_BYTE(XmlBeansUtils.XMLBuildInType.UNSIGNED_BYTE, Schema.Type.INT),
-        NORMALIZED_STRING(XmlBeansUtils.XMLBuildInType.STRING, Schema.Type.STRING),
-        TOKEN(XmlBeansUtils.XMLBuildInType.TOKEN, Schema.Type.STRING),
-        NAME(XmlBeansUtils.XMLBuildInType.NAME, Schema.Type.STRING),
-        NCNAME(XmlBeansUtils.XMLBuildInType.NCNAME, Schema.Type.STRING),
-        LANGUAGE(XmlBeansUtils.XMLBuildInType.LANGUAGE, Schema.Type.STRING),
-        ID(XmlBeansUtils.XMLBuildInType.ID, Schema.Type.STRING),
-        IDREF(XmlBeansUtils.XMLBuildInType.IDREF, Schema.Type.STRING),
-        IDREFS(XmlBeansUtils.XMLBuildInType.IDREFS, Schema.Type.STRING),
-        ENTITY(XmlBeansUtils.XMLBuildInType.ENTITY, Schema.Type.STRING),
-        ENTITIES(XmlBeansUtils.XMLBuildInType.ENTITIES, Schema.Type.STRING),
-        NMTOKEN(XmlBeansUtils.XMLBuildInType.NMTOKEN, Schema.Type.STRING),
-        NMTOKENS(XmlBeansUtils.XMLBuildInType.NMTOKENS, Schema.Type.STRING);
+        BOOLEAN(XmlBeansUtils.XMLBuildInType.BOOLEAN, Type.BOOLEAN),
+        BASE_64_BINARY(XmlBeansUtils.XMLBuildInType.BASE_64_BINARY, Type.BYTES),
+        HEX_BINARY(XmlBeansUtils.XMLBuildInType.HEX_BINARY, Type.BYTES),
+        ANY_URI(XmlBeansUtils.XMLBuildInType.ANY_URI, Type.STRING),
+        QNAME(XmlBeansUtils.XMLBuildInType.QNAME, Type.STRING),
+        NOTATION(XmlBeansUtils.XMLBuildInType.NOTATION, Type.STRING),
+        FLOAT(XmlBeansUtils.XMLBuildInType.FLOAT, Type.FLOAT),
+        DOUBLE(XmlBeansUtils.XMLBuildInType.DOUBLE, Type.DOUBLE),
+        DECIMAL(XmlBeansUtils.XMLBuildInType.DECIMAL, Type.DOUBLE),
+        STRING(XmlBeansUtils.XMLBuildInType.STRING, Type.STRING),
+        DURATION(XmlBeansUtils.XMLBuildInType.DURATION, Type.LONG),
+        DATE_TIME(XmlBeansUtils.XMLBuildInType.DATE_TIME, Type.STRING),
+        TIME(XmlBeansUtils.XMLBuildInType.TIME, Type.STRING),
+        DATE(XmlBeansUtils.XMLBuildInType.DATE, Type.STRING),
+        G_YEAR_MONTH(XmlBeansUtils.XMLBuildInType.G_YEAR_MONTH, Type.STRING),
+        G_YEAR(XmlBeansUtils.XMLBuildInType.G_YEAR, Type.STRING),
+        G_MONTH_DAY(XmlBeansUtils.XMLBuildInType.G_MONTH_DAY, Type.STRING),
+        G_DAY(XmlBeansUtils.XMLBuildInType.G_DAY, Type.STRING),
+        G_MONTH(XmlBeansUtils.XMLBuildInType.G_MONTH, Type.STRING),
+        INTEGER(XmlBeansUtils.XMLBuildInType.INTEGER, Type.LONG),
+        LONG(XmlBeansUtils.XMLBuildInType.LONG, Type.LONG),
+        INT(XmlBeansUtils.XMLBuildInType.INT, Type.INT),
+        SHORT(XmlBeansUtils.XMLBuildInType.SHORT, Type.INT),
+        BYTE(XmlBeansUtils.XMLBuildInType.HEX_BINARY, Type.STRING),
+        NON_POSITIVE_INTEGER(XmlBeansUtils.XMLBuildInType.NON_POSITIVE_INTEGER, Type.LONG),
+        NEGATIVE_INTEGER(XmlBeansUtils.XMLBuildInType.NEGATIVE_INTEGER, Type.LONG),
+        NON_NEGATIVE_INTEGER(XmlBeansUtils.XMLBuildInType.NON_NEGATIVE_INTEGER, Type.LONG),
+        POSITIVE_INTEGER(XmlBeansUtils.XMLBuildInType.POSITIVE_INTEGER, Type.LONG),
+        UNSIGNED_LONG(XmlBeansUtils.XMLBuildInType.UNSIGNED_LONG, Type.LONG),
+        UNSIGNED_INT(XmlBeansUtils.XMLBuildInType.UNSIGNED_INT, Type.LONG),
+        UNSIGNED_SHORT(XmlBeansUtils.XMLBuildInType.UNSIGNED_SHORT, Type.INT),
+        UNSIGNED_BYTE(XmlBeansUtils.XMLBuildInType.UNSIGNED_BYTE, Type.INT),
+        NORMALIZED_STRING(XmlBeansUtils.XMLBuildInType.STRING, Type.STRING),
+        TOKEN(XmlBeansUtils.XMLBuildInType.TOKEN, Type.STRING),
+        NAME(XmlBeansUtils.XMLBuildInType.NAME, Type.STRING),
+        NCNAME(XmlBeansUtils.XMLBuildInType.NCNAME, Type.STRING),
+        LANGUAGE(XmlBeansUtils.XMLBuildInType.LANGUAGE, Type.STRING),
+        ID(XmlBeansUtils.XMLBuildInType.ID, Type.STRING),
+        IDREF(XmlBeansUtils.XMLBuildInType.IDREF, Type.STRING),
+        IDREFS(XmlBeansUtils.XMLBuildInType.IDREFS, Type.STRING),
+        ENTITY(XmlBeansUtils.XMLBuildInType.ENTITY, Type.STRING),
+        ENTITIES(XmlBeansUtils.XMLBuildInType.ENTITIES, Type.STRING),
+        NMTOKEN(XmlBeansUtils.XMLBuildInType.NMTOKEN, Type.STRING),
+        NMTOKENS(XmlBeansUtils.XMLBuildInType.NMTOKENS, Type.STRING);
 
         private final XmlBeansUtils.XMLBuildInType xmlBuildInType;
-        private final Schema.Type avroType;
+        private final Type avroType;
 
-        private BuildInTypeMapping(XmlBeansUtils.XMLBuildInType xmlBuildInType, Schema.Type avroType) {
+        private BuildInTypeMapping(XmlBeansUtils.XMLBuildInType xmlBuildInType, Type avroType) {
             this.xmlBuildInType = xmlBuildInType;
             this.avroType = avroType;
         }
 
-        public static Schema.Type fromXmlTypeCode(int code) {
+        public static Type fromXmlTypeCode(int code) {
             switch (code) {
                 case SchemaType.BTC_BOOLEAN:
                     return BOOLEAN.avroType;

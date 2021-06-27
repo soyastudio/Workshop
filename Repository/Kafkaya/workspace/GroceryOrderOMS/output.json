@@ -5,7 +5,7 @@
       "SystemEnvironmentCd": "PROD",
       "DocumentID": "GROCERY_ORDER",
       "DocumentNm": "GroceryOrder",
-      "CreationDt": "2021-06-19 09:58:02.791010",
+      "CreationDt": "2021-06-21 13:26:05.346261",
       "Description": "GroceryOrderDetail",
       "SourceApplicationCd": "OMS",
       "TargetApplicationCd": "EDIS",
@@ -82,28 +82,37 @@
         },
         "Contact": [
           {
-            "TypeCode": "MOBILE",
-            "PhoneNbrTxt": "5109962550"
-          },
-          {
-            "EmailStatuses": {
-              "typeCode": "PERSONAL"
+            "PhoneFaxContact": {
+              "TypeCode": "MOBILE",
+              "PhoneNbrTxt": "5109962550"
             }
           },
           {
-            "AddressUsageTypeCd": "SHIPTO",
-            "AddressLine1txt": "664 W Evergreen Ave",
-            "CityNm": "Palmer",
-            "StateCd": "AK",
-            "CountryCd": "USA"
+            "DigitalContact": {
+              "EmailStatuses": {
+                "typeCode": "PERSONAL"
+              }
+            }
+          },
+          {
+            "Address": {
+              "AddressUsageTypeCd": "SHIPTO",
+              "AddressLine1txt": "664 W Evergreen Ave",
+              "CityNm": "Palmer",
+              "PostalZoneCd": "99645",
+              "StateCd": "AK",
+              "CountryCd": "USA"
+            }
           }
         ],
         "ClubCardNbr": "49372835334",
         "CustomerPreference": [
           {
-            "Code": "TEXT"
-          },
-          true
+            "PreferenceType": {
+              "Code": "TEXT"
+            },
+            "OptInInd": true
+          }
         ],
         "CustomerSubscription": {
           "SubscriptionTypeCd": "Subscription",
@@ -245,36 +254,38 @@
                 "PricePerAmt": 5.6600,
                 "RegulatedItemInd": false,
                 "CouponPLUNbr": "0",
-                "CustomerOffers_1": [],
-                "OfferId": "string",
-                "ReferenceOfferId": "string",
-                "OfferSourceType": {
-                  "Code": "string"
-                },
-                "CustomerRewards_1": [],
+                "CustomerOffers": [
+                  {
+                    "OfferId": "string",
+                    "ReferenceOfferId": "string",
+                    "OfferSourceType": {
+                      "Code": "string"
+                    },
+                    "CustomerRewards": []
+                  }
+                ],
                 "RewardAllowedInd": true,
                 "DiscountAllowedInd": true,
                 "WICItemInd": false,
                 "CustomerSavings": {
-                  "SavingsCategoryType": [],
-                  "SavingsCategoryType": {
-                    "Item": {
+                  "SavingsCategoryType": [
+                    {
                       "OfferId": "string",
                       "SavingsCategoryId": 0,
                       "SavingsCategoryNm": "String",
                       "SavingsAmt": 0.00
                     }
-                  }
+                  ]
                 },
                 "DeliveredItemExceptionType": [
                   {
                     "ExceptionType": {
                       "Code": "EPE"
-                    }
-                  },
-                  "EPE_PROMOTIONS_ERROR",
-                  "EPE system error.",
-                  "2020-12-25T20:57:37.610-08:00"
+                    },
+                    "ExceptionCd": "EPE_PROMOTIONS_ERROR",
+                    "ExceptionDsc": "EPE system error.",
+                    "ExceptionCreateTs": "2020-12-25T20:57:37.610-08:00"
+                  }
                 ],
                 "AutoReplenishmentOrderType": {
                   "AROItemInd": true,
@@ -323,12 +334,12 @@
         },
         "ChargeInfo": [
           {
-            "Description": "BagFee"
-          },
-          {
-            "Code": "ServiceFee"
-          },
-          {
+            "Charge": {
+              "Description": "BagFee"
+            },
+            "ChargeCategory": {
+              "Code": "ServiceFee"
+            },
             "ChargeAmt": 0.10,
             "CurrencyCd": "USD"
           }

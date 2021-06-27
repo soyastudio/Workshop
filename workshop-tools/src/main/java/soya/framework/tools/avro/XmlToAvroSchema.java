@@ -26,7 +26,7 @@ public class XmlToAvroSchema {
     }
 
     public static Schema fromXmlSchema(SchemaType schemaType) {
-        SchemaBuilder.FieldAssembler assembler = SchemaBuilder
+        SchemaBuilder.FieldAssembler assembler = SchemaBuilder.nullable()
                 .record(schemaType.getName().getLocalPart()).namespace(DEFAULT_NAMESPACE)
                 .fields();
 
@@ -36,34 +36,44 @@ public class XmlToAvroSchema {
     }
 
     private static SchemaBuilder.FieldAssembler assemble(SchemaType schemaType, SchemaBuilder.FieldAssembler assembler) {
+
         for (SchemaProperty sp : schemaType.getElementProperties()) {
-            SchemaType st = sp.getType();
-            if (st.isSimpleType()) {
-                Schema.Type pt = XmlToAvroSchema.BuildInTypeMapping.fromXmlTypeCode(XmlBeansUtils.getXMLBuildInType(sp.getType()).getCode());
-                if (sp.getMaxOccurs() == null || sp.getMaxOccurs().intValue() > 1) {
-                    // Array of Simple Type:
-                    assembler.name(sp.getName().getLocalPart()).type(Schema.createArray(Schema.create(pt)));
+            assemble(sp, assembler);
+        }
 
-                } else if (sp.getMinOccurs() == null || sp.getMinOccurs().intValue() == 0) {
-                    assembler.name(sp.getName().getLocalPart()).type(Schema.create(pt))
-                            .noDefault();
-                } else {
-                    assembler.name(sp.getName().getLocalPart()).type(Schema.create(pt))
-                            .noDefault();
-                }
+        return  assembler;
+    }
+
+    private static SchemaBuilder.FieldAssembler assemble(SchemaProperty sp, SchemaBuilder.FieldAssembler assembler) {
+
+        SchemaType st = sp.getType();
+        if (st.isSimpleType()) {
+            System.out.println("=============== " + sp.getName() + ": " + BuildInTypeMapping.fromXmlTypeCode(st.getBuiltinTypeCode()));
+
+            Schema.Type pt = XmlToAvroSchema.BuildInTypeMapping.fromXmlTypeCode(XmlBeansUtils.getXMLBuildInType(sp.getType()).getCode());
+            if (sp.getMaxOccurs() == null || sp.getMaxOccurs().intValue() > 1) {
+                // Array of Simple Type:
+                assembler.name(sp.getName().getLocalPart()).type(Schema.createArray(Schema.create(pt)));
+
+            } else if (sp.getMinOccurs() == null || sp.getMinOccurs().intValue() == 0) {
+                assembler.name(sp.getName().getLocalPart()).type(Schema.create(pt))
+                        .noDefault();
             } else {
-                String name = st.isAnonymousType() ? sp.getName().getLocalPart() : sp.getType().getName().getLocalPart();
-                SchemaBuilder.FieldAssembler sub = SchemaBuilder.record(name).namespace(DEFAULT_NAMESPACE).fields();
-                if (sp.getMaxOccurs() == null || sp.getMaxOccurs().intValue() > 1) {
-                    // Array of Complex Type:
-                    assemble(sp.getType(), sub);
-                    assembler.name(sp.getName().getLocalPart()).type(Schema.createArray((Schema) sub.endRecord())).noDefault();
+                assembler.name(sp.getName().getLocalPart()).type(Schema.create(pt))
+                        .noDefault();
+            }
+        } else {
+            String name = st.isAnonymousType() ? sp.getName().getLocalPart() : sp.getType().getName().getLocalPart();
+            SchemaBuilder.FieldAssembler sub = SchemaBuilder.record(name).namespace(DEFAULT_NAMESPACE).fields();
+            if (sp.getMaxOccurs() == null || sp.getMaxOccurs().intValue() > 1) {
+                // Array of Complex Type:
+                assemble(sp.getType(), sub);
+                assembler.name(sp.getName().getLocalPart()).type(Schema.createArray((Schema) sub.endRecord())).noDefault();
 
-                } else {
-                    assemble(sp.getType(), sub);
-                    assembler.name(sp.getName().getLocalPart()).type((Schema) sub.endRecord()).noDefault();
+            } else {
+                assemble(sp.getType(), sub);
+                assembler.name(sp.getName().getLocalPart()).type((Schema) sub.endRecord()).noDefault();
 
-                }
             }
         }
 

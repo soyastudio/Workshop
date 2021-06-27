@@ -912,10 +912,8 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerPreferredSubstituteItem/WICItemInd
 									SET CustomerPreferredSubstituteItem_.(XMLNSC.Field)Abs:WICItemInd = _substitute_item.itemPrice.wic;
 
-
 							MOVE _substitute_item NEXTSIBLING;
 							END WHILE substitute_item_loop;
-
 
 							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CurrencyCd
 							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:CurrencyCd = _orderLine.unitPrice.currency;
@@ -1006,7 +1004,6 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 
 								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/AutoReplenishmentOrderType/ArSavingsAmt
 								SET AutoReplenishmentOrderType_.(XMLNSC.Field)Abs:ArSavingsAmt = CAST(_orderLine.itemPrice.arSavings AS DECIMAL(14, 4));
-
 
 							-- LOOP FROM subOrders[*]/orderLines[*]/fulfilledUpc[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem:
 							DECLARE _fulfilled_upc REFERENCE TO _orderLine.fulfilledUpc.Item;
@@ -1335,7 +1332,6 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 
 						MOVE _orderlineException NEXTSIBLING;
 						END WHILE orderline_exception_loop;
-
 
 					MOVE _orderLine NEXTSIBLING;
 					END WHILE orderLine;

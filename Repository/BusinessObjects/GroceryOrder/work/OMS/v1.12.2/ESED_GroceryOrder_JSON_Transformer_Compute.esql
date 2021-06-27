@@ -295,16 +295,16 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 
 								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerPreference/PreferenceType
 								DECLARE PreferenceType_ REFERENCE TO CustomerPreference_.Item[i];
-								CREATE LASTCHILD OF CustomerPreference_ AS PreferenceType_ TYPE XMLNSC.Folder NAME 'PreferenceType';
+								CREATE LASTCHILD OF CustomerPreference_.Item[i] AS PreferenceType_ TYPE XMLNSC.Folder NAME 'PreferenceType';
 
 									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerPreference/PreferenceType/Code
 									SET PreferenceType_.Code = _optIn.type;
 
 								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerPreference/OptInContactNbr
-								SET CustomerPreference_.OptInContactNbr = _optIn.id;
+								SET CustomerPreference_.Item[i].OptInContactNbr = _optIn.id;
 
 								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerPreference/OptInInd
-								SET CustomerPreference_.OptInInd = _optIn.isOptin;
+								SET CustomerPreference_.Item[i].OptInInd = _optIn.isOptin;
 
 						END IF;
 
@@ -1096,10 +1096,6 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 									-- Since v1.12.1
 									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/PricePerAmt
 									SET DeliveredItem_.Item[k].PricePerAmt = CAST(_fulfilled_upc.itemPrice.pricePer AS DECIMAL(14, 4));
-
-									-- Since v1.12.2
-									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/BasePricePerAmt
-									SET DeliveredItem_.Item[k].BasePricePerAmt = CAST(_fulfilled_upc.itemPrice.basePricePer AS DECIMAL(14, 4));
 
 									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/PriceEffectiveStartDtTm
 									SET DeliveredItem_.Item[k].PriceEffectiveStartDtTm = _fulfilled_upc.itemPrice.startDate;

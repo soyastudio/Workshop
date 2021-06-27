@@ -1,0 +1,51 @@
+{
+  "home": "C:/github/Workshop/Repository",
+  "name": "CustomerPreferences",
+  "application": "ESED_CustomerPreferences_UCA_IH_Publisher",
+  "source": "UCA",
+  "consumer": "EDM",
+  "version": "v4.1.1",
+  "mappings": {
+    "schema": "CMM/BOD/GetCustomerPreferences.xsd",
+    "mappingFile": "/requirement/CustomerPreference_UCA_to_EDIS_V4.1.1.xlsx",
+    "mappingSheet": "Mapping_UCA to Canonical",
+    "constructFile": "xpath-mapping.properties"
+  },
+  "xpathMappingFile": "xpath-mapping.properties",
+  "messageFlow": {
+    "name": "ESED_CustomerPreferences_UCA_IH_Publisher",
+    "brokerSchema": "com.abs.uca.cfms",
+    "input": {
+      "name": "KafkaConsumer",
+      "properties": {
+        "topicName": "IAUC_C02_PROD_CFMS_AGGREGATE"
+      }
+    },
+    "output": {
+      "name": "KafkaProducer",
+      "properties": {
+        "topicName": "ESED_C01_CustomerPreferences"
+      }
+    },
+    "transformer": {
+      "name": "ESED_CFMS_CMM_Transformer",
+      "properties": {
+
+      }
+    },
+    "inputAuditor": {
+      "name": "Audit_Validate_Input"
+    },
+    "outputAuditor": {
+      "name": "Audit_Validate_Output"
+    },
+    "exceptionHandler": {
+      "name": "ExceptionSubFlow",
+      "properties": {
+
+      }
+    }
+  },
+  "deployEgNumber": "10",
+  "createTestWorkspace": false
+}

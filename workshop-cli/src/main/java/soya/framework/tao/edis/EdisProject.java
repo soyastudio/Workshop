@@ -11,7 +11,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.SchemaTypeSystem;
 import soya.framework.tao.KnowledgeTree;
 import soya.framework.tao.util.JsonUtils;
-import soya.framework.tao.xs.XmlToAvroSchema;
 import soya.framework.tao.xs.XsKnowledgeBase;
 import soya.framework.tao.xs.XsNode;
 
@@ -275,7 +274,7 @@ public class EdisProject {
         }
     }
 
-    public static void avro(String bod, CommandLine cmd) throws Exception {
+    public static void avsc(String bod, CommandLine cmd) throws Exception {
         System.out.println("Generate mappings for business object: " + bod + "...");
 
         File workspace = new File(boDir, bod);
@@ -302,7 +301,7 @@ public class EdisProject {
 
         avsc.createNewFile();
         FileUtils.writeByteArrayToFile(avsc,
-                GSON.toJson(JsonParser.parseString(XmlToAvroSchema.fromXmlSchema(knowledgeTree.origin()).toString())).getBytes());
+                GSON.toJson(JsonParser.parseString(XmlToAvroSchema1.fromXmlSchema(knowledgeTree.origin()).toString())).getBytes());
 
     }
 
