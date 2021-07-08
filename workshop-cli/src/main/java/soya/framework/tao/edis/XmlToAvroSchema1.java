@@ -1,5 +1,6 @@
 package soya.framework.tao.edis;
 
+import org.apache.avro.JsonProperties;
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaBuilder;
 import org.apache.xmlbeans.SchemaProperty;
@@ -64,8 +65,11 @@ public class XmlToAvroSchema1 {
 
                 } else {
                     if(BigInteger.ZERO.equals(sp.getMinOccurs())) {
-                        assembler.name(sp.getName().getLocalPart()).type((Schema) sub.endRecord()).noDefault();
+                        //assembler.name(sp.getName().getLocalPart()).type((Schema) sub.endRecord()).noDefault();
+                        Schema nested = (Schema) sub.endRecord();
+                        Schema union = SchemaBuilder.unionOf().nullType().and().type(nested).endUnion();
 
+                        assembler.name(sp.getName().getLocalPart()).type((Schema) sub.endRecord()).withDefault(null);
                     } else {
                         assembler.name(sp.getName().getLocalPart()).type((Schema) sub.endRecord()).noDefault();
                     }

@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<project name="ESED_DigitalBanner_UCA_IH_Publisher" default="iib-init" basedir=".">
+
+    <property file="build.properties"/>
+
+    <property name="IIBT.WORKSPACE" location="${user.home}/IBM/IIBT10/workspace"/>
+    <property name="IIBT.SRC.DIR" location="${IIBT.WORKSPACE}/APPDEV_ESED_SRC_TRUNK/esed_src/IIB_SRC"/>
+    <property name="IIBT.SRC.PROJECT.DIR" location="${IIBT.SRC.DIR}/${ant.project.name}"/>
+    <property name="IIBT.PROJECT.DIR" location="${IIBT.SRC.PROJECT.DIR}/src/${ant.project.name}"/>
+
+
+    <property name="IIBT.DEPLOY.DIR" location="${IIBT.WORKSPACE}/APPDEV_ESED_STD/esed_std/IIB"/>
+
+
+    <property name="template.dir" location="../../../Templates"/>
+
+    <property name="iib.dir" location="."/>
+    <property name="iib.src.dir" location="${iib.dir}/src/${application.name}"/>
+
+    <property name="src.dir" location="${iib.src.dir}/src/${application.name}"/>
+    <property name="bin.dir" location="${iib.src.dir}/bin"/>
+
+    <property name="iib.deploy.dir" location="${iib.dir}/deploy"/>
+
+    <target name="iib-init">
+        <echo message="${IIBT.DEPLOY.DIR}"/>
+
+        <mkdir dir="${iib.dir}"/>
+        <mkdir dir="${iib.src.dir}"/>
+        <mkdir dir="${src.dir}"/>
+        <mkdir dir="${bin.dir}"/>
+
+        <mkdir dir="${iib.deploy.dir}"/>
+        <mkdir dir="${iib.deploy.dir}/ESEDA"/>
+
+        <mkdir dir="${iib.deploy.dir}/ESEDB"/>
+
+        <mkdir dir="${iib.dir}/CUTOFF"/>
+
+        <copy todir="${src.dir}" file="${template.dir}/application.descriptor"/>
+
+    </target>
+
+    <target name="iib-export">
+        <echo message="Export to IIB Integration Toolkit"/>
+
+        <mkdir dir="${IIBT.SRC.PROJECT.DIR}/bin"/>
+
+        <mkdir dir="${IIBT.PROJECT.DIR}"/>
+        <copy todir="${IIBT.PROJECT.DIR}" overwrite="false">
+            <fileset dir="${iib.src.dir}" includes="*.*"/>
+        </copy>
+
+    </target>
+
+    <target name="iib-import">
+        <echo message="Import from IIB Integration Toolkit"/>
+
+        <copy todir="${iib.src.dir}" overwrite="true" includeemptydirs="true">
+            <fileset dir="${IIBT.PROJECT.DIR}" includes="**/*.*"/>
+        </copy>
+    </target>
+
+    <target name="bar">
+        
+    </target>
+
+
+
+</project>

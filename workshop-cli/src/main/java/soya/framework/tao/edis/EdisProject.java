@@ -74,8 +74,10 @@ public class EdisProject {
     }
 
     public static void main(String[] args) throws Exception {
+
         File cd = new File(Paths.get("").toAbsolutePath().toString());
         homeDir = cd.getParentFile();
+
         cmmDir = new File(homeDir, "CMM");
         boDir = new File(homeDir, "BusinessObjects");
 
@@ -102,6 +104,13 @@ public class EdisProject {
                 .required(false)
                 .build());
 
+        options.addOption(Option.builder("c")
+                .longOpt("consumerTopic")
+                .hasArg(true)
+                .desc("Consumer Topic ([OPTIONAL])")
+                .required(false)
+                .build());
+
         options.addOption(Option.builder("e")
                 .longOpt("env")
                 .hasArg(true)
@@ -116,10 +125,31 @@ public class EdisProject {
                 .required(false)
                 .build());
 
-        options.addOption(Option.builder("s")
-                .longOpt("src")
+        options.addOption(Option.builder("p")
+                .longOpt("producerTopic")
                 .hasArg(true)
-                .desc("Source. ([OPTIONAL])")
+                .desc("Producer Topic ([OPTIONAL])")
+                .required(false)
+                .build());
+
+        options.addOption(Option.builder("s")
+                .longOpt("source")
+                .hasArg(true)
+                .desc("Source organization. ([OPTIONAL])")
+                .required(false)
+                .build());
+
+        options.addOption(Option.builder("t")
+                .longOpt("target")
+                .hasArg(true)
+                .desc("Target organization. ([OPTIONAL])")
+                .required(false)
+                .build());
+
+        options.addOption(Option.builder("v")
+                .longOpt("version")
+                .hasArg(true)
+                .desc("Version. ([OPTIONAL])")
                 .required(false)
                 .build());
 
@@ -154,7 +184,17 @@ public class EdisProject {
         System.out.println("Creating workspace for business object: " + bod + "...");
 
         if (!cmd.hasOption("s")) {
-            System.out.println("Source Name is required to assign to argument '-s'");
+            System.out.println("Source organization is required to assign to argument '-s'");
+            System.exit(1);
+        }
+
+        if (!cmd.hasOption("t")) {
+            System.out.println("Target organization is required to assign to argument '-t'");
+            System.exit(1);
+        }
+
+        if (!cmd.hasOption("v")) {
+            System.out.println("Version is required to assign to argument '-v'");
             System.exit(1);
         }
 
@@ -165,6 +205,10 @@ public class EdisProject {
 
         } else {
             String src = cmd.getOptionValue("s");
+            String target = cmd.getOptionValue("t");
+            String consumerTopic = cmd.getOptionValue("c");
+            String producerTopic = cmd.getOptionValue("p");
+            String version = cmd.getOptionValue("v");
 
             dir.mkdirs();
             File projectFile = new File(dir, "project.json");
@@ -180,13 +224,13 @@ public class EdisProject {
             project.name = bod;
             project.application = "ESED_" + bod + "_" + src + "_IH_Publisher";
             project.source = src;
-            project.consumer = "???";
-            project.version = "???";
+            project.consumer = target;
+            project.version = version;
 
             project.mappings = new Mappings();
             project.mappings.schema = "CMM/BOD/get" + bod + ".xsd";
 
-            project.messageFlow = new MessageFlow(bod, src, "com.abs." + project.source.toLowerCase());
+            project.messageFlow = new MessageFlow(bod, src, "com.abs." + project.source.toLowerCase() + "." + bod);
 
             project.deployEgNumber = "???";
 
@@ -200,6 +244,7 @@ public class EdisProject {
     public static void init(String bod, CommandLine cmd) throws Exception {
         System.out.println("Initializing project for business object: " + bod + "...");
 
+        // Basic
         File workspace = new File(boDir, bod);
         String buildFile = cmd.hasOption("f") ? cmd.getOptionValue("f") : "project.json";
 
@@ -215,62 +260,138 @@ public class EdisProject {
 
         }
 
-        // Build
+        // IIB build
+        File iib = new File(workspace, "IIB");
+        if(!iib.exists()) {
+            System.out.println("Initializing IIB project");
+            iib.mkdirs();
+
+            File antXmlFile = new File(iib, "build.xml");
+            if (!antXmlFile.exists()) {
+                antXmlFile.createNewFile();
+                mustache(antXmlFile, new File(homeDir, "Templates/build.xml.mustache"), project);
+            }
+
+            File antPropFile = new File(iib, "build.properties");
+            if (!antPropFile.exists()) {
+                antPropFile.createNewFile();
+                mustache(antPropFile, new File(homeDir, "Templates/build.properties.mustache"), project);
+            }
+
+            File iibSrc = new File(iib, "src");
+            iibSrc.mkdirs();
+
+            File iibApp = new File(iibSrc, project.application);
+            if (!iibApp.exists()) {
+                iibApp.mkdirs();
+
+                File appProjectFile = new File(iibApp, ".project");
+                appProjectFile.createNewFile();
+                mustache(appProjectFile, new File(homeDir, "Templates/application.project.mustache"), project);
+
+                File appDescFile = new File(iibApp, "application.descriptor");
+                appDescFile.createNewFile();
+                mustache(appDescFile, new File(homeDir, "Templates/application.descriptor.mustache"), project);
+            }
+
+            File pkg = new File(iibApp, project.messageFlow.packageURI);
+            pkg.mkdirs();
+            File subFlow = new File(pkg, project.messageFlow.transformer.name + ".subflow");
+            subFlow.createNewFile();
+            mustache(subFlow, new File(homeDir, "Templates/CMM_Transformer.subflow.mustache"), project);
+
+            File esql = new File(pkg, project.messageFlow.transformer.name + "_Compute.esql");
+            esql.createNewFile();
+            mustache(esql, new File(homeDir, "Templates/CMM_Transformer_Compute.esql.mustache"), project);
+
+            File mainFlow = new File(pkg, project.messageFlow.name + ".msgflow.mustache");
+            mainFlow.createNewFile();
+            mustache(mainFlow, new File(homeDir, "Templates/IH_Publisher.msgflow.mustache"), project);
+
+            File iibDeploy = new File(iib, "deploy");
+            iibDeploy.mkdirs();
+            File iibDeployA = new File(iibDeploy, "ESEDA");
+            if (!iibDeployA.exists()) {
+
+                iibDeployA.mkdirs();
+
+                File overrideBase = new File(iibDeployA, project.application + ".BASE.override.properties");
+                overrideBase.createNewFile();
+                mustache(overrideBase, new File(homeDir, "Templates/override.base.mustache"), project);
+
+                File overrideDev = new File(iibDeployA, project.application + ".DV.override.properties");
+                overrideDev.createNewFile();
+                mustache(overrideDev, new File(homeDir, "Templates/override.dv.mustache"), project);
+
+                File overrideQa = new File(iibDeployA, project.application + ".QA.override.properties");
+                overrideQa.createNewFile();
+                mustache(overrideQa, new File(homeDir, "Templates/override.qa.mustache"), project);
+
+                File overrideProd = new File(iibDeployA, project.application + ".PR.override.properties");
+                overrideProd.createNewFile();
+            }
+
+            File iibDeployB = new File(iibDeploy, "ESEDB");
+            if (!iibDeployB.exists()) {
+                iibDeployB.mkdirs();
+
+                File devDeployDescriptor = new File(iibDeployB, project.application + ".DV.deploy.properties");
+                devDeployDescriptor.createNewFile();
+                mustache(devDeployDescriptor, new File(homeDir, "Templates/deploy.dv.mustache"), project);
+
+                File qaDeployDescriptor = new File(iibDeployB, project.application + ".QA.deploy.properties");
+                qaDeployDescriptor.createNewFile();
+                mustache(qaDeployDescriptor, new File(homeDir, "Templates/deploy.qa.mustache"), project);
+
+                File prDeployDescriptor = new File(iibDeployB, project.application + ".PR.deploy.properties");
+                prDeployDescriptor.createNewFile();
+                mustache(prDeployDescriptor, new File(homeDir, "Templates/deploy.pr.mustache"), project);
+
+            }
+        }
+
+        // working
         File work = new File(workspace, "work");
         if (!work.exists()) {
             System.out.println("Making work dir...");
             work.mkdirs();
+
+
         }
-        File version = new File(work, project.version);
-        if (!version.exists()) {
-            System.out.println("Making " + version + " dir...");
+
+        // History
+        File history = new File(workspace, "history");
+        if (!history.exists()) {
+            System.out.println("Making history dir...");
+            history.mkdirs();
+        }
+    }
+
+    public static void version(String bod, CommandLine cmd) throws Exception {
+        if (!cmd.hasOption("v")) {
+            System.out.println("Version is required to assign to argument '-v'");
+            System.exit(1);
+        }
+
+        File workspace = new File(boDir, bod);
+        File iib = new File(workspace, "IIB");
+        File work = new File(workspace, "work");
+
+        File history = new File(workspace, "history");
+        if (!history.exists()) {
+            System.out.println("Making history dir...");
+            history.mkdirs();
+        }
+
+        File version = new File(history, cmd.getOptionValue("v"));
+        if(!version.exists()) {
             version.mkdirs();
-        }
+            FileUtils.copyDirectory(iib, version);
 
-        File esedA = new File(version, "ESEDA");
-        if (!esedA.exists()) {
-            System.out.println("Making ESEDA dir... ");
-            esedA.mkdirs();
+            File work2 = new File(version, "work");
+            work2.mkdirs();
+            FileUtils.copyDirectory(work, work2);
 
-            System.out.println("Generating " + project.application + ".BASE.override.properties" + " file...");
-            File baseOverride = new File(esedA, project.application + ".BASE.override.properties");
-            baseOverride.createNewFile();
-            mustache(baseOverride, new File(homeDir, "Templates/override.base.mustache"), project);
-
-            System.out.println("Generating " + project.application + ".DV.override.properties" + " file...");
-            File devOverride = new File(esedA, project.application + ".DV.override.properties");
-            devOverride.createNewFile();
-            mustache(devOverride, new File(homeDir, "Templates/override.dv.mustache"), project);
-
-            System.out.println("Generating " + project.application + ".QA.override.properties" + " file...");
-            File qaOverride = new File(esedA, project.application + ".QA.override.properties");
-            qaOverride.createNewFile();
-            mustache(qaOverride, new File(homeDir, "Templates/override.qa.mustache"), project);
-
-            System.out.println("Generating " + project.application + ".PR.override.properties" + " file...");
-            File prOverride = new File(esedA, project.application + ".PR.override.properties");
-            prOverride.createNewFile();
-        }
-
-        File esedB = new File(version, "ESEDB");
-        if (!esedB.exists()) {
-            System.out.println("Making ESEDB dir...");
-            esedB.mkdirs();
-
-            System.out.println("Generating " + project.application + ".DV.deploy.properties" + " file...");
-            File devDeployDescriptor = new File(esedB, project.application + ".DV.deploy.properties");
-            devDeployDescriptor.createNewFile();
-            mustache(devDeployDescriptor, new File(homeDir, "Templates/deploy.dv.mustache"), project);
-
-            System.out.println("Generating " + project.application + ".QA.deploy.properties" + " file...");
-            File qaDeployDescriptor = new File(esedB, project.application + ".QA.deploy.properties");
-            qaDeployDescriptor.createNewFile();
-            mustache(qaDeployDescriptor, new File(homeDir, "Templates/deploy.qa.mustache"), project);
-
-            System.out.println("Generating " + project.application + ".PR.deploy.properties" + " file...");
-            File prDeployDescriptor = new File(esedB, project.application + ".PR.deploy.properties");
-            prDeployDescriptor.createNewFile();
-            mustache(prDeployDescriptor, new File(homeDir, "Templates/deploy.pr.mustache"), project);
         }
     }
 
@@ -765,6 +886,7 @@ public class EdisProject {
     static class MessageFlow {
         private String name;
         private String brokerSchema;
+        private String packageURI;
         private JsonObject properties = new JsonObject();
 
         private Node input;
@@ -782,6 +904,7 @@ public class EdisProject {
         public MessageFlow(String bod, String src, String brokerSchema) {
             this.name = "ESED_" + bod + "_" + src + "_IH_Publisher";
             this.brokerSchema = brokerSchema;
+            this.packageURI = brokerSchema.replaceAll("\\.", "/");
 
             this.input = new Node("KafkaConsumer", INPUT_PROPERTIES);
             this.output = new Node("KafkaProducer", OUTPUT_PROPERTIES);

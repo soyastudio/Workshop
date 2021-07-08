@@ -1,0 +1,50 @@
+{
+  "name": "DigitalBanner",
+  "application": "ESED_DigitalBanner_UCA_IH_Publisher",
+  "source": "UCA",
+  "consumer": "EDM",
+  "version": "v1.1.2",
+  "mappings": {
+    "schema": "CMM/BOD/getDigitalBanner.xsd",
+    "mappingFile": "???",
+    "mappingSheet": "???",
+    "sampleSheet": "???",
+    "constructFile": "xpath-mapping.properties"
+  },
+  "messageFlow": {
+    "name": "ESED_DigitalBanner_UCA_IH_Publisher",
+    "brokerSchema": "com.abs.uca.digitalBanner",
+    "packageURI": "com/abs/uca/digitalBanner",
+    "properties": {},
+    "input": {
+      "name": "KafkaConsumer",
+      "properties": {
+        "topicName": "???"
+      }
+    },
+    "output": {
+      "name": "KafkaProducer",
+      "properties": {
+        "topicName": "???"
+      }
+    },
+    "transformer": {
+      "name": "DigitalBanner_UCA_Transformer",
+      "properties": {}
+    },
+    "inputAuditor": {
+      "name": "Audit_Validate_Input",
+      "properties": {}
+    },
+    "outputAuditor": {
+      "name": "Audit_Validate_Output",
+      "properties": {}
+    },
+    "exceptionHandler": {
+      "name": "ExceptionSubFlow",
+      "properties": {}
+    }
+  },
+  "deployEgNumber": "???",
+  "createTestWorkspace": false
+}

@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<project name="Esed Pipeline Server" default="dimensions" basedir=".">
+
+    <property file="build.properties"/>
+
+    <property name="IIBT.WORKSPACE" location="${user.home}/IBM/IIBT10/workspace"/>
+    <property name="IIBT.SRC.DIR" location="${IIBT.WORKSPACE}/APPDEV_ESED_SRC_TRUNK/esed_src/IIB_SRC"/>
+    <property name="IIBT.DEPLOY.DIR" location="${IIBT.WORKSPACE}/APPDEV_ESED_STD/esed_std/IIB"/>
+
+    <property name="template.dir" location="../../Templates"/>
+    <property name="dimensions.dir" location="./Dimensions"/>
+    <property name="dimensions.src.dir" location="${dimensions.dir}/src/${application.name}"/>
+
+    <property name="src.dir" location="${dimensions.src.dir}/src/${application.name}"/>
+    <property name="bin.dir" location="${dimensions.src.dir}/bin"/>
+
+    <property name="deploy.dir" location="${dimensions.dir}/deploy"/>
+
+    <target name="dimensions">
+        <echo message="${IIBT.DEPLOY.DIR}"/>
+
+        <mkdir dir="${dimensions.dir}"/>
+        <mkdir dir="${dimensions.src.dir}"/>
+        <mkdir dir="${src.dir}"/>
+        <mkdir dir="${bin.dir}"/>
+
+        <mkdir dir="${deploy.dir}"/>
+        <mkdir dir="${deploy.dir}/ESEDA"/>
+
+        <mkdir dir="${deploy.dir}/ESEDB"/>
+
+        <mkdir dir="${dimensions.dir}/CUTOFF"/>
+
+        <copy todir="${src.dir}" file="${template.dir}/.project"/>
+        <replace file="${src.dir}/.project">
+            <replacefilter token="{{application.name}}" value="${application.name}"/>
+        </replace>
+
+        <copy todir="${src.dir}" file="${template.dir}/application.descriptor"/>
+
+    </target>
+
+    <target name="from-workspace">
+        <copy todir="${deploy.dir}/ESEDA">
+            <fileset dir="${IIBT.DEPLOY.DIR}/ESEDA" includes="${application.name}.*.override.properties"/>
+        </copy>
+        <copy todir="${deploy.dir}/ESEDB">
+            <fileset dir="${IIBT.DEPLOY.DIR}/ESEDB" includes="${application.name}.*.override.properties"/>
+        </copy>
+    </target>
+
+    <target name="to-workspace">
+        <copy todir="${IIBT.DEPLOY.DIR}/ESEDA">
+            <fileset dir="${deploy.dir}/ESEDA" includes="${application.name}.*.override.properties"/>
+        </copy>
+        <copy todir="${IIBT.DEPLOY.DIR}/ESEDB">
+            <fileset dir="${deploy.dir}/ESEDB" includes="${application.name}.*.override.properties"/>
+        </copy>
+    </target>
+
+
+
+</project>

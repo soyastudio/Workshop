@@ -21,8 +21,8 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 		CREATE LASTCHILD OF OutputRoot DOMAIN 'JSON';
 
 		-- Create root Data field
-        CREATE FIELD OutputRoot.JSON.Data;
-        DECLARE jsonDocRoot REFERENCE TO OutputRoot.JSON.Data;
+        CREATE FIELD OutputRoot.JSON.Data.GetGroceryOrder;
+        DECLARE jsonDocRoot REFERENCE TO OutputRoot.JSON.Data.GetGroceryOrder;
 
         -- GetGroceryOrder/DocumentData
 		DECLARE DocumentData_ REFERENCE TO jsonDocRoot;
@@ -691,7 +691,7 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 
 						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/SubOrderType
 						DECLARE SubOrderType_ REFERENCE TO GrocerySubOrder_.Item[i];
-						CREATE LASTCHILD OF GrocerySubOrder_ AS SubOrderType_ TYPE XMLNSC.Folder NAME 'SubOrderType';
+						CREATE LASTCHILD OF GrocerySubOrder_.Item[i] AS SubOrderType_ TYPE XMLNSC.Folder NAME 'SubOrderType';
 
 							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/SubOrderType/Code
 							SET SubOrderType_.Code = 'isRescheduled';
@@ -853,7 +853,7 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 
 									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerPreferredSubstituteItem/SubstituteItem
 									DECLARE SubstituteItem_ REFERENCE TO CustomerPreferredSubstituteItem_.Item[k];
-									CREATE LASTCHILD OF CustomerPreferredSubstituteItem_ AS SubstituteItem_ TYPE XMLNSC.Folder NAME 'SubstituteItem';
+									CREATE LASTCHILD OF CustomerPreferredSubstituteItem_.Item[k] AS SubstituteItem_ TYPE XMLNSC.Folder NAME 'SubstituteItem';
 
 										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerPreferredSubstituteItem/SubstituteItem/SystemSpecificItemId
 										SET SubstituteItem_.SystemSpecificItemId = _substitute_item.itemId;
@@ -947,8 +947,8 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 										SET OfferSourceType_1.Code = _customer_savings.source;
 
 									-- LOOP FROM subOrders[*]/orderLines[*]/itemPrice/savings[*]/points[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/CustomerRewards:
-									CREATE FIELD CustomerOffers_1.Item[k].CustomerRewards_1 IDENTITY (JSON.Array)CustomerRewards;
-									DECLARE CustomerRewards_1 REFERENCE TO CustomerOffers_1.Item[k].CustomerRewards_1;
+									CREATE FIELD CustomerOffers_1.Item[k].CustomerRewards IDENTITY (JSON.Array)CustomerRewards;
+									DECLARE CustomerRewards_1 REFERENCE TO CustomerOffers_1.Item[k].CustomerRewards;
 
 									DECLARE _point REFERENCE TO _customer_savings.points.Item;
 
@@ -1097,6 +1097,10 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/PricePerAmt
 									SET DeliveredItem_.Item[k].PricePerAmt = CAST(_fulfilled_upc.itemPrice.pricePer AS DECIMAL(14, 4));
 
+									-- Since v1.12.2
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/BasePricePerAmt
+									SET DeliveredItem_.Item[k].BasePricePerAmt = CAST(_fulfilled_upc.itemPrice.basePricePer AS DECIMAL(14, 4));
+
 									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/PriceEffectiveStartDtTm
 									SET DeliveredItem_.Item[k].PriceEffectiveStartDtTm = _fulfilled_upc.itemPrice.startDate;
 
@@ -1137,7 +1141,7 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 									delivered_item_savings_loop : WHILE LASTMOVE(_delivered_item_savings) DO
 
 											-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerOffers/OfferId
-											SET CustomerOffers_1.Item[l].OfferId =_delivered_item_savings.offerId;
+											SET CustomerOffers_1.Item[l].OfferId = _delivered_item_savings.offerId;
 
 											-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerOffers/ReferenceOfferId
 											SET CustomerOffers_1.Item[l].ReferenceOfferId = _delivered_item_savings.externalOfferId;
@@ -1273,6 +1277,9 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/AutoReplenishmentOrderType/ItemPriceAmt
 										SET AutoReplenishmentOrderType_.ItemPriceAmt = CAST(_fulfilled_upc.itemPrice.arPrice AS DECIMAL(14, 4));
 
+										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/AutoReplenishmentOrderType/ArSavingsAmt
+										SET AutoReplenishmentOrderType_.ArSavingsAmt = CAST(_fulfilled_upc.itemPrice.arSavings AS DECIMAL(14, 4));
+
 							SET k = k + 1;
 							MOVE _fulfilled_upc NEXTSIBLING;
 							END WHILE fulfilled_upc_loop;
@@ -1332,7 +1339,7 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 
 								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/OrderLineExceptionType/ExceptionType
 								DECLARE ExceptionType_ REFERENCE TO OrderLineExceptionType_.Item[k];
-								CREATE LASTCHILD OF OrderLineExceptionType_ AS ExceptionType_ TYPE XMLNSC.Folder NAME 'ExceptionType';
+								CREATE LASTCHILD OF OrderLineExceptionType_.Item[k] AS ExceptionType_ TYPE XMLNSC.Folder NAME 'ExceptionType';
 
 									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/OrderLineExceptionType/ExceptionType/Code
 									SET ExceptionType_.Code = _orderlineException.exceptionType;
@@ -1432,7 +1439,7 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_JSON_Transformer_Compute
 
 							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/PromotionType
 							DECLARE PromotionType_1 REFERENCE TO GroceryOrderDetail_1.Item[j];
-							CREATE LASTCHILD OF GroceryOrderDetail_ AS PromotionType_1 TYPE XMLNSC.Folder NAME 'PromotionType';
+							CREATE LASTCHILD OF GroceryOrderDetail_.Item[j] AS PromotionType_1 TYPE XMLNSC.Folder NAME 'PromotionType';
 
 								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/PromotionType/Code
 								SET PromotionType_1.Code = _promoCode.code;
