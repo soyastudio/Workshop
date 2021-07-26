@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" xmlns:ns1="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<xs:include schemaLocation="../Global/AbsGlobalComponents.xsd"/>
 	<!--V 1.1  Alex Nunes  11/20/2018 Change DivisionType AccountingUnitNm MaxLength to 15 and LevelDsc to 50-->
@@ -12,6 +12,7 @@
 	<!--V1.7 Rosabel Macario 12/15/20: Added ThirdPartyProcurementInd, ThirdPartyStartDt and ThirdPartyEndDt in VendorSite.-->
 	<!--V1.8 Rosabel Macario 01/13/2021: Updated VendorSiteType - moved IncomeCd under VendorSite. -->
 	<!--V1.9 Patrick Oliver 04/22/21: Added BannerId to BannerType -->
+	<!--V1.10 Alex Nunes 7/6/21: Added Forwarding Warehouse Type (WarehouseType)-->
 	<xs:group name="AccountingOrganization">
 		<xs:annotation>
 			<xs:documentation>Component to represent the accounting or financial view of organization entities - Company, GLEntity etc. - grouped together.</xs:documentation>
@@ -274,7 +275,7 @@ Synonyms are Business Unit, Fund, G/L Company, Joint Venture, Non-Profit Associa
 			<xs:element name="CorporationId" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:maxLength value="3"/>
+						<xs:maxLength value="10"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -2399,6 +2400,16 @@ on-going legal entities.                                  </xs:documentation>
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="BusinessUnitNm" type="xs:string" minOccurs="0"/>
+			<xs:element name="FirstEffectiveDt" type="xs:date" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The first Dt on which a condition or a version of an object is, was, or will be in effect.  In order to simplify joins that must match a transaction record to reference data with a Dt filter, First Effective Dt should never contain null values.  When the First Effective Dt is unknown, it should be set to a default of 01/01/0001 or the lowest Dt value supported by the DBMS.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LastEffectiveDt" type="xs:date" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The last Dt on which a condition or a version of an object was, or will be in effect.  In order to simplify joins that must match a transaction record to reference data with a Dt filter, Last Effective Dt should never contain null values.  When the Last Effective Dt is unknown, it should be set to a default of 12/31/9999 or the highest Dt value supported by the DBMS.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="PriceArea" type="CodeWithDescription" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Price areas are groups of stores within a ROG that have the same Pricing structure.  Price areas are maintained at facility section level in SSPAFACL_TABLE.</xs:documentation>
@@ -4186,15 +4197,156 @@ on-going legal entities.                                  </xs:documentation>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="PhysicalWarehouseGroupId" nillable="true" minOccurs="0">
+			<xs:element ref="ns1:PhysicalWarehouseGroupId" minOccurs="0"/>
+			<xs:element name="ForwardingWarehouse" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>This is used by the Tandem DCMCS system for the purpose of grouping together logical warehouses for processing (inventory reduction, selection list processing, bombing and printing of selection lists).</xs:documentation>
+					<xs:documentation>Forwarding warehouse data. Shipment of items from one location to another location via a third party (vendor).</xs:documentation>
 				</xs:annotation>
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="2"/>
-					</xs:restriction>
-				</xs:simpleType>
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="ShipFrom" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence minOccurs="0">
+									<xs:element name="CorporationId" nillable="false" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="3"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="DivisionId" nillable="false" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="3"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="DistributionCenterId" nillable="true" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="FacilityID" default="" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>A four character code that is used with corporation
+ and division to uniquely identify a facility. A facility may "belong" to
+ only one corporation and one division. A building may house one or more
+facilities. There are two categories for facilities:
+ 1) Operating facility
+ - actively supports the business of the Company
+ - is a distinct business operation within a building
+  - examples: office, processing plant, retail store, truck service
+ shop, or warehouse building  (A warehouse facility includes all warehouse departments that exist within a single building.)
+ - each type of division/business has a different set of possible types of operating facilities: i.e.,
+ - Retail: retail outlets and offices.
+- Wholesale: warehouse facilities, truck service shop, and offices.
+- Processing/Manufacturing: processing plants and offices.
+ 2) Non-operating Facility                                                     
+ - not currently being operated by the Company.
+ - facilities </xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="ShipTo" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence minOccurs="0">
+									<xs:element name="CorporationId" nillable="false" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="3"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="DivisionId" nillable="false" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="3"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="DistributionCenterId" nillable="true" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="FacilityID" default="" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>A four character code that is used with corporation
+ and division to uniquely identify a facility. A facility may "belong" to
+ only one corporation and one division. A building may house one or more
+facilities. There are two categories for facilities:
+ 1) Operating facility
+ - actively supports the business of the Company
+ - is a distinct business operation within a building
+  - examples: office, processing plant, retail store, truck service
+ shop, or warehouse building  (A warehouse facility includes all warehouse departments that exist within a single building.)
+ - each type of division/business has a different set of possible types of operating facilities: i.e.,
+ - Retail: retail outlets and offices.
+- Wholesale: warehouse facilities, truck service shop, and offices.
+- Processing/Manufacturing: processing plants and offices.
+ 2) Non-operating Facility                                                     
+ - not currently being operated by the Company.
+ - facilities </xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="VendorId" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Vendor Identifier. It&apos;s a six character field with zeros (left) padded.&#10;</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="VendorSubAccntId" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Vendor Sub Account Id</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="WimsSubVendorNbr" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Identifies the WIMS Vendor number set up by the Buyer. The first character of the number indicates the location e.g. V - Vancouver, E - Edmonton.  Buyer/Merchandisers may break a Vendor outlet into different WIMS Vendors to suit their own purposes. Some of the reasons a Vendor may have several WIMS Vendor records are: 1. Several Buyers buying from the same Vendor. 2. A buyer buying different commodity groups from the same Vendor. 3. A Vendor offering different purchasing terms on different product lines. 4. A Buyer buying some products through a Broker and some directly from the Vendor.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PromotionForecastWeekNbr" type="xs:int" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Number of weeks for promotion forecast purposes.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="InventoryAdjustmentReasonCd" type="ns1:CodeWithDescription" minOccurs="0"/>
+						<xs:element name="ShipOrderSource" type="ns1:CodeWithDescription" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
 			</xs:element>
 			<xs:element name="OrgEntityType" type="ns1:OrgMasterNameType" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
@@ -4813,5 +4965,15 @@ Hold</xs:documentation>
 		<xs:annotation>
 			<xs:documentation>Site code name</xs:documentation>
 		</xs:annotation>
+	</xs:element>
+	<xs:element name="PhysicalWarehouseGroupId" nillable="true">
+		<xs:annotation>
+			<xs:documentation>This is used by the Tandem DCMCS system for the purpose of grouping together logical warehouses for processing (inventory reduction, selection list processing, bombing and printing of selection lists).</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
 	</xs:element>
 </xs:schema>

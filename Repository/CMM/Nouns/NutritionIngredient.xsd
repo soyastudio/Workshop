@@ -6,6 +6,8 @@
 	<!--V1.2 - 11/04/2020 - Rosabel Macario - Added tag to resolve dateTimeStamp issue-->
 	<!--V1.3 - 11/18/2020 - Alex Nunes - Removed CorporateItemCd from this Noun. It belongs to Finished Product Noun. -->
 	<!--V1.4 - 1/21/2021 - Alex Nunes - lenght of elements (//element(*,NutritionIngredientType)/Item/IngredientLabel/IngredientLableTxt) and (//element(*,NutritionIngredientType)/Item/IngredientInfo/ParemeterLabelTxt) adjusted to match system of record.-->
+	<!--V2.0 - 6/29/2021 - Alex Nunes - Additional elements added for new source NIMS-SSIMS -->
+	<!--V2.0 - 7/7/2021 - Alex Nunes - Added WeightLossPct element. -->
 	<xs:complexType name="NutritionIngredientType">
 		<xs:annotation>
 			<xs:documentation>Complex Type for Nutrition Ingredient</xs:documentation>
@@ -31,6 +33,16 @@
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
 									<xs:maxLength value="90"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="VIDType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is type of Ingredient some of the values are REGULAR, CATALOG, OFF THE SHELF  , USDA OR COMPOUND ingredient.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
@@ -121,6 +133,17 @@ quantities of the ingredients in the product formula.</xs:documentation>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
+						<xs:element name="WeightLossPct" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The expected weight loss % for an ingredient when prepared for use in a store created item.  For example, when a watermelon is prepared for use in a fresh fruit salad the skin will be removed so loss could be 20%.  .</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="5"/>
+									<xs:fractionDigits value="0"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>						
 						<xs:element name="CalculationInd" default="0" minOccurs="0" altova:Ordinal="2">
 							<xs:annotation>
 								<xs:documentation>Determines when item is to be calculated. 
@@ -280,16 +303,6 @@ is (status), whether to hold development or manufacture (hold), and the current 
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
-						<xs:element name="VIDType" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>This is type of Ingredient some of the values are REGULAR, CATALOG, OFF THE SHELF  , USDA OR COMPOUND ingredient.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="100"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
 						<xs:element name="AliasCd1" minOccurs="0" altova:Ordinal="23">
 							<xs:annotation>
 								<xs:documentation>Use these fields to enter additional codes or names by which the item is known. These codes can
@@ -437,6 +450,79 @@ be used for translation purposes, too.</xs:documentation>
 							<xs:annotation>
 								<xs:documentation>Hold label text,</xs:documentation>
 							</xs:annotation>
+						</xs:element>
+						<xs:element name="ProcessDt" type="DateType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Date ingredient was processed.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="LevelNbr" type="xs:int" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Hierarchical level number of the ingredient.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="OverrideCostAmt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Override ingredient cost amount.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="9"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CostAmt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Ingredient cost amount.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="9"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ExtendedCostAmt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Extended ingredient cost amount.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="9"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="GenericIngredientId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Generic ingredient Id.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="WeightUOMCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Weight Unit of Measure code: 'GR' or 'LBS'.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="RestrictionFormulaInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Restriction formula indicator. Values are 'N' and 'Y'.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
 						</xs:element>
 						<xs:element name="IngredientTrademarks" minOccurs="0" maxOccurs="unbounded">
 							<xs:annotation>

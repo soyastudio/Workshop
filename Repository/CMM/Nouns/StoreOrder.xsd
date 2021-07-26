@@ -6,7 +6,7 @@
    Dsc: contains commonly used Albertson's Purchase order schema.
    Name: /ABS_CMM_Platform/Nouns/StoreOrder.xsd
 -->
-<!-- edited with XMLSpy v2021 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<!--V1.0 1/21/2020 Alex Nunes Removed 'ProcessDt' element from storeorder details. Reversed the change on 5/19/2020.-->
 	<!--V1.1 Patrick Oliver 7/22/20 - Updated VendorId & VendorSubAccountNbr to string(20)-->
@@ -15,7 +15,8 @@
 	<!--v1.3 Alex Nunes 2/5/2021 - Rename //element(*,StoreOrderVendor)/WarehouseVendorId to //element(*,StoreOrderVendor)/BackdoorVendorSubAccountId-->
 	<!--v1.4 Alex Nunes 3/19/2021 - Added Offset days and estimated available date. CR57 -->
 	<!--v1.4 Alex Nunes 4/7/2021 - wtUOM element renamed to its original name due to typo -->
-		<!--v1.5 Alex Nunes 4/14/2021 - Added PurchaseOrderEdiTs at Header level -->
+	<!--v1.5 Alex Nunes 4/14/2021 - Added PurchaseOrderEdiTs at Header level -->
+	<!--v1.6 Alex Nunes 6/10/2021 - Added FirmOrderReleaseDt and ScheduleOverrideInd at Header level JIRA ES-911 -->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:element name="StoreOrder" type="StoreOrderType">
 		<xs:annotation>
@@ -767,6 +768,7 @@ It is sometimes referred to as Division Item Code.
 			<xs:element ref="Abs:DivisionId" minOccurs="0"/>
 			<xs:element ref="Abs:DistributionCenterId" minOccurs="0"/>
 			<xs:element ref="Abs:WarehouseId" minOccurs="0"/>
+			<xs:element ref="PhysicalWarehouseGroupId" minOccurs="0"/>
 			<xs:element ref="Abs:ManufacturingPlantId" minOccurs="0"/>
 			<xs:element name="DistrictId" minOccurs="0">
 				<xs:simpleType>
@@ -1039,6 +1041,26 @@ values 'Y'/'N'
 				<xs:annotation>
 					<xs:documentation>Day of the week when Firm Orders will be sent to the
 Tandem.                                             
+</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FirmOrderReleaseDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This element represents the date firms should start release for processing at the warehouse.                                         
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ScheduleOverrideInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Override indicator. Values are: I – ignore schedule. The order will be processed today
+N – use Next DPATS schedule date – mainly used when there is a route code schedule and they want to have to go with their regular store order. 
+Blank – there are no overrides, use the schedules as per normal
+                                        
 </xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>

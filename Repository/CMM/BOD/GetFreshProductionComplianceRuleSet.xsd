@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2021 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://www.openapplications.org/oagis/9" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/FreshProdutionComplianceRuleSet.xsd"/>
+	<!--!=============================================================================================-->
+	<!--!-->
+	<!--!-->
+	<!--!      GetFreshProductionCompliance Set-->
+	<!--!                                     Business object that represents fresh produce (perishables) production compliance rule set.-->
+	<!--!-->
+	<!--!=============================================================================================-->
+	<!--6/7/2021 - v1.0 - Alex Nunes - Initial version.-->
+	<xs:element name="GetFreshProductionComplianceSet" type="GetFreshProductionComplianceSet">
+		<xs:annotation>
+			<xs:documentation>Root element.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetFreshProductionComplianceSet">
+		<xs:annotation>
+			<xs:documentation>BOD that represents the Compliance Rule Set and individual Compliance Rules, including information on Set Production and Actual Production compliance time windows, facing thresholds, and individual Rule formulas.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="FreshProductionComplianceSetData" type="Abs:FreshProductionComplianceRuleSetType" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

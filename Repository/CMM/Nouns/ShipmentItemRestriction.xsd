@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2021 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<!-- edited with XMLSpy v2021 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<!--!=============================================================================================-->
@@ -9,7 +9,9 @@
 	<!--!                                     Business object that represents shipment item restriction.-->
 	<!--!-->
 	<!--!=============================================================================================-->
-	<!--3/5/2021 - v1.0 - Alex Nunes - Initial version.-->
+	<!--5/3/2021 - v1.0 - Alex Nunes - Initial version.-->
+	<!--5/19/2021 - v1.0 - Alex Nunes - Comments added.-->
+		<!--6/24/2021 - v1.0 - Alex Nunes - DCid added.-->
 	<xs:element name="ShipmentItemRestriction" type="ShipmentItemRestrictionType">
 		<xs:annotation>
 			<xs:documentation>Root element.</xs:documentation>
@@ -17,11 +19,12 @@
 	</xs:element>
 	<xs:complexType name="ShipmentItemRestrictionType">
 		<xs:annotation>
-			<xs:documentation>It represents items that have restrictions which prevent them to be shipped to the stores.</xs:documentation>
+			<xs:documentation>It represents items that have restrictions which prevent them to be shipped to the stores. An example would be , stores in Santa Cruz are not allowed to sell Styrofoam coolers. Items are either decided by the business, or through schematic data.  If business, it is manually entered in the tool.  If by schematic data, an item gets blocked and it is removed from a future schematic</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element ref="CorporationId"/>
 			<xs:element ref="DivisionId"/>
+			<xs:element ref="DistributionCenterId"/>
 			<xs:element ref="ROGCd"/>
 			<xs:element name="FacilityId">
 				<xs:simpleType>
@@ -35,7 +38,7 @@
 			<xs:element ref="CorporateItemCd"/>
 			<xs:element name="StateInd">
 				<xs:annotation>
-					<xs:documentation>Indicates whether item is in an 'Allocated' (stores probably should receive the item)- A or an 'Unallocated' (stores probably should not receive the item)- U State. 'H' means on-hold. System is waiting for user intervention.</xs:documentation>
+					<xs:documentation>Works in conjunction with 'BlobkStatusInd'. When 'StateInd' ='A', it means the item is Allocated to that store (i.e. someone has made the decision the store can get the item).  But if the 'BlockStatusInd' is ‘B’ (for blocked) then the store itself cannot order the item.  It can still be firmed to the store by a backstage user.  If an item’s 'StateInd' is ‘U’ for unallocated, then no item will be sent to the store. On other possible value is 'H' which means on-hold. System is waiting for user intervention.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
@@ -53,29 +56,34 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="EffectivePeriod" type="EffetiveDateTimeType" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Effective dates and times for authorization purposes.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
 			<xs:element name="BlockTargetDt" type="xs:date">
 				<xs:annotation>
 					<xs:documentation>Signifies when the item should be off the shelf.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="CorrectionInd">
+			<xs:element name="EffectivePeriod" type="EffetiveDateTimeType" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>This element is used to indicate whether this entry is a correction of an old unallocation or it is a new item.</xs:documentation>
+					<xs:documentation>Effective dates and times for authorization purposes.</xs:documentation>
 				</xs:annotation>
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="1"/>
-					</xs:restriction>
-				</xs:simpleType>
 			</xs:element>
 			<xs:element name="AuditData" type="AuditType" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Audit data elements.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CommentTxt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Additional comments regarding specific restrictions.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Reason" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Represents the reason restriction are in place for an item.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 		</xs:sequence>

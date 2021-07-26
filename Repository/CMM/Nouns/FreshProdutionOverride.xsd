@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2021 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<!-- edited with XMLSpy v2021 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<!--!=============================================================================================-->
@@ -10,7 +10,7 @@
 	<!--!-->
 	<!--!=============================================================================================-->
 	<!--5/3/2021 - v1.0 - Alex Nunes - Initial version.-->
-			<!--5/5/2021 - v1.0 - Alex Nunes - Annotation added for the Noun. -->
+	<!--5/5/2021 - v1.0 - Alex Nunes - Annotation added for the Noun. -->
 	<xs:element name="FreshProductionOverride" type="FreshProductionOverrideType">
 		<xs:annotation>
 			<xs:documentation>Root element.</xs:documentation>
@@ -31,9 +31,9 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="WorksheetId" type="xs:int">
+			<xs:element name="BatchId" type="xs:int">
 				<xs:annotation>
-					<xs:documentation>This element represents the work sheet for the unit of work related to the production.</xs:documentation>
+					<xs:documentation>BatchId also known as WorksheetId. This element represents the work sheet for the unit of work related to the production.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="UPC">
@@ -83,10 +83,26 @@ scheduled date then this field represents the scheduled date and time, else it i
 					<xs:restriction base="xs:int"/>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="ProductionCycleId" type="xs:int">
-				<xs:annotation>
-					<xs:documentation>Internal identifier for the production cycle.</xs:documentation>
-				</xs:annotation>
+			<xs:element name="ProductionCycle">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ProductionCycleId" type="xs:int">
+							<xs:annotation>
+								<xs:documentation>Internal identifier for the production cycle.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ProductionCycleDsc" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Internal identifier for the production cycle.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
 			</xs:element>
 			<xs:element name="MinimumFacingQty">
 				<xs:annotation>

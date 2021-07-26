@@ -89,6 +89,7 @@ public class KafkaAdmin {
     }
 
     private KafkaAdmin() {
+
         // Producer properties:
         this.producerProperties = new Properties();
         producerProperties.setProperty(ProducerConfig.CLIENT_ID_CONFIG, getProperty(ProducerConfig.CLIENT_ID_CONFIG));
@@ -194,6 +195,10 @@ public class KafkaAdmin {
     private static String env = "LOCAL";
     private static File home;
     private static File workspace;
+    private static File log;
+    private static boolean enableLog;
+
+    private static Writer logWriter;
 
     private static Set<URL> urls = new HashSet<>();
 
@@ -233,6 +238,11 @@ public class KafkaAdmin {
         workspace = new File(home, "workspace");
         if (!workspace.exists()) {
             workspace.mkdirs();
+        }
+
+        log = new File(home, "log");
+        if(!log.exists()) {
+            log.mkdirs();
         }
 
         configuration = new Properties(defaultProperties);
@@ -306,6 +316,13 @@ public class KafkaAdmin {
                 .longOpt("key")
                 .hasArg(true)
                 .desc("Kafka message key")
+                .required(false)
+                .build());
+
+        options.addOption(Option.builder("l")
+                .longOpt("log")
+                .hasArg(false)
+                .desc("Enable log")
                 .required(false)
                 .build());
 
@@ -436,7 +453,31 @@ public class KafkaAdmin {
         }
 
         // Context:
+        if(cmd.hasOption("l")) {
+            enableLog = true;
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyy-MM-dd-hhmm");
+            File logFile = new File(log, sdf.format(new Date()) + ".log");
+            if(!logFile.exists()) {
+                try {
+                    logFile.createNewFile();
+                    logWriter = new FileWriter(logFile);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
         executeCommandLine(cmd, new KafkaAdmin());
+
+        if(enableLog && logWriter != null) {
+            try {
+                logWriter.flush();
+                logWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private static String getProperty(String propName) {
@@ -684,10 +725,6 @@ public class KafkaAdmin {
             if (!bod.exists()) {
                 log("File '" + bod + "' does not exit.");
             }
-
-
-
-
 
             Properties properties = new Properties();
             properties.load(new FileInputStream(bod));
@@ -1605,6 +1642,14 @@ public class KafkaAdmin {
 
     private static void log(String msg) {
         System.out.println(msg);
+        if(enableLog && logWriter != null) {
+            try {
+                logWriter.write(msg);
+                logWriter.write("\n");
+            } catch (IOException e) {
+
+            }
+        }
     }
 
     private static RecordMetadata send(KafkaAdmin kafkaAdmin, String topicName, File file, String hs, String key) throws Exception {

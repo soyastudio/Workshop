@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
+<!-- edited with XMLSpy v2021 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
@@ -8,10 +8,17 @@
 	<!--V1.2 Rosabel Macario 11/05/2020 - Added tag to resolve dateTimeStamp issue-->
 	<!--V2.0 Patrick Oliver 02/10/21: Added LegacyFiscalCalendar; Added HolidayData to FiscalCalendar and LegacyFiscalCalendar;-->
 	<!--V2.1 Patrick Oliver 03/25/21: Updated GregorianCalendar element WeekOfPeriodNbr to WeekOfMonthNbr-->
-	<xs:element name="Calendar" type="CalendarType">
+	<!--V3.0 Alex Nunes 5/12/21: Promotion Calendar -->
+		<!--V3.0 Alex Nunes 6/17/21: Moved type to under type. -->
+	<xs:element name="Calendar">
 		<xs:annotation>
 			<xs:documentation>root element.</xs:documentation>
 		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="CalendarType"/>
+			</xs:complexContent>
+		</xs:complexType>
 	</xs:element>
 	<xs:element name="CalendarDt" type="DateBaseType">
 		<xs:annotation>
@@ -29,22 +36,43 @@
 					<xs:documentation>Julian representation of the date.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="GregorianCalendar" type="GregorianCalendarType" minOccurs="0">
+			<xs:element name="GregorianCalendar" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>This represents the current year calendar.  Example: Jan 01 2021 is the first day of the year and is a 'Friday'</xs:documentation>
 				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="GregorianCalendarType"/>
+					</xs:complexContent>
+				</xs:complexType>
 			</xs:element>
-			<xs:element name="FiscalCalendar" type="FiscalCalendarType" minOccurs="0">
+			<xs:element name="FiscalCalendar" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>This represents the financial calendar data that company uses for financial reporting and budgeting (Mar-Feb). Example: Feb 28 2021 is first day of financial calendar.</xs:documentation>
 				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="FiscalCalendarType"/>
+					</xs:complexContent>
+				</xs:complexType>
 			</xs:element>
-			<xs:element name="LegacyFiscalCalendar" type="LegacyFiscalCalendarType" minOccurs="0">
+			<xs:element name="LegacyFiscalCalendar" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>This represents the pre-merger financial calendar used for financial reporting and budgeting (Jan-Dec). Example: Jan 03 2021 is first day of pre-merger calendar.</xs:documentation>
 				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="LegacyFiscalCalendarType"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PromotionCalendar" type="PromotionCalendarType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This section represents the promotion calendar.</xs:documentation>
+				</xs:annotation>
 			</xs:element>
 		</xs:sequence>
+		<xs:attribute ref="typeCode"/>
 	</xs:complexType>
 	<xs:complexType name="FiscalCalendarType">
 		<xs:annotation>
@@ -101,7 +129,6 @@
 			</xs:element>
 			<xs:element name="Holiday" type="HolidayType" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
-		<xs:attribute ref="typeCode"/>
 	</xs:complexType>
 	<xs:complexType name="LegacyFiscalCalendarType">
 		<xs:annotation>
@@ -158,7 +185,58 @@
 			</xs:element>
 			<xs:element name="Holiday" type="HolidayType" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
-		<xs:attribute ref="typeCode"/>
+	</xs:complexType>
+	<xs:complexType name="PromotionCalendarType">
+		<xs:annotation>
+			<xs:documentation>This type represents Company's promotion calendar</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="OrganizationTypeCd">
+				<xs:annotation>
+					<xs:documentation>Promotion calendar can be at different levels such as Corp, Store, Store Group. Valid values are ‘Division’, ‘Store’, ‘Store Group’, etc. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OrganizationValueTxt">
+				<xs:annotation>
+					<xs:documentation>Valid are DivsionId, StoreID, StoreGroupId ,etc. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PromotionStartDt" type="xs:date">
+				<xs:annotation>
+					<xs:documentation>Date of when the promotion starts for a particular Division or grouping.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PromotionEndDt" type="xs:date">
+				<xs:annotation>
+					<xs:documentation>Date of when the promotion ends for a Division or grouping.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WeekNbr" type="xs:integer">
+				<xs:annotation>
+					<xs:documentation>Week number associated with the promotion start date.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WeekNbrDsc" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Description of the Week number associated with the promotion start date.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="30"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="GregorianCalendarType">
 		<xs:annotation>
@@ -182,7 +260,6 @@
 			<xs:element name="Day" type="DayType" minOccurs="0"/>
 			<xs:element name="Holiday" type="HolidayType" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
-		<xs:attribute ref="typeCode"/>
 	</xs:complexType>
 	<xs:complexType name="HolidayType">
 		<xs:annotation>
@@ -250,7 +327,7 @@
 			</xs:element>
 			<xs:element name="WeekDsc" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Week description.</xs:documentation>
+					<xs:documentation>Week description for reporting purposes.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
@@ -390,9 +467,9 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="QuarterNm" minOccurs="0">
+			<xs:element name="QuarterDsc" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Name or description of the quarter.</xs:documentation>
+					<xs:documentation>Description of the quarter for reporting purposes.</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">

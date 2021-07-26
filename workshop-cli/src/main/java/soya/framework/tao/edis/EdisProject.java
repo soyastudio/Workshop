@@ -422,7 +422,7 @@ public class EdisProject {
 
         avsc.createNewFile();
         FileUtils.writeByteArrayToFile(avsc,
-                GSON.toJson(JsonParser.parseString(XmlToAvroSchema1.fromXmlSchema(knowledgeTree.origin()).toString())).getBytes());
+                GSON.toJson(JsonParser.parseString(XmlToAvroSchema.fromXmlSchema(knowledgeTree.origin()).toString())).getBytes());
 
     }
 

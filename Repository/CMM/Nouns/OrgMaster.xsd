@@ -1,8 +1,113 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://collab.safeway.com/it/architecture/AbsOmMaster" xmlns:ns2="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<!--V1.1 Rosabel Macario 11/04/2020 - Added tag to resolve dateTimeStamp issue-->
 	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:complexType name="ResponsibleParty">
+		<xs:annotation>
+			<xs:documentation>Party responsible for managing the OM component like div or corp. Ex President, VP</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ResponsiblePartyType" type="ns2:CodeWithName" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Party type that is responsible for the management of the organization.
+Vales: CEO, President, VP, Director, Manager..etc</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ResponsiblePartyId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ResponsiblePartyNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the responsible party person.
+ex: name of the president of a division.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="FirstNm" type="xs:string" minOccurs="0"/>
+						<xs:element name="MiddleNm" type="xs:string" minOccurs="0"/>
+						<xs:element name="LastNm" type="xs:string" minOccurs="0"/>
+						<xs:element name="PreferredNm" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="EffectivePeriod" type="EffectivePeriodType" minOccurs="0"/>
+			<xs:element name="PhoneNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EmailAddressTxt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OMCorporationType">
+		<xs:sequence>
+			<xs:element name="Corporation">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="ns2:CorporationType">
+							<xs:sequence>
+								<xs:element name="OfficeDivsionId" minOccurs="0">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="10"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="OfficeFacilityId" minOccurs="0">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="10"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="CorporationLegalNm" type="xs:string" minOccurs="0"/>
+								<xs:element ref="AlternateIdType" minOccurs="0"/>
+								<xs:element ref="AlternateId" minOccurs="0"/>
+								<xs:element name="ParentCorporationId" minOccurs="0">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="3"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="EffectivePeriod" type="EffectivePeriodType">
+									<xs:annotation>
+										<xs:documentation>Time period in effective for a version of the record.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="ActivePeriod" type="ActivePeriodType">
+									<xs:annotation>
+										<xs:documentation>Time period during which the OM component is active.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="OMResponsibleParty" type="ResponsibleParty" minOccurs="0" maxOccurs="unbounded"/>
+								<xs:element name="AccountingType" type="AccountingComponentType" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Accounting structure assigned to the the OM componenet in financial system. ex COA structure</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="CorporationStatus" type="ns2:StatusType" minOccurs="0"/>
+								<xs:element name="RecordAuditData" type="ns2:RecordAuditData" minOccurs="0"/>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
 	<xs:complexType name="OrgMaster">
 		<xs:annotation>
 			<xs:documentation>Contains data related to Albertsons Organization Master like corp, Div, OA, Districts..etc</xs:documentation>
@@ -156,4 +261,183 @@
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
+	<xs:complexType name="OMDivisionType">
+		<xs:sequence>
+			<xs:element ref="ns2:CorporationId"/>
+			<xs:element name="Division" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="ns2:DivisionType">
+							<xs:sequence>
+								<xs:element name="OfficeCorporationId" minOccurs="0">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="10"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="OfficeDivsionId" minOccurs="0">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="10"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element ref="OfficeFacilityId" minOccurs="0"/>
+								<xs:element name="DivisionLegalNm" type="xs:string" minOccurs="0"/>
+								<xs:element ref="AlternateIdType" minOccurs="0"/>
+								<xs:element ref="AlternateId" minOccurs="0"/>
+								<xs:element name="ConsolidationDivisionId" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Both Accounts Payable (AP) and General Ledger (GL) tables
+consolidate to division 17 in the United States.         </xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="10"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="ParentDivisionId" minOccurs="0">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="10"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="EffectivePeriod" type="EffectivePeriodType">
+									<xs:annotation>
+										<xs:documentation>Time period in effective for a version of the record.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="ActivePeriod" type="ActivePeriodType">
+									<xs:annotation>
+										<xs:documentation>Time period during which the OM component is active.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="OMResponsibleParty" type="ResponsibleParty" minOccurs="0" maxOccurs="unbounded"/>
+								<xs:element name="AccountingType" type="AccountingComponentType" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Accounting structure assigned to the the OM componenet in financial system. ex COA structure</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="DivisionStatus" type="ns2:StatusType" minOccurs="0"/>
+								<xs:element name="RecordAuditData" type="ns2:RecordAuditData" minOccurs="0"/>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OMFacilityType"/>
+	<xs:complexType name="OMDistrictType">
+		<xs:annotation>
+			<xs:documentation>A district is a group of facilities. Retail facilities will be grouped into "Districts", so that the Distri
+Manager is able to personally visit the facilities on a timely basis. Manufacturing plants and non-operating facilites also grouped to a district level.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="ns2:CorporationId"/>
+			<xs:element ref="ns2:DivisionId"/>
+			<xs:element name="OperatingAreaCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DistrictId">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DistrictNm">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DistrictType" type="ns2:CodeWithName" minOccurs="0"/>
+			<xs:element name="EffectivePeriod" type="EffectivePeriodType">
+				<xs:annotation>
+					<xs:documentation>Time period in effective for a version of the record.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ActivePeriod" type="ActivePeriodType">
+				<xs:annotation>
+					<xs:documentation>Time period during which the OM component is active.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="OfficeFacilityId" minOccurs="0"/>
+			<xs:element name="OMResponsibleParty" type="ResponsibleParty" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="AccountingType" type="AccountingComponentType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Accounting structure assigned to the the OM componenet in financial system. ex COA structure</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DistrictStatus" type="ns2:StatusType" minOccurs="0"/>
+			<xs:element name="RecordAuditData" type="ns2:RecordAuditData" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OMOeparatingAreaType"/>
+	<xs:complexType name="EffectivePeriodType">
+		<xs:annotation>
+			<xs:documentation>Time period in effective for a version of the record.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StartDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="EndDt" type="xs:date" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ActivePeriodType">
+		<xs:annotation>
+			<xs:documentation>Time period during which the OM component is active.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="FirstActiveDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date when a OM component like Corp, Div or facility is first active.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LastActiveDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date when a OM component like Corp, Div or facility is last active.
+generally defaulted to 9999-12-31 for all active OM components.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="AlternateId">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="50"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:complexType name="AccountingComponentType">
+		<xs:annotation>
+			<xs:documentation>Accounting components assigned the the OM componenet in financial system. ex COA structure</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="ComponentType" type="ns2:CodeWithName" minOccurs="0"/>
+			<xs:element name="ComponentValueTxt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="AlternateIdType" type="ns2:CodeWithName"/>
+	<xs:element name="OfficeFacilityId">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
 </xs:schema>

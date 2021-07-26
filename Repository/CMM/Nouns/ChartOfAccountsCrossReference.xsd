@@ -6,8 +6,9 @@
    Description: Contains commonly used Safeway Purchase order schema.
    Name: /SFWY/Nouns/SwyPurchaseOrder.xsd
 -->
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by Rosabel Macario (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.5 Rosabel Macario 06/10/21: Added Status under ChartOfAccountsTarget-->
 	<!--V1.4 Patrick Oliver: Added RestCd to COA source; Renamed GLCombinationId to LegacyFusionCd in COA source; Removed GLCombinationId from COA target-->
 	<!--V1.3 Patrick Oliver 11/20/20: Added complex types EffectiveDateTimeType and AuditDataType; added MappingNm to top level-->
 	<!--V1.2 Rosabel Macario 11/05/2020 - Added tag to resolve dateTimeStamp issue-->
@@ -228,6 +229,7 @@
 							</xs:simpleType>
 						</xs:element>
 						<xs:element name="EffectiveTimePeriod" type="EffetiveDateTimeType" minOccurs="0"/>
+						<xs:element name="Status" type="StatusType" minOccurs="0"/>
 						<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
 					</xs:sequence>
 				</xs:complexType>

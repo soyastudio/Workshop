@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
 <!--
    Schema agency: 	Safeway Inc
    Date:                11 Jan 2016
@@ -7,7 +7,7 @@
    Description: contains all Safeway Global Components as a common schema to include.
    Name: /SFWY/Global/SwyGlobalComponents.xsd
 -->
-<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" xmlns:ns="xs:string" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<xs:include schemaLocation="AbsGlobalFields.xsd"/>
 	<xs:element name="Address" type="AddressType">
 		<xs:annotation>
@@ -1748,6 +1748,59 @@ Examples are Spouse, Parent, Sibling, Relative, Friend etc.</xs:documentation>
 				<xs:annotation>
 					<xs:documentation>Date when the employee joined in the job mentioned in the job code.</xs:documentation>
 				</xs:annotation>
+			</xs:element>
+			<xs:element name="JobPositionType" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="JobPositionId" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>One Job code can have multiple job positions. It idetiifes the position employee is recruited. These positions have different BU, Collective agreement, departments etc</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="JobPositionNm" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="250"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AssignmentType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>It uniquely identifies every assignment that exists for an employee. An employee can have one or more than one assignment, and therefore more than one assignment number</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="AssignmentId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AssignmentNm" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="250"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AssignmentStartDt" type="xs:date" minOccurs="0"/>
+						<xs:element name="AssignmentEndDt" type="xs:date" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PayrollRelationshipNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A payroll relationship represents the association between a person and a payroll statutory unit, which is the legal entity responsible for employee payment.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
 			</xs:element>
 			<xs:element ref="HRDepartment" minOccurs="0"/>
 			<xs:element ref="Qualification" minOccurs="0" maxOccurs="unbounded"/>

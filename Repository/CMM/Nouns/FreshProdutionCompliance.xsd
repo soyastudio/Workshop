@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2021 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--!=============================================================================================-->
+	<!--!-->
+	<!--!-->
+	<!--!      Noun: FreshProductionCompliance-->
+	<!--!                                     Business object that represents fresh production compliance set and not set.-->
+	<!--!-->
+	<!--!=============================================================================================-->
+	<!--6/29/2021 - v1.0 - Alex Nunes - Initial version.-->
+	<xs:element name="FreshProductionCompliance" type="FreshProductionComplianceType">
+		<xs:annotation>
+			<xs:documentation>Fresh Department Production Planning, shows the items that have not had Set Production completed for them for the day. This data set is used in conjunction with Fresh Production Compliance Set which is for a fresh Department Production Planning compliance for a variety of metrics at the item level. Specific rules for compliance are set in the application, and this data indicates what rule-set an item belongs to, and if any set rules were not in compliance. Individual items must have had Set Production completed for the production cycle to be included in this data set.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="FreshProductionComplianceType">
+		<xs:annotation>
+			<xs:documentation>Needs definition HERE</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporationId"/>
+			<xs:element ref="DivisionId"/>
+			<xs:element name="FacilityType" type="CodeWithDescription"/>
+			<xs:element name="FacilityId">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="UPC">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="UPC"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ComplianceData" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="BatchId" type="xs:int" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>BatchId is also known as WorksheetId. This element represents the work sheet for the unit of work related to the production.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ProductionCycleType" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Describe what type of production Cycle this information relates to. It could 'S' for Single Production cycle or 'M' for Multi Production cycle.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ProductionCycleId" type="xs:int" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Internal identifier for the production cycle.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SetProductionTs" type="xs:dateTimeStamp">
+							<xs:annotation>
+								<xs:documentation>For Single Cycle Production -If SetProduction done before
+scheduled date then this field represents the scheduled date and time, else it is the date and time when SetProduction was completed. For Multi Cycle Production - this field is always the scheduled start date and time.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ItemSaleQty" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Item quantity for the item/store for the production cycle window (actual). Eventually this information will be available from POSLOG.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:int"/>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ActualProductionQty" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is the produced quantity.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:int"/>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SpotcheckTs" type="xs:dateTimeStamp" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Date and time when the item was spot checked.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ComplianceRuleSetId" type="xs:int">
+							<xs:annotation>
+								<xs:documentation>System generated identified for a Rule Set.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ComplianceRuleId" type="xs:int">
+							<xs:annotation>
+								<xs:documentation>System generated identifier for the Rule. </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+					<xs:attribute ref="typeCode"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AuditData" type="AuditType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Audit data elements.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AuditType">
+		<xs:annotation>
+			<xs:documentation>This type represents auditing data related to the message at source.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0">
+			<xs:element name="CreateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Time stamp of when message was created at source.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LastUpdateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time stamp of when message was last modified at source.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CreateUserId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Id of the client that created the message at source.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LastUpdateUserId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>User Id of who last modified the message at source.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EffetiveDateTimeType">
+		<xs:annotation>
+			<xs:documentation>Common type for Retail Customer effective date and time.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0">
+			<xs:element ref="Abs:FirstEffectiveDt" minOccurs="0"/>
+			<xs:element ref="Abs:FirstEffectiveTm" minOccurs="0"/>
+			<xs:element ref="Abs:LastEffectiveDt" minOccurs="0"/>
+			<xs:element ref="Abs:LastEffectiveTm" minOccurs="0"/>
+			<xs:element name="InclusiveInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates whether or not the dates and times are inclusive or not.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

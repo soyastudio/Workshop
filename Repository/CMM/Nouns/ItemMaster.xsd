@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<!-- edited with XMLSpy v2021 rel. 2 sp1 (x64) (http://www.altova.com) by poliv02 (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.13 Patrick Oliver 07/13/21 - Updated StockingSection to unbounded in Merchandise Hierarchy.-->
+	<!--v1.12 - Alex Nunes - 6/17/2021 - Added CostMemoAmt to DisplayItem type section Noun.-->
+	<!--v1.11 - Alex Nunes - 5/18/2021 - Added additional elements from SSITMROG and Label elements from URX to SupplyChainItem ROGItemRefrence section Noun.-->
 	<!--V1.10 snuth00 5/7/21 Added Business Unit in Merchandise Hierarchy.-->
 	<!--v1.9 - Alex Nunes - 3/1/2021 - System of record changed from SIMS to EXE for the following elements: ItemSizeNbr,WarehouseUnitWidth,WarehouseUnitLength,WarehouseUnitHeight,WarehouseCube,WarehouseUnitWt,PalletLayer,PalletHeight. Lengths adjusted accordingly.-->
 	<!--V1.8 Patrick Oliver 12/10/20: Updated LeadVendorInd to PrimaryVendorInd in ItemPriceAreaVendorType -->
@@ -1322,6 +1325,128 @@ fro SSITMURX</xs:documentation>
 									<xs:maxLength value="1"/>
 								</xs:restriction>
 							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ItemLabelType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Defines labels needed for the item in retail shelf.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="LabelType" type="CodeWithDescription" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Type of the label</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="LabelCnt" type="xs:integer" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Number of labels needed for the item.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="LabelPrintType" type="CodeWithDescription" minOccurs="0"/>
+									<xs:element name="LabelSizeType" type="CodeWithDescription" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="OriginOrder" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Corpotation and Division used to specify item and facility that store orders which will be routed to for this item (for warehouse items) and which item/division/CIC combination this item/rog combination is being maintained under (for DSD items). These are required due to business processes exceptions in which sometimes the WAREHOUSE division in WHSE Item is different than the RETAIL division. Examples are all Item ROG records for various divisions that order from the cross-division serving Sundries (WSUN) or Ponca (WPON) DCs.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence minOccurs="0">
+									<xs:element ref="CorporationId" minOccurs="0"/>
+									<xs:element ref="DivisionId" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="GapTargetInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Identifies the National Brand item that will be targeted when pricing House Brand and Generic items.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LockGapPricingInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field indicates if Gap pricing is not to happen on a specific item when used at the SSITMROG level or not on a whole product group and item type when used at the Gap Control level.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LockCSRInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Lock from computer suggested retails indicator.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ProcurementRestriction" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Any restriction that must exist in a store in order for the item to be sold.  
+</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence minOccurs="0">
+									<xs:element name="OrganizationTypeCd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Restrictions can be at different levels such as Department, Section, etc Valid values are ‘Department’, ‘Section’, ‘Store, etc. </xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="OrganizationValueTxt" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Valid values are DepartmentId, SectionCd, etc. </xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="ApprovalInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field is specifically for store created items that requires approval within Optiva before sending to store. When the item is first setup, MDS (Merchandising Data Service) will set to ‘O’. [Approval Outstanding]. The item details are not eligible to send to store.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LoadStoreInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Used to trigger UPC System = 4 items that need to be loaded down to the Stores.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="StatusEffDt" type="xs:date" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The Dt the Status on ITMCDS changed from New to Valid.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CreateDt" type="xs:date" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Item create date at corporate level.</xs:documentation>
+							</xs:annotation>
 						</xs:element>
 					</xs:sequence>
 				</xs:complexType>
@@ -4154,7 +4279,7 @@ Delivery Item in a ROG and Price Area.                        </xs:documentation
 																			</xs:annotation>
 																			<xs:complexType>
 																				<xs:sequence>
-																					<xs:element name="StockingSection" minOccurs="0">
+																					<xs:element name="StockingSection" minOccurs="0" maxOccurs="unbounded">
 																						<xs:complexType>
 																							<xs:sequence>
 																								<xs:element ref="StockingSectionId" minOccurs="0"/>
@@ -6124,6 +6249,17 @@ For example, Coke sold in the individual can or in a 6-pack are two distinct "pu
 										<xs:simpleType>
 											<xs:restriction base="xs:string">
 												<xs:maxLength value="20"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="CostMemoAmt" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Cost memo it the amount of the total display item cost assigned to this shelf item whithin the display. It is stricktly a memo field. Provincial billing additions are not used with this field.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:decimal">
+												<xs:totalDigits value="14"/>
+												<xs:fractionDigits value="4"/>
 											</xs:restriction>
 										</xs:simpleType>
 									</xs:element>

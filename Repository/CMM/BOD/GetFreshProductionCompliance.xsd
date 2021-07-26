@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2021 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://www.openapplications.org/oagis/9" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/FreshProdutionCompliance.xsd"/>
+	<!--!=============================================================================================-->
+	<!--!-->
+	<!--!-->
+	<!--!      GetFreshProductionCompliance-->
+	<!--!                                     Business object that represents fresh produce (perishables) production compliance SET and NOT SET.-->
+	<!--!-->
+	<!--!=============================================================================================-->
+	<!--6/302021 - v1.0 - Alex Nunes - Initial version.-->
+	<xs:element name="GetFreshProductionCompliance" type="GetFreshProductionCompliance">
+		<xs:annotation>
+			<xs:documentation>Root element.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetFreshProductionCompliance">
+		<xs:annotation>
+			<xs:documentation>BOD represents fresh Department Production Planning, shows the items that have not had Set Production completed for them for the day. This data set is used in conjunction with Fresh Production Compliance Set which is for a fresh Department Production Planning compliance for a variety of metrics at the item level. Specific rules for compliance are set in the application, and this data indicates what rule-set an item belongs to, and if any set rules were not in compliance. Individual items must have had Set Production completed for the production cycle to be included in this data set.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="FreshProductionComplianceData" type="Abs:FreshProductionComplianceType" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

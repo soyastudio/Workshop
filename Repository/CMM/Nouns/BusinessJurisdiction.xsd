@@ -283,7 +283,7 @@ District - if it applies at district level.</xs:documentation>
 										<xs:documentation>Defines various types of jurisdiction categories apllied with in a definition, ex taxes, sales restrictions, specail programs.</xs:documentation>
 									</xs:annotation>
 								</xs:element>
-								<xs:element ref="Abs:POSAppliedInd" minOccurs="0"/>
+								<xs:element ref="Abs:POSAppliedCd" minOccurs="0"/>
 							</xs:sequence>
 						</xs:extension>
 					</xs:complexContent>
@@ -301,7 +301,7 @@ Prepack,  service, code, and percent are the tare items stored here.
 						<xs:element name="RetailScanCd" type="Abs:UPC" minOccurs="0"/>
 						<xs:element ref="Abs:EffectiveStartDt" minOccurs="0"/>
 						<xs:element ref="Abs:EffectiveEndDt" minOccurs="0"/>
-						<xs:element ref="Abs:POSAppliedInd" minOccurs="0"/>
+						<xs:element ref="Abs:POSAppliedCd" minOccurs="0"/>
 						<xs:element name="TareCd" minOccurs="0">
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
@@ -494,9 +494,14 @@ Ex Tax-A Tax-B,Tax-C, Tax-D..etc</xs:documentation>
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
-	<xs:element name="POSAppliedInd" type="xs:boolean">
+	<xs:element name="POSAppliedCd">
 		<xs:annotation>
 			<xs:documentation>indicates if item is eligible for the rule to apply at POS.</xs:documentation>
 		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="5"/>
+			</xs:restriction>
+		</xs:simpleType>
 	</xs:element>
 </xs:schema>

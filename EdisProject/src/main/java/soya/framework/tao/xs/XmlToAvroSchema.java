@@ -1,20 +1,29 @@
-package soya.framework.tao.edis;
+package soya.framework.tao.xs;
 
-import org.apache.avro.JsonProperties;
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaBuilder;
 import org.apache.xmlbeans.SchemaProperty;
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.SchemaTypeSystem;
-import soya.framework.tao.xs.XmlBeansUtils;
+import org.apache.xmlbeans.XmlException;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigInteger;
 
-public class XmlToAvroSchema1 {
+public class XmlToAvroSchema {
 
     public static final String DEFAULT_NAMESPACE = "com.albertsons.esed.cmm";
 
-    private XmlToAvroSchema1() {
+    private XmlToAvroSchema() {
+    }
+
+    public static Schema fromXmlSchema(File xsd) {
+        try {
+            return fromXmlSchema(XmlBeansUtils.getSchemaTypeSystem(xsd));
+        } catch (XmlException | IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static Schema fromXmlSchema(SchemaTypeSystem sts) {
@@ -64,12 +73,15 @@ public class XmlToAvroSchema1 {
                     assembler.name(sp.getName().getLocalPart()).type(Schema.createArray((Schema) sub.endRecord())).noDefault();
 
                 } else {
-                    if(BigInteger.ZERO.equals(sp.getMinOccurs())) {
-                        //assembler.name(sp.getName().getLocalPart()).type((Schema) sub.endRecord()).noDefault();
-                        Schema nested = (Schema) sub.endRecord();
-                        Schema union = SchemaBuilder.unionOf().nullType().and().type(nested).endUnion();
+                    if (BigInteger.ZERO.equals(sp.getMinOccurs())) {
+                        assembler.name(sp.getName().getLocalPart()).type((Schema) sub.endRecord()).noDefault();
+/*
 
-                        assembler.name(sp.getName().getLocalPart()).type((Schema) sub.endRecord()).withDefault(null);
+                        Schema nested = (Schema) sub.endRecord();
+                        Schema union = SchemaBuilder.unionOf().type(nested).and().nullType().endUnion();
+                        assembler.name(sp.getName().getLocalPart()).type(union).noDefault();
+*/
+
                     } else {
                         assembler.name(sp.getName().getLocalPart()).type((Schema) sub.endRecord()).noDefault();
                     }
@@ -81,7 +93,6 @@ public class XmlToAvroSchema1 {
     }
 
     private static void assembleSimpleProperty(SchemaProperty sp, SchemaBuilder.FieldAssembler assembler) {
-        String defaultText = sp.getDefaultText();
         Schema.Type pt = BuildInTypeMapping.fromXmlTypeCode(XmlBeansUtils.getXMLBuildInType(sp.getType()).getCode());
 
         SchemaBuilder.FieldTypeBuilder builder = assembler.name(sp.getName().getLocalPart()).type();
@@ -121,8 +132,10 @@ public class XmlToAvroSchema1 {
         SchemaBuilder.StringDefault stringDefault;
         if (sp.getMinOccurs() == null || sp.getMinOccurs().intValue() == 0) {
             stringDefault = assembler.name(sp.getName().getLocalPart()).type().nullable().stringType();
+
         } else {
             stringDefault = assembler.name(sp.getName().getLocalPart()).type().stringType();
+
         }
 
         if (sp.getDefaultText() != null) {

@@ -7,6 +7,7 @@
 	<!--V1.0 Patrick Oliver 02/19/21: Initial Draft-->
 	<!--V1.1 Patrick Oliver 03/22/21: Updated TransactionTs to optional-->
 	<!--V1.2 Patrick Oliver 04/02/21: Changed AltTransaction cardinality to single occurrence; Rename SiteId to PartnerSiteId; ParticipantId to PartnerParticipantId; Changed TransactionTs, AltTransactionTs, to dateTimeStamp-->
+	<!--V1.3 Patrick Oliver: Removed SubAccountId, AccountTypeCd-->
 	<xs:element name="PartnerRewardReconciliation" type="PartnerRewardReconciliationType">
 		<xs:annotation>
 			<xs:documentation>Root element. Business Object Document for Albertsons Partner Reward Reconciliation. Current Albertson’s partner reward programs include fuel discounts with partner’s such as Shell and Chevron where customers can redeem Deferred rewards which are earned over time. During fuel purchases customers are presented with their reward balances which they can choose to redeem, request additional information, or cancel. Partners capture this customer transactional data throughout the day and is sent back to Albertsons accounting. This object will capture the partner reward reconciliation messages which are an accounting disposition which determines if and how a given partner reward is treated for financial reporting and accounting purposes.</xs:documentation>
@@ -258,12 +259,6 @@ Ex Partner transaction</xs:documentation>
 								<xs:sequence>
 									<xs:element ref="AccountId" minOccurs="0"/>
 									<xs:element ref="AccountingUnitId" minOccurs="0"/>
-									<xs:element ref="SubAccountId" minOccurs="0"/>
-									<xs:element name="AccountTypeCd" type="CodeWithDescription" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Type of UserAccount.</xs:documentation>
-										</xs:annotation>
-									</xs:element>
 								</xs:sequence>
 							</xs:complexType>
 						</xs:element>

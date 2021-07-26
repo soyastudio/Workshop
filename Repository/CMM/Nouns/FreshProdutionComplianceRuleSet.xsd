@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2021 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--!=============================================================================================-->
+	<!--!-->
+	<!--!-->
+	<!--!      Noun: FreshProductionComplianceRule-->
+	<!--!                                     Business object that represents fresh production compliance rule set.-->
+	<!--!-->
+	<!--!=============================================================================================-->
+	<!--6/7/2021 - v1.0 - Alex Nunes - Initial version.-->
+	<xs:element name="FreshProductionComplianceRuleSet" type="FreshProductionComplianceRuleSetType">
+		<xs:annotation>
+			<xs:documentation>Root element.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="FreshProductionComplianceRuleSetType">
+		<xs:annotation>
+			<xs:documentation>Represents the Compliance Rule Set and individual Compliance Rules, including information on Set Production and Actual Production compliance time windows, facing thresholds, and individual Rule formulas.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporationId"/>
+			<xs:element ref="DivisionId"/>
+			<xs:element name="ComplianceRuleSet" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Collection of rules that apply to a specific production cycle.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="ComplianceRuleSetId" type="xs:int">
+							<xs:annotation>
+								<xs:documentation>System generated identified for a Rule Set.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ComplianceRuleSetNm">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ActualsBeforeStartQty" type="xs:int" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Actual production quantity before production cycle starts.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ActualsAfterLeadTimeQty" type="xs:int" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Actual production quantity after the lead time of a production cycle.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SetBeforeStartTm" type="xs:time" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Number of hours prior to production cycle start time that store can hit set production.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SetAfterStartTm" type="xs:time" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Number of hours after the production cycle start time that store can hit set production.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="LastUpdateDt" type="xs:date" minOccurs="0"/>
+						<xs:element name="ComplianceRule" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Production compliance rule. Ex: Over or Under production by X %.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence minOccurs="0">
+									<xs:element name="ComplianceRuleId" type="xs:int">
+										<xs:annotation>
+											<xs:documentation>System generated identifier for the Rule. </xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="ComplianceRuleNm">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="FacingMinQty" type="xs:int" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Minimum number of products on the shelf so that the shelf appears full.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="FacingTypeInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Represents whether or not the item is a core or optional item.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="EffectivePeriod" type="EffetiveDateTimeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Effective dates and times for production cycle.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AuditData" type="AuditType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Audit data elements.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AuditType">
+		<xs:annotation>
+			<xs:documentation>This type represents auditing data related to the message at source.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0">
+			<xs:element name="CreateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Time stamp of when message was created at source.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LastUpdateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time stamp of when message was last modified at source.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CreateUserId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Id of the client that created the message at source.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LastUpdateUserId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>User Id of who last modified the message at source.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EffetiveDateTimeType">
+		<xs:annotation>
+			<xs:documentation>Common type for Retail Customer effective date and time.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0">
+			<xs:element ref="Abs:FirstEffectiveDt" minOccurs="0"/>
+			<xs:element ref="Abs:FirstEffectiveTm" minOccurs="0"/>
+			<xs:element ref="Abs:LastEffectiveDt" minOccurs="0"/>
+			<xs:element ref="Abs:LastEffectiveTm" minOccurs="0"/>
+			<xs:element name="InclusiveInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates whether or not the dates and times are inclusive or not.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>
