@@ -27,9 +27,81 @@ public class XmlToJsonConverter {
 
     public JsonElement estimate(Node node) {
         String path = path(node);
-        if (node.getTextContent() != null) {
-            if (mappings.containsKey(path)) {
-                String type = mappings.get(path);
+        if (!mappings.containsKey(path)) {
+            if (node.getTextContent() != null) {
+                return new JsonPrimitive(node.getTextContent());
+
+            } else if (node.getChildNodes().getLength() > 0) {
+                JsonObject obj = new JsonObject();
+                NamedNodeMap attributes = node.getAttributes();
+                for (int i = 0; i < attributes.getLength(); i++) {
+                    Node attr = attributes.item(i);
+                    obj.add(attr.getLocalName(), estimate(attr));
+                }
+
+                NodeList list = node.getChildNodes();
+                for (int i = 0; i < list.getLength(); i++) {
+                    Node child = list.item(i);
+                    obj.add(child.getLocalName(), estimate(child));
+                }
+
+                return obj;
+
+            } else {
+                return null;
+            }
+
+        } else {
+            String type = mappings.get(path);
+            if (type.toLowerCase().contains("array")) {
+                JsonArray array = arrayMap.get(path);
+                if (array == null) {
+                    array = new JsonArray();
+                    arrayMap.put(path, array);
+                }
+
+                if ("booleanArray".equals(type)) {
+                    array.add(new JsonPrimitive(Boolean.parseBoolean(node.getTextContent())));
+
+                } else if ("shortArray".equals(type)) {
+                    array.add(new JsonPrimitive(Short.parseShort(node.getTextContent())));
+
+                } else if ("integerArray".equals(type)) {
+                    array.add(new JsonPrimitive(Integer.parseInt(node.getTextContent())));
+
+                } else if ("longArray".equals(type)) {
+                    array.add(new JsonPrimitive(Long.parseLong(node.getTextContent())));
+
+                } else if ("floatArray".equals(type)) {
+                    array.add(new JsonPrimitive(Float.parseFloat(node.getTextContent())));
+
+                } else if ("doubleArray".equals(type)) {
+                    array.add(new JsonPrimitive(Double.parseDouble(node.getTextContent())));
+
+                } else if ("stringArray".equals(type)) {
+                    String content = node.getTextContent() == null ? "" : node.getTextContent();
+                    array.add(new JsonPrimitive(content));
+
+                } else if ("array".equals(type)) {
+                    JsonObject obj = new JsonObject();
+                    NamedNodeMap attributes = node.getAttributes();
+                    for (int i = 0; i < attributes.getLength(); i++) {
+                        Node attr = attributes.item(i);
+                        obj.add(attr.getLocalName(), estimate(attr));
+                    }
+
+                    NodeList list = node.getChildNodes();
+                    for (int i = 0; i < list.getLength(); i++) {
+                        Node child = list.item(i);
+                        obj.add(child.getLocalName(), estimate(child));
+                    }
+
+                    array.add(obj);
+                }
+
+                return array;
+
+            } else if (node.getTextContent() != null) {
                 if ("boolean".equals(type)) {
                     return new JsonPrimitive(Boolean.parseBoolean(node.getTextContent()));
 
@@ -48,51 +120,11 @@ public class XmlToJsonConverter {
                 } else if ("double".equals(type)) {
                     return new JsonPrimitive(Double.parseDouble(node.getTextContent()));
 
-                } else if ("array".equals(type)) {
-                    JsonArray array = arrayMap.get(path);
-                    if(array == null) {
-                        array = new JsonArray();
-                        arrayMap.put(path, array);
-                    }
-
-                    array.add(new JsonPrimitive(node.getTextContent()));
-
-                    return array;
-
                 } else {
                     return new JsonPrimitive(node.getTextContent());
                 }
 
-            } else {
-                return new JsonPrimitive(node.getTextContent());
-            }
-
-        } else if (node.getChildNodes().getLength() > 0) {
-            if (mappings.containsKey(path) && "array".equals(mappings.get(path))) {
-                JsonArray array = arrayMap.get(path);
-                if (!arrayMap.containsKey(path)) {
-                    array = new JsonArray();
-                    arrayMap.put(path, array);
-                }
-
-                JsonObject obj = new JsonObject();
-                NamedNodeMap attributes = node.getAttributes();
-                for (int i = 0; i < attributes.getLength(); i++) {
-                    Node attr = attributes.item(i);
-                    obj.add(attr.getLocalName(), estimate(attr));
-                }
-
-                NodeList list = node.getChildNodes();
-                for (int i = 0; i < list.getLength(); i++) {
-                    Node child = list.item(i);
-                    obj.add(child.getLocalName(), estimate(child));
-                }
-
-                array.add(obj);
-
-
-                return array;
-            } else {
+            } else if (node.getChildNodes().getLength() > 0) {
                 JsonObject obj = new JsonObject();
                 NamedNodeMap attributes = node.getAttributes();
                 for (int i = 0; i < attributes.getLength(); i++) {
@@ -107,12 +139,9 @@ public class XmlToJsonConverter {
                 }
 
                 return obj;
-
             }
 
-        } else {
-            return new JsonPrimitive("");
-
+            return null;
         }
     }
 

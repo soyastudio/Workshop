@@ -5,6 +5,7 @@ import com.samskivert.mustache.Mustache;
 import org.apache.avro.Schema;
 import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;
+import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.SchemaTypeSystem;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.impl.xsd2inst.SampleXmlUtil;
@@ -18,6 +19,7 @@ import soya.framework.tao.xs.XsKnowledgeBase;
 import soya.framework.tao.xs.XsNode;
 
 import java.io.*;
+import java.math.BigInteger;
 import java.util.*;
 
 public class Project {
@@ -397,7 +399,7 @@ public class Project {
         protected abstract String process() throws Exception;
 
         protected void fromTemplate(File dest, String templateName) throws IOException {
-            if(!dest.exists()) {
+            if (!dest.exists()) {
                 dest.createNewFile();
                 mustache(dest, new File(context.templateDir, templateName), project);
             }
@@ -467,9 +469,61 @@ public class Project {
             StringBuilder builder = new StringBuilder();
             Iterator<String> iterator = knowledgeTree.paths();
             while (iterator.hasNext()) {
-                builder.append(iterator.next()).append("=").append("\n");
+                String path = iterator.next();
+                XsNode node = knowledgeTree.get(path).origin();
+                builder.append(path).append("=");
+                if (XsNode.XsNodeType.Folder.equals(node.getNodeType())) {
+                    if (BigInteger.ONE.equals(node.getMaxOccurs())) {
+                        builder.append("object");
+                    } else {
+                        builder.append("array");
+                    }
+                } else if (XsNode.XsNodeType.Attribute.equals(node.getNodeType())) {
+                    builder.append("string");
+                } else {
+                    builder.append(getSimpleType(node.getSchemaType()));
+
+                    if (!BigInteger.ONE.equals(node.getMaxOccurs())) {
+                        builder.append("Array");
+                    }
+
+                }
+                builder.append("\n");
             }
             return builder.toString();
+        }
+
+        private String getSimpleType(SchemaType schemaType) {
+            String type = null;
+
+            SchemaType base = schemaType;
+            while (!base.isSimpleType()) {
+                base = base.getBaseType();
+            }
+            String className = XmlBeansUtils.getXMLBuildInType(base).getJavaType().getSimpleName();
+            switch (className) {
+                case "boolean":
+                    type = "boolean";
+                    break;
+                case "float":
+                    type = "float";
+                    break;
+                case "double":
+                case "BigDecimal":
+                    type = "double";
+                    break;
+                case "BigInteger":
+                case "int":
+                    type = "integer";
+                    break;
+                case "short":
+                    type = "short";
+                    break;
+                default:
+                    type = "string";
+            }
+
+            return type;
         }
     }
 }
