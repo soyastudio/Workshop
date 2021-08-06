@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<!-- edited with XMLSpy v2021 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V 1.8 - 7/26/2021 - Alex Nunes - JIRA: EEDM-15930. Added ProductGroupId as part of ProductCategory.-->
 	<!--V 1.7 - 1/7/2021 - Alex Nunes - Jira EBC-13448: Change requested by CABS, Vendor Number and WHSE Id must be optional. DealVendorId in DealVendorType section and WarehouseId in VendorDealDetailType section.-->
 	<!--V1.6 11/05/2020 Rosabel Macario - Added tag to resolve dateTimeStamp issue-->
 	<!--V1.5 9/15/2020 Alex Nunes - Added AP Vendor Account Number element as per Jira EBC-12226 -->
@@ -219,13 +220,7 @@ If the log number can’t be seen in PACS, Safeway won’t be able to bill the v
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
-						<xs:element name="ProductCategoryManagerNm" minOccurs="0">
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="50"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
+						<xs:element name="ProductGroupId" type="xs:long" minOccurs="0"/>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>

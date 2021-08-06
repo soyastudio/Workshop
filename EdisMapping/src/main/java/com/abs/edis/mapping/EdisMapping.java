@@ -10,9 +10,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -84,8 +82,10 @@ public class EdisMapping {
         try {
             process(session);
             return session.output;
+
         } catch (Exception e) {
             return e.getMessage();
+
         }
     }
 
@@ -136,6 +136,49 @@ public class EdisMapping {
 
     }
 
+    private static XPathMapping parse(String line) {
+        XPathMapping mapping = null;
+        if (line.contains("=")) {
+            String target = line.substring(0, line.indexOf("=")).trim();
+            mapping = new XPathMapping().target(target);
+
+            String value = line.substring(line.indexOf("=") + 1).trim();
+            StringTokenizer tokenizer = new StringTokenizer(value, "::");
+            while (tokenizer.hasMoreTokens()) {
+                String token = tokenizer.nextToken();
+                int begin = token.indexOf("(");
+                int end = token.lastIndexOf(")");
+                if (begin > 0 && end > begin) {
+                    String name = token.substring(0, begin);
+                    String param = token.substring(begin + 1, end);
+
+                    if ("type".equals(name)) {
+                        mapping.dataType(param);
+
+                    } else if ("cardinality".equals(name)) {
+                        mapping.cardinality(param);
+
+                    } else if ("construct".equals(name)) {
+
+                    } else if ("array".equals(name)) {
+
+                    } else if ("assign".equals(name)) {
+
+                    } else if ("parent".equals(name)) {
+                        if (mapping.assignment != null) {
+                            mapping.assignment.parent = param;
+
+                        } else if (mapping.construction != null) {
+
+                        }
+                    }
+                }
+            }
+        }
+
+        return mapping;
+    }
+
     static class Context {
         private File homeDir;
         private File workHome;
@@ -164,10 +207,19 @@ public class EdisMapping {
     static class Session {
 
         private transient Context context;
+
         private transient CommandLine cmd;
+        private transient EdisProject project;
+
+        private Map<String, XPathMapping> schema;
+
+        private Map<String, XPathMapping> mappings;
+        private Map<String, Array> arrays;
+
 
         private String commandLine;
         private JsonElement input;
+
         private String output;
 
         private Session init(Context context) {
@@ -188,6 +240,8 @@ public class EdisMapping {
                 throw new RuntimeException(e.getMessage());
             }
 
+            this.project = GSON.fromJson(input, EdisProject.class);
+
             return this;
         }
 
@@ -201,13 +255,21 @@ public class EdisMapping {
         private String target;
         private String name;
         private int level;
+
         private String dataType;
         private String constraints;
+
         private String cardinality;
+
         private String rule;
         private String source;
 
-        private Map<String, Object> annotations = new LinkedHashMap<>();
+        private String version;
+
+        private Construction construction;
+        private Assignment assignment;
+
+        private String unknown;
 
         public XPathMapping target(String target) {
             this.target = target;
@@ -219,10 +281,10 @@ public class EdisMapping {
         }
 
         public XPathMapping dataType(String dataType) {
-            String token = dataType.trim().toLowerCase();
+            String token = dataType.trim();
             if (token.contains("(")) {
-                this.constraints = token.substring(token.indexOf("(") + 1, token.lastIndexOf(")"));
-                this.dataType = token.substring(0, token.indexOf("("));
+                this.constraints = token.substring(token.indexOf("(") + 1, token.lastIndexOf(")")).trim();
+                this.dataType = token.substring(0, token.indexOf("(")).trim();
 
             } else if (token.contains(" ")) {
                 this.dataType = token.substring(0, token.indexOf(" "));
@@ -249,6 +311,16 @@ public class EdisMapping {
             return this;
         }
 
+        public XPathMapping version(String version) {
+            this.version = version;
+            return this;
+        }
+
+        public XPathMapping unknown(String unknown) {
+            this.unknown = unknown;
+            return this;
+        }
+
         public String parent() {
             if (target.contains("/")) {
                 return target.substring(0, target.lastIndexOf("/"));
@@ -265,33 +337,19 @@ public class EdisMapping {
         public boolean singleValue() {
             return cardinality.endsWith("-1");
         }
-
-        public Object getAnnotation(String name) {
-            return annotations.get(name);
-        }
-
-        public <T> T getAnnotation(String name, Class<T> type) {
-            return (T) annotations.get(name);
-        }
-
-        public void annotate(String name, Object value) {
-            annotations.put(name, value);
-        }
     }
 
     static class Construction {
         private String type;
         private String variable;
-        private Map<String, Array> arrays;
+        private List<Array> arrays;
 
         public void addArray(Array array) {
             if (arrays == null) {
-                arrays = new LinkedHashMap<>();
+                arrays = new ArrayList<>();
             }
 
-            if (!arrays.containsKey(array.sourcePath)) {
-                arrays.put(array.sourcePath, array);
-            }
+            arrays.add(array);
         }
 
 
@@ -328,24 +386,83 @@ public class EdisMapping {
     }
 
     static abstract class AbstractXPathMappingCommand implements Command {
-        private Set<String> vars = new LinkedHashSet<>();
-
-        protected Map<String, Array> arrays = new LinkedHashMap<>();
 
         @Override
         public void execute(Session session) throws Exception {
+            session.schema = schema(session);
+            session.mappings = mappings(session);
 
-            EdisProject project = null;
-            if (session.input != null) {
-                project = GSON.fromJson(session.input, EdisProject.class);
+            recalculate(session);
+
+            session.output = render(session);
+
+        }
+
+        protected String getJsonType(String type) {
+            String result = null;
+            String token = type.toLowerCase();
+
+            switch (token) {
+                case "date":
+                case "time":
+                case "datetime":
+                case "normalizedstring":
+                    result = "string";
+                    break;
+
+                case "decimal":
+                    result = "double";
+                    break;
+
+                case "int":
+                case "positiveinteger":
+                case "negativeinteger":
+                    result = "integer";
+                    break;
+
+                case "string":
+                case "boolean":
+                case "short":
+                case "integer":
+                case "long":
+                case "float":
+                case "double":
+                    result = token;
+
+                default:
+                    result = "string";
+            }
+
+            return result;
+        }
+
+        private Map<String, XPathMapping> schema(Session session) throws IOException {
+            Map<String, XPathMapping> mappings = new LinkedHashMap<>();
+
+            File schemaFile = new File(session.context.getWorkHome(), session.project.getMappings().getSchema());
+            BufferedReader br = new BufferedReader(new FileReader(schemaFile));
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (line.contains("=")) {
+                    XPathMapping mapping = parse(line);
+                    mappings.put(mapping.target, mapping);
+                }
+            }
+
+            return mappings;
+        }
+
+        private Map<String, XPathMapping> mappings(Session session) throws Exception {
+            Properties adjustments = new Properties();
+            File adjustFile = new File(session.context.getWorkHome(), session.project.getMappings().getMappingAdjustment());
+            if (adjustFile.exists()) {
+                adjustments.load(new FileInputStream(adjustFile));
             }
 
             Map<String, XPathMapping> mappings = new LinkedHashMap<>();
-
             CommandLine cmd = session.commandLine();
-            String path = cmd.getOptionValue("f");
-            File mappingFile = new File(session.context.getWorkHome(), path);
-            String mappingSheet = cmd.getOptionValue("s");
+            File mappingFile = new File(session.context.getWorkHome(), session.project.getMappings().getMappingFile());
+            String mappingSheet = session.project.getMappings().getMappingSheet();
 
             if (!mappingFile.exists()) {
                 throw new IllegalStateException("Can not find mapping file: " + mappingFile.toString());
@@ -357,6 +474,7 @@ public class EdisMapping {
             int cardinalityIndex = 0;
             int ruleIndex = 0;
             int sourceIndex = 0;
+            int versionIndex = 0;
 
             boolean start = false;
 
@@ -373,16 +491,67 @@ public class EdisMapping {
                         Cell cardinalityCell = currentRow.getCell(cardinalityIndex);
                         Cell ruleCell = currentRow.getCell(ruleIndex);
                         Cell sourceCell = currentRow.getCell(sourceIndex);
+                        Cell versionCell = currentRow.getCell(versionIndex);
 
                         if (!isEmpty(targetCell)) {
                             String xpath = targetCell.getStringCellValue().trim();
+                            String path = getCorrectPath(xpath, session);
+                            if (path != null) {
+                                mappings.put(path, new XPathMapping()
+                                        .target(path)
+                                        .dataType(isEmpty(typeCell) ? "" : typeCell.getStringCellValue())
+                                        .cardinality(isEmpty(cardinalityCell) ? "" : cardinalityCell.getStringCellValue())
+                                        .rule(ruleValue(ruleCell))
+                                        .source(sourceValue(sourceCell))
+                                        .version(cellValue(versionCell))
+                                );
 
-                            mappings.put(xpath, new XPathMapping()
-                                    .target(xpath)
-                                    .dataType(isEmpty(typeCell) ? "" : typeCell.getStringCellValue())
-                                    .cardinality(isEmpty(cardinalityCell) ? "" : cardinalityCell.getStringCellValue())
-                                    .rule(ruleValue(ruleCell))
-                                    .source(sourceValue(sourceCell)));
+                            } else if (adjustments.containsKey(xpath)) {
+                                XPathMapping adj = new XPathMapping()
+                                        .target(xpath)
+                                        .dataType(isEmpty(typeCell) ? "" : typeCell.getStringCellValue())
+                                        .cardinality(isEmpty(cardinalityCell) ? "" : cardinalityCell.getStringCellValue())
+                                        .rule(ruleValue(ruleCell))
+                                        .source(sourceValue(sourceCell))
+                                        .version(cellValue(versionCell));
+
+                                String value = adjustments.getProperty(xpath);
+
+                                boolean ignore = false;
+                                StringTokenizer tokenizer = new StringTokenizer(value, "::");
+                                while (tokenizer.hasMoreTokens()) {
+                                    String token = tokenizer.nextToken();
+                                    int begin = token.indexOf("(");
+                                    int end = token.lastIndexOf(")");
+                                    String func = token.substring(0, begin);
+                                    String param = token.substring(begin + 1, end);
+
+                                    if ("ignore".equals(func)) {
+                                        ignore = true;
+                                        break;
+
+                                    } else if ("path".equals(func)) {
+                                        adj.target(param);
+
+                                    }
+                                }
+
+                                if(!ignore) {
+                                    mappings.put(adj.target, adj);
+                                }
+
+                            } else {
+                                mappings.put(xpath, new XPathMapping()
+                                        .target(xpath)
+                                        .dataType(isEmpty(typeCell) ? "" : typeCell.getStringCellValue())
+                                        .cardinality(isEmpty(cardinalityCell) ? "" : cardinalityCell.getStringCellValue())
+                                        .rule(ruleValue(ruleCell))
+                                        .source(sourceValue(sourceCell))
+                                        .version(cellValue(versionCell))
+                                        .unknown("path")
+                                );
+                            }
+
                         }
 
                     } else {
@@ -416,6 +585,9 @@ public class EdisMapping {
                                         case "Source":
                                             sourceIndex = i;
                                             break;
+                                        case "Version":
+                                            versionIndex = i;
+                                            break;
                                     }
                                 }
                             }
@@ -423,23 +595,54 @@ public class EdisMapping {
                     }
                 }
 
-                recalculate(mappings);
-
-                session.output = render(mappings, project);
-
             } catch (Exception e) {
-                session.output = e.getMessage();
 
             } finally {
                 workbook.close();
             }
+
+            return mappings;
         }
 
-        private void recalculate(Map<String, XPathMapping> mappings) {
+        private String getCorrectPath(String xpath, Session session) {
+            if (session.schema.containsKey(xpath)) {
+                return xpath;
+
+            } else {
+                int slash = xpath.lastIndexOf("/");
+                String attrPath = xpath.substring(0, slash + 1) + "@" + xpath.substring(slash + 1);
+                if (session.schema.containsKey(attrPath)) {
+                    return attrPath;
+
+                } else {
+                    for (String path : session.schema.keySet()) {
+                        if (path.equalsIgnoreCase(xpath)) {
+                            return path;
+                        }
+                    }
+
+                    return null;
+                }
+            }
+
+        }
+
+        private void recalculate(Session session) {
+            Map<String, XPathMapping> schema = session.schema;
+            Map<String, XPathMapping> mappings = session.mappings;
+
+            Map<String, Array> arrays = session.arrays;
+            if (arrays == null) {
+                arrays = new LinkedHashMap<>();
+                session.arrays = arrays;
+            }
+            Set<String> vars = new LinkedHashSet<>();
+
             for (Map.Entry<String, XPathMapping> entry : mappings.entrySet()) {
                 XPathMapping mapping = entry.getValue();
+
                 if (mapping.rule != null) {
-                    touchParent(mappings, mapping);
+                    touchParent(mappings, mapping, vars, arrays);
 
                     String rule = mapping.rule.toUpperCase();
                     Assignment assignment = new Assignment();
@@ -447,7 +650,7 @@ public class EdisMapping {
                     if (rule.contains("DEFAULT")) {
                         assignment.evaluation = mapping.rule.substring(mapping.rule.indexOf("(") + 1, mapping.rule.lastIndexOf(")"));
 
-                    } else if (rule.equals("ASSIGN")) {
+                    } else if (rule.equals("DIRECT")) {
                         String src = mapping.source;
                         if (src.contains("[*]")) {
                             String parent = src.substring(0, src.lastIndexOf("[*]")) + "[*]";
@@ -469,24 +672,24 @@ public class EdisMapping {
 
                     }
 
-                    mapping.annotate("assignment", assignment);
+                    mapping.assignment = assignment;
                 }
             }
         }
 
-        private void touchParent(Map<String, XPathMapping> mappings, XPathMapping mapping) {
+        private void touchParent(Map<String, XPathMapping> mappings, XPathMapping mapping, Set<String> vars, Map<String, Array> arrays) {
             String parent = mapping.parent();
             while (parent != null) {
                 XPathMapping parentMapping = mappings.get(parent);
-                if (parentMapping != null && parentMapping.getAnnotation("construct") == null) {
+                if (parentMapping != null && parentMapping.construction == null) {
                     Construction construction = new Construction();
                     String var = parentMapping.target;
                     if (var.contains("/")) {
                         var = var.substring(var.lastIndexOf("/") + 1);
                     }
-                    construction.variable = getVariable(var + "_");
+                    construction.variable = getVariable(var + "_", vars);
                     if (parentMapping.singleValue()) {
-                        construction.type = "object";
+                        construction.type = "complex";
 
                     } else {
                         construction.type = "array";
@@ -506,7 +709,7 @@ public class EdisMapping {
                             if (base.contains(".")) {
                                 base = base.substring(base.lastIndexOf(".") + 1);
                             }
-                            base = getVariable(base);
+                            base = getVariable(base, vars);
 
                             path = path + "[*]";
                             if (!arrays.containsKey(path)) {
@@ -531,7 +734,7 @@ public class EdisMapping {
                         }
                     }
 
-                    parentMapping.annotate("construct", construction);
+                    parentMapping.construction = construction;
                     parent = parentMapping.parent();
 
                 } else {
@@ -540,7 +743,7 @@ public class EdisMapping {
             }
         }
 
-        private String getVariable(String base) {
+        private String getVariable(String base, Set<String> vars) {
             String token = base;
             int count = 0;
             while (vars.contains(token)) {
@@ -552,10 +755,16 @@ public class EdisMapping {
             return token;
         }
 
-        protected abstract String render(Map<String, XPathMapping> mappings, EdisProject project);
-
         private boolean isEmpty(Cell cell) {
             return cell == null || cell.getStringCellValue() == null || cell.getStringCellValue().trim().length() == 0;
+        }
+
+        private String cellValue(Cell cell) {
+            if (cell != null && CellType.STRING.equals(cell.getCellType())) {
+                return cell.getStringCellValue().trim();
+            }
+
+            return null;
         }
 
         private String ruleValue(Cell cell) {
@@ -572,7 +781,7 @@ public class EdisMapping {
                     return "DEFAULT(" + value + ")";
 
                 } else if (token.contains("DIRECT")) {
-                    return "ASSIGN";
+                    return "DIRECT";
 
                 } else {
                     return "TODO";
@@ -596,30 +805,315 @@ public class EdisMapping {
             return "";
         }
 
+        protected abstract String render(Session session);
+
     }
 
     static class MappingsCommand extends AbstractXPathMappingCommand {
+
         @Override
-        protected String render(Map<String, XPathMapping> mappings, EdisProject project) {
-            List<XPathMapping> list = new ArrayList<>(mappings.values());
+        protected String render(Session session) {
+            StringBuilder builder = new StringBuilder();
+            session.mappings.entrySet().forEach(e -> {
+                builder.append(e.getKey()).append("=").append("type(");
+                XPathMapping mapping = e.getValue();
+                String type = mapping.dataType != null && mapping.dataType.trim().length() > 0 ? mapping.dataType : "???";
+
+                if (Character.isUpperCase(type.charAt(0))) {
+                    type = "" + Character.toLowerCase(type.charAt(0)) + type.substring(1);
+                }
+
+                builder.append(type).append(")").append("::").append("cardinality(").append(mapping.cardinality).append(")");
+
+                if (mapping.rule != null) {
+                    builder.append("::");
+                    if ("DEFAULT".equals(mapping.rule)) {
+                        builder.append(mapping.rule);
+
+                    } else if ("DIRECT".equals(mapping.rule)) {
+                        builder.append("DIRECT(").append(mapping.source).append(")");
+
+                    } else {
+                        builder.append("TODO()");
+                    }
+
+                    if (mapping.version != null) {
+                        builder.append("::").append("version(").append(mapping.version).append(")");
+                    }
+                }
+
+                if (mapping.unknown != null) {
+                    builder.append("::").append("unknown(").append(mapping.unknown).append(")");
+                }
+
+                builder.append("\n");
+
+
+            });
+
+            return builder.toString();
+        }
+    }
+
+    static class UnknownMappingsCommand extends AbstractXPathMappingCommand {
+
+        @Override
+        protected String render(Session session) {
+            StringBuilder builder = new StringBuilder();
+            session.mappings.entrySet().forEach(e -> {
+                XPathMapping mapping = e.getValue();
+                if (mapping.unknown != null) {
+                    builder.append(e.getKey()).append("=").append("type(");
+                    String type = mapping.dataType != null && mapping.dataType.trim().length() > 0 ? mapping.dataType : "???";
+
+                    if (Character.isUpperCase(type.charAt(0))) {
+                        type = "" + Character.toLowerCase(type.charAt(0)) + type.substring(1);
+                    }
+
+                    builder.append(type).append(")").append("::").append("cardinality(").append(mapping.cardinality).append(")");
+
+                    if (mapping.rule != null) {
+                        builder.append("::");
+                        if ("DEFAULT".equals(mapping.rule)) {
+                            builder.append(mapping.rule);
+
+                        } else if ("DIRECT".equals(mapping.rule)) {
+                            builder.append("DIRECT(").append(mapping.source).append(")");
+
+                        } else {
+                            builder.append("TODO()");
+                        }
+
+                        if (mapping.version != null) {
+                            builder.append("::").append("version(").append(mapping.version).append(")");
+                        }
+                    }
+
+                    builder.append("::").append("unknown(").append(mapping.unknown).append(")");
+
+                    builder.append("\n");
+                }
+
+            });
+
+            return builder.toString();
+        }
+    }
+
+    static class MappingsDataTypeCommand extends AbstractXPathMappingCommand {
+        @Override
+        protected String render(Session session) {
+            StringBuilder builder = new StringBuilder();
+            session.mappings.entrySet().forEach(e -> {
+                builder.append(e.getKey()).append("=").append("type(");
+                XPathMapping mapping = e.getValue();
+                String type = mapping.dataType != null && mapping.dataType.trim().length() > 0 ? mapping.dataType : "???";
+
+                if (Character.isUpperCase(type.charAt(0))) {
+                    type = "" + Character.toLowerCase(type.charAt(0)) + type.substring(1);
+                }
+
+                builder.append(type).append(")").append("::").append("cardinality(").append(mapping.cardinality).append(")").append("\n");
+
+
+            });
+
+            return builder.toString();
+        }
+    }
+
+    static class MappingsJsonTypeCommand extends AbstractXPathMappingCommand {
+
+        @Override
+        protected String render(Session session) {
+            StringBuilder builder = new StringBuilder();
+            session.mappings.entrySet().forEach(e -> {
+                builder.append(e.getKey()).append("=").append("type(");
+                XPathMapping mapping = e.getValue();
+                String type = mapping.dataType != null && mapping.dataType.trim().length() > 0 ? mapping.dataType : "???";
+                String cardinality = mapping.cardinality;
+
+                if (Character.isUpperCase(type.charAt(0))) {
+                    type = "" + Character.toLowerCase(type.charAt(0)) + type.substring(1);
+                }
+
+                if (session.schema.containsKey(mapping.target)) {
+                    type = getJsonType(session.schema.get(mapping.target).dataType);
+                    cardinality = session.schema.get(mapping.target).cardinality;
+                }
+
+                builder.append(type).append(")").append("::").append("cardinality(").append(mapping.cardinality).append(")").append("\n");
+
+            });
+
+            return builder.toString();
+        }
+    }
+
+    static class XmlToJsonTypeMappingsCommand extends AbstractXPathMappingCommand {
+
+        @Override
+        protected String render(Session session) {
+            StringBuilder builder = new StringBuilder();
+
+            Map<String, XPathMapping> schema = session.schema;
+            session.mappings.entrySet().forEach(e -> {
+
+                XPathMapping mapping = e.getValue();
+                String cardinality = schema.containsKey(e.getKey()) ? schema.get(e.getKey()).cardinality : mapping.cardinality;
+
+                if (mapping.construction != null && !cardinality.endsWith("-1")) {
+                    builder.append(mapping.target).append("=").append("array").append("\n");
+
+                } else if (mapping.assignment != null) {
+                    String type = getJsonType(mapping.dataType);
+                    if (!cardinality.endsWith("-1")) {
+                        type = type + "Array";
+                    }
+                    if (!"string".equals(type)) {
+                        builder.append(mapping.target).append("=").append(type).append("\n");
+                    }
+
+                }
+            });
+
+            return builder.toString();
+        }
+    }
+
+    static class JsonTypeMappingsCommand extends AbstractXPathMappingCommand {
+
+        @Override
+        protected String render(Session session) {
+            StringBuilder builder = new StringBuilder();
+
+            Map<String, XPathMapping> schema = session.schema;
+            session.mappings.entrySet().forEach(e -> {
+
+                XPathMapping mapping = e.getValue();
+                String cardinality = schema.containsKey(e.getKey()) ? schema.get(e.getKey()).cardinality : mapping.cardinality;
+
+                if (mapping.construction != null && !cardinality.endsWith("-1")) {
+                    builder.append("array(").append(mapping.target).append(")").append(";");
+
+
+                } else if (mapping.assignment != null) {
+                    String type = getJsonType(mapping.dataType);
+                    if (!cardinality.endsWith("-1")) {
+                        type = type + "Array";
+                    }
+
+                    if (!"string".equals(type)) {
+                        builder.append(type).append("(").append(mapping.target).append(")").append(";");
+                    }
+
+                }
+            });
+
+            return builder.toString();
+        }
+    }
+
+    static class MappingsConstructCommand extends AbstractXPathMappingCommand {
+
+        @Override
+        protected String render(Session session) {
+            StringBuilder builder = new StringBuilder();
+            session.mappings.entrySet().forEach(e -> {
+                builder.append(e.getKey()).append("=").append("type(");
+                XPathMapping mapping = e.getValue();
+                String type = mapping.dataType != null && mapping.dataType.trim().length() > 0 ? mapping.dataType : "???";
+                String cardinality = mapping.cardinality;
+
+                if (Character.isUpperCase(type.charAt(0))) {
+                    type = "" + Character.toLowerCase(type.charAt(0)) + type.substring(1);
+                }
+
+                if (session.schema.containsKey(mapping.target)) {
+                    type = getJsonType(session.schema.get(mapping.target).dataType);
+                    cardinality = session.schema.get(mapping.target).cardinality;
+
+                }
+
+                builder.append(type).append(")").append("::").append("cardinality(").append(mapping.cardinality).append(")");
+
+                if (mapping.construction != null) {
+                    Construction construction = mapping.construction;
+                    builder.append("::").append("construct(").append(construction.variable).append(")");
+
+                    if (construction.arrays != null) {
+                        construction.arrays.forEach(a -> {
+                            builder.append("::").append("array(")
+                                    .append(a.sourcePath).append(", ")
+                                    .append(a.name).append(", ")
+                                    .append(a.variable).append(", ")
+                                    .append(a.evaluation)
+                                    .append(")");
+                            if (a.parent != null) {
+                                builder.append("::").append("parent(").append(a.parent).append(")");
+                            }
+                        });
+                    }
+
+                } else if (mapping.assignment != null) {
+                    Assignment assignment = mapping.assignment;
+                    builder.append("::").append("assign(").append(assignment.evaluation).append(")");
+                    if (assignment.parent != null) {
+                        builder.append("::").append("parent(").append(assignment.parent).append(")");
+                    }
+
+                }
+
+                builder.append("\n");
+
+            });
+
+            return builder.toString();
+        }
+    }
+
+    static class MappingsValidationCommand extends AbstractXPathMappingCommand {
+
+        @Override
+        protected String render(Session session) {
+            List<String> list = new ArrayList<>();
+            session.mappings.entrySet().forEach(e -> {
+
+                if (!session.schema.containsKey(e.getKey())) {
+                    list.add("Unknown target path: " + e.getKey());
+                } else {
+                    XPathMapping m1 = session.schema.get(e.getKey());
+                    XPathMapping m2 = session.mappings.get(e.getKey());
+
+                    if (!m1.dataType.equals(m2.dataType)) {
+                        list.add("Type mismatch for " + e.getKey() + ": schema type is " + m1.dataType + " while mapping type is " + m2.dataType);
+                    }
+
+                    if (!m1.cardinality.equals(m2.cardinality)) {
+                        list.add("Cardinality mismatch for " + e.getKey() + ": schema cardinality is " + m1.cardinality + " while mapping cardinality is " + m2.cardinality);
+                    }
+                }
+
+            });
+
             return GSON.toJson(list);
         }
     }
 
     static class ArrayMappingsCommand extends AbstractXPathMappingCommand {
         @Override
-        protected String render(Map<String, XPathMapping> mappings, EdisProject project) {
-            return GSON.toJson(arrays.values());
+        protected String render(Session session) {
+            return GSON.toJson(session.arrays.values());
         }
     }
 
     static class XPathMappingCommand extends AbstractXPathMappingCommand {
 
         @Override
-        protected String render(Map<String, XPathMapping> mappings, EdisProject project) {
+        protected String render(Session session) {
             StringBuilder builder = new StringBuilder();
 
-            mappings.entrySet().forEach(e -> {
+            session.mappings.entrySet().forEach(e -> {
                 builder.append(e.getKey() + "=" + exp(e.getValue())).append("\n");
             });
 
@@ -642,181 +1136,20 @@ public class EdisMapping {
         }
     }
 
-    static class XPathJsonTypeCommand extends AbstractXPathMappingCommand {
+    static class ConstructTreeCommand extends AbstractXPathMappingCommand {
 
         @Override
-        protected String render(Map<String, XPathMapping> mappings, EdisProject project) {
-            StringBuilder builder = new StringBuilder();
-            mappings.entrySet().forEach(e -> {
-                builder.append(e.getKey()).append("=");
-                XPathMapping mapping = e.getValue();
-                String jsonType = "string";
-
-                String type = mapping.dataType.toLowerCase();
-                if (type.contains("(")) {
-                    type = type.substring(0, type.indexOf("("));
-                }
-
-                boolean arr = false;
-                String cardinality = mapping.cardinality;
-                if (cardinality.contains("-")) {
-                    cardinality = cardinality.substring(mapping.cardinality.lastIndexOf('-') + 1);
-                }
-
-                if ("n".equalsIgnoreCase(cardinality) || Integer.parseInt(cardinality) > 1) {
-                    arr = true;
-
-                }
-
-                if (arr) {
-                    if (type.equals("boolean")) {
-                        jsonType = "booleanArray";
-
-                    } else if (type.equals("short")) {
-                        jsonType = "shortArray";
-
-                    } else if (type.equals("integer")) {
-                        jsonType = "integerArray";
-
-                    } else if (type.equals("long")) {
-                        jsonType = "longArray";
-
-                    } else if (type.equals("float")) {
-                        jsonType = "floatArray";
-
-                    } else if (type.equals("double")) {
-                        jsonType = "doubleArray";
-
-                    } else if (type.equals("decimal")) {
-                        jsonType = "decimalArray";
-
-                    } else if (type.startsWith("complex")) {
-                        jsonType = "array";
-
-                    } else {
-                        jsonType = "stringArray";
-                    }
-
-
-                } else if (type.startsWith("complex")) {
-                    jsonType = "object";
-
-                } else if (type.equals("boolean")
-                        || type.equals("short")
-                        || type.equals("integer")
-                        || type.equals("long")
-                        || type.equals("float")
-                        || type.equals("double")) {
-
-                    jsonType = type;
-
-                } else if (type.equals("decimal")) {
-                    jsonType = "double";
-
-                }
-
-                builder.append(jsonType).append("\n");
-            });
-
-            return builder.toString();
-        }
-    }
-
-    static class JsonTypeCommand extends AbstractXPathMappingCommand {
-
-        @Override
-        protected String render(Map<String, XPathMapping> mappings, EdisProject project) {
-            StringBuilder builder = new StringBuilder();
-            mappings.entrySet().forEach(e -> {
-                XPathMapping mapping = e.getValue();
-                String jsonType = "string";
-
-                String type = mapping.dataType.toLowerCase();
-                if (type.contains("(")) {
-                    type = type.substring(0, type.indexOf("("));
-                }
-
-                boolean arr = false;
-                String cardinality = mapping.cardinality;
-                if (cardinality.contains("-")) {
-                    cardinality = cardinality.substring(mapping.cardinality.lastIndexOf('-') + 1);
-                }
-
-                if ("n".equalsIgnoreCase(cardinality) || Integer.parseInt(cardinality) > 1) {
-                    arr = true;
-
-                }
-
-                if (arr) {
-                    if (type.equals("boolean")) {
-                        jsonType = "booleanArray";
-
-                    } else if (type.equals("short")) {
-                        jsonType = "shortArray";
-
-                    } else if (type.equals("integer")) {
-                        jsonType = "integerArray";
-
-                    } else if (type.equals("long")) {
-                        jsonType = "longArray";
-
-                    } else if (type.equals("float")) {
-                        jsonType = "floatArray";
-
-                    } else if (type.equals("double")) {
-                        jsonType = "doubleArray";
-
-                    } else if (type.equals("decimal")) {
-                        jsonType = "decimalArray";
-
-                    } else if (type.startsWith("complex")) {
-                        jsonType = "array";
-
-                    } else {
-                        jsonType = "stringArray";
-                    }
-
-
-                } else if (type.startsWith("complex")) {
-                    jsonType = "object";
-
-                } else if (type.equals("boolean")
-                        || type.equals("short")
-                        || type.equals("integer")
-                        || type.equals("long")
-                        || type.equals("float")
-                        || type.equals("double")) {
-
-                    jsonType = type;
-
-                } else if (type.equals("decimal")) {
-                    jsonType = "double";
-
-                }
-
-                if (!jsonType.equals("string") && !jsonType.equals("object")) {
-                    builder.append(jsonType).append("(").append(mapping.target).append(");");
-                }
-            });
-
-            return builder.toString();
-        }
-    }
-
-    static class ConstructCommand extends AbstractXPathMappingCommand {
-
-        @Override
-        protected String render(Map<String, XPathMapping> mappings, EdisProject project) {
+        protected String render(Session session) {
             CodeBuilder builder = CodeBuilder.newInstance();
 
-            mappings.entrySet().forEach(e -> {
+            session.mappings.entrySet().forEach(e -> {
                 XPathMapping mapping = e.getValue();
                 builder.append(e.getKey()).append("=");
-                if (mapping.getAnnotation("construct") != null) {
-                    Construction construction = mapping.getAnnotation("construct", Construction.class);
+                if (mapping.construction != null) {
+                    Construction construction = mapping.construction;
                     builder.append("construct()");
                     if (construction.arrays != null) {
-                        construction.arrays.values().forEach(array -> {
+                        construction.arrays.forEach(array -> {
                             builder.append(".array(")
                                     .append(array.name)
                                     .append(", ")
@@ -826,8 +1159,8 @@ public class EdisMapping {
                                     .append(")");
                         });
                     }
-                } else if (mapping.getAnnotation("assignment") != null) {
-                    builder.append(mapping.getAnnotation("assignment", Assignment.class).evaluation);
+                } else if (mapping.assignment != null) {
+                    builder.append(mapping.assignment.evaluation);
                 }
 
                 builder.appendLine();
@@ -840,8 +1173,8 @@ public class EdisMapping {
     static class EsqlCommand extends AbstractXPathMappingCommand {
 
         @Override
-        protected String render(Map<String, XPathMapping> mappings, EdisProject project) {
-            EdisProject.MessageFlow flow = project.getMessageFlow();
+        protected String render(Session session) {
+            EdisProject.MessageFlow flow = session.project.getMessageFlow();
             EdisProject.Node transformer = flow.getTransformer();
             CodeBuilder builder = CodeBuilder.newInstance();
 
@@ -869,18 +1202,18 @@ public class EdisMapping {
                     .appendLine("CREATE LASTCHILD OF OutputRoot DOMAIN 'XMLNSC';", indent)
                     .appendLine();
 
-            for (Map.Entry<String, XPathMapping> e : mappings.entrySet()) {
+            for (Map.Entry<String, XPathMapping> e : session.mappings.entrySet()) {
                 XPathMapping m = e.getValue();
-                XPathMapping p = mappings.get(m.parent());
+                XPathMapping p = session.mappings.get(m.parent());
                 if (m.parent() == null) {
 
                     builder.appendLine("-- " + m.target, indent + m.level)
                             .append("DECLARE ", indent + m.level)
-                            .append(m.getAnnotation("construct", Construction.class).variable)
+                            .append(m.construction.variable)
                             .append(" REFERENCE TO OutputRoot.XMLNSC.")
                             .append(m.name).appendLine(";")
                             .append("CREATE LASTCHILD OF OutputRoot.XMLNSC AS ", indent + m.level)
-                            .append(m.getAnnotation("construct", Construction.class).variable)
+                            .append(m.construction.variable)
                             .append(" TYPE XMLNSC.Folder NAME '")
                             .append(m.name)
                             .appendLine("';")
@@ -890,12 +1223,12 @@ public class EdisMapping {
                             .appendLine();
 
 
-                } else if (m.getAnnotation("construct") != null) {
-                    Construction mc = m.getAnnotation("construct", Construction.class);
-                    Construction pc = p.getAnnotation("construct", Construction.class);
+                } else if (m.construction != null) {
+                    Construction mc = m.construction;
+                    Construction pc = p.construction;
 
                     builder.appendLine("-- " + m.target, indent + m.level);
-                    if ("object".equals(mc.type)) {
+                    if ("complex".equals(mc.type)) {
                         if (m.level > 2) {
                             builder.append("DECLARE ", indent + m.level)
                                     .append(mc.variable)
@@ -928,17 +1261,17 @@ public class EdisMapping {
 
                         }
 
-                    } else if ("array".equals(m.getAnnotation("construct"))) {
+                    } else if ("array".equals("???")) {
 
                     }
 
-                } else if (m.getAnnotation("assignment") != null) {
-                    Assignment assignment = m.getAnnotation("assignment", Assignment.class);
+                } else if (m.assignment != null) {
+                    Assignment assignment = m.assignment;
                     String evaluation = assignment.evaluation;
                     if (evaluation.startsWith("$.")) {
                         evaluation = evaluation.substring(2);
                     }
-                    Construction pc = p.getAnnotation("construct", Construction.class);
+                    Construction pc = p.construction;
                     builder.appendLine("-- " + m.target, indent + m.level)
                             .append("SET ", indent + m.level)
                             .append(pc.variable)

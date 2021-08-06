@@ -1,4 +1,4 @@
-package com.abs.edis.mapping;
+package com.abs.edis.schema;
 
 import com.google.gson.JsonElement;
 
@@ -50,7 +50,6 @@ public class EdisProject {
         private String mappingFile = "???";
         private String mappingSheet = "???";
         private String sampleSheet = "???";
-        private String mappingAdjustment;
         private String constructFile = "xpath-mapping.properties";
 
         public String getSchema() {
@@ -65,10 +64,6 @@ public class EdisProject {
             return mappingSheet;
         }
 
-        public String getMappingAdjustment() {
-            return mappingAdjustment;
-        }
-
         public String getSampleSheet() {
             return sampleSheet;
         }
@@ -76,8 +71,6 @@ public class EdisProject {
         public String getConstructFile() {
             return constructFile;
         }
-
-
     }
 
     static class MessageFlow {

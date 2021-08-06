@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2021 rel. 2 sp1 (x64) (http://www.altova.com) by poliv02 (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://collab.safeway.com/it/architecture/AbsOmMaster" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V2.3 07/28/21 Patrick Oliver: RetailStoreDigital; note the following changes can also be found in GetRetailStoreDigital v1.2:
+ Changed PickUpLocationDetail to unbounded and removed unbounded from the PickUpLocationDetail sequence  
+ For EcomBusinessHours.BusinessHrs changed StartHr and EndHr to strings:
+ For EcomAlternateBusinessHours.AlternateBusinessHrs:
+     - Added BusinessHrs as unbounded and removed the unbounded sequence. 
+     - Changed StartHr and EndHr to strings 
+     - Added HrsTypeCd (this can be used to set the type to Operation, Staffing, etc.) 
+ Updated PickUpSchedule.typeCode, AlternateBusinessHrsComment.typeCode, LocationCoordinates.typeCode, MultiBannerPostalCodes.typeCode, InstructionTxt.typeCode to string
+ Updated FacilityProfileType.EffectiveStartDt to FacilityProfileType.EffectiveStartDtTm and FacilityProfileType.EffectiveEndDt to FacilityProfileType.EffectiveEndDtTm
+ Changed AltStoreId to optional -->
 	<!--V2.2 07/12/21 Patrick Oliver: Added LocationCoordinates to PickUpLocation and removed LatitudeDegree/LongitudeDegree; added DivisionNm-->
 	<!--V2.1 06/22/21 Patrick Oliver: Added PartnerData to RetailStoreDigital -->
 	<!--V2.0 06/10/21 Patrick Oliver: Added MultiDeliveryBannerType (this used with FulfillmentStoreId )-->
@@ -102,8 +112,8 @@ Added complex types EcomBusinessHours , EcomAlternateBusinessHours
 			<xs:documentation>Defines all the digital profiles of a retail store used in ecom business</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element ref="CorporationId"/>
-			<xs:element ref="DivisionId"/>
+			<xs:element ref="CorporationId" minOccurs="0"/>
+			<xs:element ref="DivisionId" minOccurs="0"/>
 			<xs:element name="DivisionNm" nillable="false" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Name of the Safeway Divisionex: Norcal, Denver, Dominick&apos;s, Supply, Safeway Direct.</xs:documentation>
@@ -116,7 +126,7 @@ Added complex types EcomBusinessHours , EcomAlternateBusinessHours
 			</xs:element>
 			<xs:element ref="BannerCd" minOccurs="0"/>
 			<xs:element name="RetailStoreId" type="xs:integer"/>
-			<xs:element name="AltStoreId">
+			<xs:element name="AltStoreId" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Alternate sotre id, generally store id in char format.</xs:documentation>
 				</xs:annotation>
@@ -275,12 +285,12 @@ Ex: 3PL enabled store, Premium store, ERUM store, Auto Replenishment store, .etc
 										</xs:restriction>
 									</xs:simpleType>
 								</xs:element>
-								<xs:element name="EffectiveStartDt" type="xs:date" minOccurs="0">
+								<xs:element name="EffectiveStartDtTm" type="xs:dateTimeStamp" minOccurs="0">
 									<xs:annotation>
 										<xs:documentation>Date on which the store profile starts. </xs:documentation>
 									</xs:annotation>
 								</xs:element>
-								<xs:element name="EffectiveEndDt" type="xs:date" minOccurs="0">
+								<xs:element name="EffectiveEndDtTm" type="xs:dateTimeStamp" minOccurs="0">
 									<xs:annotation>
 										<xs:documentation>Date on which the store profile starts. </xs:documentation>
 									</xs:annotation>
@@ -300,7 +310,7 @@ Ex: 3PL enabled store, Premium store, ERUM store, Auto Replenishment store, .etc
 						<xs:element name="FirstPickUpTm" type="xs:string" minOccurs="0"/>
 						<xs:element name="LastPickUpTm" type="xs:string" minOccurs="0"/>
 					</xs:sequence>
-					<xs:attribute name="typeCode">
+					<xs:attribute name="typeCode" type="xs:string">
 						<xs:annotation>
 							<xs:documentation>Attribute used to describe what is the type of the associated entity. This allows for extension of the model without the need for pre-defining a static ID element.
 			
@@ -331,7 +341,7 @@ ex: Inside Locker,Outside Locker, Outside Kiosk.</xs:documentation>
 				</xs:annotation>
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="PickupAreaTypeCd" minOccurs="0"/>
+						<xs:element name="PickupAreaTypeCd" type="xs:string" minOccurs="0"/>
 						<xs:element name="PickupAreaId" type="xs:string" minOccurs="0"/>
 						<xs:element name="LocationPriorityNbr" type="xs:int" minOccurs="0"/>
 						<xs:element name="MachineId" minOccurs="0" maxOccurs="5">
@@ -360,7 +370,11 @@ ex: Inside Locker,Outside Locker, Outside Kiosk.</xs:documentation>
 							<xs:complexType>
 								<xs:complexContent>
 									<xs:extension base="CoordinatesType">
-										<xs:attribute ref="typeCode"/>
+										<xs:attribute name="typeCode" type="xs:string">
+											<xs:annotation>
+												<xs:documentation>Used for the type of location coordiate such as "Point" etc. </xs:documentation>
+											</xs:annotation>
+										</xs:attribute>
 									</xs:extension>
 								</xs:complexContent>
 							</xs:complexType>
@@ -392,13 +406,17 @@ ex: Inside Locker,Outside Locker, Outside Kiosk.</xs:documentation>
 								</xs:sequence>
 							</xs:complexType>
 						</xs:element>
-						<xs:element name="PickUpLocationDetail" minOccurs="0">
+						<xs:element name="PickUpLocationDetail" minOccurs="0" maxOccurs="unbounded">
 							<xs:annotation>
 								<xs:documentation>Used to show additional details about pick up store locations. For example the pickup area may be in the back of a store and the pick up location details can specify the allocated parking lots for customers, vendors, etc.. </xs:documentation>
 							</xs:annotation>
 							<xs:complexType>
-								<xs:sequence minOccurs="0" maxOccurs="unbounded">
-									<xs:element name="LocationTypeCd" minOccurs="0"/>
+								<xs:sequence minOccurs="0">
+									<xs:element name="LocationTypeCd" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Used for the type of location coordiate such as geoFence1pl", etc. </xs:documentation>
+										</xs:annotation>
+									</xs:element>
 									<xs:element name="LocationAreaNm" minOccurs="0">
 										<xs:simpleType>
 											<xs:restriction base="xs:string">
@@ -634,12 +652,12 @@ Ex: Store can be designated to manually override an automated 3PL delivery sched
 								<xs:documentation>Day of week</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="StartHr" type="xs:time" nillable="false" minOccurs="0">
+						<xs:element name="StartHr" type="xs:string" nillable="false" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>Starting hour of the eCom business operation.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="EndHr" type="xs:time" nillable="false" minOccurs="0">
+						<xs:element name="EndHr" type="xs:string" nillable="false" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>Ending hour of the eCom business operation.</xs:documentation>
 							</xs:annotation>
@@ -682,43 +700,27 @@ Ex: Store can be designated to manually override an automated 3PL delivery sched
 								<xs:documentation>Day of week.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:sequence minOccurs="0" maxOccurs="unbounded">
-							<xs:annotation>
-								<xs:documentation>Note: There can be multiple alternate start and end hours for the type and subtype (ex: OpeartiontarttHr, OperationEndHr, StaffingSarttHr, StaffingEndHr, etc.</xs:documentation>
-							</xs:annotation>
-							<xs:element name="StartHr" nillable="false" minOccurs="0">
-								<xs:annotation>
-									<xs:documentation>Starting hour of the eCom business operation.</xs:documentation>
-								</xs:annotation>
-								<xs:complexType>
-									<xs:simpleContent>
-										<xs:extension base="xs:time">
-											<xs:attribute name="typeCode">
-												<xs:annotation>
-													<xs:documentation>Ex: OperationStartHr, StaffingStartHr, etc.</xs:documentation>
-												</xs:annotation>
-											</xs:attribute>
-										</xs:extension>
-									</xs:simpleContent>
-								</xs:complexType>
-							</xs:element>
-							<xs:element name="EndHr" nillable="false" minOccurs="0">
-								<xs:annotation>
-									<xs:documentation>Ending hour of the eCom business operation.</xs:documentation>
-								</xs:annotation>
-								<xs:complexType>
-									<xs:simpleContent>
-										<xs:extension base="xs:time">
-											<xs:attribute name="typeCode">
-												<xs:annotation>
-													<xs:documentation>Ex: OperationEndHr, StaffingEndHr, etc.</xs:documentation>
-												</xs:annotation>
-											</xs:attribute>
-										</xs:extension>
-									</xs:simpleContent>
-								</xs:complexType>
-							</xs:element>
-						</xs:sequence>
+						<xs:element name="BusinessHrs" minOccurs="0" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="HrsTypeCd" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Ex: OperationStartHr, StaffingStartHr, etc.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="StartHr" type="xs:string" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Starting hour of the eCom business operation.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="EndHr" type="xs:string" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Ending hour of the eCom business operation.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
@@ -741,7 +743,7 @@ Ex: Store can be designated to manually override an automated 3PL delivery sched
 				<xs:complexType>
 					<xs:simpleContent>
 						<xs:extension base="xs:string">
-							<xs:attribute ref="typeCode"/>
+							<xs:attribute name="typeCode" type="xs:string"/>
 						</xs:extension>
 					</xs:simpleContent>
 				</xs:complexType>
@@ -906,7 +908,7 @@ Ex: Store can be designated to manually override an automated 3PL delivery sched
 			<xs:documentation>Any free format text pertaining to the delivery order.</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
-			<xs:attribute ref="typeCode"/>
+			<xs:attribute name="typeCode" type="xs:string"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:complexType name="MultiBannerPostalCodesType">
@@ -922,31 +924,31 @@ Ex: Store can be designated to manually override an automated 3PL delivery sched
 			<xs:element ref="BannerCd" minOccurs="0"/>
 			<xs:element ref="InstructionTxt" minOccurs="0"/>
 		</xs:sequence>
-		<xs:attribute ref="typeCode"/>
+		<xs:attribute name="typeCode" type="xs:string"/>
 	</xs:complexType>
 	<xs:complexType name="CoordinatesType">
 		<xs:sequence>
 			<xs:element name="XCoordinateNbr" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
-						<xs:totalDigits value="10"/>
-						<xs:fractionDigits value="3"/>
+						<xs:totalDigits value="17"/>
+						<xs:fractionDigits value="13"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="YCoordinateNbr" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
-						<xs:totalDigits value="10"/>
-						<xs:fractionDigits value="3"/>
+						<xs:totalDigits value="17"/>
+						<xs:fractionDigits value="13"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="ZCoordinateNbr" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="xs:decimal">
-						<xs:totalDigits value="10"/>
-						<xs:fractionDigits value="3"/>
+						<xs:totalDigits value="17"/>
+						<xs:fractionDigits value="13"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>

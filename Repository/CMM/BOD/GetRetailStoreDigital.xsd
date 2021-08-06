@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
-	<!--V 1.0   )6/01/2021 Initial Version-->
+	<!--V1.2 07/28/21 Patrick Oliver: RetailStoreDigital; note the following changes can also be found in GetRetailStoreDigital v1.2:
+ Changed PickUpLocationDetail to unbounded and removed unbounded from the PickUpLocationDetail sequence  
+ For EcomBusinessHours.BusinessHrs changed StartHr and EndHr to strings:
+ For EcomAlternateBusinessHours.AlternateBusinessHrs:
+     - Added BusinessHrs as unbounded and removed the unbounded sequence. 
+     - Changed StartHr and EndHr to strings 
+     - Added HrsTypeCd (this can be used to set the type to Operation, Staffing, etc.) 
+ Updated PickUpSchedule.typeCode, AlternateBusinessHrsComment.typeCode, LocationCoordinates.typeCode, MultiBannerPostalCodes.typeCode, InstructionTxt.typeCode to string
+ Updated FacilityProfileType.EffectiveStartDt to FacilityProfileType.EffectiveStartDtTm and FacilityProfileType.EffectiveEndDt to FacilityProfileType.EffectiveEndDtTm
+ Changed AltStoreId to optional -->
+	<!--V1.1 07/12/21 Patrick Oliver: Added DivisionNm-->
+	<!--V 1.0   6/01/2021 Sai: Initial Version-->
 	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/RetailStore.xsd"/>
 	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:element name="GetRetailStoreDigital" type="GetRetailStoreDigital">

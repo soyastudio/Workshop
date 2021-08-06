@@ -31,6 +31,8 @@
      Initial dump in
      ********************************************************************* -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Q1="http://www.nrf-arts.org/IXRetail/namespace/" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="qualified">
+	<!--07/13/2021  Changed EcomOrderNbr to PartnerOrderId in BUsinessPartnerType-->
+	<!--06/16/2021  Added new type BusinessPartnerType to identify 3rd party orders and deliveries in a store.-->
 	<!--03/16/2021 Added ScreenID as an attribute to QuestionID in Customer survey type.-->
 	<!--02/04/2021  Added CustomerSurveyType to capture survey on pin pad.-->
 	<!--02/02/2021  Added new complex type PAGExtensonsType for price accuracy gaurentee to customers.-->
@@ -41,6 +43,44 @@
      * Simple types defined here                                           *
      ********************************************************************* -->
 	<xs:import namespace="http://www.nrf-arts.org/IXRetail/namespace/" schemaLocation="POSLogV2.2.1-Strict.xsd"/>
+	<xs:complexType name="BusinessPartnerType">
+		<xs:annotation>
+			<xs:documentation>Defines 3rd party partners participated in order fulfillment and delivery in a retail store. ex: Doordash, Uber, Instacart..etc</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="BusinessPartnerId">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BusinessPartnerNm">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PartnerOrderId">
+				<xs:annotation>
+					<xs:documentation>Corresponding Order id from Partner systems</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="LoyaltyAccountID" minOccurs="0"/>
+			<xs:element ref="LoyaltyCardID" minOccurs="0"/>
+			<xs:element name="QuickResponseCd" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Partner QR code scanned at POS to get the partner details.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
 	<xs:complexType name="DocumentType">
 		<xs:annotation>
 			<xs:documentation>Defines document id, name, create timestamp</xs:documentation>
@@ -922,11 +962,8 @@ Source Field in Tlog : Hdr Indicat1 - Bit31</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="TransactionType" type="xs:string"/>
-			<xs:element name="EcommOrderNumber" type="xs:string" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>ECommOrderNumber filed to identify ecomm order that is closed on any other store lane. This field is added only when original order is created on ecomm and is closed on a physical terminal. The field is included to complete the feedback loop and correlated with ecomm order online</xs:documentation>
-				</xs:annotation>
-			</xs:element>
+			<xs:element ref="EcommOrderNumber" minOccurs="0"/>
+			<xs:element name="BusinessPartner" type="BusinessPartnerType" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="SwyRetailTxnExtensionsType">
@@ -1547,4 +1584,9 @@ A = ACE transaction number
 		</xs:sequence>
 	</xs:complexType>
 	<xs:attribute name="SequenceNbr" type="xs:integer"/>
+	<xs:element name="EcommOrderNumber" type="xs:string">
+		<xs:annotation>
+			<xs:documentation>ECommOrderNumber filed to identify ecomm order that is closed on any other store lane. This field is added only when original order is created on ecomm and is closed on a physical terminal. The field is included to complete the feedback loop and correlated with ecomm order online</xs:documentation>
+		</xs:annotation>
+	</xs:element>
 </xs:schema>

@@ -8,6 +8,7 @@
 -->
 <!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.10 Alex Nunes 7/27/2021: Data type chage for ReceiveDelivery/ReceiveDeliveryHeader/Invoice/VerificationInd and //element(*,AbsReceiveDeliveryType)/ReceiveDeliveryDetail/SpecialOrderItemInd-->
 	<!--V1.9 Patrick O. 05/27/21: Updated UnitOfMeasurement, OrderQty to optional-->
 	<!--V1.8 snuth00  04/08/2021   updated to include DSD BDR receivinngs-->
 	<!--V1.7 Rosabel Macario 02/01/2021: Set AccountingUnitId and ChartOfAccountNm as Optional-->
@@ -712,7 +713,13 @@ N = No</xs:documentation>
 										</xs:sequence>
 									</xs:complexType>
 								</xs:element>
-								<xs:element name="SpecialOrderItemInd" type="xs:boolean" minOccurs="0"/>
+								<xs:element name="SpecialOrderItemInd" minOccurs="0">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="1"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
 								<xs:element name="ItemUsageTypeCd" minOccurs="0">
 									<xs:simpleType>
 										<xs:restriction base="xs:string">
@@ -1116,10 +1123,15 @@ ex:DSD vendor invoice details received in back door receiving system(BDR).</xs:d
 </xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="VerificationInd" type="xs:boolean" minOccurs="0">
+			<xs:element name="VerificationInd" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Manger veririfed and audited the invoice for payment.</xs:documentation>
 				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
 			</xs:element>
 			<xs:element name="Payment" minOccurs="0">
 				<xs:complexType>

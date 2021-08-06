@@ -10,7 +10,9 @@
 	<!--!-->
 	<!--!=============================================================================================-->
 	<!--4/27/2021 - v1.0 - Alex Nunes - Initial version.-->
-			<!--5/5/2021 - v1.0 - Alex Nunes - Annotation added for the Noun. -->
+	<!--5/5/2021 - v1.0 - Alex Nunes - Annotation added for the Noun. -->
+	<!--7/21/2021 - v1.1 - Alex Nunes - Added //element(*,FreshProductionCycleType)/ProductionCycleDsc-->
+	<!--7/30/2021 - v1.1 - Alex Nunes - Modified constraint maxlenght of //element(*,FreshProductionCycleType)/ProductionCycleTime/WeekDayTxt  -->
 	<xs:element name="FreshProductionCycle" type="FreshProductionCycleType">
 		<xs:annotation>
 			<xs:documentation>Root element.</xs:documentation>
@@ -35,6 +37,16 @@
 				<xs:annotation>
 					<xs:documentation>Internal identifier for the production cycle.</xs:documentation>
 				</xs:annotation>
+			</xs:element>
+			<xs:element name="ProductionCycleDsc" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Description of the production cycle.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="60"/>
+					</xs:restriction>
+				</xs:simpleType>
 			</xs:element>
 			<xs:element name="UPC">
 				<xs:complexType>
@@ -62,7 +74,7 @@
 							</xs:annotation>
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
-									<xs:length value="20"/>
+									<xs:maxLength value="20"/>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
