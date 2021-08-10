@@ -19,7 +19,8 @@ public class ProjectManager {
 
     public static void main(String[] args) {
         Properties properties = new Properties();
-        properties.setProperty("edis.project.home", "C:/Users/qwen002/IBM/IIBT10/workspace/AppBuild/BusinessObjects");
+        //properties.setProperty("edis.project.home", "C:/Users/qwen002/IBM/IIBT10/workspace/AppBuild/BusinessObjects");
+        properties.setProperty("edis.project.home", "D:\\AppBuild\\BusinessObjects");
         properties.setProperty("edis.schema.service", "http://localhost:7800/edis-schema");
         properties.setProperty("edis.mappings.service", "http://localhost:7800/edis-schema");
 
@@ -61,6 +62,15 @@ public class ProjectManager {
         private Session(Context context, String projectName) {
             this.context = context;
             this.name = projectName;
+            String src = "{{project.source}}";
+            if(projectName.contains("_")) {
+                int index = projectName.lastIndexOf("_");
+                this.name = projectName.substring(0, index);
+                src = projectName.substring(index + 1);
+
+            } else {
+
+            }
 
             this.projectHome = new File(context.home, projectName);
             if (!projectHome.exists()) {
