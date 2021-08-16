@@ -9,6 +9,7 @@ public class Project {
     private String source;
     private String consumer;
     private String version;
+    private boolean enabled;
 
     private Mappings mappings;
 
@@ -22,9 +23,24 @@ public class Project {
 
     public Project(String name) {
         this.name = name;
-        this.application = "ESED_" + name + "_IH_Publisher";
-        this.source = "";
+        this.application = "ESED_" + name + "_{{project.source}}_IH_Publisher";
+        this.source = "{{project.source}}";
         this.consumer = "{{project.consumer}}";
+        this.version = "{{project.version}}";
+
+        this.mappings = new Mappings();
+        mappings.schema = "BOD/Get" + name + ".xsd";
+        mappings.mappingFile = name + "/requirement/" + name + "_{{project.source}}" + "_TO_Canonical_Mapping_{{project.version}}.xlsx";
+
+        mappings.xpathDataType = name + "/work" + mappings.xpathDataType;
+        mappings.xpathJsonType = name + "/work" + mappings.xpathJsonType;
+        mappings.xpathMappings = name + "/work" + mappings.xpathMappings;
+        mappings.xpathMappingAdjustments = name + "/work" + mappings.xpathMappingAdjustments;
+        mappings.xpathConstruction = name + "/work" + mappings.xpathConstruction;
+
+        this.messageFlow = new MessageFlow();
+        messageFlow.name = "ESED_" + name + "_{{project.source}}_IH_Publisher";
+
 
     }
 
@@ -48,6 +64,10 @@ public class Project {
         return version;
     }
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
     public Mappings getMappings() {
         return mappings;
     }
@@ -59,10 +79,13 @@ public class Project {
     static class Mappings {
         private String schema = "";
         private String mappingFile = "???";
-        private String mappingSheet = "???";
-        private String mappingAdjustment;
-        private String sampleSheet = "???";
-        private String constructFile = "xpath-mapping.properties";
+
+        private String xpathDataType = "xpath-data-type.properties";
+        private String xpathJsonType = "xpath-json-type.properties";
+
+        private String xpathMappings = "xpath-mappings.properties";
+        private String xpathMappingAdjustments = "xpath-mapping-adjustment.properties";
+        private String xpathConstruction = "xpath-construction.properties";
 
         public String getSchema() {
             return schema;
@@ -72,23 +95,25 @@ public class Project {
             return mappingFile;
         }
 
-        public String getMappingSheet() {
-            return mappingSheet;
+        public String getXpathDataType() {
+            return xpathDataType;
         }
 
-        public String getMappingAdjustment() {
-            return mappingAdjustment;
+        public String getXpathJsonType() {
+            return xpathJsonType;
         }
 
-        public String getSampleSheet() {
-            return sampleSheet;
+        public String getXpathMappings() {
+            return xpathMappings;
         }
 
-        public String getConstructFile() {
-            return constructFile;
+        public String getXpathMappingAdjustments() {
+            return xpathMappingAdjustments;
         }
 
-
+        public String getXpathConstruction() {
+            return xpathConstruction;
+        }
     }
 
     static class MessageFlow {
