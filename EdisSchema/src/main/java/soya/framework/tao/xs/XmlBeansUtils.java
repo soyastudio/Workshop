@@ -17,10 +17,6 @@ public class XmlBeansUtils {
 
     public static XMLBuildInType getXMLBuildInType(SchemaType type) {
 
-        if (!type.isSimpleType()) {
-            throw new IllegalArgumentException("Not a simple type.");
-        }
-
         SchemaType st = type;
         while (st.getBaseType() != null && !st.isBuiltinType()) {
             st = st.getBaseType();
@@ -61,16 +57,6 @@ public class XmlBeansUtils {
                 .setCompileNoPvrRule());
 
         return sts;
-    }
-
-    public static Class<? extends XmlAnySimpleType> getXmlSimpleType(SchemaType type) {
-        SchemaType baseType = type;
-        while (baseType != null && !baseType.getBaseType().getName().getLocalPart().equalsIgnoreCase("anySimpleType")) {
-            baseType = baseType.getBaseType();
-        }
-
-        return baseType.getJavaClass();
-
     }
 
     public static enum XMLBuildInType {

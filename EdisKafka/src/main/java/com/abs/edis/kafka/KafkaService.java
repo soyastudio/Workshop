@@ -2,7 +2,6 @@ package com.abs.edis.kafka;
 
 import com.google.gson.*;
 import org.apache.commons.cli.*;
-import org.apache.commons.io.FileUtils;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
@@ -38,7 +37,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
-public class EdisKafka {
+public class KafkaService {
 
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -52,7 +51,7 @@ public class EdisKafka {
 
     static {
         COMMANDS = new LinkedHashMap<>();
-        Class<?>[] classes = EdisKafka.class.getDeclaredClasses();
+        Class<?>[] classes = KafkaService.class.getDeclaredClasses();
         for (Class<?> c : classes) {
             if (Command.class.isAssignableFrom(c) && !c.isInterface()) {
                 String name = c.getSimpleName();
@@ -120,7 +119,7 @@ public class EdisKafka {
         COMMAND_LINE_OPTIONS.addOption(Option.builder("e")
                 .longOpt("action")
                 .hasArg(true)
-                .desc("Environment, default 'local', case insensitive.")
+                .desc("environment ironment, default 'local', case insensitive.")
                 .required(false)
                 .build());
 
@@ -237,15 +236,14 @@ public class EdisKafka {
                 .build());
     }
 
-    public EdisKafka(InputStream inputStream) {
+    public KafkaService(InputStream inputStream) {
         this.context = new Context(inputStream);
     }
 
     public String process(Node node) {
         Session session = createSession(node).init(context);
         try {
-            process(session);
-            return session.output;
+            return process(session);
 
         } catch (Exception e) {
 
@@ -254,7 +252,7 @@ public class EdisKafka {
 
     }
 
-    public void process(Session session) throws Exception {
+    public String process(Session session) throws Exception {
         CommandLine cl = session.commandLine();
         String cmd = "CommandList";
         if (cl.hasOption("a")) {
@@ -262,7 +260,7 @@ public class EdisKafka {
         }
 
         Command command = COMMANDS.get(cmd.toUpperCase(Locale.ROOT));
-        command.execute(session);
+        return command.execute(session);
 
     }
 
@@ -363,10 +361,6 @@ public class EdisKafka {
         return rc;
     }
 
-    public static void main(String[] args) {
-
-    }
-
     static class Context {
         private Properties configuration;
 
@@ -379,8 +373,8 @@ public class EdisKafka {
             }
         }
 
-        public String getProperty(String propName, String env) {
-            String key = env == null ? "LOCAL." + propName : env + "." + propName;
+        public String getProperty(String propName, String environment ) {
+            String key = environment  == null ? "LOCAL." + propName : environment  + "." + propName;
             if (configuration.containsKey(key)) {
                 return configuration.getProperty(key);
 
@@ -395,13 +389,13 @@ public class EdisKafka {
     static class Session {
         private transient CommandLine cmd;
 
+        private transient String environment;
         private transient Properties adminProperties;
         private transient Properties producerProperties;
         private transient Properties consumerProperties;
 
         private String commandLine;
         private JsonElement input;
-        private String output;
 
         private Session init(Context context) {
             List<String> list = new ArrayList<>();
@@ -419,68 +413,68 @@ public class EdisKafka {
                 throw new RuntimeException(e.getMessage());
             }
 
-            String env = "LOCAL";
+            this.environment = "LOCAL";
             if (cmd.hasOption("e")) {
-                env = cmd.getOptionValue("e");
+                environment  = cmd.getOptionValue("e").toUpperCase();
             }
 
             // Producer properties:
             this.producerProperties = new Properties();
-            producerProperties.setProperty(ProducerConfig.CLIENT_ID_CONFIG, context.getProperty(ProducerConfig.CLIENT_ID_CONFIG, env));
-            producerProperties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, context.getProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, env));
-            producerProperties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, context.getProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, env));
+            producerProperties.setProperty(ProducerConfig.CLIENT_ID_CONFIG, context.getProperty(ProducerConfig.CLIENT_ID_CONFIG, environment ));
+            producerProperties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, context.getProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, environment ));
+            producerProperties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, context.getProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, environment ));
 
-            producerProperties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, context.getProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, env));
-            producerProperties.setProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, context.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, env));
+            producerProperties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, context.getProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, environment ));
+            producerProperties.setProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, context.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, environment ));
 
             if ("SSL".equalsIgnoreCase(producerProperties.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG))) {
-                producerProperties.setProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, context.getProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, env));
-                producerProperties.setProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, context.getProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, env));
-                producerProperties.setProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, context.getProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, env));
-                producerProperties.setProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, context.getProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, env));
+                producerProperties.setProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, context.getProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, environment ));
+                producerProperties.setProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, context.getProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, environment ));
+                producerProperties.setProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, context.getProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, environment ));
+                producerProperties.setProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, context.getProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, environment ));
 
             } else if ("SASL_SSL".equalsIgnoreCase(producerProperties.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG))) {
-                producerProperties.setProperty(SaslConfigs.SASL_MECHANISM, context.getProperty(SaslConfigs.SASL_MECHANISM, env));
-                producerProperties.setProperty(SaslConfigs.SASL_JAAS_CONFIG, context.getProperty(SaslConfigs.SASL_JAAS_CONFIG, env));
+                producerProperties.setProperty(SaslConfigs.SASL_MECHANISM, context.getProperty(SaslConfigs.SASL_MECHANISM, environment ));
+                producerProperties.setProperty(SaslConfigs.SASL_JAAS_CONFIG, context.getProperty(SaslConfigs.SASL_JAAS_CONFIG, environment ));
             }
 
             // Consumer properties:
             this.consumerProperties = new Properties();
 
-            consumerProperties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, context.getProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env));
-            consumerProperties.setProperty(ConsumerConfig.CLIENT_ID_CONFIG, context.getProperty(ConsumerConfig.CLIENT_ID_CONFIG, env));
-            consumerProperties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, context.getProperty(ConsumerConfig.GROUP_ID_CONFIG, env));
-            consumerProperties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, context.getProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, env));
-            consumerProperties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, context.getProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, env));
-            consumerProperties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, context.getProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, env));
+            consumerProperties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, context.getProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, environment ));
+            consumerProperties.setProperty(ConsumerConfig.CLIENT_ID_CONFIG, context.getProperty(ConsumerConfig.CLIENT_ID_CONFIG, environment ));
+            consumerProperties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, context.getProperty(ConsumerConfig.GROUP_ID_CONFIG, environment ));
+            consumerProperties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, context.getProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, environment ));
+            consumerProperties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, context.getProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, environment ));
+            consumerProperties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, context.getProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, environment ));
             consumerProperties.setProperty(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "60000");
 
-            consumerProperties.setProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, context.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, env));
+            consumerProperties.setProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, context.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, environment ));
             if ("SSL".equalsIgnoreCase(consumerProperties.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG))) {
-                consumerProperties.setProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, context.getProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, env));
-                consumerProperties.setProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, context.getProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, env));
-                consumerProperties.setProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, context.getProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, env));
-                consumerProperties.setProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, context.getProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, env));
+                consumerProperties.setProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, context.getProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, environment ));
+                consumerProperties.setProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, context.getProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, environment ));
+                consumerProperties.setProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, context.getProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, environment ));
+                consumerProperties.setProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, context.getProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, environment ));
 
             } else if ("SASL_SSL".equalsIgnoreCase(consumerProperties.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG))) {
-                consumerProperties.setProperty(SaslConfigs.SASL_MECHANISM, context.getProperty(SaslConfigs.SASL_MECHANISM, env));
-                consumerProperties.setProperty(SaslConfigs.SASL_JAAS_CONFIG, context.getProperty(SaslConfigs.SASL_JAAS_CONFIG, env));
+                consumerProperties.setProperty(SaslConfigs.SASL_MECHANISM, context.getProperty(SaslConfigs.SASL_MECHANISM, environment ));
+                consumerProperties.setProperty(SaslConfigs.SASL_JAAS_CONFIG, context.getProperty(SaslConfigs.SASL_JAAS_CONFIG, environment ));
             }
 
             // Admin properties:
             this.adminProperties = new Properties();
-            adminProperties.setProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, context.getProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, env));
-            adminProperties.setProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, context.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, env));
+            adminProperties.setProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, context.getProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, environment ));
+            adminProperties.setProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, context.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, environment ));
 
             if ("SSL".equalsIgnoreCase(adminProperties.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG))) {
-                adminProperties.setProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, context.getProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, env));
-                adminProperties.setProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, context.getProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, env));
-                adminProperties.setProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, context.getProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, env));
-                adminProperties.setProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, context.getProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, env));
+                adminProperties.setProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, context.getProperty(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, environment ));
+                adminProperties.setProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, context.getProperty(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, environment ));
+                adminProperties.setProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, context.getProperty(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, environment ));
+                adminProperties.setProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, context.getProperty(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, environment ));
 
             } else if ("SASL_SSL".equalsIgnoreCase(adminProperties.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG))) {
-                adminProperties.setProperty(SaslConfigs.SASL_MECHANISM, context.getProperty(SaslConfigs.SASL_MECHANISM, env));
-                adminProperties.setProperty(SaslConfigs.SASL_JAAS_CONFIG, context.getProperty(SaslConfigs.SASL_JAAS_CONFIG, env));
+                adminProperties.setProperty(SaslConfigs.SASL_MECHANISM, context.getProperty(SaslConfigs.SASL_MECHANISM, environment ));
+                adminProperties.setProperty(SaslConfigs.SASL_JAAS_CONFIG, context.getProperty(SaslConfigs.SASL_JAAS_CONFIG, environment ));
             }
 
             return this;
@@ -498,17 +492,12 @@ public class EdisKafka {
             return AdminClient.create(adminProperties);
         }
 
-
         public CommandLine commandLine() {
             return cmd;
         }
 
         public JsonElement getInput() {
             return input;
-        }
-
-        public String getOutput() {
-            return output;
         }
 
     }
@@ -650,13 +639,13 @@ public class EdisKafka {
     }
 
     interface Command {
-        void execute(Session session) throws Exception;
+        String execute(Session session) throws Exception;
     }
 
     static class TopicListCommand implements Command {
 
         @Override
-        public void execute(Session session) throws Exception {
+        public String execute(Session session) throws Exception {
             List<String> results = new ArrayList<>();
             CommandLine cmd = session.commandLine();
             String q = null;
@@ -695,14 +684,14 @@ public class EdisKafka {
                 throw new RuntimeException(e);
             }
 
-            session.output = GSON.toJson(results);
+            return GSON.toJson(results);
         }
     }
 
     static class ProduceCommand implements Command {
 
         @Override
-        public void execute(Session session) throws Exception {
+        public String execute(Session session) throws Exception {
             long timestamp = System.currentTimeMillis();
 
             CommandLine cmd = session.commandLine();
@@ -718,14 +707,14 @@ public class EdisKafka {
             String key = cmd.hasOption("k") ? cmd.getOptionValue("k") : UUID.randomUUID().toString();
 
             RecordMetadata metadata = send(session.createKafkaProducer(), topicName, msg, null, key);
-            session.output = GSON.toJson(metadata);
+            return GSON.toJson(metadata);
         }
     }
 
     static class ConsumeCommand implements Command {
 
         @Override
-        public void execute(Session session) throws Exception {
+        public String execute(Session session) throws Exception {
             CommandLine cmd = session.commandLine();
 
             if (!cmd.hasOption("c")) {
@@ -754,8 +743,59 @@ public class EdisKafka {
 
             ConsumerRecord<String, byte[]> rc = latest(kafkaConsumer, topicName, partitions);
 
-            session.output = new String(rc.value());
+            return new String(rc.value());
         }
+    }
+
+    static class PubAndSubCommand implements Command {
+
+        @Override
+        public String execute(Session session) throws Exception {
+            long timestamp = System.currentTimeMillis();
+
+            CommandLine cmd = session.commandLine();
+
+            if (!cmd.hasOption("p")) {
+                throw new IllegalArgumentException("Publish topic is required through option '-p'");
+            }
+
+            String produceTopicName = cmd.getOptionValue("p");
+
+            byte[] msg = GSON.toJson(session.input).getBytes(StandardCharsets.UTF_8);
+            String hs = cmd.hasOption("H") ? cmd.getOptionValue("H") : null;
+            String key = cmd.hasOption("k") ? cmd.getOptionValue("k") : UUID.randomUUID().toString();
+
+            send(session.createKafkaProducer(), produceTopicName, msg, null, key);
+
+            if (!cmd.hasOption("c")) {
+                throw new IllegalArgumentException("Consume topic is required through option '-c'");
+            }
+
+            String topicName = cmd.getOptionValue("c");
+
+            KafkaConsumer<String, byte[]> kafkaConsumer = session.createKafkaConsumer();
+            List<String> topics = new ArrayList<>();
+            topics.add(topicName);
+
+            Collection<TopicPartition> partitions = null;
+            if (cmd.hasOption("P")) {
+                partitions = new ArrayList<>();
+                partitions.add(new TopicPartition(topicName, Integer.parseInt(cmd.getOptionValue("P"))));
+
+            } else {
+                List<PartitionInfo> partitionInfoSet = kafkaConsumer.partitionsFor(topicName);
+                partitions = partitionInfoSet.stream()
+                        .map(partitionInfo -> new TopicPartition(partitionInfo.topic(),
+                                partitionInfo.partition()))
+                        .collect(Collectors.toList());
+
+            }
+
+            ConsumerRecord<String, byte[]> rc = latest(kafkaConsumer, topicName, partitions);
+
+            return new String(rc.value());
+        }
+
     }
 
 

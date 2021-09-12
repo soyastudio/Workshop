@@ -1,6 +1,7 @@
 package soya.framework.tao.xs;
 
 import org.apache.xmlbeans.SchemaField;
+import org.apache.xmlbeans.SchemaParticle;
 import org.apache.xmlbeans.SchemaProperty;
 import org.apache.xmlbeans.SchemaType;
 
@@ -31,9 +32,14 @@ public class XsNode {
 
         } else {
             nodeType = XsNodeType.Folder;
+            if (schemaType.getContentModel() != null
+                    && SchemaParticle.SEQUENCE == schemaType.getContentModel().getParticleType()
+                    && schemaType.getContentModel().getMaxOccurs() == null) {
+
+                this.maxOccurs = null;
+            }
 
         }
-
     }
 
     XsNode(SchemaProperty schemaProperty) {
@@ -43,6 +49,7 @@ public class XsNode {
         this.name = schemaProperty.getName();
         this.minOccurs = schemaProperty.getMinOccurs();
         this.maxOccurs = schemaProperty.getMaxOccurs();
+
     }
 
     public SchemaType getSchemaType() {

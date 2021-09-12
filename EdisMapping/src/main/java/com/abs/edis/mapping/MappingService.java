@@ -14,6 +14,10 @@ import java.util.*;
 
 public class MappingService {
 
+    private static String XPATH_SCHEMA_FILE = "xpath-schema.properties";
+    private static String XPATH_MAPPING_FILE = "xpath-mapping.properties";
+    private static String XPATH_ADJUSTMENT_FILE = "xpath-adjustment.properties";
+
     private static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static Map<String, Command> COMMANDS;
 
@@ -37,24 +41,6 @@ public class MappingService {
 
                 }
             }
-        }
-    }
-
-    public static void main(String[] args) {
-        Request request = new Request();
-        request.command = "Mapping";
-        request.context = "C:/Users/qwen002/IBM/IIBT10/workspace/AppBuild/BusinessObjects/GroceryOrder";
-        request.files = new FileSet();
-        request.files.xpathDataType = "xpath-data-type.properties";
-        request.files.mappingFile = "GroceryOrder_ERUMS_to_Canonical_Mapping_v1.13.1.xlsx";
-
-        try {
-            String result = COMMANDS.get(request.command.toUpperCase()).execute(new Session(request));
-
-            System.out.println(result);
-
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -177,6 +163,7 @@ public class MappingService {
             case "float":
             case "double":
                 result = token;
+                break;
 
             default:
                 result = "string";
@@ -185,51 +172,239 @@ public class MappingService {
         return result;
     }
 
-    static class FileSet {
+    private static Object getDefaultValue(XPathMapping mapping) {
+        Object value = "";
+        String type = mapping.dataType;
 
-        private String mappingFile = "???";
-        private String mappingSheet = "???";
+        if ("boolean".equals(type)) {
+            value = Boolean.TRUE;
 
-        private String xpathDataType = "xpath-data-type.properties";
-        private String xpathJsonType = "xpath-json-type.properties";
+        } else if ("integer".equals(type)) {
+            value = 5;
 
-        private String xpathMappings = "xpath-mappings.properties";
-        private String xpathMappingAdjustments = "xpath-mapping-adjustment.properties";
-        private String xpathConstruction = "xpath-construction.properties";
+        } else if ("long".equals(type)) {
+            value = 9999;
 
-        public String getMappingFile() {
-            return mappingFile;
+        } else if ("decimal".equals(type)) {
+            value = 1.99;
+
+        } else if ("dateTime".equals(type) || "date".equals(type) || "time".equals(type)) {
+            value = "2020-12-28T19:04:06.090Z";
+
+        } else if ("string".equals(type)) {
+            StringBuilder builder = new StringBuilder();
+            char[] arr = null;
+            if (mapping.isAttribute()) {
+                arr = mapping.getAttributeName().toCharArray();
+            } else {
+                arr = mapping.name.toCharArray();
+            }
+
+            boolean boo = true;
+            for (char c : arr) {
+                if (!Character.isLetter(c)) {
+                    builder.append(c);
+                    boo = false;
+
+                } else if (Character.isUpperCase(c)) {
+                    if (!boo) {
+                        builder.append("_");
+                    }
+                    builder.append(c);
+                    boo = true;
+                } else {
+                    builder.append(Character.toUpperCase(c));
+                    boo = false;
+                }
+            }
+
+            value = builder.toString().toLowerCase();
+
         }
 
-        public String getMappingSheet() {
-            return mappingSheet;
+        return value;
+    }
+
+    private static Map<String, XPathMapping> fromPropertiesFile(File file) throws IOException {
+        Map<String, XPathMapping> mappings = new LinkedHashMap<>();
+
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        String line;
+        while ((line = br.readLine()) != null) {
+            if (line.contains("=")) {
+                XPathMapping mapping = parseLine(line);
+                mappings.put(mapping.target, mapping);
+            }
         }
 
-        public String getXpathDataType() {
-            return xpathDataType;
+        return mappings;
+    }
+
+    private static Map<String, XPathMapping> fromXlsxFile(File file, String sheetName) throws Exception {
+
+        XSSFWorkbook workbook = null;
+        Sheet sheet = null;
+        try {
+            workbook = new XSSFWorkbook(file);
+            if (sheetName != null) {
+                sheet = workbook.getSheet(sheetName);
+
+            } else {
+                Iterator<Sheet> iterator = workbook.sheetIterator();
+                while (iterator.hasNext()) {
+                    Sheet sh = iterator.next();
+                    if (isMappingSheet(sh)) {
+                        sheet = sh;
+                        break;
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (workbook != null) {
+                workbook.close();
+
+            }
         }
 
-        public String getXpathJsonType() {
-            return xpathJsonType;
+        if (sheet == null) {
+            throw new IllegalStateException("Cannot locate mapping sheet.");
         }
 
-        public String getXpathMappings() {
-            return xpathMappings;
+        Map<String, XPathMapping> mappings = new LinkedHashMap<>();
+
+        int targetIndex = 0;
+        int typeIndex = 0;
+        int cardinalityIndex = 0;
+        int ruleIndex = 0;
+        int sourceIndex = 0;
+        int versionIndex = 0;
+
+        boolean start = false;
+
+        try {
+            Iterator<Row> sheetIterator = sheet.iterator();
+            while (sheetIterator.hasNext()) {
+                Row currentRow = sheetIterator.next();
+                if (start) {
+                    Cell targetCell = currentRow.getCell(targetIndex);
+                    Cell typeCell = currentRow.getCell(typeIndex);
+                    Cell cardinalityCell = currentRow.getCell(cardinalityIndex);
+                    Cell ruleCell = currentRow.getCell(ruleIndex);
+                    Cell sourceCell = currentRow.getCell(sourceIndex);
+                    Cell versionCell = currentRow.getCell(versionIndex);
+
+                    if (!isEmpty(targetCell)) {
+                        String xpath = targetCell.getStringCellValue().trim();
+                        mappings.put(xpath, new XPathMapping()
+                                .target(xpath)
+                                .dataType(isEmpty(typeCell) ? "???" : typeCell.getStringCellValue())
+                                .cardinality(isEmpty(cardinalityCell) ? "???" : cardinalityCell.getStringCellValue())
+                                .rule(isEmpty(ruleCell) ? "" : cellValue(ruleCell))
+                                .source(isEmpty(sourceCell) ? "" : cellValue(sourceCell))
+                                .version(isEmpty(sourceCell) ? "" : cellValue(versionCell))
+                        );
+                    }
+
+                } else {
+                    int first = currentRow.getFirstCellNum();
+                    int last = currentRow.getLastCellNum();
+
+                    boolean isLabelRow = false;
+                    for (int i = first; i <= last; i++) {
+                        Cell cell = currentRow.getCell(i);
+                        if (cell != null && cell.getCellType().equals(CellType.STRING) && "#".equals(cell.getStringCellValue().trim())) {
+                            isLabelRow = true;
+                            start = true;
+                        }
+
+                        if (isLabelRow && cell != null && cell.getCellType().equals(CellType.STRING) && cell.getStringCellValue() != null) {
+                            String label = cell.getStringCellValue().trim();
+                            if (label != null) {
+                                switch (label) {
+                                    case "Target":
+                                        targetIndex = i;
+                                        break;
+                                    case "DataType":
+                                        typeIndex = i;
+                                        break;
+                                    case "Cardinality":
+                                        cardinalityIndex = i;
+                                        break;
+                                    case "Mapping":
+                                        ruleIndex = i;
+                                        break;
+                                    case "Source":
+                                        sourceIndex = i;
+                                        break;
+                                    case "Version":
+                                        versionIndex = i;
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        public String getXpathMappingAdjustments() {
-            return xpathMappingAdjustments;
+        return mappings;
+    }
+
+    private static boolean isMappingSheet(Sheet sheet) {
+        int rowNum = Math.min(10, sheet.getLastRowNum());
+        for (int i = sheet.getFirstRowNum(); i < rowNum; i++) {
+            Row row = sheet.getRow(i);
+            if (row != null) {
+                int colNum = Math.max(5, row.getLastCellNum());
+                for (int j = row.getFirstCellNum(); j < colNum; j++) {
+                    Cell cell = row.getCell(j);
+                    if (cell != null && CellType.STRING.equals(cell.getCellType())
+                            && cell.getStringCellValue() != null
+                            && "#".equals(cell.getStringCellValue().trim())) {
+                        return true;
+                    }
+                }
+
+            }
         }
 
-        public String getXpathConstruction() {
-            return xpathConstruction;
+        return false;
+    }
+
+    private static boolean isEmpty(Cell cell) {
+        return cell == null
+                || !CellType.STRING.equals(cell.getCellType())
+                || cell.getStringCellValue() == null
+                || cell.getStringCellValue().trim().length() == 0;
+    }
+
+    private static String cellValue(Cell cell) {
+        if (cell != null && CellType.STRING.equals(cell.getCellType())) {
+            StringBuilder builder = new StringBuilder();
+            StringTokenizer tokenizer = new StringTokenizer(cell.getStringCellValue());
+            while (tokenizer.hasMoreTokens()) {
+                builder.append(" ").append(tokenizer.nextToken().trim());
+            }
+
+            return builder.toString().trim();
         }
+
+        return null;
     }
 
     static class Request {
         private String command;
         private String context;
-        private FileSet files;
+
+        private String mappingFile;
+        private String mappingSheet;
     }
 
     static class Session {
@@ -243,83 +418,38 @@ public class MappingService {
 
         private Map<String, XPathMapping> schema;
         private Map<String, XPathMapping> mappings;
-        private Map<String, Array> arrays = new LinkedHashMap<>();
 
-        private Session(Request request) throws IOException {
+        private TreeNode mappingTree;
+        private Map<String, Array> arrays = new LinkedHashMap<>();
+        private Set<String> vars = new HashSet<>();
+
+        private Session(Request request) throws Exception {
             this.request = request;
 
             File base = new File(request.context);
             this.requirementDir = new File(base, "requirement");
             this.workDir = new File(base, "work");
 
-            FileSet fileset = request.files;
-            this.schema = schema(new File(workDir, fileset.xpathDataType));
+            File xpathDataTypeFile = new File(workDir, XPATH_SCHEMA_FILE);
+            if (!xpathDataTypeFile.exists()) {
+                throw new IllegalStateException("File '" + xpathDataTypeFile.getAbsolutePath() + "' does not exist.");
+            }
+            this.schema = fromPropertiesFile(xpathDataTypeFile);
 
-            this.mappingFile = new File(requirementDir, fileset.mappingFile);
-            this.adjustmentFile = new File(workDir, fileset.getXpathMappingAdjustments());
+            this.mappingFile = new File(requirementDir, request.mappingFile);
+            if (!mappingFile.exists()) {
+                throw new IllegalStateException("File '" + mappingFile.getAbsolutePath() + "' does not exist.");
+            }
+            this.mappings = fromXlsxFile(mappingFile, request.mappingSheet);
 
-            if (mappingFile.exists()) {
-                XSSFWorkbook workbook = null;
-                try {
-                    workbook = new XSSFWorkbook(mappingFile);
-                    Iterator<Sheet> iterator = workbook.sheetIterator();
-                    while (iterator.hasNext()) {
-                        Sheet sheet = iterator.next();
-                        if (isMappingSheet(sheet)) {
-                            this.mappings = parse(sheet);
-                        }
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-
-                } finally {
-                    if (workbook != null) {
-                        workbook.close();
-
-                    }
-                }
+            Properties adjustments = new Properties();
+            File adjFile = new File(workDir, XPATH_ADJUSTMENT_FILE);
+            if (adjFile.exists()) {
+                adjustments.load(new FileInputStream(adjFile));
             }
 
-            if (mappings != null && mappings.size() > 0) {
-                recalculate();
-            }
-        }
+            this.mappingTree = new TreeNode(mappings, adjustments);
 
-        private Map<String, XPathMapping> schema(File file) throws IOException {
-            Map<String, XPathMapping> mappings = new LinkedHashMap<>();
-
-            BufferedReader br = new BufferedReader(new FileReader(file));
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (line.contains("=")) {
-                    XPathMapping mapping = parseLine(line);
-                    mappings.put(mapping.target, mapping);
-                }
-            }
-
-            return mappings;
-        }
-
-        private boolean isMappingSheet(Sheet sheet) {
-            int rowNum = Math.min(10, sheet.getLastRowNum());
-            for (int i = sheet.getFirstRowNum(); i < rowNum; i++) {
-                Row row = sheet.getRow(i);
-                if (row != null) {
-                    int colNum = Math.max(5, row.getLastCellNum());
-                    for (int j = row.getFirstCellNum(); j < colNum; j++) {
-                        Cell cell = row.getCell(j);
-                        if (cell != null && CellType.STRING.equals(cell.getCellType())
-                                && cell.getStringCellValue() != null
-                                && "#".equals(cell.getStringCellValue().trim())) {
-                            return true;
-                        }
-                    }
-
-                }
-            }
-
-            return false;
         }
 
         private Map<String, XPathMapping> parse(Sheet sheet) throws Exception {
@@ -357,8 +487,8 @@ public class MappingService {
                             if (path != null) {
                                 mappings.put(path, new XPathMapping()
                                         .target(path)
-                                        .dataType(isEmpty(typeCell) ? "" : typeCell.getStringCellValue())
-                                        .cardinality(isEmpty(cardinalityCell) ? "" : cardinalityCell.getStringCellValue())
+                                        .dataType(isEmpty(typeCell) ? "???" : typeCell.getStringCellValue())
+                                        .cardinality(isEmpty(cardinalityCell) ? "???" : cardinalityCell.getStringCellValue())
                                         .rule(ruleValue(ruleCell))
                                         .source(sourceValue(sourceCell))
                                         .version(cellValue(versionCell))
@@ -460,54 +590,65 @@ public class MappingService {
             return mappings;
         }
 
-        private void recalculate() {
-            Set<String> vars = new LinkedHashSet<>();
+        private void construct() {
+            vars.clear();
+            arrays.clear();
+            annotate(mappingTree);
+        }
 
-            for (Map.Entry<String, XPathMapping> entry : mappings.entrySet()) {
-                XPathMapping mapping = entry.getValue();
+        private void annotate(TreeNode node) {
+            if (node.children != null && node.children.size() > 0) {
+                node.children.forEach(e -> {
+                    annotate(e);
+                });
+            } else {
+                XPathMapping mapping = node.mapping;
 
-                if (mapping.rule != null) {
-                    touchParent(mappings, mapping, vars, arrays);
-
-                    String rule = mapping.rule.toUpperCase();
-                    Assignment assignment = new Assignment();
-
-                    if (rule.contains("DEFAULT")) {
-                        assignment.evaluation = mapping.rule.substring(mapping.rule.indexOf("(") + 1, mapping.rule.lastIndexOf(")"));
-
-                    } else if (rule.equals("DIRECT")) {
-                        String src = mapping.source;
-                        if (src.contains("[*]")) {
-                            String parent = src.substring(0, src.lastIndexOf("[*]")) + "[*]";
-                            assignment.parent = parent;
-                            if (arrays.containsKey(parent)) {
-                                assignment.parent = parent;
-                                Array parentArray = arrays.get(assignment.parent);
-                                assignment.evaluation = parentArray.variable + src.substring(parent.length());
+                if (mapping.rule != null && mapping.rule.length() > 0) {
+                    if (mapping.assignment == null) {
+                        mapping.assignment = new Assignment();
+                        String rule = mapping.rule.trim().toUpperCase();
+                        if (rule.contains("DEFAULT")) {
+                            if (mapping.rule.indexOf("'") > 0 && mapping.rule.indexOf("'") < mapping.rule.lastIndexOf("'")) {
+                                mapping.assignment.evaluation = mapping.rule.substring(mapping.rule.indexOf("'"), mapping.rule.lastIndexOf("'") + 1);
 
                             } else {
-                                assignment.evaluation = "$." + src;
+                                mapping.assignment.evaluation = "???";
+                            }
+
+                        } else if (rule.contains("DIRECT") && mapping.source != null) {
+                            String src = mapping.source;
+                            if (src.contains("[*]")) {
+                                String parent = src.substring(0, src.lastIndexOf("[*]")) + "[*]";
+                                mapping.assignment.parent = parent;
+                                if (arrays.containsKey(parent)) {
+                                    mapping.assignment.parent = parent;
+                                    Array parentArray = arrays.get(mapping.assignment.parent);
+                                    mapping.assignment.evaluation = parentArray.variable + src.substring(parent.length());
+
+                                } else {
+                                    mapping.assignment.evaluation = "$." + src;
+                                }
+                            } else {
+                                mapping.assignment.evaluation = "$." + src;
                             }
                         } else {
-                            assignment.evaluation = "$." + src;
+                            mapping.assignment.evaluation = "???";
+
                         }
-
-                    } else {
-                        assignment.evaluation = "???";
-                        mapping.unknown = "rule";
-
                     }
 
-                    mapping.assignment = assignment;
+                    annotateParent(node, vars, arrays);
+
                 }
             }
         }
 
-        private void touchParent(Map<String, XPathMapping> mappings, XPathMapping mapping, Set<String> vars, Map<String, Array> arrays) {
-            String parent = mapping.parent();
+        private void annotateParent(TreeNode node, Set<String> vars, Map<String, Array> arrays) {
+            TreeNode parent = node.parent;
             while (parent != null) {
-                XPathMapping parentMapping = mappings.get(parent);
-                if (parentMapping != null && parentMapping.construction == null) {
+                XPathMapping parentMapping = parent.mapping;
+                if (parentMapping.construction == null) {
                     Construction construction = new Construction();
                     String var = parentMapping.target;
                     if (var.contains("/")) {
@@ -520,7 +661,7 @@ public class MappingService {
                     } else {
                         construction.type = "array";
 
-                        String path = mapping.source;
+                        String path = node.mapping.source;
                         if (path.contains("[*]")) {
                             path = path.substring(0, path.lastIndexOf("[*]"));
                             String parentPath = null;
@@ -559,12 +700,16 @@ public class MappingService {
                     }
 
                     parentMapping.construction = construction;
-                    parent = parentMapping.parent();
+
+                    parent = parent.parent;
 
                 } else {
                     break;
                 }
+
+
             }
+
         }
 
         private String getVariable(String base, Set<String> vars) {
@@ -579,7 +724,7 @@ public class MappingService {
             return token;
         }
 
-        private String getCorrectPath(String xpath) {
+        public String getCorrectPath(String xpath) {
             if (schema.containsKey(xpath)) {
                 return xpath;
 
@@ -599,21 +744,6 @@ public class MappingService {
                     return null;
                 }
             }
-        }
-
-        private boolean isEmpty(Cell cell) {
-            return cell == null
-                    || !CellType.STRING.equals(cell.getCellType())
-                    || cell.getStringCellValue() == null
-                    || cell.getStringCellValue().trim().length() == 0;
-        }
-
-        private String cellValue(Cell cell) {
-            if (cell != null && CellType.STRING.equals(cell.getCellType())) {
-                return cell.getStringCellValue().trim();
-            }
-
-            return null;
         }
 
         private String ruleValue(Cell cell) {
@@ -664,7 +794,6 @@ public class MappingService {
 
         private String dataType;
         private String constraints;
-
         private String cardinality;
 
         private String rule;
@@ -697,6 +826,16 @@ public class MappingService {
 
             } else {
                 this.dataType = token;
+            }
+
+            if (this.dataType.equalsIgnoreCase("complex type") || this.dataType.equalsIgnoreCase("complexType")) {
+                this.dataType = "complex";
+
+            } else if (this.dataType.equalsIgnoreCase("dateTimeStamp")) {
+                this.dataType = "dateTime";
+
+            } else if ("String".equals(this.dataType)) {
+                this.dataType = "string";
             }
 
             return this;
@@ -736,12 +875,34 @@ public class MappingService {
             }
         }
 
+        public boolean isAttribute() {
+            return name.startsWith("@");
+        }
+
+        public String getAttributeName() {
+            if (name.startsWith("@")) {
+                return name.substring(1);
+            }
+
+            return null;
+        }
+
         public boolean mandatory() {
             return cardinality.startsWith("1-");
         }
 
         public boolean singleValue() {
             return cardinality.endsWith("-1");
+        }
+
+        public static XPathMapping copy(XPathMapping mapping) {
+            return new XPathMapping()
+                    .target(mapping.target)
+                    .dataType(mapping.dataType)
+                    .cardinality(mapping.cardinality)
+                    .rule(mapping.rule)
+                    .source(mapping.source)
+                    .version(mapping.version);
         }
     }
 
@@ -779,37 +940,107 @@ public class MappingService {
 
     }
 
+    static class Function {
+        private String name;
+        private String[] parameters;
+
+        private Function(String exp) {
+            this.name = exp.substring(0, exp.indexOf("("));
+            this.parameters = exp.substring(exp.indexOf("(") + 1, exp.lastIndexOf(")")).split(",");
+            for (int i = 0; i < parameters.length; i++) {
+                parameters[i] = parameters[i].trim();
+            }
+        }
+    }
+
     static class TreeNode {
         private XPathMapping mapping;
 
         private TreeNode parent;
         private List<TreeNode> children = new ArrayList<>();
 
-        public TreeNode(Session session) {
-            Map<String, TreeNode> map = new LinkedHashMap<>();
+        private TreeNode(XPathMapping mapping) {
+            this.mapping = XPathMapping.copy(mapping);
+        }
 
-            session.mappings.values().forEach(e -> {
+        public TreeNode(Map<String, XPathMapping> mappings, Properties adjustments) {
+
+            Map<String, TreeNode> map = new LinkedHashMap<>();
+            mappings.values().forEach(e -> {
                 if (e.parent() == null) {
-                    this.mapping = e;
+                    this.mapping = XPathMapping.copy(e);
+                    if (adjustments.containsKey(mapping.target)) {
+                        String exp = adjustments.getProperty(mapping.target);
+                        adjust(mapping, exp);
+                    }
                     map.put(e.target, this);
 
                 } else {
-                    String parentPath = e.parent();
+                    TreeNode node = new TreeNode(e);
+                    XPathMapping mapping = node.mapping;
+                    if (adjustments.containsKey(mapping.target)) {
+                        String exp = adjustments.getProperty(mapping.target);
+                        adjust(mapping, exp);
+                    }
+
+
+                    String parentPath = mapping.parent();
                     TreeNode parent = map.get(parentPath);
 
-                    TreeNode node = new TreeNode(e);
                     node.parent = parent;
                     parent.children.add(node);
 
-                    map.put(e.target, node);
+                    map.put(mapping.target, node);
 
                 }
             });
 
         }
 
-        private TreeNode(XPathMapping mapping) {
-            this.mapping = mapping;
+        private void adjust(XPathMapping mapping, String expression) {
+            String[] arr = expression.split("::");
+            for (String exp : arr) {
+                Function function = new Function(exp);
+                if ("path".equals(function.name) && function.parameters.length == 1) {
+                    mapping.target(function.parameters[0]);
+
+                } else if ("type".equals(function.name) && function.parameters.length == 1) {
+                    mapping.dataType(function.parameters[0]);
+
+                } else if ("cardinality".equals(function.name) && function.parameters.length == 1) {
+                    mapping.cardinality(function.parameters[0]);
+
+                } else if ("rule".equals(function.name) && function.parameters.length == 1) {
+                    mapping.rule(function.parameters[0]);
+
+                } else if ("source".equals(function.name) && function.parameters.length == 1) {
+                    mapping.source(function.parameters[0]);
+
+                } else if ("version".equals(function.name) && function.parameters.length == 1) {
+                    mapping.version(function.parameters[0]);
+
+                } else if ("assign".equals(function.name) && function.parameters.length > 0) {
+                    mapping.assignment = new Assignment();
+                    mapping.assignment.evaluation = function.parameters[0];
+                    if (function.parameters.length > 1) {
+                        mapping.assignment.parent = function.parameters[1];
+                    }
+
+                } else if ("construct".equals(function.name) && function.parameters.length > 0) {
+
+                }
+            }
+        }
+
+        public List<TreeNode> getAttributes() {
+            List<TreeNode> attributes = new ArrayList<>();
+            children.forEach(e -> {
+                if (e.mapping.isAttribute()) {
+                    attributes.add(e);
+                }
+            });
+
+            return attributes;
         }
     }
 
@@ -821,7 +1052,6 @@ public class MappingService {
 
         @Override
         public String execute(Session session) throws Exception {
-
             StringBuilder builder = new StringBuilder();
             session.mappings.entrySet().forEach(e -> {
                 builder.append(e.getKey()).append("=").append("type(");
@@ -834,25 +1064,16 @@ public class MappingService {
 
                 builder.append(type).append(")").append("::").append("cardinality(").append(mapping.cardinality).append(")");
 
-                if (mapping.rule != null) {
-                    builder.append("::");
-                    if ("DEFAULT".equals(mapping.rule)) {
-                        builder.append(mapping.rule);
-
-                    } else if ("DIRECT".equals(mapping.rule)) {
-                        builder.append("DIRECT(").append(mapping.source).append(")");
-
-                    } else {
-                        builder.append("TODO()");
-                    }
-
-                    if (mapping.version != null) {
-                        builder.append("::").append("version(").append(mapping.version).append(")");
-                    }
+                if (mapping.rule != null && mapping.rule.trim().length() > 0) {
+                    builder.append("::").append("rule").append("(").append(mapping.rule).append(")");
                 }
 
-                if (mapping.unknown != null) {
-                    builder.append("::").append("unknown(").append(mapping.unknown).append(")");
+                if (mapping.source != null && mapping.source.trim().length() > 0) {
+                    builder.append("::").append("source").append("(").append(mapping.source).append(")");
+                }
+
+                if (mapping.version != null && mapping.version.trim().length() > 0) {
+                    builder.append("::").append("version").append("(").append(mapping.version).append(")");
                 }
 
                 builder.append("\n");
@@ -860,6 +1081,268 @@ public class MappingService {
 
             });
 
+            return builder.toString();
+        }
+    }
+
+    static abstract class TreeBasedCommand implements Command {
+
+        @Override
+        public String execute(Session session) throws Exception {
+            session.construct();
+            CodeBuilder builder = CodeBuilder.newInstance();
+
+            render(session, builder);
+
+            return builder.toString();
+        }
+
+        protected abstract void render(Session session, CodeBuilder builder);
+    }
+
+    static class MappingTreeCommand extends TreeBasedCommand {
+
+        @Override
+        protected void render(Session session, CodeBuilder builder) {
+            printNode(session.mappingTree, builder);
+        }
+
+        protected void printNode(TreeNode node, CodeBuilder builder) {
+            XPathMapping mapping = node.mapping;
+            builder.append(mapping.target).append("=");
+
+            if (mapping.dataType != null && mapping.dataType.trim().length() > 0) {
+                builder.append("type").append("(").append(mapping.dataType).append(")");
+            }
+
+            if (mapping.cardinality != null && mapping.cardinality.trim().length() > 0) {
+                builder.append("::").append("cardinality").append("(").append(mapping.cardinality).append(")");
+            }
+
+            if (mapping.rule != null && mapping.rule.trim().length() > 0) {
+                builder.append("::").append("rule").append("(").append(mapping.rule).append(")");
+            }
+
+            if (mapping.source != null && mapping.source.trim().length() > 0) {
+                builder.append("::").append("source").append("(").append(mapping.source).append(")");
+            }
+
+            if (mapping.version != null && mapping.version.trim().length() > 0) {
+                builder.append("::").append("version").append("(").append(mapping.version).append(")");
+            }
+
+            builder.appendLine();
+
+            if (node.children != null && node.children.size() > 0) {
+                node.children.forEach(e -> {
+                    printNode(e, builder);
+                });
+            }
+        }
+    }
+
+    static class MismatchCommand extends TreeBasedCommand {
+
+        @Override
+        protected void render(Session session, CodeBuilder builder) {
+            Map<String, XPathMapping> schema = session.schema;
+            check(session.mappingTree, schema, builder);
+        }
+
+        protected void check(TreeNode node, Map<String, XPathMapping> schema, CodeBuilder builder) {
+            XPathMapping mapping = node.mapping;
+            if (!schema.containsKey(mapping.target)) {
+                builder.append(mapping.target).append("=path(").append(guess(mapping.target, schema)).appendLine(")");
+
+            } else {
+                if (mapping.construction != null || mapping.assignment != null) {
+                    XPathMapping cmm = schema.get(mapping.target);
+                    if (!cmm.dataType.equals(mapping.dataType) || !cmm.cardinality.equals(mapping.cardinality)) {
+
+                        builder.append(mapping.target).append("=").append("MAPPING[")
+                                .append("type(").append(mapping.dataType).append(")")
+                                .append("::cardinality(").append(mapping.cardinality).append(")")
+                                .append("] <-> CMM[")
+                                .append("type(").append(cmm.dataType).append(")")
+                                .append("::cardinality(").append(cmm.cardinality).append(")")
+                                .appendLine("]");
+                    }
+                }
+            }
+
+            if (node.children != null && node.children.size() > 0) {
+                node.children.forEach(e -> {
+                    check(e, schema, builder);
+                });
+            }
+        }
+
+        protected String guess(String xpath, Map<String, XPathMapping> schema) {
+            int slash = xpath.lastIndexOf("/");
+            String attrPath = xpath.substring(0, slash + 1) + "@" + xpath.substring(slash + 1);
+            if (schema.containsKey(attrPath)) {
+                return attrPath;
+
+            } else {
+                for (String path : schema.keySet()) {
+                    if (path.equalsIgnoreCase(xpath)) {
+                        return path;
+                    }
+                }
+
+                return "???";
+            }
+        }
+    }
+
+    static class AutoAdjustCommand extends MismatchCommand {
+        protected void check(TreeNode node, Map<String, XPathMapping> schema, CodeBuilder builder) {
+            XPathMapping mapping = node.mapping;
+            if (!schema.containsKey(mapping.target)) {
+                builder.append(mapping.target).append("=path(").append(guess(mapping.target, schema)).appendLine(")");
+
+            } else {
+                if (mapping.construction != null || mapping.assignment != null) {
+                    XPathMapping cmm = schema.get(mapping.target);
+                    if (!cmm.dataType.equals(mapping.dataType) || !cmm.cardinality.equals(mapping.cardinality)) {
+                        builder.append(mapping.target).append("=")
+                                .append("type(").append(cmm.dataType).append(")")
+                                .append("::cardinality(").append(cmm.cardinality).append(")")
+                                .appendLine();
+                    } else if (mapping.assignment != null && "???".equals(mapping.assignment.evaluation)) {
+                        builder.append(mapping.target).append("=assign(???)").appendLine();
+                    }
+                }
+            }
+
+            if (node.children != null && node.children.size() > 0) {
+                node.children.forEach(e -> {
+                    check(e, schema, builder);
+                });
+            }
+        }
+    }
+
+    static class ConstructCommand extends TreeBasedCommand {
+
+        @Override
+        protected void render(Session session, CodeBuilder builder) {
+            printTreeNode(session.mappingTree, builder);
+        }
+
+        private void printTreeNode(TreeNode node, CodeBuilder builder) {
+            XPathMapping mapping = node.mapping;
+            if (mapping.assignment == null && mapping.construction == null) {
+                return;
+            }
+
+            builder.append(mapping.target).append("=");
+            if (mapping.assignment != null) {
+                printAssignment(mapping.assignment, builder);
+
+            } else if (mapping.construction != null) {
+                printConstruction(mapping.construction, builder);
+            }
+
+            builder.appendLine();
+
+            if (node.children != null && node.children.size() > 0) {
+                node.children.forEach(e -> {
+                    printTreeNode(e, builder);
+                });
+            }
+        }
+
+        private void printAssignment(Assignment assignment, CodeBuilder builder) {
+            builder.append("assign(").append(assignment.evaluation).append(")");
+        }
+
+        private void printConstruction(Construction construction, CodeBuilder builder) {
+            builder.append("construct()");
+        }
+    }
+
+    static class OutputXmlCommand extends TreeBasedCommand {
+
+        @Override
+        protected void render(Session session, CodeBuilder builder) {
+            printTreeNode(session.mappingTree, builder);
+        }
+
+        private void printTreeNode(TreeNode node, CodeBuilder builder) {
+            XPathMapping mapping = node.mapping;
+            if (mapping.assignment == null && mapping.construction == null) {
+                return;
+            }
+
+            if (!mapping.isAttribute() && mapping.cardinality.startsWith("0-")) {
+                builder.appendLine("<!--Optional:-->", mapping.level);
+            }
+
+            if (mapping.assignment != null && !mapping.isAttribute()) {
+                builder.append("<Abs:", mapping.level)
+                        .append(mapping.name)
+                        .append(">")
+                        .append(getDefaultValue(mapping).toString())
+                        .append("</Abs:")
+                        .append(mapping.name).appendLine(">");
+
+            } else if (mapping.construction != null) {
+                if (mapping.level == 1) {
+                    builder.append("<", mapping.level)
+                            .append(mapping.name)
+                            .append(" xmlns:Abs=\"http://collab.safeway.com/it/architecture/info/default.aspx\"");
+                } else if (mapping.level < 3) {
+                    builder.append("<", mapping.level);
+                    builder.append(mapping.name);
+                } else {
+                    builder.append("<Abs:", mapping.level);
+                    builder.append(mapping.name);
+                }
+
+                node.getAttributes().forEach(e -> {
+                    XPathMapping attr = e.mapping;
+                    builder.append(" ").append(attr.getAttributeName()).append("=\"").append(getDefaultValue(attr).toString()).append("\"");
+                });
+                builder.appendLine(">");
+
+                node.children.forEach(e -> {
+                    printTreeNode(e, builder);
+                });
+
+                if (mapping.level < 3) {
+                    builder.append("</", mapping.level);
+                } else {
+                    builder.append("</Abs:", mapping.level);
+                }
+                builder.append(mapping.name).appendLine(">");
+            }
+        }
+
+        private void printAssignment(Assignment assignment, CodeBuilder builder) {
+            builder.append("assign(").append(assignment.evaluation).append(")");
+        }
+
+        private void printConstruction(Construction construction, CodeBuilder builder) {
+            builder.append("construct()");
+        }
+    }
+
+    static class UnknownPathsCommand implements Command {
+
+        @Override
+        public String execute(Session session) throws Exception {
+            StringBuilder builder = new StringBuilder();
+            session.mappings.entrySet().forEach(e -> {
+                if (!session.schema.containsKey(e.getKey())) {
+                    builder.append(e.getKey()).append("=path(");
+                    String path = session.getCorrectPath(e.getKey());
+                    if (path == null) {
+                        path = "???";
+                    }
+                    builder.append(path).append(")").append("\n");
+                }
+            });
             return builder.toString();
         }
     }
@@ -953,13 +1436,14 @@ public class MappingService {
 
                 XPathMapping mapping = e.getValue();
                 String cardinality = schema.containsKey(e.getKey()) ? schema.get(e.getKey()).cardinality : mapping.cardinality;
+                String type = schema.containsKey(e.getKey()) ? schema.get(e.getKey()).dataType : mapping.dataType;
 
                 if (mapping.construction != null && !cardinality.endsWith("-1")) {
                     builder.append("array(").append(mapping.target).append(")").append(";");
 
 
                 } else if (mapping.assignment != null) {
-                    String type = getJsonType(mapping.dataType);
+                    type = getJsonType(type);
                     if (!cardinality.endsWith("-1")) {
                         type = type + "_array";
                     }
@@ -979,31 +1463,54 @@ public class MappingService {
 
         @Override
         public String execute(Session session) throws Exception {
+            session.construct();
             return GSON.toJson(session.arrays.values());
         }
     }
 
-    static class ConstructCommand implements Command {
+    static class TransformCommand extends TreeBasedCommand {
 
         @Override
-        public String execute(Session session) throws Exception {
-            TreeNode tree = new TreeNode(session);
-            CodeBuilder builder = CodeBuilder.newInstance();
-            printNode(tree, builder);
-
-            return builder.toString();
+        protected void render(Session session, CodeBuilder builder) {
+            printNode(session.mappingTree, builder);
         }
 
-        private void printNode(TreeNode node, CodeBuilder builder) {
+        protected void printNode(TreeNode node, CodeBuilder builder) {
             XPathMapping mapping = node.mapping;
-            builder.append("", mapping.level - 1);
+            if (mapping.construction != null) {
 
-            builder.append(node.mapping.name).append(": // ");
-            builder.append(mapping.target).append(" = function()");
-            builder.appendLine();
-            node.children.forEach(c -> {
-                printNode(c, builder);
-            });
+                builder.append("", mapping.level - 1);
+                builder.append("<");
+                builder.append(node.mapping.name);
+                node.children.forEach(c -> {
+                    if (c.mapping.name.startsWith("@")) {
+                        String attrName = c.mapping.name.substring(1);
+                        builder.append(" ").append(attrName).append(" =\"").append(attrName).append("\"");
+                    }
+                });
+
+                builder.append(">");
+                builder.appendLine();
+                node.children.forEach(c -> {
+                    if (!c.mapping.name.startsWith("@")) {
+                        printNode(c, builder);
+                    }
+                });
+                builder.append("", mapping.level - 1);
+                builder.append("</").append(node.mapping.name).append(">");
+
+            } else if (mapping.assignment != null) {
+                if (mapping.cardinality.startsWith("0-")) {
+                    builder.appendLine("<!-- Optional -->", mapping.level - 1);
+                }
+                builder.append("", mapping.level - 1)
+                        .append("<")
+                        .append(mapping.name)
+                        .append(">")
+                        .append(getDefaultValue(mapping).toString());
+                builder.append("</").append(mapping.name).append(">");
+            }
         }
     }
+
 }

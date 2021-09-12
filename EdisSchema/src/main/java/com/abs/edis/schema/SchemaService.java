@@ -2,6 +2,7 @@ package com.abs.edis.schema;
 
 import com.google.gson.*;
 import org.apache.avro.Schema;
+import org.apache.avro.generic.GenericRecord;
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.SchemaTypeSystem;
 import org.apache.xmlbeans.impl.xsd2inst.SampleXmlUtil;
@@ -17,8 +18,10 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class SchemaService {
+
     private static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static Map<String, Command> COMMANDS;
 
@@ -42,6 +45,20 @@ public class SchemaService {
 
                 }
             }
+        }
+    }
+
+    public static void main(String[] args) {
+        File file = new File("C:\\Users\\qwen002\\IBM\\IIBT10\\workspace\\APPDEV_ESED1_SRC_TRUNK\\esed1_src\\CMM_dev\\BOD\\GetAlaskaAirMile.xsd");
+        // File file = new File("C:\\Users\\qwen002\\IBM\\IIBT10\\workspace\\APPDEV_ESED1_SRC_TRUNK\\esed1_src\\CMM_dev\\BOD\\GetGroceryOrder.xsd");
+
+        try {
+            //String result = new XPathDataTypeCommand().execute(knowledgeTree(file));
+            String result = new AvroSchemaCommand().execute(knowledgeTree(file));
+            System.out.println(result);
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -93,7 +110,7 @@ public class SchemaService {
         return null;
     }
 
-    private static String getSimpleType(SchemaType schemaType) {
+    private static String getXsType(SchemaType schemaType) {
         SchemaType base = schemaType;
         while (base != null && !base.isSimpleType()) {
             base = base.getBaseType();
@@ -110,6 +127,35 @@ public class SchemaService {
             }
 
             return type;
+        }
+    }
+
+    private static String getSimpleType(SchemaType schemaType) {
+        SchemaType base = schemaType;
+        while (base != null && !base.isSimpleType()) {
+            base = base.getBaseType();
+        }
+
+        if (base == null || XmlBeansUtils.getXMLBuildInType(base) == null) {
+            return "string";
+
+        } else {
+            XmlBeansUtils.XMLBuildInType buildInType = XmlBeansUtils.getXMLBuildInType(base);
+            String type = buildInType.getName();
+            if (type.startsWith("xs:")) {
+                type = type.substring(3);
+            }
+
+            switch (type) {
+                case "normalizedString":
+                case "date":
+                case "dateTime":
+                case "time":
+                    return "string";
+
+                default:
+                    return type;
+            }
         }
     }
 
@@ -131,10 +177,10 @@ public class SchemaService {
                     builder.append("complex").append(")");
 
                 } else if (XsNode.XsNodeType.Attribute.equals(node.getNodeType())) {
-                    builder.append(getSimpleType(node.getSchemaType())).append(")");
+                    builder.append(getXsType(node.getSchemaType())).append(")");
 
                 } else {
-                    builder.append(getSimpleType(node.getSchemaType())).append(")");
+                    builder.append(getXsType(node.getSchemaType())).append(")");
 
                 }
 
@@ -174,8 +220,10 @@ public class SchemaService {
                 }
 
                 builder.append("::").append("cardinality(").append(node.getMinOccurs()).append("-");
+
                 if (node.getMaxOccurs() != null) {
                     builder.append(node.getMaxOccurs());
+
                 } else {
                     builder.append("n");
                 }
@@ -202,6 +250,28 @@ public class SchemaService {
         public String execute(KnowledgeTree<SchemaTypeSystem, XsNode> knowledgeTree) throws Exception {
             Schema schema = XmlToAvroSchema.fromXmlSchema(knowledgeTree.origin());
             return schema.toString(true);
+        }
+    }
+
+    static class SampleAvroCommand implements Command {
+
+        @Override
+        public String execute(KnowledgeTree<SchemaTypeSystem, XsNode> knowledgeTree) throws Exception {
+            Schema schema = XmlToAvroSchema.fromXmlSchema(knowledgeTree.origin());
+            Object result = new SampleAvroGenerator(schema, new Random(), 0).generate();
+            GenericRecord genericRecord = (GenericRecord) result;
+
+            /*File out = new File("C:/github/Workshop/Doc/AlaskaAirMile.avro");
+            FileOutputStream fos = new FileOutputStream(out);
+            GenericDatumWriter<GenericRecord> writer = new GenericDatumWriter<>(schema);
+            //writer.getData().addLogicalTypeConversion(new TimeConversions.TimestampConversion());
+            BinaryEncoder encoder = EncoderFactory.get().binaryEncoder(fos, null);
+            writer.write(genericRecord, encoder);
+            encoder.flush();*/
+
+            return genericRecord.toString();
+
+
         }
     }
 }

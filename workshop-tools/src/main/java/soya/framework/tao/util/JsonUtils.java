@@ -51,7 +51,6 @@ public class JsonUtils {
         return list;
     }
 
-
     public static JsonObjectBuilder objectBuilder() {
         return new JsonObjectBuilder();
     }

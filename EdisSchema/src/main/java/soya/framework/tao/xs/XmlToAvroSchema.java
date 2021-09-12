@@ -2,10 +2,7 @@ package soya.framework.tao.xs;
 
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaBuilder;
-import org.apache.xmlbeans.SchemaProperty;
-import org.apache.xmlbeans.SchemaType;
-import org.apache.xmlbeans.SchemaTypeSystem;
-import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,7 +51,8 @@ public class XmlToAvroSchema {
 
         for (SchemaProperty sp : schemaType.getElementProperties()) {
             SchemaType st = sp.getType();
-            if (st.isSimpleType()) {
+
+            if (isSimpleType(st)) {
                 Schema.Type pt = BuildInTypeMapping.fromXmlTypeCode(XmlBeansUtils.getXMLBuildInType(sp.getType()).getCode());
                 if (sp.getMaxOccurs() == null || sp.getMaxOccurs().intValue() > 1) {
                     // Array of Simple Type:
@@ -68,19 +66,32 @@ public class XmlToAvroSchema {
                 SchemaBuilder.FieldAssembler sub = SchemaBuilder.record(name).namespace(DEFAULT_NAMESPACE).fields();
                 assemble(sp.getType(), sub);
 
-                if (sp.getMaxOccurs() == null || sp.getMaxOccurs().intValue() > 1) {
-                    // Array of Complex Type:
-                    assembler.name(sp.getName().getLocalPart()).type(Schema.createArray((Schema) sub.endRecord())).noDefault();
+                if (sp.getMaxOccurs() == null || sp.getMaxOccurs().intValue() > 1
+                        // || SchemaParticle.SEQUENCE == st.getContentModel().getParticleType() && st.getContentModel().getMaxOccurs() == null
+                ) {
 
-                } else {
                     if (BigInteger.ZERO.equals(sp.getMinOccurs())) {
-                        assembler.name(sp.getName().getLocalPart()).type((Schema) sub.endRecord()).noDefault();
-/*
+                        //assembler.name(sp.getName().getLocalPart()).type((Schema) sub.endRecord()).noDefault();
 
                         Schema nested = (Schema) sub.endRecord();
                         Schema union = SchemaBuilder.unionOf().type(nested).and().nullType().endUnion();
                         assembler.name(sp.getName().getLocalPart()).type(union).noDefault();
-*/
+
+                    } else {
+                        // Array of Complex Type:
+                        Schema nested = (Schema) sub.endRecord();
+                        Schema arrayType = Schema.createArray(nested);
+                        Schema union = SchemaBuilder.unionOf().type(arrayType).and().nullType().endUnion();
+                        assembler.name(sp.getName().getLocalPart()).type(union).noDefault();
+                    }
+
+                } else {
+                    if (BigInteger.ZERO.equals(sp.getMinOccurs())) {
+                        //assembler.name(sp.getName().getLocalPart()).type((Schema) sub.endRecord()).noDefault();
+
+                        Schema nested = (Schema) sub.endRecord();
+                        Schema union = SchemaBuilder.unionOf().type(nested).and().nullType().endUnion();
+                        assembler.name(sp.getName().getLocalPart()).type(union).noDefault();
 
                     } else {
                         assembler.name(sp.getName().getLocalPart()).type((Schema) sub.endRecord()).noDefault();
@@ -91,6 +102,25 @@ public class XmlToAvroSchema {
 
         return assembler;
     }
+
+    private static boolean isSimpleType(SchemaType st) {
+        if (st.isSimpleType()) {
+            return true;
+        } else {
+            SchemaType base = st.getBaseType();
+            while (base != null) {
+                if (base.isSimpleType()) {
+                    return true;
+                } else {
+                    base = base.getBaseType();
+                }
+            }
+
+            return false;
+
+        }
+    }
+
 
     private static void assembleSimpleProperty(SchemaProperty sp, SchemaBuilder.FieldAssembler assembler) {
         Schema.Type pt = BuildInTypeMapping.fromXmlTypeCode(XmlBeansUtils.getXMLBuildInType(sp.getType()).getCode());

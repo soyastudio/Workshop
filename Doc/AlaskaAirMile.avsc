@@ -1,0 +1,607 @@
+{
+  "type": "record",
+  "name": "GetAlaskaAirMileType",
+  "namespace": "com.albertsons.esed.cmm",
+  "fields": [
+    {
+      "name": "DocumentData",
+      "type": {
+        "type": "record",
+        "name": "DocumentData",
+        "fields": [
+          {
+            "name": "Document",
+            "type": {
+              "type": "record",
+              "name": "DocumentType",
+              "fields": [
+                {
+                  "name": "ReleaseId",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                {
+                  "name": "VersionId",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                {
+                  "name": "SystemEnvironmentCd",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                {
+                  "name": "DocumentID",
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "default": "0"
+                },
+                {
+                  "name": "AlternateDocumentID",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                {
+                  "name": "InboundOutboundInd",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                {
+                  "name": "DocumentNm",
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "default": "PurchaseOrder"
+                },
+                {
+                  "name": "CreationDt",
+                  "type": "string"
+                },
+                {
+                  "name": "TargetApplicationCd",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                {
+                  "name": "Note",
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "default": ""
+                },
+                {
+                  "name": "GatewayNm",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                {
+                  "name": "SenderId",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                {
+                  "name": "ReceiverId",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                {
+                  "name": "RoutingSystemNm",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                {
+                  "name": "InternalFileTransferInd",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                {
+                  "name": "InterchangeDate",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                {
+                  "name": "InterchangeTime",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                {
+                  "name": "ExternalTargetInd",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                {
+                  "name": "MessageSequenceNbr",
+                  "type": [
+                    "long",
+                    "null"
+                  ]
+                },
+                {
+                  "name": "ExpectedMessageCnt",
+                  "type": [
+                    "long",
+                    "null"
+                  ]
+                },
+                {
+                  "name": "DataClassification",
+                  "type": {
+                    "type": "record",
+                    "name": "DataClassificationType",
+                    "fields": [
+                      {
+                        "name": "DataClassificationLevel",
+                        "type": {
+                          "type": "record",
+                          "name": "CodeWithDescription",
+                          "fields": [
+                            {
+                              "name": "Code",
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            {
+                              "name": "Description",
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            {
+                              "name": "ShortDescription",
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "name": "BusinessSensitivityLevel",
+                        "type": "CodeWithDescription"
+                      },
+                      {
+                        "name": "PHIdataInd",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      {
+                        "name": "PCIdataInd",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      {
+                        "name": "PIIdataInd",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "name": "DocumentAction",
+            "type": {
+              "type": "record",
+              "name": "DocumentActionType",
+              "fields": [
+                {
+                  "name": "ActionTypeCd",
+                  "type": "string"
+                },
+                {
+                  "name": "RecordTypeCd",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "AlaskaAirMileData",
+      "type": {
+        "type": "record",
+        "name": "AlaskaAirMileType",
+        "fields": [
+          {
+            "name": "BatchId",
+            "type": "long"
+          },
+          {
+            "name": "AttachmentType",
+            "type": {
+              "type": "array",
+              "items": {
+                "type": "record",
+                "name": "AttachmentType",
+                "fields": [
+                  {
+                    "name": "FileNm",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  {
+                    "name": "LinkURL",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "BatchStartDt",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          {
+            "name": "BatchEndDt",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          {
+            "name": "TotalAirMileQty",
+            "type": [
+              "double",
+              "null"
+            ]
+          },
+          {
+            "name": "RecordCnt",
+            "type": [
+              "long",
+              "null"
+            ]
+          },
+          {
+            "name": "RejectedAirMilesQty",
+            "type": [
+              "long",
+              "null"
+            ]
+          },
+          {
+            "name": "RejectedRecordCnt",
+            "type": [
+              "long",
+              "null"
+            ]
+          },
+          {
+            "name": "AuditData",
+            "type": {
+              "type": "record",
+              "name": "AirMileRecordAuditData",
+              "fields": [
+                {
+                  "name": "CreateDtTm",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                {
+                  "name": "CreateTs",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                {
+                  "name": "CreateUserId",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                {
+                  "name": "UpdateDtTm",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                {
+                  "name": "UpdateTs",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                {
+                  "name": "UpdateUserId",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "name": "AlaskaAirMilesDetail",
+            "type": {
+              "type": "array",
+              "items": {
+                "type": "record",
+                "name": "AlaskaAirMilesDetail",
+                "fields": [
+                  {
+                    "name": "BatchId",
+                    "type": "long"
+                  },
+                  {
+                    "name": "TransactionType",
+                    "type": {
+                      "type": "record",
+                      "name": "TransactionType",
+                      "fields": [
+                        {
+                          "name": "TransactionId",
+                          "type": "string"
+                        },
+                        {
+                          "name": "TransactionDt",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        {
+                          "name": "TransactionTs",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        {
+                          "name": "TransactionTypeCd",
+                          "type": "CodeWithDescription"
+                        },
+                        {
+                          "name": "TransactionReasonCd",
+                          "type": "CodeWithDescription"
+                        },
+                        {
+                          "name": "ReferenceNbr",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        {
+                          "name": "AltTransaction",
+                          "type": {
+                            "type": "record",
+                            "name": "AltTransaction",
+                            "fields": [
+                              {
+                                "name": "AltTransactionId",
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              {
+                                "name": "AltTransactionType",
+                                "type": "CodeWithDescription"
+                              },
+                              {
+                                "name": "AltTransactionDtTs",
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "name": "RecordType",
+                    "type": "CodeWithDescription"
+                  },
+                  {
+                    "name": "AttachmentType",
+                    "type": {
+                      "type": "array",
+                      "items": "AttachmentType"
+                    }
+                  },
+                  {
+                    "name": "HouseholdId",
+                    "type": "string"
+                  },
+                  {
+                    "name": "AirMileProgram",
+                    "type": {
+                      "type": "record",
+                      "name": "AirMileProgram",
+                      "fields": [
+                        {
+                          "name": "AirMileProgramId",
+                          "type": [
+                            "long",
+                            "null"
+                          ]
+                        },
+                        {
+                          "name": "AirMileProgramNm",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        {
+                          "name": "AirMileTier",
+                          "type": {
+                            "type": "record",
+                            "name": "AirMileTierType",
+                            "fields": [
+                              {
+                                "name": "AirMileTierNm",
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              {
+                                "name": "AirMilePointQty",
+                                "type": [
+                                  "double",
+                                  "null"
+                                ]
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "name": "CustomerNm",
+                    "type": {
+                      "type": "record",
+                      "name": "AirMilePersonNameType",
+                      "fields": [
+                        {
+                          "name": "FormattedNm",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        {
+                          "name": "PreferredSalutationCd",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        {
+                          "name": "TitleCd",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        {
+                          "name": "GivenNm",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        {
+                          "name": "NickNm",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        {
+                          "name": "MiddleNm",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        {
+                          "name": "FamilyNm",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        {
+                          "name": "MaidenNm",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        {
+                          "name": "GenerationAffixCd",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        {
+                          "name": "QualificationAffixCd",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "name": "AuditData",
+                    "type": "AirMileRecordAuditData"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

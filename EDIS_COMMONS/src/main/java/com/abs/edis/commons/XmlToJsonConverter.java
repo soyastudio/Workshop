@@ -6,7 +6,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.LinkedHashMap;
-import java.util.Locale;
 import java.util.Map;
 
 public class XmlToJsonConverter {
@@ -22,7 +21,6 @@ public class XmlToJsonConverter {
 
     public String convert(Node node) {
         arrayMap.clear();
-
         return GSON.toJson(estimate(node));
     }
 
@@ -38,7 +36,10 @@ public class XmlToJsonConverter {
                 if (attributes != null) {
                     for (int i = 0; i < attributes.getLength(); i++) {
                         Node attr = attributes.item(i);
-                        obj.add(this.getNodeName(attr), estimate(attr));
+                        String attrName = getNodeName(attr);
+                        if (!"Abs".equals(attrName)) {
+                            obj.add(this.getNodeName(attr), estimate(attr));
+                        }
                     }
                 }
 
@@ -50,12 +51,27 @@ public class XmlToJsonConverter {
 
                 return obj;
 
+            } else if (node.getAttributes() != null && node.getAttributes().getLength() > 0) {
+                JsonObject obj = new JsonObject();
+                NamedNodeMap attributes = node.getAttributes();
+                if (attributes != null) {
+                    for (int i = 0; i < attributes.getLength(); i++) {
+                        Node attr = attributes.item(i);
+                        String attrName = getNodeName(attr);
+                        if (!"Abs".equals(attrName)) {
+                            obj.add(this.getNodeName(attr), estimate(attr));
+                        }
+                    }
+                }
+
+                return obj;
+
             } else {
                 return null;
             }
 
         } else {
-            String type = mappings.get(path);
+            String type = mappings.get(path).toLowerCase();
             if (type.toLowerCase().contains("array")) {
                 JsonArray array = arrayMap.get(path);
                 if (array == null) {
@@ -79,8 +95,8 @@ public class XmlToJsonConverter {
 
                     array.add(obj);
 
-                } else {
-                    String elementType = type.toLowerCase().substring(0, type.lastIndexOf("array"));
+                } else if (type.endsWith("_array")) {
+                    String elementType = type.substring(0, type.lastIndexOf("_array"));
                     JsonElement primitive = convert(node.getTextContent(), elementType);
                     array.add(primitive);
                 }
@@ -112,30 +128,47 @@ public class XmlToJsonConverter {
     }
 
     private JsonElement convert(String value, String type) {
-        try {
-            if ("boolean".equals(type)) {
-                return new JsonPrimitive(Boolean.parseBoolean(value));
 
-            } else if ("short".equals(type)) {
-                return new JsonPrimitive(Short.parseShort(value));
-
-            } else if ("integer".equals(type)) {
-                return new JsonPrimitive(Integer.parseInt(value));
-
-            } else if ("long".equals(type)) {
-                return new JsonPrimitive(Long.parseLong(value));
-
-            } else if ("float".equals(type)) {
-                return new JsonPrimitive(Float.parseFloat(value));
-
-            } else if ("double".equals(type)) {
-                return new JsonPrimitive(Double.parseDouble(value));
-
+        if ("boolean".equals(type)) {
+            if("Y".equalsIgnoreCase(value) || "TRUE".equalsIgnoreCase(value)) {
+                return new JsonPrimitive(true);
             } else {
+                return new JsonPrimitive(false);
+            }
+        } else if ("short".equals(type)) {
+            try {
+                return new JsonPrimitive(Short.parseShort(value));
+            } catch (Exception e) {
                 return new JsonPrimitive(value);
             }
-        } catch (ClassCastException e) {
-            throw new RuntimeException("Cannot cast '" + value + "' to " + type );
+        } else if ("integer".equals(type)) {
+            try {
+                return new JsonPrimitive(Integer.parseInt(value));
+            } catch (Exception e) {
+                return new JsonPrimitive(value);
+            }
+        } else if ("long".equals(type)) {
+            try {
+                return new JsonPrimitive(Long.parseLong(value));
+            } catch (Exception e) {
+                return new JsonPrimitive(value);
+            }
+        } else if ("float".equals(type)) {
+            try {
+                return new JsonPrimitive(Float.parseFloat(value));
+            } catch (Exception e) {
+                return new JsonPrimitive(value);
+            }
+
+        } else if ("double".equals(type)) {
+            try {
+                return new JsonPrimitive(Double.parseDouble(value));
+            } catch (Exception e) {
+                return new JsonPrimitive(value);
+            }
+
+        } else {
+            return new JsonPrimitive(value);
         }
     }
 
