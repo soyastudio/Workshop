@@ -28,7 +28,7 @@ KIT --> |<Json Data>|IIB
         AKS[(Azure Kafka SRC Topic)]
 
         KIT[(Kafka Consumer Topic)]
-        IIB[{{application}}]
+        IIB[{{application.name}}]
 
         KOT[(Kafka Producer Topic)]
 
@@ -79,9 +79,9 @@ KIT --> |<Json Data>|IIB
 # IIB Command
 
 ```
-mqsiapplybaroverride -k {{application}} -b {{application}}.bar -p {{application}}.BASE.override.properties
+mqsiapplybaroverride -k {{application.flow}} -b {{application.name}}.bar -p {{application.name}}.BASE.override.properties
 
-mqsireadbar -b {{application}}.bar -r
+mqsireadbar -b {{application.name}}.bar -r
 
 ```
 

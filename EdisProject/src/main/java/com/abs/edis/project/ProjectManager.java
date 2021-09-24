@@ -1,9 +1,11 @@
 package com.abs.edis.project;
 
+import com.google.common.base.CaseFormat;
 import com.google.gson.*;
 import com.samskivert.mustache.Mustache;
 import okhttp3.*;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -53,6 +55,17 @@ public class ProjectManager {
     }
 
     private Context context;
+
+    public ProjectManager() {
+        Properties properties = new Properties();
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("workspace.properties");
+        try {
+            properties.load(inputStream);
+            this.context = new Context(properties);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public ProjectManager(Properties configuration) {
         this.context = new Context(configuration);
@@ -114,6 +127,11 @@ public class ProjectManager {
                 new InputStreamReader(template)).execute(JsonUtils.toMap(GSON.toJsonTree(project).getAsJsonObject()));
     }
 
+    private static String mustache(InputStream template, JsonObject data) throws IOException {
+        return Mustache.compiler().compile(
+                new InputStreamReader(template)).execute(JsonUtils.toMap(data));
+    }
+
     private static String mustache(String template, JsonObject data) throws IOException {
         InputStream inputStream = ProjectManager.class.getClassLoader().getResourceAsStream(template);
         return Mustache.compiler().compile(
@@ -133,6 +151,8 @@ public class ProjectManager {
         private File schemaHome;
         private File srcHome;
         private File deployHome;
+
+        private File templateHome;
         private File buildHome;
 
         private SchemaService schemaService;
@@ -156,6 +176,8 @@ public class ProjectManager {
             if (!deployHome.exists()) {
                 throw new RuntimeException(deployHome.getAbsolutePath() + " does not exist.");
             }
+
+            templateHome = new File(configuration.getProperty("edis.project.template.home"));
 
             buildHome = new File(configuration.getProperty("edis.project.build.home"));
             if (!buildHome.exists()) {
@@ -747,6 +769,9 @@ public class ProjectManager {
     static class OutputXmlCommand extends MappingServiceCommand {
     }
 
+    static class EsqlCommand extends MappingServiceCommand {
+    }
+
     static class UnknownPathsCommand extends MappingServiceCommand {
     }
 
@@ -983,6 +1008,7 @@ public class ProjectManager {
         }
     }
 
+
     static class MqsiCommand extends AbstractProjectCommand {
 
         @Override
@@ -1036,6 +1062,138 @@ public class ProjectManager {
         public String process(Session session) throws Exception {
             InputStream inputStream = ProjectManager.class.getClassLoader().getResourceAsStream("mustache/readme.mustache");
             return mustache(inputStream, session.project);
+        }
+    }
+
+    // Mustache Commands:
+    static abstract class AbstractMustacheCommand implements Command {
+        protected static Map<String, String> templates = new LinkedHashMap<>();
+
+        static {
+            templates.put("README", "mustache/readme.mustache");
+
+            templates.put("Default_Base_Override".toUpperCase(), "mustache/default_base_override.properties.mustache");
+            templates.put("Default_Dev_Override".toUpperCase(), "mustache/default_dev_override.properties.mustache");
+            templates.put("Default_Qa_Override".toUpperCase(), "mustache/default_qa_override.properties.mustache");
+
+            templates.put("Audit_Validate_Input".toUpperCase(), "mustache/audit_validate_input.properties.mustache");
+            templates.put("Audit_Validate_Output".toUpperCase(), "mustache/audit_validate_output.properties.mustache");
+            templates.put("Audit_Validate_Exception".toUpperCase(), "mustache/audit_validate_exception.properties.mustache");
+
+            templates.put("Kafka_Consumer_Override".toUpperCase(), "mustache/kafka_consumer_override.properties.mustache");
+            templates.put("Kafka_Producer_Override".toUpperCase(), "mustache/kafka_producer_override.properties.mustache");
+
+            templates.put("deploy_dev".toUpperCase(), "mustache/deploy.dv.mustache");
+            templates.put("deploy_qa".toUpperCase(), "mustache/deploy.qa.mustache");
+            templates.put("deploy_pr".toUpperCase(), "mustache/deploy.pr.mustache");
+
+            templates.put("mqsi".toUpperCase(), "mustache/mqsi.mustache");
+
+            templates.put("postman".toUpperCase(), "mustache/postman_collection.json.mustache");
+
+        }
+
+        protected InputStream getTemplate(Session session) throws FileNotFoundException {
+            JsonElement prop = session.requestMessage.parameters.get("template");
+            if (prop == null) {
+                throw new RuntimeException("template need to set in request parameter");
+            }
+
+            String template = prop.getAsString();
+
+            if(template.endsWith(".mustache")) {
+                File file = new File(session.context.templateHome, template);
+
+                return new FileInputStream(file);
+
+            } else {
+
+                return getTemplate(template);
+
+            }
+        }
+
+        protected InputStream getTemplate(String name) {
+
+            String template = name.toUpperCase();
+            if (!templates.containsKey(template)) {
+                throw new RuntimeException("template not defined: " + template);
+            }
+
+            return ProjectManager.class.getClassLoader().getResourceAsStream(templates.get(template));
+        }
+
+    }
+
+    static class MustacheTemplateListCommand extends AbstractMustacheCommand {
+
+        @Override
+        public String execute(Session session) throws Exception {
+            return GSON.toJson(new ArrayList<String>(templates.keySet()));
+        }
+    }
+
+    static class MustacheTemplateDetailsCommand extends AbstractMustacheCommand {
+
+        @Override
+        public String execute(Session session) throws Exception {
+            return IOUtils.toString(getTemplate(session), Charset.defaultCharset());
+        }
+    }
+
+    static class MustacheInputExampleCommand extends AbstractMustacheCommand {
+
+        @Override
+        public String execute(Session session) throws Exception {
+            JsonObject root = new JsonObject();
+
+            String contents = IOUtils.toString(getTemplate(session), Charset.defaultCharset());
+            StringTokenizer tokenizer = new StringTokenizer(contents, "{{");
+            while (tokenizer.hasMoreTokens()) {
+                String token = tokenizer.nextToken();
+                if (token.contains("}}")) {
+                    String path = token.substring(0, token.indexOf("}}"));
+                    set(path, root);
+                }
+            }
+
+            return GSON.toJson(root);
+        }
+
+        private void set(String path, JsonObject root) {
+            if (!path.contains(".")) {
+                if (root.get(path) == null) {
+                    root.addProperty(path, CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, path));
+                }
+
+            } else {
+                String[] arr = path.split("\\.");
+                JsonObject parent = root;
+                for (int i = 0; i < arr.length - 1; i++) {
+                    parent = getJsonObject(arr[i], parent);
+                }
+
+                set(arr[arr.length - 1], parent);
+
+            }
+        }
+
+        private JsonObject getJsonObject(String name, JsonObject parent) {
+            JsonElement prop = parent.get(name);
+            if (prop == null) {
+                prop = new JsonObject();
+                parent.add(name, prop);
+            }
+
+            return prop.getAsJsonObject();
+        }
+    }
+
+    static class MustacheCommand extends AbstractMustacheCommand {
+
+        @Override
+        public String execute(Session session) throws Exception {
+            return mustache(getTemplate(session), session.requestMessage.message.getAsJsonObject());
         }
     }
 }

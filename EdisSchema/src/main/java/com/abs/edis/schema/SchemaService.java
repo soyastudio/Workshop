@@ -10,7 +10,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import soya.framework.tao.KnowledgeTree;
 import soya.framework.tao.xs.XmlBeansUtils;
-import soya.framework.tao.xs.XmlToAvroSchema;
+import soya.framework.tao.xs.XsdToAvsc;
 import soya.framework.tao.xs.XsKnowledgeBase;
 import soya.framework.tao.xs.XsNode;
 
@@ -49,7 +49,7 @@ public class SchemaService {
     }
 
     public static void main(String[] args) {
-        File file = new File("C:\\Users\\qwen002\\IBM\\IIBT10\\workspace\\APPDEV_ESED1_SRC_TRUNK\\esed1_src\\CMM_dev\\BOD\\GetAlaskaAirMile.xsd");
+        File file = new File("C:\\Users\\qwen002\\IBM\\IIBT10\\workspace\\APPDEV_ESED1_SRC_TRUNK\\esed1_src\\CMM_dev\\BOD\\GetAirMilePoints.xsd");
         // File file = new File("C:\\Users\\qwen002\\IBM\\IIBT10\\workspace\\APPDEV_ESED1_SRC_TRUNK\\esed1_src\\CMM_dev\\BOD\\GetGroceryOrder.xsd");
 
         try {
@@ -248,7 +248,7 @@ public class SchemaService {
 
         @Override
         public String execute(KnowledgeTree<SchemaTypeSystem, XsNode> knowledgeTree) throws Exception {
-            Schema schema = XmlToAvroSchema.fromXmlSchema(knowledgeTree.origin());
+            Schema schema = XsdToAvsc.fromXmlSchema(knowledgeTree.origin());
             return schema.toString(true);
         }
     }
@@ -257,7 +257,7 @@ public class SchemaService {
 
         @Override
         public String execute(KnowledgeTree<SchemaTypeSystem, XsNode> knowledgeTree) throws Exception {
-            Schema schema = XmlToAvroSchema.fromXmlSchema(knowledgeTree.origin());
+            Schema schema = XsdToAvsc.fromXmlSchema(knowledgeTree.origin());
             Object result = new SampleAvroGenerator(schema, new Random(), 0).generate();
             GenericRecord genericRecord = (GenericRecord) result;
 

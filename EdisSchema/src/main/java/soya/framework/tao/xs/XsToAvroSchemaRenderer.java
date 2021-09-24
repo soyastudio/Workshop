@@ -9,7 +9,7 @@ public class XsToAvroSchemaRenderer implements XsKnowledgeRenderer {
 
     @Override
     public String render(KnowledgeTree<SchemaTypeSystem, XsNode> knowledgeBase) throws T123W.FlowExecutionException {
-        Schema schema = XmlToAvroSchema.fromXmlSchema(knowledgeBase.origin());
+        Schema schema = XsdToAvsc.fromXmlSchema(knowledgeBase.origin());
         return schema.toString(true);
     }
 }

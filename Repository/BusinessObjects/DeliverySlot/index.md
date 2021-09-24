@@ -64,7 +64,7 @@ graph LR
 ```
     su - esq03ed
     password: #Today@321!
-    cd /appl/esed/kafka
+    cd /appl/esed/kafka/admin/bin
 
 ```
 

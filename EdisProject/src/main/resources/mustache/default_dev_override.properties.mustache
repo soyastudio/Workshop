@@ -1,0 +1,68 @@
+# ===================== Node: KafkaConsumer
+{{brokerSchema}}.{{flowName}}#KafkaConsumer.topicName = {{inboundTopicName}}
+{{brokerSchema}}.{{flowName}}#KafkaConsumer.bootstrapServers = dgv0137c6.safeway.com:9093,dgv0137be.safeway.com:9093,dgv0137c0.safeway.com:9093
+{{brokerSchema}}.{{flowName}}#KafkaConsumer.groupId = ESED_CG_001_{{name}}
+{{brokerSchema}}.{{flowName}}#KafkaConsumer.initialOffset = latest
+{{brokerSchema}}.{{flowName}}#KafkaConsumer.enableAutoCommit = true
+{{brokerSchema}}.{{flowName}}#KafkaConsumer.clientId = edis_consumer
+{{brokerSchema}}.{{flowName}}#KafkaConsumer.useClientIdSuffix = true
+{{brokerSchema}}.{{flowName}}#KafkaConsumer.connectionTimeout = 15
+{{brokerSchema}}.{{flowName}}#KafkaConsumer.sessionTimeout = 10
+{{brokerSchema}}.{{flowName}}#KafkaConsumer.receiveBatchSize = 1
+{{brokerSchema}}.{{flowName}}#KafkaConsumer.securityProtocol = SSL
+{{brokerSchema}}.{{flowName}}#KafkaConsumer.sslProtocol = TLSv1.2
+{{brokerSchema}}.{{flowName}}#KafkaConsumer.validateMaster = none
+{{brokerSchema}}.{{flowName}}#KafkaConsumer.componentLevel = flow
+{{brokerSchema}}.{{flowName}}#KafkaConsumer.additionalInstances = 0
+
+# ===================== Node: KafkaProducer
+{{brokerSchema}}.{{flowName}}#KafkaProducer.topicName = {{outboundTopicName}}
+{{brokerSchema}}.{{flowName}}#KafkaProducer.bootstrapServers = dgv0137c6.safeway.com:9093,dgv0137be.safeway.com:9093,dgv0137c0.safeway.com:9093
+{{brokerSchema}}.{{flowName}}#KafkaProducer.clientId = edis_producer
+{{brokerSchema}}.{{flowName}}#KafkaProducer.useClientIdSuffix = true
+{{brokerSchema}}.{{flowName}}#KafkaProducer.acks = 1
+{{brokerSchema}}.{{flowName}}#KafkaProducer.timeout = 60
+{{brokerSchema}}.{{flowName}}#KafkaProducer.securityProtocol = SSL
+{{brokerSchema}}.{{flowName}}#KafkaProducer.sslProtocol = TLSv1.2
+{{brokerSchema}}.{{flowName}}#KafkaProducer.validateMaster = inherit
+
+# ===================== Node: Audit_Validate_Input
+{{brokerSchema}}.{{flowName}}#Audit_Validate_Input.APPLICATION_NAME = {{flowName}}
+{{brokerSchema}}.{{flowName}}#Audit_Validate_Input.APPLICATION_DESC = {{name}} for {{source}}
+{{brokerSchema}}.{{flowName}}#Audit_Validate_Input.BO_NAME = {{name}}
+{{brokerSchema}}.{{flowName}}#Audit_Validate_Input.COMPONENT_DESC = {{flowName}}
+{{brokerSchema}}.{{flowName}}#Audit_Validate_Input.COMPONENT_TYPE = PF
+{{brokerSchema}}.{{flowName}}#Audit_Validate_Input.COMPONENT_INPUT_TYPE = KAFKA
+{{brokerSchema}}.{{flowName}}#Audit_Validate_Input.SOURCE_SYSTEM_NAME = {{source}}
+{{brokerSchema}}.{{flowName}}#Audit_Validate_Input.AUDIT_REQD = Y
+{{brokerSchema}}.{{flowName}}#Audit_Validate_Input.AUDIT_SRC_UNQ_ID = Y
+{{brokerSchema}}.{{flowName}}#Audit_Validate_Input.PATH_SRC_UNQ_ID = CURRENT_TIMESTAMP
+{{brokerSchema}}.{{flowName}}#Audit_Validate_Input.AUDIT_TRGT_UNQ_ID = Y
+{{brokerSchema}}.{{flowName}}#Audit_Validate_Input.PATH_TRGT_UNQ_ID = CURRENT_TIMESTAMP
+{{brokerSchema}}.{{flowName}}#Audit_Validate_Input.VALIDATION_REQD_SOURCE = N
+{{brokerSchema}}.{{flowName}}#Audit_Validate_Input.VALIDATION_REQD_TARGET = N
+{{brokerSchema}}.{{flowName}}#Audit_Validate_Input.STORE_SRC_MSG = Y
+{{brokerSchema}}.{{flowName}}#Audit_Validate_Input.STORE_TRGT_MSG = Y
+{{brokerSchema}}.{{flowName}}#Audit_Validate_Input.COMPONENT_INPUT_NAME = {{inboundTopicName}}
+{{brokerSchema}}.{{flowName}}#Audit_Validate_Input.queueName = ESEDDV.AUDIT.MSG
+{{brokerSchema}}.{{flowName}}#Audit_Validate_Input.AUDIT_MDL_UNQ_ID = Y
+{{brokerSchema}}.{{flowName}}#Audit_Validate_Input.PATH_MDL_UNQ_ID = CURRENT_TIMESTAMP
+{{brokerSchema}}.{{flowName}}#Audit_Validate_Input.STORE_MDL_MSG = Y
+
+# ===================== Node: ExceptionSubFlow
+{{brokerSchema}}.{{flowName}}#Audit_Validate_Output.queueName = ESEDDV.AUDIT.MSG
+
+# ===================== Node: ExceptionSubFlow
+{{brokerSchema}}.{{flowName}}#ExceptionSubFlow.HOSTNAME = IIBDV
+{{brokerSchema}}.{{flowName}}#ExceptionSubFlow.STOREMSG = Y
+{{brokerSchema}}.{{flowName}}#ExceptionSubFlow.APPLICATIONNAME = {{flowName}}
+{{brokerSchema}}.{{flowName}}#ExceptionSubFlow.BONAME = {{name}}
+{{brokerSchema}}.{{flowName}}#ExceptionSubFlow.INPUTTYPE = KAFKA
+{{brokerSchema}}.{{flowName}}#ExceptionSubFlow.INPUTNAME = {{inboundTopicName}}
+{{brokerSchema}}.{{flowName}}#ExceptionSubFlow.REPLAYRULE = Y
+{{brokerSchema}}.{{flowName}}#ExceptionSubFlow.MAXREPLAYCOUNT = 3
+{{brokerSchema}}.{{flowName}}#ExceptionSubFlow.COMPONENTNAME = {{flowName}}
+{{brokerSchema}}.{{flowName}}#ExceptionSubFlow.queueName = ESEDDV.EXCEPTION.MSG
+
+# ===================== Node: {{transformer}}
+{{brokerSchema}}.{{flowName}}#{{transformer}}.SYSTEM_ENVIRONMENT_CODE = DV

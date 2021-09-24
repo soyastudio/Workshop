@@ -1,61 +1,57 @@
 package com.abs.edis.schema;
 
-
 import org.apache.avro.Schema;
-import org.apache.avro.file.DataFileWriter;
 import org.apache.avro.generic.GenericData;
+import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.generic.GenericDatumWriter;
 import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.io.*;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 public class XmlToAvroConverter {
 
-    public static final String PREFIX = "Abs:";
+    public static final String ALPHABET = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz";
 
-    private Schema schema;
-
-    public XmlToAvroConverter(Schema schema) {
-        this.schema = schema;
+    private XmlToAvroConverter() {
     }
 
-    public static byte[] convert(Node xml, Schema schema) throws IOException {
-        return write(schema, new XmlToAvroConverter(schema).createRecord(schema, xml));
+    public static Schema parse(byte[] data) {
+        return new Schema.Parser().parse(unzip(data));
     }
 
-    public static byte[] write(Schema schema, GenericRecord record) throws IOException {
-        DataFileWriter<GenericRecord> dataFileWriter = new DataFileWriter<>(new GenericDatumWriter<>(schema));
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        dataFileWriter.create(schema, outputStream);
-        dataFileWriter.append(record);
-        dataFileWriter.close();
+    public static byte[] zip(final String str) {
+        if ((str == null) || (str.length() == 0)) {
+            throw new IllegalArgumentException("Cannot zip null or empty string");
+        }
 
-        return outputStream.toByteArray();
-    }
-
-    public static byte[] write(Schema schema, List<GenericRecord> records) throws IOException {
-
-        DataFileWriter<GenericRecord> dataFileWriter = new DataFileWriter<>(new GenericDatumWriter<>(schema));
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        dataFileWriter.create(schema, outputStream);
-        records.forEach(e -> {
-            try {
-                dataFileWriter.append(e);
-
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+            try (GZIPOutputStream gzipOutputStream = new GZIPOutputStream(byteArrayOutputStream)) {
+                gzipOutputStream.write(str.getBytes(StandardCharsets.UTF_8));
             }
+            return byteArrayOutputStream.toByteArray();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to zip content", e);
+        }
+    }
 
-        });
-        dataFileWriter.close();
-
+    public static byte[] convert(Node xml, Schema schema) throws IOException, ParserConfigurationException, SAXException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        write(createRecord(schema, xml), schema, outputStream);
         return outputStream.toByteArray();
     }
 
@@ -63,10 +59,17 @@ public class XmlToAvroConverter {
         GenericData.Record record = new GenericData.Record(schema);
         List<Schema.Field> fields = schema.getFields();
         fields.forEach(e -> {
-            record.put(e.name(), generateObject(e.name(), e.schema(), node));
+            record.put(e.name(), create(e.name(), e.schema(), node));
         });
 
         return record;
+    }
+
+    public static GenericRecord read(byte[] data, Schema schema) throws Exception {
+        DatumReader<GenericRecord> datumReader = new GenericDatumReader<GenericRecord>();
+        datumReader.setSchema(schema);
+        Decoder decoder = DecoderFactory.get().binaryDecoder(data, null);
+        return datumReader.read(null, decoder);
     }
 
     private static GenericData.Record createEmptyRecord(Schema schema) {
@@ -78,7 +81,24 @@ public class XmlToAvroConverter {
         return record;
     }
 
-    private static Object generateObject(String name, Schema schema, Node node) {
+    private static List<Node> getChildrenByName(Node node, String name) {
+        List<Node> list = new ArrayList<>();
+        NodeList nodeList = node.getChildNodes();
+        for (int i = 0; i < nodeList.getLength(); i ++) {
+            Node child = nodeList.item(i);
+            String nodeName = child.getNodeName();
+            if(nodeName.contains(":")) {
+                nodeName = nodeName.substring(nodeName.indexOf(":") + 1);
+            }
+
+            if(name.equals(nodeName)) {
+                list.add(child);
+            }
+        }
+        return list;
+    }
+
+    private static Object create(String name, Schema schema, Node node) {
 
         Schema.Type type = schema.getType();
         Element element = (Element) node;
@@ -86,16 +106,16 @@ public class XmlToAvroConverter {
         if (element.getAttribute(name) != null && !element.getAttribute(name).isEmpty()) {
             return element.getAttribute(name);
 
-        } else if (element.getAttribute(PREFIX + name) != null && !element.getAttribute(PREFIX + name).isEmpty()) {
-            return element.getAttribute(PREFIX + name);
+        } else if (element.getAttribute(name) != null && !element.getAttribute(name).isEmpty()) {
+            return element.getAttribute(name);
 
         } else if (type.equals(Schema.Type.ARRAY)) {
-            return generateArray(name, schema, node);
+            return createArray(name, schema, node);
 
-        } else if (type.equals(Schema.Type.RECORD)) {
-            NodeList nodeList = element.getElementsByTagName(PREFIX + name);
-            if (nodeList != null && nodeList.getLength() == 1 && nodeList.item(0).getNodeType() == Node.ELEMENT_NODE) {
-                return createRecord(schema, nodeList.item(0));
+        } else if (type.equals(Schema.Type.RECORD) || type.equals(Schema.Type.MAP)) {
+            List<Node> children = getChildrenByName(node, name);
+            if (children.size() == 1 && children.get(0).getNodeType() == Node.ELEMENT_NODE) {
+                return createRecord(schema, children.get(0));
 
             } else {
                 return new GenericData.Record(schema);
@@ -106,9 +126,9 @@ public class XmlToAvroConverter {
 
         } else {
             String value = null;
-            NodeList nodeList = element.getElementsByTagName(PREFIX + name);
-            if (nodeList != null && nodeList.getLength() == 1) {
-                value = nodeList.item(0).getTextContent();
+            List<Node> children = getChildrenByName(node, name);
+            if (children.size() == 1) {
+                value = children.get(0).getTextContent();
             }
 
             return convert(value, schema);
@@ -145,17 +165,70 @@ public class XmlToAvroConverter {
             case STRING:
                 return value;
 
-            /*case ENUM:
-                return generateEnumSymbol(name, schema, node);
+            case ENUM:
+                return generateEnumSymbol(value, schema);
 
             case FIXED:
-                return generateFixed(name, schema, node);
+                return generateFixed(value, schema);
 
-            case MAP:
-                return generateMap(name, schema, node);*/
             default:
                 throw new RuntimeException("Unrecognized schema type: " + schema.getType());
         }
+    }
+
+    private static Object generateUnion(String name, Schema type, Node node) {
+        List<Node> children = getChildrenByName(node, name);
+        if(children.size() > 0) {
+            for (Node n: children) {
+                List<Schema> schemas = type.getTypes();
+                for (Schema sc : schemas) {
+                    if (!Schema.Type.NULL.equals(sc.getType())) {
+                        return create(name, sc, node);
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private static Object createArray(String name, Schema schema, Node node) {
+
+        Collection<Object> result = new ArrayList<>();
+        List<Node> children = getChildrenByName(node, name);
+        children.forEach(e -> {
+            Schema elementType = schema.getElementType();
+            if (Schema.Type.RECORD.equals(elementType.getType())) {
+                result.add(createRecord(elementType, e));
+
+            } else {
+                result.add(convert(e.getTextContent(), elementType));
+
+            }
+        });
+
+        return result;
+    }
+
+    private static Object generateFixed(String value, Schema schema) {
+        if (value == null) {
+            return getDefaultFixedValue(schema);
+
+        } else {
+            return value;
+
+        }
+    }
+
+    private static Object generateEnumSymbol(String value, Schema schema) {
+        List<String> values = schema.getEnumSymbols();
+        for (String e : values) {
+            if (e.equals(value)) {
+                return e;
+            }
+        }
+
+        throw new IllegalArgumentException("No value for enum type: " + value);
     }
 
     private static Object getDefaultValue(Schema schema) {
@@ -185,73 +258,151 @@ public class XmlToAvroConverter {
                 return "";
 
             case RECORD:
+            case MAP:
                 return createEmptyRecord(schema);
 
             case ARRAY:
                 return new ArrayList<>();
 
             case UNION:
-                return null;
+                return getDefaultUnionValue(schema);
 
-            /*case ENUM:
-                return generateEnumSymbol(name, schema, node);
+            case ENUM:
+                return getDefaultEnumSymbol(schema);
 
             case FIXED:
-                return generateFixed(name, schema, node);
+                return getDefaultFixedValue(schema);
 
-            case MAP:
-                return generateMap(name, schema, node);*/
             default:
                 throw new RuntimeException("Unrecognized schema type: " + schema.getType());
         }
     }
 
-    private static Object generateUnion(String name, Schema type, Node node) {
-        Element element = (Element) node;
-        NodeList nodeList = element.getElementsByTagName(name);
-        if (nodeList.getLength() == 0) {
-            nodeList = element.getElementsByTagName(PREFIX + name);
-        }
+    private static Object getDefaultUnionValue(Schema schema) {
+        Object value = null;
+        List<Schema> list = schema.getTypes();
+        for (Schema sc : list) {
+            if (Schema.Type.NULL.equals(sc.getType())) {
+                return null;
 
-        if (nodeList != null && nodeList.getLength() > 0) {
-            List<Schema> schemas = type.getTypes();
-            for (Schema sc : schemas) {
-                if (!Schema.Type.NULL.equals(sc.getType())) {
-                    return generateObject(name, sc, node);
-                }
+            } else if (value == null) {
+                value = getDefaultValue(schema);
             }
         }
 
-        return null;
+        return value;
     }
 
-    private static Object generateArray(String name, Schema schema, Node node) {
+    private static Object getDefaultEnumSymbol(Schema schema) {
+        List<String> values = schema.getEnumSymbols();
+        if (values.size() > 0) {
+            return values.get(0);
 
-        Element element = (Element) node;
-        NodeList nodeList = element.getElementsByTagName(name);
-        if (nodeList.getLength() == 0) {
-            nodeList = element.getElementsByTagName(PREFIX + name);
+        } else {
+            return null;
+
+        }
+    }
+
+    private static Object getDefaultFixedValue(Schema schema) {
+        StringBuilder builder = new StringBuilder();
+        int len = schema.getFixedSize();
+        char[] arr = ALPHABET.toCharArray();
+        for (int i = 0; i < len; i++) {
+            int random = ThreadLocalRandom.current().nextInt();
+            if (random < 0) {
+                random = -1 * random;
+            }
+            int index = random % 52;
+            builder.append(arr[index]);
+        }
+        return builder.toString();
+    }
+
+    public static String getRandom(int len) {
+        StringBuilder builder = new StringBuilder();
+        char[] arr = ALPHABET.toCharArray();
+        for (int i = 0; i < len; i++) {
+            int random = ThreadLocalRandom.current().nextInt();
+            if (random < 0) {
+                random = -1 * random;
+            }
+            int index = random % 52;
+            builder.append(arr[index]);
+        }
+        return builder.toString();
+    }
+
+    private static void write(GenericRecord record, Schema schema, OutputStream outputStream) throws IOException {
+        GenericDatumWriter<GenericRecord> writer = new GenericDatumWriter<>(schema);
+        Encoder encoder = EncoderFactory.get().binaryEncoder(outputStream, null);
+
+        writer.write(record, encoder);
+        encoder.flush();
+        outputStream.close();
+    }
+
+    private static String unzip(final byte[] data) {
+        if ((data == null) || (data.length == 0)) {
+            throw new IllegalArgumentException("Cannot unzip null or empty bytes");
         }
 
-        int length = nodeList.getLength();
-        Collection<Object> result = new ArrayList<>(length);
-        for (int i = 0; i < length; i++) {
-            result.add(createRecord(schema.getElementType(), nodeList.item(i)));
+        byte[] compressed = Base64.getDecoder().decode(data);
+
+        if (!isZipped(compressed)) {
+            return new String(compressed);
         }
 
-        return result;
+        try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(compressed)) {
+            try (GZIPInputStream gzipInputStream = new GZIPInputStream(byteArrayInputStream)) {
+                try (InputStreamReader inputStreamReader = new InputStreamReader(gzipInputStream, StandardCharsets.UTF_8)) {
+                    try (BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
+                        StringBuilder output = new StringBuilder();
+                        String line;
+                        while ((line = bufferedReader.readLine()) != null) {
+                            output.append(line);
+                        }
+                        return output.toString();
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to unzip content", e);
+        }
     }
 
-    private Object generateMap(String name, Schema type, Node node) {
-        return null;
+    private static boolean isZipped(final byte[] compressed) {
+        return (compressed[0] == (byte) (GZIPInputStream.GZIP_MAGIC))
+                && (compressed[1] == (byte) (GZIPInputStream.GZIP_MAGIC >> 8));
     }
 
-    private Object generateFixed(String name, Schema type, Node node) {
-        return null;
+    public static String toXmlString(Node node) {
+        StringBuilder builder = new StringBuilder();
+        print(node, builder);
+        return builder.toString();
     }
 
-    private Object generateEnumSymbol(String name, Schema type, Node node) {
-        return null;
+    private static void print(Node node, StringBuilder builder) {
+        if (node.getNodeType() == Node.ELEMENT_NODE) {
+            String name = node.getNodeName();
+            if (name.contains(":")) {
+                name = name.substring(name.indexOf(":") + 1);
+            }
+            builder.append("<").append(name).append(">");
+
+            NodeList children = node.getChildNodes();
+            if (children.getLength() == 1 && children.item(0).getNodeType() == Node.TEXT_NODE) {
+                builder.append(node.getTextContent());
+            } else {
+                for (int i = 0; i < children.getLength(); i++) {
+                    print(children.item(i), builder);
+                }
+
+            }
+
+            builder.append("</").append(name).append(">");
+        }
     }
+
 }
 

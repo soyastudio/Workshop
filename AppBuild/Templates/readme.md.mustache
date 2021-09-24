@@ -1,0 +1,99 @@
+# Project
+
+# Business Object Design Document (BORD)
+
+## Flow Chart
+``` mermaid
+graph LR
+subgraph SRC [{{source}}]
+{{source}}
+end
+
+{{source}} --> AKS
+AKS --> KIT
+
+subgraph EDIS [EDIS BOD - {{name}}]
+KIT --> |<Json Data>|IIB
+    IIB --> |<CMM XML>|KOT
+        end
+
+        KOT --> AKT
+        AKT --> END
+
+        subgraph TGT [{{consumer}}]
+        END
+        end
+
+        {{source}}((Source))
+        AKS[(Azure Kafka SRC Topic)]
+
+        KIT[(Kafka Consumer Topic)]
+        IIB[{{application}}]
+
+        KOT[(Kafka Producer Topic)]
+
+        AKT[(Azure Kafka TGT)]
+        END((Consumer))
+
+
+```
+
+
+## Sequence Chart
+``` mermaid
+        sequenceDiagram
+        SRC({{source}})->>Kafka Inbound Topic: publish
+        Kafka Inbound Topic-->>IIB Transformer: Json Message
+        IIB Transformer-->>Kafka Outbound Topic: CMM XML
+        Kafka Outbound Topic->>Consumer({{consumer}}): subscribe
+
+```
+
+## Message Flow
+``` mermaid
+        graph LR
+        KIT --> KFC
+
+        subgraph EDIS [IIB Message Flow]
+        KFC --> AUI
+        AUI --> |<Json Data>|IIB
+        IIB --> |<CMM XML>|KFP
+        KFC --> EXH
+        end
+
+        KFP --> KOT
+
+        KIT[(Kafka Inbound Topic)]
+
+        KFC([KafkaConsumer])
+        AUI[Input Auditor]
+        IIB(IIB Transformer)
+        KFP([KafkaProducer])
+        EXH[Exception Handler]
+
+        KOT[(Kafka Outbound Topic)]
+
+```
+
+
+# IIB Command
+
+```
+mqsiapplybaroverride -k {{application}} -b {{application}}.bar -p {{application}}.BASE.override.properties
+
+mqsireadbar -b {{application}}.bar -r
+
+```
+
+# Kafka Test
+## Workspace
+
+
+# SQL
+```
+    select * from MSGLOG.edis_msg_log t where t.bo_name = '{{name}}' order by t.db_insert_timestamp desc;
+
+    select * from MSGLOG.edis_exception_msg t where t.bo_name = '{{name}}' order by t.db_insert_timestamp desc;
+
+```
+

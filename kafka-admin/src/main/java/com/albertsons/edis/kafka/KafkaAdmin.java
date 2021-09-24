@@ -5,6 +5,12 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import groovy.lang.GroovyShell;
+import org.apache.avro.Schema;
+import org.apache.avro.generic.GenericDatumReader;
+import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.io.DatumReader;
+import org.apache.avro.io.Decoder;
+import org.apache.avro.io.DecoderFactory;
 import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -172,6 +178,12 @@ public class KafkaAdmin {
 
     private KafkaConsumer createKafkaConsumer() {
         return new KafkaConsumer(consumerProperties);
+    }
+
+    private KafkaConsumer createKafkaAvroConsumer() {
+        Properties  properties = new Properties(consumerProperties);
+        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "io.confluent.kafka.serializers.KafkaAvroDeserializer");
+        return new KafkaConsumer(properties);
     }
 
     private AdminClient createAdminClient() {
@@ -379,6 +391,13 @@ public class KafkaAdmin {
                 .longOpt("streamClass")
                 .hasArg(true)
                 .desc("Stream class to execute.")
+                .required(false)
+                .build());
+
+        options.addOption(Option.builder("S")
+                .longOpt("schema")
+                .hasArg(true)
+                .desc("Avro schema file name")
                 .required(false)
                 .build());
 
@@ -1405,6 +1424,109 @@ public class KafkaAdmin {
         }
 
         return rc;
+    }
+
+    @Command(desc = "Get latest avro message from kafka topic of all or specified partition",
+            options = {
+                    "-a avro",
+                    "-b business object name, if provided, options '-c' will be read from the bod.properties file.",
+                    "-c consumer topic name",
+                    "-e environment",
+                    "-P partition",
+                    "-T timeout in millisecond"
+            },
+            cases = {
+                    "java -jar kafkaya.jar -a avro -h",
+                    "java -jar kafkaya.jar -a avro -c CONSUMER_TOPIC -P 1 -O 1234 -e dev -T 5000",
+                    "java -jar kafkaya.jar -a avro -b BOD_NAME -e dev"
+            })
+    public static ConsumerRecord<String, byte[]> avro(CommandLine cmd, KafkaAdmin kafkaAdmin) throws Exception {
+        String topicName = null;
+
+        if(!cmd.hasOption("S")) {
+            throw new IllegalArgumentException("Option 'S' is required for specifying schema file.");
+        }
+
+        String avsc = "avsc/" + cmd.getOptionValue("S");
+        if(!avsc.endsWith(".avsc")) {
+            avsc = avsc + ".avsc";
+        }
+
+        File schemaFile = new File(home, avsc);
+        if(!schemaFile.exists()) {
+            throw new FileNotFoundException("File not found: " + avsc);
+        }
+
+        Schema schema = new Schema.Parser().parse(schemaFile);
+
+        if (cmd.hasOption("b")) {
+            File dir = new File(workspace, cmd.getOptionValue("b"));
+            File bod = new File(dir, "bod.properties");
+
+            if (!bod.exists()) {
+                log("File '" + bod + "' does not exit.");
+            }
+
+            Properties properties = new Properties();
+            properties.load(new FileInputStream(bod));
+
+            topicName = properties.containsKey(env + ".c") ? properties.getProperty(env + ".c") : properties.getProperty("c");
+        }
+
+        if (cmd.hasOption("c")) {
+            topicName = cmd.getOptionValue("c");
+        }
+
+        if (topicName == null) {
+            log("ERROR: Topic is not set. Please set topic name using parameter 'c'.");
+            System.exit(1);
+        }
+
+        KafkaConsumer<String, byte[]> kafkaConsumer = kafkaAdmin.createKafkaConsumer();
+        List<String> topics = new ArrayList<>();
+        topics.add(topicName);
+
+        Collection<TopicPartition> partitions = null;
+        if (cmd.hasOption("P")) {
+            partitions = new ArrayList<>();
+            partitions.add(new TopicPartition(topicName, Integer.parseInt(cmd.getOptionValue("P"))));
+
+        } else {
+            List<PartitionInfo> partitionInfoSet = kafkaConsumer.partitionsFor(topicName);
+            partitions = partitionInfoSet.stream()
+                    .map(partitionInfo -> new TopicPartition(partitionInfo.topic(),
+                            partitionInfo.partition()))
+                    .collect(Collectors.toList());
+
+        }
+
+        ConsumerRecord<String, byte[]> rc = latest(kafkaConsumer, topicName, partitions);
+        if (rc != null) {
+
+            byte[] data = rc.value();
+            GenericRecord record = read(data, schema);
+
+            log("Timestamp: " + DATE_FORMAT.format(new Date(rc.timestamp())));
+            log("Topic: " + rc.topic());
+            log("Partition: " + rc.partition());
+            log("Offset: " + rc.offset());
+            log("Key: " + rc.key());
+            log("Headers: " + toString(rc.headers()));
+            log("Message: ");
+            log(prettyPrint(record.toString()));
+
+        } else {
+            log("Cannot get message from topic: " + topicName);
+        }
+
+        return rc;
+    }
+
+    private static GenericRecord read(byte[] data, Schema schema) throws Exception {
+        DatumReader<GenericRecord> datumReader = new GenericDatumReader<GenericRecord>();
+        datumReader.setSchema(schema);
+        Decoder decoder = DecoderFactory.get().binaryDecoder(data, null);
+        return datumReader.read(null, decoder);
     }
 
     @Command(desc = "Get the message from kafka topic of from specified partition and offset",

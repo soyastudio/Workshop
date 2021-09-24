@@ -1,0 +1,69 @@
+com.abs.cmnflows.{{messageFlow.inputAuditor.name}}#queueName = ESEDQA.AUDIT.MSG
+com.abs.cmnflows.{{messageFlow.outputAuditor.name}}#queueName = ESEDQA.AUDIT.MSG
+com.abs.cmnflows.{{messageFlow.exceptionHandler.name}}#HOSTNAME = IIBQA
+com.abs.cmnflows.{{messageFlow.exceptionHandler.name}}#queueName = ESEDQA.EXCEPTION.MSG
+
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.input.name}}.topicName = {{messageFlow.input.properties.topicName}}
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.input.name}}.bootstrapServers = qgv013bb3.safeway.com:9093,qgv013bb7.safeway.com:9093,qgv013bb8.safeway.com:9093
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.input.name}}.groupId = ESED_CG_001_{{name}}
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.input.name}}.initialOffset = latest
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.input.name}}.enableAutoCommit = true
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.input.name}}.clientId = edis_consumer
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.input.name}}.useClientIdSuffix = true
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.input.name}}.connectionTimeout = 15
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.input.name}}.sessionTimeout = 10
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.input.name}}.receiveBatchSize = 1
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.input.name}}.securityProtocol = SSL
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.input.name}}.sslProtocol = TLSv1.2
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.input.name}}.validateMaster = none
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.input.name}}.componentLevel = flow
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.input.name}}.additionalInstances = 0
+
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.output.name}}.topicName = {{messageFlow.output.properties.topicName}}
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.output.name}}.bootstrapServers = qgv013bb3.safeway.com:9093,qgv013bb7.safeway.com:9093,qgv013bb8.safeway.com:9093
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.output.name}}.clientId = edis_producer
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.output.name}}.useClientIdSuffix = true
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.output.name}}.acks = 1
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.output.name}}.timeout = 60
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.output.name}}.securityProtocol = SSL
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.output.name}}.sslProtocol = TLSv1.2
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.output.name}}.validateMaster = inherit
+
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.inputAuditor.name}}.APPLICATION_NAME = {{application}}
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.inputAuditor.name}}.APPLICATION_DESC = {{name}} for {{source}}
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.inputAuditor.name}}.BO_NAME = {{name}}
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.inputAuditor.name}}.COMPONENT_DESC = {{application}}
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.inputAuditor.name}}.COMPONENT_TYPE = PF
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.inputAuditor.name}}.COMPONENT_INPUT_TYPE = KAFKA
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.inputAuditor.name}}.SOURCE_SYSTEM_NAME = {{source}}
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.inputAuditor.name}}.AUDIT_REQD = Y
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.inputAuditor.name}}.AUDIT_SRC_UNQ_ID = Y
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.inputAuditor.name}}.PATH_SRC_UNQ_ID = CURRENT_TIMESTAMP
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.inputAuditor.name}}.AUDIT_TRGT_UNQ_ID = Y
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.inputAuditor.name}}.PATH_TRGT_UNQ_ID = CURRENT_TIMESTAMP
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.inputAuditor.name}}.VALIDATION_REQD_SOURCE = N
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.inputAuditor.name}}.VALIDATION_REQD_TARGET = N
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.inputAuditor.name}}.STORE_SRC_MSG = Y
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.inputAuditor.name}}.STORE_TRGT_MSG = Y
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.inputAuditor.name}}.COMPONENT_INPUT_NAME = {{messageFlow.input.properties.topicName}}
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.inputAuditor.name}}.queueName = ESEDQA.AUDIT.MSG
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.inputAuditor.name}}.AUDIT_MDL_UNQ_ID = Y
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.inputAuditor.name}}.PATH_MDL_UNQ_ID = CURRENT_TIMESTAMP
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.inputAuditor.name}}.STORE_MDL_MSG = Y
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.outputAuditor.name}}.queueName = ESEDQA.AUDIT.MSG
+
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.exceptionHandler.name}}.HOSTNAME = IIBQA
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.exceptionHandler.name}}.STOREMSG = Y
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.exceptionHandler.name}}.APPLICATIONNAME = {{application}}
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.exceptionHandler.name}}.BONAME = {{name}}
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.exceptionHandler.name}}.INPUTTYPE = KAFKA
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.exceptionHandler.name}}.INPUTNAME = {{messageFlow.input.properties.topicName}}
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.exceptionHandler.name}}.REPLAYRULE = Y
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.exceptionHandler.name}}.MAXREPLAYCOUNT = 3
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.exceptionHandler.name}}.COMPONENTNAME = {{application}}
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.exceptionHandler.name}}.queueName = ESEDQA.EXCEPTION.MSG
+
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.transformer.name}}.SYSTEM_ENVIRONMENT_CODE = QA
+{{messageFlow.brokerSchema}}.{{messageFlow.name}}#{{messageFlow.transformer.name}}.LOG_OUPUT_MSG = Y
+
+{{messageFlow.brokerSchema}}.{{messageFlow.transformer.name}}#SYSTEM_ENVIRONMENT_CODE = QA

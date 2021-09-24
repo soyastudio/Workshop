@@ -1328,6 +1328,163 @@ public class MappingService {
         }
     }
 
+    static class EsqlCommand extends TreeBasedCommand {
+        private String brokerSchema = "com.abs.ocrp.AirMilePoints";
+        private String moduleName = "ESED_AirMilePoints_Transformer_Compute";
+        private String version = "1.0.0";
+
+        private String xmlDocRoot = "xmlDocRoot";
+        private String inputRootNode = "_inputRootNode";
+
+        private int indent;
+
+        @Override
+        protected void render(Session session, CodeBuilder builder) {
+            this.xmlDocRoot = session.mappingTree.mapping.name + "_";
+
+            this.indent = 0;
+
+            builder.append("BROKER SCHEMA ").appendLine(brokerSchema).appendLine();
+            builder.append("CREATE COMPUTE MODULE ").appendLine(moduleName).appendLine();
+
+            indent++;
+            builder.appendLine("-- Declare UDPs", indent);
+            builder.append("DECLARE VERSION_ID EXTERNAL CHARACTER ", indent)
+                    .append("'").append(version).append("'")
+                    .appendLine(";");
+            builder.appendLine("DECLARE SYSTEM_ENVIRONMENT_CODE EXTERNAL CHARACTER 'PROD';", indent);
+            builder.appendLine();
+
+            builder.appendLine("-- Declare Namespace", indent);
+            builder.appendLine("DECLARE Abs NAMESPACE 'https://collab.safeway.com/it/architecture/info/default.aspx';", indent);
+            builder.appendLine();
+
+            builder.appendLine("CREATE FUNCTION Main() RETURNS BOOLEAN", indent);
+
+            builder.appendLine("BEGIN", indent);
+
+            indent ++;
+            builder.appendLine("-- Declare Input Message Root", indent);
+            builder.append("DECLARE ", indent)
+                    .append(inputRootNode)
+                    .append(" REFERENCE TO InputRoot.JSON.Data")
+                    .appendLine(";");
+
+            builder.appendLine();
+
+            builder.appendLine("-- Declare Output Message Root", indent);
+            builder.appendLine("CREATE LASTCHILD OF OutputRoot DOMAIN 'XMLNSC';", indent);
+            builder.appendLine();
+
+            builder.append("DECLARE ", indent)
+                    .append(xmlDocRoot)
+                    .append(" REFERENCE TO ")
+                    .append("OutputRoot.XMLNSC")
+                    .appendLine(";");
+
+            builder.append("CREATE LASTCHILD OF OutputRoot.XMLNSC AS ", indent)
+                    .append(xmlDocRoot)
+                    .append(" TYPE XMLNSC.Folder NAME ")
+                    .append("'").append(session.mappingTree.mapping.name).append("'")
+                    .appendLine(";");
+
+            builder.append("SET OutputRoot.XMLNSC.", indent)
+                    .append(session.mappingTree.mapping.name)
+                    .append(".(XMLNSC.NamespaceDecl)xmlns:Abs=Abs")
+                    .appendLine(";");
+
+            builder.appendLine();
+
+            TreeNode node = session.mappingTree;
+            if (node.children != null && node.children.size() > 0) {
+                node.children.forEach(e -> {
+                    printTreeNode(e, builder);
+                });
+            }
+
+            indent --;
+
+            builder.appendLine("END;", indent);
+
+            indent--;
+            builder.append("END MODULE;");
+        }
+
+        private void printTreeNode(TreeNode node, CodeBuilder builder) {
+            XPathMapping mapping = node.mapping;
+            if (mapping.assignment == null && mapping.construction == null) {
+                return;
+            }
+
+            indent++;
+
+            builder.appendLine("-- " + mapping.target, indent);
+            if (mapping.assignment != null) {
+                printAssignment(node, builder);
+
+            } else if (mapping.construction != null) {
+                printConstruction(node, builder);
+            }
+
+            builder.appendLine();
+
+            if (node.children != null && node.children.size() > 0) {
+                node.children.forEach(e -> {
+                    printTreeNode(e, builder);
+                });
+            }
+
+            indent--;
+        }
+
+        private void printConstruction(TreeNode node, CodeBuilder builder) {
+            XPathMapping mapping = node.mapping;
+            XPathMapping parent = node.parent == null ? null : node.parent.mapping;
+
+            String ref = parent == null ? xmlDocRoot : parent.name + "_";
+            String var = mapping.name + "_";
+            String name = mapping.level > 2 ? "Abs:" + mapping.name : mapping.name;
+
+            builder.append("DECLARE ", indent)
+                    .append(var)
+                    .append(" REFERENCE TO ")
+                    .append(ref)
+                    .appendLine(";");
+
+            builder.append("CREATE LASTCHILD OF ", indent)
+                    .append(ref)
+                    .append(" AS ")
+                    .append(var)
+                    .append(" TYPE XMLNSC.Folder NAME ")
+                    .append("'").append(name).append("'")
+                    .appendLine(";");
+        }
+
+        private void printAssignment(TreeNode node, CodeBuilder builder) {
+            XPathMapping mapping = node.mapping;
+            XPathMapping parent = node.parent.mapping;
+            builder.append("SET ", indent).append(parent.name + "_.");
+
+            if (mapping.isAttribute()) {
+                builder.append("(XMLNSC.Attribute)").append(mapping.getAttributeName());
+            } else {
+                builder.append("(XMLNSC.Field)Abs:").append(mapping.name);
+            }
+
+            builder.append(" = ").append(getEvaluation(mapping.assignment)).appendLine(";");
+        }
+
+        private String getEvaluation(Assignment assignment) {
+            String token = assignment.evaluation;
+
+            if (token.startsWith("$.")) {
+                token = inputRootNode + "." + token.substring(2);
+            }
+            return token;
+        }
+    }
+
+
     static class UnknownPathsCommand implements Command {
 
         @Override

@@ -32,39 +32,15 @@ import java.util.Random;
 public class XmlToAvro {
 
     public static void main(String[] args) throws Exception {
+
         File avsc = new File("C:\\github\\Workshop\\Repository\\BusinessObjects\\AirMilePoints\\GetAirMilePoints.avsc");
         File xml = new File("C:\\github\\Workshop\\Repository\\BusinessObjects\\AirMilePoints\\GetAirMilePoints.xml");
 
-        File avro = new File("C:\\github\\Workshop\\Repository\\BusinessObjects\\AirMilePoints\\GetAirMilePoints.avro");
-        File avro2 = new File("C:\\github\\Workshop\\Repository\\BusinessObjects\\AirMilePoints\\GetAirMilePoints_List.avro");
+        File avro = new File("C:\\github\\Workshop\\Repository\\BusinessObjects\\AirMilePoints\\GetAirMilePoints_20210913.avro");
 
         Schema schema = new Schema.Parser().parse(new FileInputStream(avsc));
-        // System.out.println(schema.toString(true));
-
-        SampleAvroGenerator generator = new SampleAvroGenerator(schema, new Random(), 1);
-        GenericData.Record record = (GenericData.Record) generator.generate();
-
-        List<GenericData.Record> records = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
-            records.add((GenericData.Record) generator.generate());
-        }
-
-        //write(records, schema, avro2);
-
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-        //System.out.println(gson.toJson(JsonParser.parseString(record.toString())));
-
-        //write(record, schema, avro2);
-
-        //read(avro2);
-
-        //XmlToAvroConverter converter = new XmlToAvroConverter(schema);
-
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
-        // optional, but recommended
-        // process XML securely, avoid attacks like XML External Entities (XXE)
         dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 
         // parse XML file
@@ -75,10 +51,15 @@ public class XmlToAvro {
         //Here comes the root node
         Element root = document.getDocumentElement();
 
-        //byte[] out = XmlToAvroConverter.convert(root, schema);
+        //System.out.println(XmlToAvroConverter.toXmlString(root));
 
-        GenericData.Record rd = XmlToAvroConverter.createRecord(schema, root);
-        write(rd, schema, avro2);
+        GenericData.Record record =  XmlToAvroConverter.createRecord(schema, root);
+
+        byte[] out = XmlToAvroConverter.convert(root, schema);
+
+        GenericRecord result = XmlToAvroConverter.read(out, schema);
+        System.out.println(result.toString());
+
     }
 
     private static void printNode(Node node) {
@@ -105,6 +86,7 @@ public class XmlToAvro {
         DataFileWriter<GenericRecord> dataFileWriter = new DataFileWriter<>(new GenericDatumWriter<>(schema));
         FileOutputStream outputStream = new FileOutputStream(avro);
         dataFileWriter.create(schema, outputStream);
+
         dataFileWriter.append(record);
         dataFileWriter.close();
 
@@ -135,17 +117,6 @@ public class XmlToAvro {
             System.out.println(e);
             System.out.println();
         });
-
-    }
-
-    private static void read(byte[] data, Schema schema) throws Exception {
-        DatumReader<GenericRecord> datumReader = new GenericDatumReader<GenericRecord>();
-
-        DatumReader<GenericRecord> reader = new SpecificDatumReader<GenericRecord>(schema);
-        Decoder decoder = DecoderFactory.get().binaryDecoder(data, null);
-        GenericRecord payload = reader.read(null, decoder);
-
-        System.out.println(payload);
 
     }
 }
