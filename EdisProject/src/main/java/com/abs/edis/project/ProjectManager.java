@@ -12,9 +12,14 @@ import org.w3c.dom.NodeList;
 import java.io.*;
 import java.lang.reflect.Modifier;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class ProjectManager {
 
@@ -144,6 +149,38 @@ public class ProjectManager {
                         new InputStreamReader(template)).execute(JsonUtils.toMap(GSON.toJsonTree(project).getAsJsonObject())).getBytes());
     }
 
+    private static void pack(String sourceDirPath, String zipFilePath) throws IOException {
+        Path p = Files.createFile(Paths.get(zipFilePath));
+        try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(p))) {
+            Path pp = Paths.get(sourceDirPath);
+            Files.walk(pp)
+                    .filter(path -> !Files.isDirectory(path))
+                    .forEach(path -> {
+                        ZipEntry zipEntry = new ZipEntry(pp.relativize(path).toString());
+                        try {
+                            zs.putNextEntry(zipEntry);
+                            Files.copy(path, zs);
+                            zs.closeEntry();
+                        } catch (IOException e) {
+                            System.err.println(e);
+                        }
+                    });
+        }
+    }
+
+    private static void cleanDirectory(File dir) throws IOException {
+        File[] children = dir.listFiles();
+        for(File child: children) {
+            if(child.isDirectory() ) {
+                if(child.getName().startsWith(".")) {
+                    FileUtils.forceDelete(child);
+                } else {
+                    cleanDirectory(child);
+                }
+            }
+        }
+    }
+
     static class Context {
 
         private Properties configuration;
@@ -267,14 +304,16 @@ public class ProjectManager {
 
     static class RequestMessage {
         private String command;
-        private JsonObject parameters;
         private String project;
+
+        private JsonObject headers;
         private JsonElement message;
     }
 
     static class ResponseMessage {
         private String command;
         private String project;
+
         private JsonElement message;
         private List<Logging> logs = new ArrayList<>();
     }
@@ -421,8 +460,8 @@ public class ProjectManager {
         public String execute(Session session) throws Exception {
             String result = null;
             RequestMessage requestMessage = session.requestMessage;
-            if (requestMessage.parameters != null) {
-                JsonObject params = requestMessage.parameters.getAsJsonObject();
+            if (requestMessage.headers != null) {
+                JsonObject params = requestMessage.headers.getAsJsonObject();
                 if (params.get("r") != null) {
                     // TODO:
                 }
@@ -593,13 +632,13 @@ public class ProjectManager {
             String name = request.project;
             String source = null;
             String version = null;
-            if (request.parameters == null) {
-                return "'parameters' is required.";
+            if (request.headers == null) {
+                return "'headers' is required.";
 
             } else {
-                JsonObject parameters = request.parameters;
-                source = parameters.get("source") != null ? parameters.get("source").getAsString() : null;
-                version = parameters.get("version") != null ? parameters.get("version").getAsString() : null;
+                JsonObject headers = request.headers;
+                source = headers.get("source") != null ? headers.get("source").getAsString() : null;
+                version = headers.get("version") != null ? headers.get("version").getAsString() : null;
             }
 
             if (name == null) {
@@ -607,11 +646,11 @@ public class ProjectManager {
             }
 
             if (source == null) {
-                return "'source' need specified through parameters";
+                return "'source' need specified through headers";
             }
 
             if (version == null) {
-                return "'version' need specified through parameters";
+                return "'version' need specified through headers";
             }
 
             if (session.projectHome.exists()) {
@@ -639,8 +678,9 @@ public class ProjectManager {
                 File req = new File(session.projectHome, REQUIREMENT_DIR);
                 req.mkdir();
 
-                session.log("import_mapping_file", "todo", session.project.getMappingFile());
-                session.log("import_postman_collection", "todo", null);
+                session.log("Finish project configurations", "todo", null);
+                session.log("Import and annotate mapping file", "todo", session.project.getMappingFile());
+                session.log("Import postman collection", "todo", null);
 
 
                 return GSON.toJson(session.responseMessage);
@@ -705,6 +745,7 @@ public class ProjectManager {
         }
     }
 
+    // Services:
     static abstract class ServiceCommand implements Command {
         protected String getCommand() {
             String cmd = getClass().getSimpleName();
@@ -803,8 +844,8 @@ public class ProjectManager {
         protected String commandLine(Session session) {
             StringBuilder builder = new StringBuilder("-a ").append(getServiceCommand().toUpperCase());
             JsonObject jsonObject = null;
-            if (session.requestMessage.parameters != null) {
-                jsonObject = session.requestMessage.parameters.getAsJsonObject();
+            if (session.requestMessage.headers != null) {
+                jsonObject = session.requestMessage.headers.getAsJsonObject();
                 jsonObject.entrySet().forEach(e -> {
                     if (!"a".equals(e.getKey())) {
                         builder.append(" -").append(e.getKey()).append(" ").append(e.getValue().getAsString());
@@ -1008,15 +1049,14 @@ public class ProjectManager {
         }
     }
 
-
     static class MqsiCommand extends AbstractProjectCommand {
 
         @Override
         protected String process(Session session) throws Exception {
             String application = null;
             RequestMessage requestMessage = session.requestMessage;
-            if (requestMessage.parameters != null && requestMessage.parameters.get("application") != null) {
-                application = requestMessage.parameters.get("application").getAsString();
+            if (requestMessage.headers != null && requestMessage.headers.get("application") != null) {
+                application = requestMessage.headers.get("application").getAsString();
 
             } else {
                 Project project = session.project;
@@ -1031,6 +1071,158 @@ public class ProjectManager {
             jo.addProperty("application", application);
 
             return mustache("mustache/msqi.mustache", jo);
+        }
+    }
+
+    static class CutoffCommand extends AbstractProjectCommand {
+
+        @Override
+        protected String process(Session session) throws Exception {
+            File backupDir = new File(session.historyDir, session.project.getVersion());
+            if (backupDir.exists()) {
+                FileUtils.forceDelete(backupDir);
+            }
+            FileUtils.forceMkdir(backupDir);
+            File projectFile = new File(backupDir, "project.json");
+            FileUtils.copyFile(new File(session.projectHome, "project.json"), projectFile);
+
+            File workDir = new File(backupDir, "work");
+            FileUtils.forceMkdir(workDir);
+            FileUtils.copyDirectory(session.workDir, workDir);
+
+            File srcDir = new File(backupDir, "src");
+            FileUtils.forceMkdir(srcDir);
+            File src = new File(session.context.srcHome, session.project.getApplication() + "/src");
+            if (src.exists()) {
+                FileUtils.copyDirectory(src, srcDir);
+            }
+
+            File ESEDA = new File(session.context.deployHome, "ESEDA");
+            File ESEDB = new File(session.context.deployHome, "ESEDB");
+            File deployDir = new File(backupDir, "deploy");
+            FileUtils.forceMkdir(deployDir);
+            File deployDirA = new File(deployDir, "ESEDA");
+            FileUtils.forceMkdir(deployDirA);
+
+            File bar = new File(ESEDA, session.project.getApplication() + ".bar");
+            if (!bar.exists()) {
+                throw new IllegalStateException("File does not exist: " + bar.getAbsolutePath());
+            }
+            File destBar = new File(deployDirA, session.project.getApplication() + ".bar");
+            FileUtils.copyFile(bar, destBar);
+
+            File overrideBase = new File(ESEDA, session.project.getApplication() + ".BASE.override.properties");
+            if (!overrideBase.exists()) {
+                throw new IllegalStateException("File does not exist: " + overrideBase.getAbsolutePath());
+            }
+            File destOverrideBase = new File(deployDirA, session.project.getApplication() + ".BASE.override.properties");
+            FileUtils.copyFile(overrideBase, destOverrideBase);
+
+            File overrideDv = new File(ESEDA, session.project.getApplication() + ".DV.override.properties");
+            if (!overrideDv.exists()) {
+                throw new IllegalStateException("File does not exist: " + overrideDv.getAbsolutePath());
+            }
+            File destOverrideDv = new File(deployDirA, session.project.getApplication() + ".DV.override.properties");
+            FileUtils.copyFile(overrideDv, destOverrideDv);
+
+            File overrideQa = new File(ESEDA, session.project.getApplication() + ".QA.override.properties");
+            if (!overrideQa.exists()) {
+                throw new IllegalStateException("File does not exist: " + overrideQa.getAbsolutePath());
+            }
+            File destOverrideQa = new File(deployDirA, session.project.getApplication() + ".QA.override.properties");
+            FileUtils.copyFile(overrideQa, destOverrideQa);
+
+            File overridePr = new File(ESEDA, session.project.getApplication() + ".PR.override.properties");
+            if (!overridePr.exists()) {
+                throw new IllegalStateException("File does not exist: " + overridePr.getAbsolutePath());
+            }
+            File destOverridePr = new File(deployDirA, session.project.getApplication() + ".PR.override.properties");
+            FileUtils.copyFile(overridePr, destOverridePr);
+
+            File deployDirB = new File(deployDir, "ESEDB");
+            FileUtils.forceMkdir(deployDirB);
+
+            File deployDescDV = new File(ESEDB, session.project.getApplication() + ".DV.deploy.properties");
+            if (!deployDescDV.exists()) {
+                throw new IllegalStateException("File does not exist: " + deployDescDV.getAbsolutePath());
+            }
+            File destDeployDescDV = new File(deployDirB, session.project.getApplication() + ".DV.deploy.properties");
+            FileUtils.copyFile(deployDescDV, destDeployDescDV);
+
+            File deployDescQA = new File(ESEDB, session.project.getApplication() + ".QA.deploy.properties");
+            if (!deployDescQA.exists()) {
+                throw new IllegalStateException("File does not exist: " + deployDescQA.getAbsolutePath());
+            }
+            File destDeployDescQA = new File(deployDirB, session.project.getApplication() + ".QA.deploy.properties");
+            FileUtils.copyFile(deployDescQA, destDeployDescQA);
+
+            File deployDescPR = new File(ESEDB, session.project.getApplication() + ".PR.deploy.properties");
+            if (!deployDescPR.exists()) {
+                throw new IllegalStateException("File does not exist: " + deployDescPR.getAbsolutePath());
+            }
+            File destDeployDescPR = new File(deployDirB, session.project.getApplication() + ".PR.deploy.properties");
+            FileUtils.copyFile(deployDescPR, destDeployDescPR);
+
+
+
+            cleanDirectory(backupDir);
+
+            return "";
+        }
+    }
+
+    static class CutoffPackCommand extends AbstractProjectCommand {
+
+        @Override
+        protected String process(Session session) throws Exception {
+            File ESEDA = new File(session.context.deployHome, "ESEDA");
+            File ESEDB = new File(session.context.deployHome, "ESEDB");
+
+            File deployment = new File(session.projectHome, "deployment");
+            if (!deployment.exists()) {
+                deployment.mkdirs();
+            }
+            File cutoff = new File(deployment, session.project.getVersion());
+            if (cutoff.exists()) {
+                throw new IllegalStateException("Cutoff Plan already exist: " + session.project.getVersion());
+            }
+
+            cutoff.mkdir();
+            File dirA = new File(cutoff, "ESEDA");
+            dirA.mkdir();
+            File dirB = new File(cutoff, "ESEDB");
+            dirB.mkdir();
+
+            File bar = new File(ESEDA, session.project.getApplication() + ".bar");
+            if (!bar.exists()) {
+                throw new IllegalStateException("File does not exist: " + bar.getAbsolutePath());
+            }
+            File destBar = new File(dirA, session.project.getApplication() + ".bar");
+            FileUtils.copyFile(bar, destBar);
+
+            File override = new File(ESEDA, session.project.getApplication() + ".PR.override.properties");
+            if (!override.exists()) {
+                throw new IllegalStateException("File does not exist: " + override.getAbsolutePath());
+            }
+            File destOverride = new File(dirA, session.project.getApplication() + ".PR.override.properties");
+            FileUtils.copyFile(override, destOverride);
+
+            File deployDesc = new File(ESEDB, session.project.getApplication() + ".PR.deploy.properties");
+            if (!deployDesc.exists()) {
+                throw new IllegalStateException("File does not exist: " + deployDesc.getAbsolutePath());
+            }
+            File destDeployDesc = new File(dirB, session.project.getApplication() + ".PR.deploy.properties");
+            FileUtils.copyFile(deployDesc, destDeployDesc);
+
+            File cutoffPlan = new File(cutoff, "Cutoff_Plan_for_" + session.project.getName() + "_" + session.project.getVersion() + ".txt");
+            cutoffPlan.createNewFile();
+            FileUtils.write(cutoffPlan, mustache(AbstractMustacheCommand.getTemplate(AbstractMustacheCommand.MUSTACHE_CUTOFF_PLAN),
+                    session.project), Charset.defaultCharset());
+
+            File zip = new File(deployment, session.project.getName() + "_" + session.project.getVersion() + "_Cutoff.zip");
+
+            pack(cutoff.getPath(), zip.getPath());
+            return "";
         }
     }
 
@@ -1067,41 +1259,47 @@ public class ProjectManager {
 
     // Mustache Commands:
     static abstract class AbstractMustacheCommand implements Command {
+        public static final String MUSTACHE_README = "README";
+
+
+        public static final String MUSTACHE_CUTOFF_PLAN = "CUTOFF_PLAN";
+
         protected static Map<String, String> templates = new LinkedHashMap<>();
 
         static {
             templates.put("README", "mustache/readme.mustache");
+            templates.put("POSTMAN_COLLECTION", "mustache/postman_collection.json.mustache");
 
-            templates.put("Default_Base_Override".toUpperCase(), "mustache/default_base_override.properties.mustache");
-            templates.put("Default_Dev_Override".toUpperCase(), "mustache/default_dev_override.properties.mustache");
-            templates.put("Default_Qa_Override".toUpperCase(), "mustache/default_qa_override.properties.mustache");
+            templates.put("DEFAULT_BASE_OVERRIDE", "mustache/default_base_override.properties.mustache");
+            templates.put("DEFAULT_DEV_OVERRIDE", "mustache/default_dev_override.properties.mustache");
+            templates.put("DEFAULT_QA_OVERRIDE", "mustache/default_qa_override.properties.mustache");
 
-            templates.put("Audit_Validate_Input".toUpperCase(), "mustache/audit_validate_input.properties.mustache");
-            templates.put("Audit_Validate_Output".toUpperCase(), "mustache/audit_validate_output.properties.mustache");
-            templates.put("Audit_Validate_Exception".toUpperCase(), "mustache/audit_validate_exception.properties.mustache");
+            templates.put("AUDIT_VALIDATE_INPUT_OVERRIDE", "mustache/audit_validate_input.properties.mustache");
+            templates.put("AUDIT_VALIDATE_OUTPUT_OVERRIDE", "mustache/audit_validate_output.properties.mustache");
+            templates.put("AUDIT_VALIDATE_EXCEPTION_OVERRIDE", "mustache/audit_validate_exception.properties.mustache");
 
-            templates.put("Kafka_Consumer_Override".toUpperCase(), "mustache/kafka_consumer_override.properties.mustache");
-            templates.put("Kafka_Producer_Override".toUpperCase(), "mustache/kafka_producer_override.properties.mustache");
+            templates.put("KAFKA_CONSUMER_OVERRIDE", "mustache/kafka_consumer_override.properties.mustache");
+            templates.put("KAFKA_PRODUCER_OVERRIDE", "mustache/kafka_producer_override.properties.mustache");
 
-            templates.put("deploy_dev".toUpperCase(), "mustache/deploy.dv.mustache");
-            templates.put("deploy_qa".toUpperCase(), "mustache/deploy.qa.mustache");
-            templates.put("deploy_pr".toUpperCase(), "mustache/deploy.pr.mustache");
+            templates.put("DEPLOY_DESCRIPTOR_DEV", "mustache/deploy.dv.mustache");
+            templates.put("DEPLOY_DESCRIPTOR_QA", "mustache/deploy.qa.mustache");
+            templates.put("DEPLOY_DESCRIPTOR_PR", "mustache/deploy.pr.mustache");
 
-            templates.put("mqsi".toUpperCase(), "mustache/mqsi.mustache");
+            templates.put("MQSI", "mustache/mqsi.mustache");
 
-            templates.put("postman".toUpperCase(), "mustache/postman_collection.json.mustache");
+            templates.put("CUTOFF_PLAN", "mustache/cutoff.mustache");
 
         }
 
         protected InputStream getTemplate(Session session) throws FileNotFoundException {
-            JsonElement prop = session.requestMessage.parameters.get("template");
+            JsonElement prop = session.requestMessage.headers.get("template");
             if (prop == null) {
                 throw new RuntimeException("template need to set in request parameter");
             }
 
             String template = prop.getAsString();
 
-            if(template.endsWith(".mustache")) {
+            if (template.endsWith(".mustache")) {
                 File file = new File(session.context.templateHome, template);
 
                 return new FileInputStream(file);
@@ -1113,7 +1311,7 @@ public class ProjectManager {
             }
         }
 
-        protected InputStream getTemplate(String name) {
+        protected static InputStream getTemplate(String name) {
 
             String template = name.toUpperCase();
             if (!templates.containsKey(template)) {

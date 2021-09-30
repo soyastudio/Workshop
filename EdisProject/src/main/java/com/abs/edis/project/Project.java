@@ -1,22 +1,26 @@
 package com.abs.edis.project;
 
-import com.google.gson.JsonElement;
-
 public class Project {
 
     private String name;
-    private String application;
-    private String source = "{{source}}";
+    private String application = "ESED_{{name}}_{{source}}_IH_Publisher";
     private String version = "{{version}}";
+
+    private String source = "{{source}}";
+    private String inboundType = "KAFKA_TOPIC";
+    private String inboundDestination = "{{inboundDestination}}";
+
     private String consumer = "{{consumer}}";
+    private String outboundType = "KAFKA_TOPIC";
+    private String outboundDestination = "{{outboundDestination}}";
+
     private String schemaFile;
     private String mappingFile;
+    private String mappingSheets;
+
+    private String egNumber;
 
     private boolean enabled;
-
-    private MessageFlow messageFlow;
-
-    // private String deployEgNumber;
 
     public Project() {
     }
@@ -35,9 +39,6 @@ public class Project {
         this.schemaFile = "BOD/Get" + name + ".xsd";
         this.mappingFile = name + "_" + this.source + "_TO_Canonical_Mapping_" + this.version + ".xlsx";
 
-        this.messageFlow = new MessageFlow();
-        messageFlow.name = this.application;
-
     }
 
     public String getName() {
@@ -52,12 +53,24 @@ public class Project {
         return source;
     }
 
+    public String getInboundDestination() {
+        return inboundDestination;
+    }
+
     public String getConsumer() {
         return consumer;
     }
 
+    public String getOutboundDestination() {
+        return outboundDestination;
+    }
+
     public String getVersion() {
         return version;
+    }
+
+    public String getEgNumber() {
+        return egNumber;
     }
 
     public String getSchemaFile() {
@@ -70,78 +83,6 @@ public class Project {
 
     public boolean isEnabled() {
         return enabled;
-    }
-
-    public MessageFlow getMessageFlow() {
-        return messageFlow;
-    }
-
-    static class MessageFlow {
-        private String name;
-        private String brokerSchema;
-        private String packageURI;
-        private JsonElement properties;
-
-        private Node input;
-        private Node output;
-        private Node transformer;
-
-        private Node inputAuditor;
-        private Node outputAuditor;
-        private Node exceptionHandler;
-
-        public String getName() {
-            return name;
-        }
-
-        public String getBrokerSchema() {
-            return brokerSchema;
-        }
-
-        public String getPackageURI() {
-            return packageURI;
-        }
-
-        public JsonElement getProperties() {
-            return properties;
-        }
-
-        public Node getInput() {
-            return input;
-        }
-
-        public Node getOutput() {
-            return output;
-        }
-
-        public Node getTransformer() {
-            return transformer;
-        }
-
-        public Node getInputAuditor() {
-            return inputAuditor;
-        }
-
-        public Node getOutputAuditor() {
-            return outputAuditor;
-        }
-
-        public Node getExceptionHandler() {
-            return exceptionHandler;
-        }
-    }
-
-    static class Node {
-        private String name;
-        private JsonElement properties;
-
-        public String getName() {
-            return name;
-        }
-
-        public JsonElement getProperties() {
-            return properties;
-        }
     }
 
 }
