@@ -8,10 +8,13 @@ import org.apache.avro.io.DatumReader;
 import org.apache.avro.io.Decoder;
 import org.apache.avro.io.DecoderFactory;
 import org.apache.commons.cli.*;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
@@ -181,8 +184,19 @@ public class KafkaCommandLines {
         return parser.parse(options, args);
     }
 
-    public static CommandLine build(JsonObject jsonObject) {
-        return null;
+    public static CommandLine build(JsonObject jsonObject) throws ParseException {
+        List<String> list = new ArrayList<>();
+        jsonObject.entrySet().forEach(e -> {
+            String key = e.getKey();
+            if (options.hasOption(e.getKey())) {
+                list.add("-" + key);
+                if (options.getOption(key).hasArg()) {
+                    list.add(e.getValue().getAsString());
+                }
+            }
+        });
+
+        return build(list.toArray(new String[list.size()]));
     }
 
     public static String execute(CommandLine cmd) throws Exception {
@@ -372,6 +386,135 @@ public class KafkaCommandLines {
     }
 
     @Command(
+            desc = "Produce message to specified topic and Consume message from another topic on specified environment.",
+            options = {
+                    @Opt(option = "a",
+                            required = true,
+                            defaultValue = "pubAndSub",
+                            desc = "Command name."),
+                    @Opt(option = "c",
+                            required = true,
+                            desc = "Topic name."),
+                    @Opt(option = "d",
+                            required = true,
+                            desc = "Topic name for produce messages."),
+                    @Opt(option = "e",
+                            defaultValue = "LOCAL",
+                            desc = "Environment"),
+                    @Opt(option = "h",
+                            desc = "Headers for produce record, gzip and base64 encoded json format."),
+                    @Opt(option = "k",
+                            desc = "Key for produce record, if not specified, generate a uuid."),
+                    @Opt(option = "m",
+                            required = true,
+                            desc = "Message to publish, in GZip and Base64 encoded format."),
+                    @Opt(option = "s",
+                            desc = "Schema to parse the avro message if provided"),
+                    @Opt(option = "t",
+                            defaultValue = "5000",
+                            desc = "Timeout for connection.")
+            },
+            cases = {"-a pubAndSub -d MY_TOPIC_NAME -m BASE64_GZIP_MSG",
+                    "-a pubAndSub -d MY_TOPIC_NAME -m BASE64_GZIP_MSG -k 1234567 -h BASE64_GZIP_JSON_HEADERS -e QA"}
+    )
+    public static String pubAndSub(CommandLine cmd) throws Exception {
+
+        long timestamp = System.currentTimeMillis();
+
+        String topicName = topicName = cmd.getOptionValue("d");
+        byte[] msg = extract(cmd.getOptionValue("m"));
+        long timeout = 5000L;
+
+        if (cmd.hasOption("d")) {
+            topicName = cmd.getOptionValue("d");
+        }
+
+        String obTopic = cmd.getOptionValue("c");
+
+        String key = cmd.hasOption("k") ? cmd.getOptionValue("k") : UUID.randomUUID().toString();
+
+        String hs = cmd.hasOption("h") ? cmd.getOptionValue("h") : null;
+        Headers headers = headers(hs);
+
+        ProducerRecord<String, byte[]> record = createProducerRecord(topicName, msg, headers, key);
+
+        List<ConsumerRecord<String, byte[]>> results = new ArrayList<>();
+        send(kafkaClientFactory(cmd).createKafkaProducer(), record, new Callback() {
+            @Override
+            public void onCompletion(RecordMetadata recordMetadata, Exception e) {
+
+
+                KafkaConsumer<String, byte[]> kafkaConsumer = kafkaClientFactory(cmd).createKafkaConsumer();
+                List<PartitionInfo> partitionInfoSet = kafkaConsumer.partitionsFor(obTopic);
+                Collection<TopicPartition> partitions = partitionInfoSet.stream()
+                        .map(partitionInfo -> new TopicPartition(partitionInfo.topic(),
+                                partitionInfo.partition()))
+                        .collect(Collectors.toList());
+
+
+                Map<TopicPartition, Long> latestOffsets = kafkaConsumer.endOffsets(partitions);
+                for (TopicPartition partition : partitions) {
+                    if (results.isEmpty()) {
+                        List<TopicPartition> assignments = new ArrayList<>();
+                        assignments.add(partition);
+                        kafkaConsumer.assign(assignments);
+
+                        Long latestOffset = Math.max(0, latestOffsets.get(partition) - 1);
+                        kafkaConsumer.seek(partition, Math.max(0, latestOffset));
+                        ConsumerRecords<String, byte[]> polled = kafkaConsumer.poll(Duration.ofMillis(timeout));
+
+                        polled.forEach(rc -> {
+                            if (rc.timestamp() > recordMetadata.timestamp()) {
+                                results.add(0, rc);
+                            }
+                        });
+
+                    }
+                }
+            }
+        });
+
+        while (results.isEmpty()) {
+            if(System.currentTimeMillis() - timestamp > timeout) {
+                throw new RuntimeException("Process timeout over " + timeout + "ms");
+            }
+
+            Thread.sleep(100l);
+        }
+
+        ConsumerRecord<String, byte[]> rc = results.get(0);
+        if(cmd.hasOption("s")) {
+            Schema schema = null;
+            String sc = cmd.getOptionValue("s");
+            if(new File(sc).exists()) {
+                schema = new Schema.Parser().parse(new File(sc));
+            }
+
+            if(schema == null) {
+                try {
+                    URL url = new URL(sc);
+                    schema = new Schema.Parser().parse(url.openStream());
+
+                } catch (Exception e) {
+
+                }
+            }
+
+            if(schema == null) {
+                schema = new Schema.Parser().parse(decompress(sc));
+            }
+
+            GenericRecord avro = read(rc.value(), schema);
+
+            return avro.toString();
+
+        } else {
+            return render(rc);
+
+        }
+    }
+
+    @Command(
             desc = "Produce message to specified topic of specified environment.",
             options = {
                     @Opt(option = "a",
@@ -388,6 +531,9 @@ public class KafkaCommandLines {
                             desc = "Headers for produce record, gzip and base64 encoded json format."),
                     @Opt(option = "k",
                             desc = "Key for produce record, if not specified, generate a uuid."),
+                    @Opt(option = "m",
+                            required = true,
+                            desc = "Message to publish, in GZip and Base64 encoded format."),
                     @Opt(option = "t",
                             defaultValue = "5000",
                             desc = "Timeout for connection.")
@@ -396,27 +542,14 @@ public class KafkaCommandLines {
                     "-a produce -d MY_TOPIC_NAME -m BASE64_GZIP_MSG -k 1234567 -h BASE64_GZIP_JSON_HEADERS -e QA"}
     )
     public static String produce(CommandLine cmd) throws Exception {
-        String topicName = null;
-        String message = null;
+        String topicName = topicName = cmd.getOptionValue("d");
+        byte[] msg = extract(cmd.getOptionValue("m"));
         long timeout = 5000L;
 
         if (cmd.hasOption("d")) {
             topicName = cmd.getOptionValue("d");
         }
 
-        if (topicName == null) {
-            throw new IllegalArgumentException("Topic is not set. Please set topic name using parameter 'p'.");
-        }
-
-        if (cmd.hasOption("m")) {
-            message = cmd.getOptionValue("m");
-        }
-
-        if (message == null) {
-            throw new IllegalArgumentException("Message is not set. Please set compressed message using parameter 'm'.");
-        }
-
-        byte[] msg = decompress(message).getBytes();
         String key = cmd.hasOption("k") ? cmd.getOptionValue("k") : UUID.randomUUID().toString();
 
         String hs = cmd.hasOption("h") ? cmd.getOptionValue("h") : null;
@@ -929,6 +1062,21 @@ public class KafkaCommandLines {
         return future.get();
     }
 
+    protected static void send(KafkaProducer<String, byte[]> kafkaProducer, ProducerRecord<String, byte[]> record, Callback callback) throws Exception {
+
+        long timestamp = System.currentTimeMillis();
+
+        Future<RecordMetadata> future = kafkaProducer.send(record, callback);
+        while (!future.isDone()) {
+            if (System.currentTimeMillis() - timestamp > 60000) {
+                throw new TimeoutException("Fail to publish message in 60 second.");
+            }
+
+            Thread.sleep(100L);
+        }
+
+    }
+
     protected static ProducerRecord<String, byte[]> createProducerRecord(String topicName, byte[] msg, Headers headers, String key) {
         RecordBuilder builder = new RecordBuilder(topicName).key(key).value(msg);
         if (headers != null) {
@@ -1053,6 +1201,20 @@ public class KafkaCommandLines {
         return GSON.toJson(result);
     }
 
+    protected static String render(ConsumerRecord<String, byte[]> rc) throws TransformerException {
+        String msg = new String(rc.value()).trim();
+        if (msg.startsWith("<") && msg.endsWith(">")) {
+            return prettyPrintXml(rc);
+
+        } else if (msg.startsWith("{") && msg.endsWith("}") || msg.startsWith("[") && msg.endsWith("]")) {
+            return prettyPrintJson(rc);
+
+        } else {
+            return new String(rc.value());
+
+        }
+    }
+
     protected static String prettyPrintJson(ConsumerRecord<String, byte[]> rc) {
 
         JsonObject result = new JsonObject();
@@ -1062,7 +1224,12 @@ public class KafkaCommandLines {
         result.addProperty("offset", rc.offset());
         result.addProperty("key", rc.key());
         result.add("headers", GSON.toJsonTree(rc.headers().toArray()));
-        result.add("value", JsonParser.parseString(new String(rc.value())));
+        try {
+            result.add("value", JsonParser.parseString(new String(rc.value())));
+
+        } catch (Exception e) {
+            result.addProperty("value", new String(rc.value()));
+        }
 
         return GSON.toJson(result);
     }
@@ -1100,6 +1267,45 @@ public class KafkaCommandLines {
         Source xmlInsetProperty = new StreamSource(new StringReader(xml));
         transformer.transform(xmlInsetProperty, result);
         return result.getWriter().toString();
+    }
+
+    protected static byte[] extract(String str) {
+        byte[] result = null;
+
+        File file = new File(str);
+        if (file.exists()) {
+            try {
+                result = IOUtils.toByteArray(new FileInputStream(file));
+
+            } catch (IOException e) {
+
+            }
+        }
+
+        if (result == null) {
+            try {
+                URL url = new URL(str);
+                result = IOUtils.toByteArray(url);
+
+            } catch (Exception e) {
+
+            }
+        }
+
+        if (result == null) {
+            try {
+                result = decompress(str).getBytes(StandardCharsets.UTF_8);
+
+            } catch (Exception e) {
+                // do nothing
+            }
+        }
+
+        if (result == null) {
+            throw new IllegalArgumentException("Cannot extract data from file, url or string: " + str);
+        }
+
+        return result;
     }
 
     protected static String compress(String contents) {

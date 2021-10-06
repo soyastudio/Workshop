@@ -55,7 +55,7 @@ public class XsdToAvsc {
             if (isSimpleType(st)) {
                 Schema.Type pt = BuildInTypeMapping.fromXmlTypeCode(XmlBeansUtils.getXMLBuildInType(sp.getType()).getCode());
                 if (sp.getMaxOccurs() == null || sp.getMaxOccurs().intValue() > 1) {
-                    if(BigInteger.ZERO.equals(sp.getMinOccurs())) {
+                    if (BigInteger.ZERO.equals(sp.getMinOccurs())) {
                         // Union of Simple Array Type:
                         Schema nested = Schema.createArray(Schema.create(pt));
                         Schema union = SchemaBuilder.unionOf().type(nested).and().nullType().endUnion();
@@ -75,22 +75,21 @@ public class XsdToAvsc {
                 assemble(sp.getType(), sub);
 
                 if (sp.getMaxOccurs() == null || sp.getMaxOccurs().intValue() > 1
-                        // || SchemaParticle.SEQUENCE == st.getContentModel().getParticleType() && st.getContentModel().getMaxOccurs() == null
+                        || SchemaParticle.SEQUENCE == st.getContentModel().getParticleType() && st.getContentModel().getMaxOccurs() == null
                 ) {
 
                     if (BigInteger.ZERO.equals(sp.getMinOccurs())) {
                         //assembler.name(sp.getName().getLocalPart()).type((Schema) sub.endRecord()).noDefault();
-
                         Schema nested = (Schema) sub.endRecord();
-                        Schema union = SchemaBuilder.unionOf().type(nested).and().nullType().endUnion();
+                        Schema arrayType = Schema.createArray(nested);
+                        Schema union = SchemaBuilder.unionOf().type(arrayType).and().nullType().endUnion();
                         assembler.name(sp.getName().getLocalPart()).type(union).noDefault();
 
                     } else {
                         // Array of Complex Type:
                         Schema nested = (Schema) sub.endRecord();
                         Schema arrayType = Schema.createArray(nested);
-                        Schema union = SchemaBuilder.unionOf().type(arrayType).and().nullType().endUnion();
-                        assembler.name(sp.getName().getLocalPart()).type(union).noDefault();
+                        assembler.name(sp.getName().getLocalPart()).type(arrayType).noDefault();
                     }
 
                 } else {
