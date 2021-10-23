@@ -36,9 +36,12 @@ public class XmlToAvro {
         File avsc = new File("C:\\github\\Workshop\\Repository\\BusinessObjects\\AirMilePoints\\GetAirMilePoints.avsc");
         File xml = new File("C:\\github\\Workshop\\Repository\\BusinessObjects\\AirMilePoints\\GetAirMilePoints.xml");
 
-        File avro = new File("C:\\github\\Workshop\\Repository\\BusinessObjects\\AirMilePoints\\GetAirMilePoints_20210913.avro");
+        File avro = new File("C:\\github\\Workshop\\AppBuild\\BusinessObjects\\AirMilePoints\\test\\AirMilePoints.avro");
 
-        Schema schema = new Schema.Parser().parse(new FileInputStream(avsc));
+
+        read(avro);
+
+        /*Schema schema = new Schema.Parser().parse(new FileInputStream(avsc));
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
         dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
@@ -58,7 +61,7 @@ public class XmlToAvro {
         byte[] out = XmlToAvroConverter.convert(root, schema);
 
         GenericRecord result = XmlToAvroConverter.read(out, schema);
-        System.out.println(result.toString());
+        System.out.println(result.toString());*/
 
     }
 
@@ -76,9 +79,17 @@ public class XmlToAvro {
                         printNode(nodeList.item(i));
                     }
                 }
-
             }
         }
+    }
+
+    private static void toByteArray(GenericData.Record record, Schema schema, File avro) throws Exception {
+        DataFileWriter<GenericRecord> dataFileWriter = new DataFileWriter<>(new GenericDatumWriter<>(schema));
+        FileOutputStream outputStream = new FileOutputStream(avro);
+        dataFileWriter.create(schema, outputStream);
+
+        dataFileWriter.append(record);
+        dataFileWriter.close();
 
     }
 

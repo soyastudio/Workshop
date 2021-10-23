@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
+        xmlns:cmn="http://scoperetail.com/common/default.aspx"
+        xmlns:tz="http://scoperetail.com/timezone/default.aspx"
+        targetNamespace="http://scoperetail.com/master/default.aspx"
+        elementFormDefault="qualified"
+        attributeFormDefault="unqualified"
+        vc:minVersion="1.1">
+
+    <!--
+   Change Log#1
+   ============
+   Date: 06-17-2018
+   1. Corrected the naming convention for Address Complex type
+    Change Log#2
+   ============
+   Date: 06-18-2018
+   1. Added complex type ProductCategory
+   Change Log#3
+   ============
+   Date: 06-18-2018
+   1. Added complex type SubstitutionType
+   Change Log#4
+   ============
+   Date: 07-05-2018
+   1. Renamed address to PostalAddress
+   2. Removed orderTotal from OrderHeaderType
+   Change Log#5
+   ============
+   Date: 07-20-2018
+   1. Added comment field in order header
+   Change Log#6 (SAM)
+   ==================
+   Date: 09-12-2018
+   1. added orderHoldForFuture ( for Firm Seprate order hold for 6 months )
+   Change Log#7 (SAM)
+   ==================
+   Date: 09-27-2018
+   1. change CountryCode to string3
+   2.  change Address complex type restriction on Postal Address
+   Change Log#8 (Tushar) - SCOOP-2008
+   ======================
+   Date: 12-12-2018
+   1. changed rank type for Substitution to int
+   Change Log#8 (Sandesh) - SCOOP-3178
+   ======================
+   Date: 1-30-2019
+   1. Substitution factor is mandatory
+   Change Log#9 (Toshi) - SCOOP-3693
+   ======================
+   Date: 02-21-2019
+   1. Added USER_SUB in SubstitutionType enum
+   Change Log#10 (Toshi) - SCOOP-3778
+   ======================
+   Date: 02-26-2019
+   1. Added srcOrderId2 under OrderHeaderType for inbound order (CR#14)
+
+   Change Log#11 (NISAR) - SCOOP-4055
+   ======================
+   Date: 03-29-2019
+   1. Added userId
+    Change Log#11 (Jose) - SCOOP-4168
+   ======================
+   Date: 03-19-2019
+   1. Added supplierId and notifyInd under OrderHeaderType for inbound order (CR#60, 61, 62)
+   Change Log#12 (NISAR) - SCOOP-4055
+   ======================
+   Date: 03-28-2019
+   1. Added userId
+   Change Log#13 - SCOOP-6226
+   ===========================
+   Date: 08-26-2019
+   1. Added expiredProductId
+    Changelog #14 (SCOOP-7051)
+    ============
+    Date: 10/24/2019
+    Changes:
+    - Removed branchItemCd and whseItemId
+    - Added supplierProductId
+    Changelog #15 (Rakshant) - SCOOP-7284
+   ==================
+     Date: 11-29-2019
+     1. Changed type of orderedItemWeight,totalCaseQuantity,totalPalletQuantity,totalCubeQuantity,totalItemWeight
+      from decimal92 to decimal114
+
+    Changelog #16 (Satyam) - SCOOP-6796
+   ===========================
+   Date: 01-12-2019
+   Added new Skip Routing field under OrderHeaderType for inbound order
+    Changelog #17 (yogeshp) - SCOOP-6801
+   ===========================
+   Date: 02-12-2019
+   Added new field override under OrderHeaderType for inbound order
+   Change Log #18 - SCOOP-9039
+   ===========================
+   Date: 05-12-2020
+   1. Added srcProductId
+
+   Changelog #19 (Rakshant) - SCOOP-8254
+   ===========================
+   Date: 04-29-2020
+   Imported time_zone.xsd
+   Made timeZoneCd element mandatory under PostalAddress complex
+
+   Changelog #20 (Rakshant) - SCOOP-9369
+   ===========================
+   Date: 08-06-2020
+   Added element subProductDesc under complex type Substitution
+   Changelog #21 (Tushar) - SCOOP-12519
+   ===========================
+   Date: 09-25-2020
+   Updated documentation of supplierId element under inbound order header
+   Changelog #22 (Javier) - SCOOP-12951
+   ===========================
+   Date: 10-28-2020
+   Added element originalTotalItemQuantity under complex type orderTotalType
+   Changelog #21 (Vaibhav) - SCOOP-13183
+   ==================
+   Date: 11-25-2020
+   Added a new supplierIds complex type
+   -->
+    <xs:import namespace="http://scoperetail.com/common/default.aspx" schemaLocation="scope_common.xsd"/>
+    <xs:import namespace="http://scoperetail.com/timezone/default.aspx" schemaLocation="time_zone.xsd"/>
+
+    <xs:simpleType name="CustomerType" final="restriction">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="STORE"/>
+            <xs:enumeration value="WAREHOUSE"/>
+            <xs:enumeration value="WHOLESALER"/>
+            <xs:enumeration value="ECOMM"/>
+            <xs:enumeration value="PLANT"/>
+            <xs:enumeration value="BACKSTAGE"/>
+            <xs:enumeration value="CHARITY"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="SupplierType" final="restriction">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="WAREHOUSE"/>
+            <xs:enumeration value="VENDOR"/>
+            <xs:enumeration value="PLANT"/>
+            <xs:enumeration value="STORE"/>
+            <xs:enumeration value="UNKNOWN"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="ActionType" final="restriction">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ADD"/>
+            <xs:enumeration value="UPDATE"/>
+            <xs:enumeration value="DELETE"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="SubstitutionType" final="restriction">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="DEAL_SUB"/>
+            <xs:enumeration value="SUB_WHEN_OUT"/>
+            <xs:enumeration value="SUB_ALSO"/>
+            <xs:enumeration value="SUB_ALWAYS"/>
+            <xs:enumeration value="USER_SUB"/>
+            <xs:enumeration value="USER_ALLOC_SUB"/>
+            <xs:enumeration value="SUB_ALSO_PCT"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="PostalAddress">
+        <xs:annotation>
+            <xs:documentation>Contains attributes related to any party address</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="addressUsageTypeCd" type="cmn:string2" minOccurs="0"/>
+            <xs:element name="addressLine1txt" type="cmn:string60" default="" minOccurs="0"/>
+            <xs:element name="addressLine2txt" type="cmn:string60" minOccurs="0"/>
+            <xs:element name="cityName" type="cmn:string30" nillable="true" minOccurs="0"/>
+            <xs:element name="countyName" type="cmn:string30" nillable="true" minOccurs="0"/>
+            <xs:element name="postalZoneCd" type="cmn:string10" minOccurs="0"/>
+            <xs:element name="stateCd" type="cmn:string2" nillable="true" minOccurs="0"/>
+            <xs:element name="countryCd" type="cmn:string3" nillable="true" minOccurs="0"/>
+            <xs:element name="latitudeDegree" type="xs:decimal" nillable="true" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Defines the angular distance north or south from the equator of a point on the
+                        earth's surface, measured on the meridian of the point. Half of a pair of coordinates (the other
+                        being longitude). A latitude can have negative values.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="longitudeDegree" type="xs:decimal" nillable="true" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Defines the angular distance east or west on the earth's surface, measured by the
+                        angle contained between the meridian of a given point and a prime meridian. Half of a pair of
+                        coordinates (the other being latitude) assigned via a point geocoding procedure. Unlike
+                        latitude, which has the equator as a natural starting position, there is no natural starting
+                        position for longitude Longitude can have negative values.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="timeZoneCd" type="tz:TimeZone" nillable="false" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Cd that defines the time zone in which the store facility is located.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="phoneNbr" type="cmn:string15" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="faxNbr" type="cmn:string15" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="SupplierRecordType">
+        <xs:sequence>
+            <xs:element name="corpId" type="cmn:corpIdType" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="divisionId" type="cmn:divisionIdType" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="supplierId" type="cmn:supplierIdType" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Unique identifier for the supplier</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CustomerRecordType">
+        <xs:sequence>
+            <xs:element name="corpId" type="cmn:corpIdType" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="divisionId" type="cmn:divisionIdType" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="customerId" type="cmn:customerIdType" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Unique identifier for the customer</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="OrderLine">
+        <xs:sequence>
+            <xs:element name="productId" type="cmn:productIdType" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Unique identifier for the product (item code)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="expiredProductId" type="cmn:productIdType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Unique identifier for the expired productId corresponding to valid productId
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="srcProductId" type="cmn:string18" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>source productId, it can be any 18 character string, it is a pass through value
+                        without any business logic
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="orderedItemQuantity" type="cmn:quantityType" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Quantity of item ordered by the customer.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="orderedItemQuantityUom" type="cmn:uomCodeQty" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>UOM for ordered Quantity</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="orderedItemWeight" type="cmn:decimal114" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Weight of item ordered by the customer.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="orderedItemWeightUom" type="cmn:uomCodeWgt" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>UOM for ordered Weight</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="orderTotalType">
+
+        <xs:sequence>
+            <xs:element name="totalItemQuantity" type="cmn:quantityType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Aggregate of all quantities of items in an order without an UoM</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="totalEachQuantity" type="cmn:quantityType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Aggregate of all quantities of items in an order with UoM as EACH
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="totalCaseQuantity" type="cmn:decimal114" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Aggregate of all quantities of items in an order with UoM as CASE
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="totalInnerPackQuantity" type="cmn:quantityType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Aggregate of all quantities of items in an order with UoM as Inner Pack
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="totalPalletQuantity" type="cmn:decimal114" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Aggregate of pallets constituted by the items in an order</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="totalCubeQuantity" type="cmn:decimal114" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Aggregate of cases constituted by the items in an order</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="totalItemWeight" type="cmn:decimal114" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Aggregate weight of all items in an order</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="totalItemWeightUom" type="cmn:uomCodeWgt" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>UOM for total Weight</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="originalTotalItemQuantity" type="cmn:quantityType" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Original Aggregate of all quantities of items in an order</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="OrderHeaderType">
+        <xs:sequence>
+            <xs:element name="orderId" type="cmn:string19" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Unique Id for the order generated by order management system.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="batchId" type="xs:positiveInteger" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Id generated by bulk order upload service</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="poRefNbr" type="cmn:string10" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Document Reference Number( tracking number for WSO or Purchase Order)
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="srcOrderId" type="cmn:string19" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Order Id generated by the source system</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="srcOrderCreateTimestamp" type="xs:dateTime" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Timestamp when order has been created at source system
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="orderTypeCode" type="cmn:OrderTypeCodes" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Defines type of the order. Please refere to enumeration OrderTypes for
+                        valid values.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="orderHoldForFuture" type="cmn:string1" minOccurs="0" maxOccurs="1" default="N">
+                <xs:annotation>
+                    <xs:documentation>This is for Firm Order Seprate type order,
+                        when this flag is set, system shall update the process date of the order to 6 months out.
+                        Hold the order in the system for 6 months
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+
+            <xs:element name="transferType" type="cmn:string2" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Applicable for tansfer orders. for ex: M2
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="schedDeliveryDate" type="xs:date" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Date when the order should be delivered to the customer.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="schedProcessDate" type="xs:date" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Date when the order should be processed by supplier.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="routeId" type="xs:positiveInteger" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Route Identification Id created by trasportation</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="routeCode" type="cmn:string4" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Route Code defined during creation of schedule</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="stopId" type="xs:positiveInteger" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Stop Sequence of the route</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="comment" type="cmn:string60" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Comment text entered by user during bulk order creation process</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="srcOrderId2" type="cmn:string19" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Order Id generated by the source system. In ABS it will be used for FIRM ORDER#
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="supplierIds"  minOccurs="0" maxOccurs="1">
+            	<xs:complexType >
+	            	<xs:sequence>
+	            		<xs:element name="supplierId" type="cmn:supplierIdType" minOccurs="0" maxOccurs="50" />
+	            	</xs:sequence>
+            	</xs:complexType>
+            </xs:element>
+            <xs:element name="notifyInd" type="cmn:string1" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Notification Indicator</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="userId" type="cmn:string10" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Logged-in User Id from OMS UI when the bulk upload order creation.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="skipRouting" type="cmn:string1"
+                        minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Optional Skip Routing flag (Y/N)
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="override" type="cmn:string1" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>override option. for ex: Y or N</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+
+    </xs:complexType>
+
+    <xs:complexType name="Substitution">
+        <xs:sequence>
+            <xs:element name="rank" type="xs:int" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Priority ranking for the substitute item</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="productId" type="cmn:productIdType" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Substitute item identifier</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="supplierProductId" type="cmn:string18" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Generic product id at supplier level</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="retail_upc" type="cmn:string14" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Retail UPC of the substitute item</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="factor" type="cmn:decimal92" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Factor used for substituting the quantity. (e.g. factor of 0.5 means the
+                        substituted item quantity will be half of the orders item)
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="type" type="cmn:string5" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Substitution type. Valid Values: WHEN OUT, SUB ALWAYS,DEAL SUB and WHEN ALSO
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="subsOrderedQuantity" type="cmn:quantityType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Quantity of substitute item</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="subProductDesc" type="cmn:string60" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ProductCategory">
+        <xs:annotation>
+            <xs:documentation>Product category also known as Commodity or department. It categorizez the products in
+                departments or categories
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="productCatId" type="xs:positiveInteger" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        Product Category Id is a 3 character code that is associated with
+                        product and supplier. It uniquely identify a
+                        category or department for the given product and supplier. OMS uses this information to derive
+                        source of supply for a given customer
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="description" type="cmn:string20" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Long description</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="shortDescription" type="cmn:string10" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Short description</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

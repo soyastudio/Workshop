@@ -1,0 +1,1086 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by SKATK01 (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensios" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" id="fsxml" vc:minVersion="1.1">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--V 1.1  Alex Nunes  11/28/2018 Change on NutritionProductType aka Formula. Business required Vendor (External) Formula unique identifier. -->
+	<!--V 1.1  Alex Nunes  4/23/2019 Change all NutritionFormulaDocs/NutritionFormulaROG/NutritionFormulaIngr elements to optional. -->
+	<!--V1.3 Alex Nunes 11/18/2020 - Added CIC CorporateItemCd to the Noun. Previously it was used via CorporationId-->
+	<!--V1.4 Alex Nunes 8/4/2021 - Added CIC CorporateItemCd to Formula ingredient section. Added CompoundInfo section.-->
+	<!--V 1.5 Sridhar Katkuri 9/15/2021 -  FirstEffectiveDt, LastEffectiveDt, ROGCd - Changed to Mantodary-->
+	<!--v1.6 Sridhar Katkuri - 9/17/2021 - Revert changes to NutritionProduct on NutritionFormulaIngredients-->
+	<!--v1.7 Sridhar Katkuri - 9/120/2021 - Revert changes to NutritionProduct on NutritionFormulaIngredients
+Need to remove CompoundInfo from NutritionProduct and NutritionIngredient BOD's
+Remove CIC (CorporateItemCd) from NutritionProduct BOD
+Add an element CIC to NutritionIngredient BOD with (0 or More)
+In the NutritionProduct BOD UPCCountryOriginCd,UPCManufacturerCd,UPCSalesCd,UPCSystemCd -Changed Mandatory
+Increase the length of the ‘FormulaVersionNbr’ element to 25 as corresponding source has more than 10 char. -->
+	<!--V1.7 Sridhar Katkuri - 10/04/2021 - Added CorporateItemCd (CIC) back to Product BOD-->
+	<xs:complexType name="NutritionProductType">
+		<xs:annotation>
+			<xs:documentation>Complex type for nutrition product</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Formula">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="NutritionProductId" default="@DFLTGLOBAL" altova:Ordinal="0">
+							<xs:annotation>
+								<xs:documentation>Identifies a product for which a nutrient label and or a product ingredient label are to be produced or maintained.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="32"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="NutritionProductDsc" default="." altova:Ordinal="2">
+							<xs:annotation>
+								<xs:documentation>Description of the nutrition product or formula.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="90"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="FormulaVersionNbr" default="@DFLT" minOccurs="0" altova:Ordinal="1">
+							<xs:annotation>
+								<xs:documentation>Product or formula version number.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="25"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ExternalFormulaID" type="xs:string" minOccurs="0" altova:Ordinal="1">
+							<xs:annotation>
+								<xs:documentation>External (Vendor-specific) Finished Product/Formula Unique identifier.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element ref="CorporationId" minOccurs="0"/>
+						<xs:element ref="DivisionId" minOccurs="0"/>
+						<xs:element ref="DepartmentId" minOccurs="0"/>
+						<xs:element name="RetailSectionCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Identifies the retail section code.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element ref="CorporateItemCd" minOccurs="0"/>
+						<xs:element name="UOMCd" default="KG" minOccurs="0" altova:Ordinal="3">
+							<xs:annotation>
+								<xs:documentation>Ingredient's default unit of measure.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="YieldAmt" type="xs:double" default="100" minOccurs="0" altova:Ordinal="5">
+							<xs:annotation>
+								<xs:documentation>Product yield measures the output as an indicator of productivity, efficiency and product quality for manufacturers.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="YieldPct" type="xs:double" default="100" minOccurs="0" altova:Ordinal="6">
+							<xs:annotation>
+								<xs:documentation>Product yield percentage.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ProcessYieldPct" type="xs:double" default="100" minOccurs="0" altova:Ordinal="10">
+							<xs:annotation>
+								<xs:documentation>Percent of yield produced in the laboratory or manufacturing environment, after accounting</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PhantomSubstanceInd" default="0" minOccurs="0" altova:Ordinal="7">
+							<xs:annotation>
+								<xs:documentation>Informational. Indicate whether this formula produces a phantom substance. A phantom substance exists only as a transition to other products. It is either used in another process, or itself packaged in different quantities, without a significant lapse of time. Whether a formula produces a phantom is relevant to the manufacturing interface.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LabBookCd" minOccurs="0" altova:Ordinal="12">
+							<xs:annotation>
+								<xs:documentation>Reference to the Research and Development Lab Notebook used to develop the product.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LabBookPg" minOccurs="0" altova:Ordinal="13">
+							<xs:annotation>
+								<xs:documentation>Reference to the page number in the above lab notebook.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="StatusInd" default="0" minOccurs="0" altova:Ordinal="20">
+							<xs:annotation>
+								<xs:documentation>An indicator for a formula/product that describes how far along in the development process the object is (status), whether to hold development or manufacture (hold), and the current level or authorization
+(approval)
+0=None
+100=Experimental
+200=RA Approved
+500=Approved
+600=Inactive
+700=Rejected
+888=Pending Delete
+999=Deleted</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="HoldCd" minOccurs="0" altova:Ordinal="22">
+							<xs:annotation>
+								<xs:documentation>Indicates why a workflow associated with the object has been placed on hold.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element ref="FirstEffectiveDt" altova:Ordinal="23"/>
+						<xs:element ref="LastEffectiveDt" altova:Ordinal="24"/>
+						<xs:element name="WorkReasonTxt1" minOccurs="0" altova:Ordinal="25">
+							<xs:annotation>
+								<xs:documentation>Informational. Enter the reason for the creation or modification of the formula.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="60"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="WorkReasonTxt2" minOccurs="0" altova:Ordinal="26">
+							<xs:annotation>
+								<xs:documentation>Informational. Enter the reason for the creation or modification of the formula.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="60"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="FormulatorUserNm" default="FSI" minOccurs="0" altova:Ordinal="27">
+							<xs:annotation>
+								<xs:documentation>Person currently responsible for the formula.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="40"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CalculationInd" default="0" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates how parameter is being calculated. 
+The choices are:
+- 0=All calc - Always calculate the item.
+- 1=Cost only - Calculate only for costs.
+- 2=Tech only - Calculate only for parameters.
+- 3=No calc - Never calculate the item.
+Most items use the default Calculation Type, which is All calc.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="YieldCalculationInd" default="1" minOccurs="0" altova:Ordinal="29">
+							<xs:annotation>
+								<xs:documentation>Indicates how yeild is calculated. It's either Manually or Automatically.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CommentTxt" minOccurs="0" altova:Ordinal="32">
+							<xs:annotation>
+								<xs:documentation>Free text field to capture comments in the formula header area.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="70"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ClassificationCd" minOccurs="0" altova:Ordinal="34">
+							<xs:annotation>
+								<xs:documentation>An organized set of objects. A formula can belong to the class of finished products or the class of intermediate products, but not to both.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ProductTypeInd" default="0" minOccurs="0" altova:Ordinal="39">
+							<xs:annotation>
+								<xs:documentation>Product type indicator: Manufacturer=0 (finished product) or raw material=1</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="MaterialChangeInd" type="xs:string" default="0" minOccurs="0" altova:Ordinal="43">
+							<xs:annotation>
+								<xs:documentation>Indicator of change in material. Optional field that can be used to capture how the material has changed.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="MaterialChangeDsc" default="0" minOccurs="0" Abs:readonly="True" altova:Ordinal="73">
+							<xs:annotation>
+								<xs:documentation>Description of change in material. Optional field that can be used to capture how the material has changed.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="60"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="BuildSheetCategoryCd" minOccurs="0" altova:Ordinal="51">
+							<xs:annotation>
+								<xs:documentation>Category from Albertsons' Build Sheet.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="BuildSheetClassificationCd" minOccurs="0" altova:Ordinal="52">
+							<xs:annotation>
+								<xs:documentation>Classification from Albertsons' Build Sheet.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="BuildSheetGroupCd" minOccurs="0" altova:Ordinal="55">
+							<xs:annotation>
+								<xs:documentation>Group from Albertson's Build Sheet.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="HowProductIsSoldTxt" minOccurs="0" altova:Ordinal="56">
+							<xs:annotation>
+								<xs:documentation>How the product is sold text field.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="MenuLabelInd" minOccurs="0" altova:Ordinal="58">
+							<xs:annotation>
+								<xs:documentation>Indicates if product is menu labeling.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ProductNutrifactInd" minOccurs="0" altova:Ordinal="59">
+							<xs:annotation>
+								<xs:documentation>Indicates if product is used for nutrifacts.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PLUCd" minOccurs="0" altova:Ordinal="60">
+							<xs:annotation>
+								<xs:documentation>PLU - Product Lookup Code from Albertsons' Build Sheet. Most of cases this code is the same as UPC Manuf.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="RetailSectionNbr" minOccurs="0" altova:Ordinal="61">
+							<xs:annotation>
+								<xs:documentation>Retail Section number.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SLUCd" minOccurs="0" altova:Ordinal="62">
+							<xs:annotation>
+								<xs:documentation>SLU - Scale Lookup Code from Albertson's Build Sheet. Most of cases this code is the same as UPC Manuf.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SubClassificationCd" minOccurs="0" altova:Ordinal="64">
+							<xs:annotation>
+								<xs:documentation>Sub Class from Albertsons' Build Sheet.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SubSubClassificationCd" minOccurs="0" altova:Ordinal="63">
+							<xs:annotation>
+								<xs:documentation>Sub-Sub Class from Albertsons' Build Sheet.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="UnitNetWt" type="xs:double" minOccurs="0" altova:Ordinal="65">
+							<xs:annotation>
+								<xs:documentation>Unit Net weight.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="UnitScaleWt" type="xs:double" minOccurs="0" altova:Ordinal="66">
+							<xs:annotation>
+								<xs:documentation>Unit Scale weight.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="UPCCountryOriginCd" altova:Ordinal="67">
+							<xs:annotation>
+								<xs:documentation>This indicates the UPC's country of origin.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="UPCManufacturerCd" altova:Ordinal="68">
+							<xs:annotation>
+								<xs:documentation>The 5 digit manufacturer's identification portion of
+the UPC code or a LAC, which is an internally
+assigned identifer for random dollar or random
+weight items.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="5"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="UPCSalesCd" altova:Ordinal="69">
+							<xs:annotation>
+								<xs:documentation>This is the sales unit identification portion of the
+UPC. In a true UPC, it designates the item. In a LAC, it contains the sequence number part of the corp. item code and 2 digits to separate selling units
+where there is more than 1 selling unit for a warehouse unit.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="5"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="UPCSystemCd" altova:Ordinal="70">
+							<xs:annotation>
+								<xs:documentation>This is the system part of the UPC that indicates
+what type of UPC is stored in the UPC fields and
+how the price is found for the item.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ProductPrimaryInd" default="0" minOccurs="0" Abs:readonly="True" altova:Ordinal="71">
+							<xs:annotation>
+								<xs:documentation>Indicates the version of the formula as the current production version
+0=Not primary
+1=Primary</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CalculationStateInd" type="xs:string" default="0" minOccurs="0" Abs:readonly="True" altova:Ordinal="74">
+							<xs:annotation>
+								<xs:documentation>Level of formula calculations:
+0=Not Calculated
+1=Pending Calculations
+2=Calculated</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="FormulaTotalMassAmt" type="xs:double" minOccurs="0" Abs:readonly="True" altova:Ordinal="75">
+							<xs:annotation>
+								<xs:documentation>Total Mass of all formula ingredients.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="FormulaTotalVolumeAmt" type="xs:double" minOccurs="0" Abs:readonly="True" altova:Ordinal="76">
+							<xs:annotation>
+								<xs:documentation>Total volume of all formula ingredients.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="UOMLabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True" altova:Ordinal="77">
+							<xs:annotation>
+								<xs:documentation>Unit of measure label text.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PhantomSubstanceIndLabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True" altova:Ordinal="78">
+							<xs:annotation>
+								<xs:documentation>Informational. Indicate whether this formula produces a phantom substance. A phantom substance exists only as a transition to other products. It is either used in another process, or itself packaged in different quantities, without a significant lapse of time. Whether a formula produces a phantom is relevant to the manufacturing interface.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="FormulatorUserNameLabelTxt" minOccurs="0" Abs:readonly="True" altova:Ordinal="79">
+							<xs:annotation>
+								<xs:documentation>Informational. Formulator user name label text (Owner description)</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="60"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="GroupCodeLabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True" altova:Ordinal="80">
+							<xs:annotation>
+								<xs:documentation>Group code label text.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="StatusIndicatorLabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True" altova:Ordinal="81">
+							<xs:annotation>
+								<xs:documentation>Status indicator label text.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="HoldCodeLabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True" altova:Ordinal="83">
+							<xs:annotation>
+								<xs:documentation>Hold code label text.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Workreason1LabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True" altova:Ordinal="84">
+							<xs:annotation>
+								<xs:documentation>Informational. Text for the  reason for the creation or modification of the formula.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Workreason2LabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True" altova:Ordinal="85">
+							<xs:annotation>
+								<xs:documentation>Informational. Text for the  reason for the creation or modification of the formula</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ClassificationLabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True" altova:Ordinal="87">
+							<xs:annotation>
+								<xs:documentation>Classification code label text,</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CalculationModeLabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True" altova:Ordinal="88">
+							<xs:annotation>
+								<xs:documentation>Calculation mode label text.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="MenuLabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True" altova:Ordinal="90">
+							<xs:annotation>
+								<xs:documentation>Menu lable code text.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="NutrifactLabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True" altova:Ordinal="91">
+							<xs:annotation>
+								<xs:documentation>Nutrifiact Label text.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="NutritionFormulaROG" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Retail Ordering Group information.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="LineNbr" type="xs:short" default="0" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Row number on the table.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="NutritionProductId" default="@DFLTGLOBAL" minOccurs="0" altova:Ordinal="0">
+										<xs:annotation>
+											<xs:documentation>Identifies a product for which a nutrient label and or a product ingredient label are to be produced or maintained.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="32"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element ref="ROGCd"/>
+									<xs:element name="ROGLabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True">
+										<xs:annotation>
+											<xs:documentation>ROG label text.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="NutritionFormulaInfo" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Nutrition formula information.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="LineNbr" type="xs:short" default="0" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Row number on the table.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="NutritionProductId" default="@DFLTGLOBAL" minOccurs="0" altova:Ordinal="0">
+										<xs:annotation>
+											<xs:documentation>Identifies a product for which a nutrient label and or a product ingredient label are to be produced or maintained.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="32"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ParemeterCd" default="" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Paremeter Code.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="20"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ParameterDsc" type="xs:string" minOccurs="0" Abs:readonly="True">
+										<xs:annotation>
+											<xs:documentation>Paremeter description.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="ParameterVal" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Parameter's value.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="40"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ParemeterFormattedVal" type="xs:string" minOccurs="0" Abs:readonly="True">
+										<xs:annotation>
+											<xs:documentation>Parameter's value (formatted).</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="ParemeterUOMCd" minOccurs="0" Abs:readonly="True">
+										<xs:annotation>
+											<xs:documentation>Parameter Unit of measure code.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="21"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ParemeterUOMLabelTxt" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Parameter Unit of measure label text.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="CalculationInd" default="0" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicates how parameter is being calculated. 
+The choices are:
+- 0=All calc - Always calculate the item.
+- 1=Cost only - Calculate only for costs.
+- 2=Tech only - Calculate only for parameters.
+- 3=No calc - Never calculate the item.
+Most items use the default Calculation Type, which is All calc.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="CalculationLabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True">
+										<xs:annotation>
+											<xs:documentation>Calculation Level label text.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="NutritionFormulaIngredients" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Nutrition formula ingredient details.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="LineNbr" type="xs:short" default="0" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Row number on the table.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="NutritionProductId" default="@DFLTGLOBAL" minOccurs="0" altova:Ordinal="0">
+										<xs:annotation>
+											<xs:documentation>Identifies a product for which a nutrient label and or a product ingredient label are to be produced or maintained.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="32"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="IngredientId" default="" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Ingridient Identification. Any of the foods or substances that are combined to make a particular product.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="IngredientDsc" type="xs:string" minOccurs="0" Abs:readonly="True"/>
+									<xs:element name="IngredientQty" type="xs:double" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Ingredient quantity.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="UOMCd" default="" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Unit of measure code.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="20"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="LineBreakCd" minOccurs="0" altova:Ordinal="10">
+										<xs:annotation>
+											<xs:documentation>Specify how line breaks are formatted in spreadsheets and parameter equations.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="LineBreakLabelTxt" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Line Break label text.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="MaterialQuantityPct" type="xs:double" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Ingredient quantity percentage.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="ScaleInd" type="xs:string" default="0" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Determines the  method for scaling items. 
+The choices are:
+- 0=Linear
+- 1=No Scaling
+- 2=Auto Adjust to Total
+- 3=Equal Adjust to Total
+Most items use the default Scale Type, which is Linear.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="RatioAmt" type="xs:short" default="0" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>If 2 ingredients must be used in a specific ratio, then you would use this field to designate the ratio.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="RelativeQuantityInd" type="xs:string" default="0" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicates if the quantity is a relative quantity.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="RelativeQuantityPct" type="xs:double" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>If the quantity is a relative quantity, then this would show the relative quantity percentage.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="IngredientCostAmt" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Cost of the ingredient.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:decimal">
+												<xs:totalDigits value="7"/>
+												<xs:fractionDigits value="4"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ParameterCd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Parameter Code.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="20"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ParameterVal" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Parameter's value.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="40"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ClassificationSectionCd" default="0" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Alternative classification for line items as Ingredients, instructions or packaging.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ClassificationSectionDsc" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Description of classification section.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="20"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AdjustInd" default="0" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>You can adjust the formula based off an ingredient.  This is the flag to set which ingredient you adjust the formula against.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ComponentInd" default="1" minOccurs="0" altova:Ordinal="8">
+										<xs:annotation>
+											<xs:documentation>Refers to ingredients (items). Component types include: 
+1=raw material
+2=packaging material
+3=discrete non-packaging material (such as a labor value) cost
+4=process instructions for equipment
+6=user instructions
+8=raw material
+9=grouping set (for labeling).</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="RationLockInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>If 2 ingredients must be used in a specific ratio, then you would use this field to designate the ratio.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="QuantityAmt" type="xs:double" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Ingredient's quantity amount.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="QuantityMassAmt" type="xs:double" minOccurs="0" Abs:readonly="True">
+										<xs:annotation>
+											<xs:documentation>Ingredient's quantity mass amount.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="QuantityVolumeAmt" type="xs:double" minOccurs="0" Abs:readonly="True">
+										<xs:annotation>
+											<xs:documentation>Ingredient's quantity volume amount.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="StatusCd" default="0" minOccurs="0" altova:Ordinal="5">
+										<xs:annotation>
+											<xs:documentation>A code for a item (ingredient) that describes how far along in the development process the object
+is (status), whether to hold development or manufacture (hold), and the current level or authorization
+(approval)
+0=None
+100=Experimental
+200=RA Approved
+500=Approved
+600=Inactive
+700=Rejected
+888=Pending Delete
+999=Deleted</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="3"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ClassificationCd" minOccurs="0" altova:Ordinal="7">
+										<xs:annotation>
+											<xs:documentation>An organized set of objects. An ingredient can be assigned to one class. </xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="20"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="CASNbr" minOccurs="0" altova:Ordinal="21">
+										<xs:annotation>
+											<xs:documentation>CAS Registry Numbers (often referred to as CAS RN® or CAS Numbers) are universally used to provide a unique, unmistakable identifier for chemical substances. A CAS Registry Number itself has no inherent chemical significance but provides an unambiguous way to identify a chemical substance or molecular structure when there are many possible systematic, generic, proprietary or trivial names.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="32"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="CommonNm" minOccurs="0" altova:Ordinal="22">
+										<xs:annotation>
+											<xs:documentation>Common name for an ingredient (item).</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="90"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AliasCd1" minOccurs="0" altova:Ordinal="23">
+										<xs:annotation>
+											<xs:documentation>Use these fields to enter additional codes or names by which the item is known. These codes can
+be used for translation purposes, too.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AliasCd2" minOccurs="0" altova:Ordinal="24">
+										<xs:annotation>
+											<xs:documentation>Use these fields to enter additional codes or names by which the item is known. These codes can
+be used for translation purposes, too.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AliasCd3" minOccurs="0" altova:Ordinal="25">
+										<xs:annotation>
+											<xs:documentation>Use these fields to enter additional codes or names by which the item is known. These codes can
+be used for translation purposes, too.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AliasCd4" minOccurs="0" altova:Ordinal="26">
+										<xs:annotation>
+											<xs:documentation>Use these fields to enter additional codes or names by which the item is known. These codes can
+be used for translation purposes, too.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AliasCd5" minOccurs="0" altova:Ordinal="27">
+										<xs:annotation>
+											<xs:documentation>Use these fields to enter additional codes or names by which the item is known. These codes can
+be used for translation purposes, too.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AliasCd6" minOccurs="0" altova:Ordinal="28">
+										<xs:annotation>
+											<xs:documentation>Use these fields to enter additional codes or names by which the item is known. These codes can
+be used for translation purposes, too.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AliasCd7" minOccurs="0" altova:Ordinal="29">
+										<xs:annotation>
+											<xs:documentation>Use these fields to enter additional codes or names by which the item is known. These codes can
+be used for translation purposes, too.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AliasCd8" minOccurs="0" altova:Ordinal="30">
+										<xs:annotation>
+											<xs:documentation>Use these fields to enter additional codes or names by which the item is known. These codes can
+be used for translation purposes, too.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ScaleLabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True" altova:Ordinal="51">
+										<xs:annotation>
+											<xs:documentation>Scale label text.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="RelativeQuantityLabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True">
+										<xs:annotation>
+											<xs:documentation>Relative quantity label text.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="ParameterValueLabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True">
+										<xs:annotation>
+											<xs:documentation>Parameter value label text.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="SectionTypeLabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True">
+										<xs:annotation>
+											<xs:documentation>Section type label text.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="AdjustIntLabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True">
+										<xs:annotation>
+											<xs:documentation>Adjust indicator label text.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="ComponentLabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True" altova:Ordinal="55">
+										<xs:annotation>
+											<xs:documentation>Component label text.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="StatusLabelTxt" type="xs:string" minOccurs="0" Abs:readonly="True" altova:Ordinal="52">
+										<xs:annotation>
+											<xs:documentation>Status label text.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="NutritionFormulaDocuments" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Nutrition formula documents.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="LineNbr" type="xs:short" default="0" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Row number on the table.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="NutritionProductId" default="@DFLTGLOBAL" minOccurs="0" altova:Ordinal="0">
+										<xs:annotation>
+											<xs:documentation>Identifies a product for which a nutrient label and or a product ingredient label are to be produced or maintained.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="32"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="DocumentFunctionCd" default="" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Document function code. Codes are: INSTRUC
+HISTORY
+NOTES
+ALLERGEN_CONTAINS
+ALLERGEN_MAY_CONTAIN
+INGRED_STMT
+STORAGE_HANDLING
+</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="30"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="DocumentDataTxt" default="" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Document data/value.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="2147483647"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="DocumentDsc" type="xs:string" minOccurs="0" Abs:readonly="True">
+										<xs:annotation>
+											<xs:documentation>Document description: Instructions
+History
+Notes
+Allergen - Contains
+Allergen - May Contain
+Ingredient Statement
+Storage and Handling
+</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+					<xs:attribute name="KEYCOLUMNS" type="xs:string" default="NutritionProductId" Abs:readonly="True"/>
+					<xs:attribute name="KEYS" type="xs:string" default="@DFLT" Abs:readonly="True"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

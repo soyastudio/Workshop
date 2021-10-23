@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2014 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Safeway, Inc.) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/VendorDeal.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="GetVendorDeal" type="GetVendorDeal">
+		<xs:annotation>
+			<xs:documentation>root</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetVendorDeal">
+		<xs:annotation>
+			<xs:documentation>Business Object contains data related to the deals offered by vendors on the items they supply to Albertsons companies.
+eDeals is an application that stores these vendor deal contracts. 
+These are contracts between the vendor and Safeway that contain the details and authorize allowances as offered to the Safeway companies.
+Allowances are discounts given to retailers in exchange for either favorable placement of a product in their stores, or sometimes even the initial or continued stocking of a product. The contract is called a Notice of Promotion Allowances, or NOPA.   
+</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="VendorDealData" type="Abs:VendorDealType"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--V1.9- 09/21/2021 - Monica Gaddam - Added AllowanceSourceCd, AllowanceSourceDsc, Updated data length for categorymanagerNbr-->
+</xs:schema>

@@ -13,7 +13,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Paths;
 import java.util.Date;
 
-public class KML extends KafkaCommandLines {
+public class KML extends KafkaCommands {
 
     private static File home;
     private static File cmmDir;

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by SKATK01 (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:include schemaLocation="../Global/AbsGlobalComponents.xsd"/>
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--V 1.0 Sridhar Katkuri 9/1/2021  Designed ForwardingWarehouse BOD from GetWarehouse BOD-->
+	<!--V 1.1 Sridhar Katkuri 9/17/2021 - Changed WarehouseId to Facility ID-->
+	<xs:include schemaLocation=""/>
+	<xs:complexType name="ForwardingWarehouse">
+		<xs:annotation>
+			<xs:documentation>Forwarding warehouse data. Shipment of items from one location to another location via a third party (vendor).</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0">
+			<xs:element name="CorporationId" nillable="false">
+				<xs:annotation>
+					<xs:documentation>A legally defined business entity. In our business terms these are Safeway Incorporated and its associates
+ and various holding or financial companies.  Independent stores that  our warehouses service are also recorded as corporations.
+ Corporations are divided into divisions</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DivisionId" nillable="false">
+				<xs:annotation>
+					<xs:documentation>Identifies the division that is subset of a corporation and responsible for a certain type of line of business.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DistributionCenterId" nillable="true" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identiifes the distribution center within a division.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="WarehouseId"/>
+			<xs:element name="FacilityType" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="ShipToType" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ShipTo" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="CorporationId" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>A legally defined business entity. In our business terms these are Safeway Incorporated and its associates
+ and various holding or financial companies.  Independent stores that  our warehouses service are also recorded as corporations.
+ Corporations are divided into divisions</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="3"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="DivisionId" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Identifies the division that is subset of a corporation and responsible for a certain type of line of business.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="3"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="DistributionCenterId" nillable="true" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Identiifes the distribution center within a division.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element ref="WarehouseId"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="VendorId" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Vendor Identifier. It&apos;s a six character field with zeros (left) padded.&#10;</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="VendorSubAccntId" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Vendor Sub Account Id</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="WimsSubVendorNbr" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Identifies the WIMS Vendor number set up by the Buyer. The first character of the number indicates the location e.g. V - Vancouver, E - Edmonton.  Buyer/Merchandisers may break a Vendor outlet into different WIMS Vendors to suit their own purposes. Some of the reasons a Vendor may have several WIMS Vendor records are: 1. Several Buyers buying from the same Vendor. 2. A buyer buying different commodity groups from the same Vendor. 3. A Vendor offering different purchasing terms on different product lines. 4. A Buyer buying some products through a Broker and some directly from the Vendor.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string"/>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PromotionForecastWeekNbr" type="xs:int" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Number of weeks for promotion forecast purposes.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="InventoryAdjustmentReasonType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="ShipOrderSource" type="CodeWithDescription" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AuditData" minOccurs="0">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="RecordAuditData"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

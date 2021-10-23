@@ -335,7 +335,9 @@ public class XmlToAvroConverter {
 
     private static void write(GenericRecord record, Schema schema, OutputStream outputStream) throws IOException {
         GenericDatumWriter<GenericRecord> writer = new GenericDatumWriter<>(schema);
-        Encoder encoder = EncoderFactory.get().binaryEncoder(outputStream, null);
+        //Encoder encoder = EncoderFactory.get().binaryEncoder(outputStream, null);
+
+        Encoder encoder = EncoderFactory.get().jsonEncoder(schema, outputStream);
 
         writer.write(record, encoder);
         encoder.flush();

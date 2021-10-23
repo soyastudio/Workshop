@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by Devesh (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--!=============================================================================================-->
+	<!--!-->
+	<!--!-->
+	<!--!      Noun: WarehouseActivitySummary-->
+	<!--!                                     Business object that represents various activties within a warehouse related to pallet, case lifting, selector performance etc used to dervice warehouse performance at a given time-->
+	<!--!-->
+	<!--!=============================================================================================-->
+	<!--10/12/2021 - v1.1 - Devesh Kandpal - ES-5013 - Added fields to accommodate Receiving data-->
+	<!--08/09/2021 - v1.0 - Devesh Kandpal - Initial version.-->
+	<xs:element name="WarehouseActivitySummary" type="WarehouseActivitySummaryType">
+		<xs:annotation>
+			<xs:documentation>represents various activties within a warehouse related to pallet, case lifting, selector performance etc used to dervice warehouse performance at a given time.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="WarehouseActivitySummaryType">
+		<xs:annotation>
+			<xs:documentation>represents various activties within a warehouse related to pallet, case lifting, selector performance etc used to dervice warehouse performance at a given time</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporationId"/>
+			<xs:element ref="DivisionId"/>
+			<xs:element ref="DistributionCenterId"/>
+			<xs:element name="DistributionCenterAltId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Alternate identifier for a DC like dst_cntr. For ex WNCA, PONCA </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityType" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="WarehouseId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is 4 char facility from WMFACOPT</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PhysicalWarehouseId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Physical warehouse in a distribution Center</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AltFacilityId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SummaryRangeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Denotes warehouse summary is by Hour/Day/Week/Month</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="CodeWithDescription">
+							<xs:sequence>
+								<xs:element name="RangeValueTxt" type="xs:string" minOccurs="0"/>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ActivityType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Shipment,Labor,Transporation,Receiving activity</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PalletLevelData" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="PalletPlannedNbr" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>No of pallets planned to be Shipped/Received at a given time</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PalletRemainingNbr" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Pallets yet to be Shipped/Received</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PalletSelectedNbr" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Total number of pallets Shipped/Received</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PutawayPalletNbr" type="xs:decimal" minOccurs="0"/>
+						<xs:element name="PutawayPalletRemainingNbr" type="xs:decimal" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CaseLevelData" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="CasePlannedNbr" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Total number of cases to be Shipped/Received at a given time</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CaseRemainingNbr" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Cases yet to be Shipped/Received</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CaseSelectedNbr" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Total number of cases Shipped/Received</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PutawayCaseNbr" type="xs:decimal" minOccurs="0"/>
+						<xs:element name="PutawayCaseRemainingNbr" type="xs:decimal" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="LoadData" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>Item load information in the trailor</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="LoadType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="LoadCompletedCnt" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Count of Pallets loaded into trailer</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="LoadRemainingCnt" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Count of Pallets yet to be loaded into Trailier</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="LoadAssignedCnt" type="xs:decimal" minOccurs="0"/>
+						<xs:element name="LoadWt" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Total Weight of case loaded to the trailers at that time</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="LoadVol" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Dimension of the cube </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ReplenishmentCnt" type="xs:decimal" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Moving Pallets from reserve slot to Pack Slot </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SelectorCnt" type="xs:decimal" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Number of selectors available for selection</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EquipmentData" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Different type of equipment used in warehouse activity and their count. For Ex Fork</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="EquipmentType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="EquipmentId" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Equipment Unit ID number/code</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="EquipmentCnt" type="xs:decimal" minOccurs="0"/>
+						<xs:element name="EquipmentCategory" type="CodeWithDescription" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PerformanceData" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Warehouse performance at a given time for different entities</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="PerformanceMetricType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="MetricPeriodType" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>It can be per hour, per day or per shift</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PerformanceMetricCnt" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>number of items, cases selected </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="RemainingDurationNbr" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Remaining time for items to be picked in the warehouse</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="JobPerformanceData" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Amount of labor done till time of WMS extract completion</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="JobType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="AssignedTimeDurationNbr" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Labor time assigned for job acitvity in minutes,hours to complete the work</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ActualTimeDurationNbr" type="xs:decimal" minOccurs="0"/>
+						<xs:element name="DelayTimeDurationNbr" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Delay in minutes to complete the work </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PutawayTimeDurationNbr" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Total putaway workunits at the time of extraction</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ReplenishTimeDurationNbr" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Total replenished workunits at the time of extraction</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="TotalTimeNbr" type="xs:decimal" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CrossDockHandleCnt" type="xs:decimal" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Number of Pallets cross docked</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MarkOutData" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Items marked out which were planned to be delivered</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="MarkoutType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="TotalMarkOutCnt" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Selection level markout. For ex case level, Each level</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="TotalMarkedOutCasesCnt" type="xs:decimal" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AdjustmentData" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="AdjustmentType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="TotalAdjustmentCnt" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Adjustment done at case or each level</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="TotalCasesAdjustmentCnt" type="xs:decimal" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CubeSlotCnt" type="xs:decimal" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Count of  cube slots which are utilized in warehouse location</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReserveSlotCnt" type="xs:decimal" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>No of  reserve slot available at particular time</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AuditData" type="AuditType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Audit data elements.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="JobHoursType">
+		<xs:sequence>
+			<xs:element name="ScheduledHours" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="ActualHours" type="xs:decimal" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AuditType">
+		<xs:annotation>
+			<xs:documentation>This type represents auditing data related to the message at source.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0">
+			<xs:element name="CreateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Time stamp of when message was created at source.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LastUpdateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time stamp of when message was last modified at source.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CreateUserId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Id of the client that created the message at source.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LastUpdateUserId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>User Id of who last modified the message at source.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AssignmentType">
+		<xs:annotation>
+			<xs:documentation>Defines the work assignment for a warehouse task like shipping, replenishment or putaway.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="AssignmentId" type="xs:integer" minOccurs="0"/>
+			<xs:element name="AssignmentNm" type="xs:string" minOccurs="0"/>
+			<xs:element name="AssignmentType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Assignment type within a task. Shipment is hte task and selection is assignment.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TotalAssignmentNbr" type="xs:decimal" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Total number of assignment in the DC at a given time</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AssignmentPriority" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Priority of the assignment. 1=High and 9=Low</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AssignmentStatus" minOccurs="0">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="CodeWithDescription"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AssignedDtTm" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Time assignment was assigned to an
+associate</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StartDtTm" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Assignment work Start timestamp</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EndDtTm" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Assignment work End Timestamp</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Shipmentmethod" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="AssignmentToStartTm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Time taken to start an assignment</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:duration">
+							<xs:attribute ref="UOMCd"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AssignmentToEndTm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Time taken to end an assignment.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:duration">
+							<xs:attribute ref="UOMCd"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="TotalTravelDistance" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:decimal">
+							<xs:attribute name="UOMCd" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

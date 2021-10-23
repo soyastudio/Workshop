@@ -1,0 +1,692 @@
+<?xml version="1.0"?>
+<!-- edited with XMLSpy v2018 sp1 (x64) (http://www.altova.com) by Ashutosh Rana (TCS) -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/jobsync" targetNamespace="http://collab.safeway.com/it/architecture/info/jobsync" elementFormDefault="qualified">
+	<xsd:element name="JOBCODE_SYNC" type="S_JOBCODE_SYNC_REStype"/>
+	<xsd:complexType name="S_JOBCODE_SYNC_REStype">
+		<xsd:sequence>
+			<xsd:element name="JOBCODE_TBL" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="SETID" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>This field denotes SETID</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="JOBCODE" type="xsd:short" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>This field denotes the jobcode</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="EFFDT" type="xsd:date" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>This field denotes the Effective date</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="EFF_STATUS" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>This field denotes Effective date Status.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="DESCR" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>This field denotes the Description of jobcode</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="DESCRSHORT" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>This field denotes the short description 10 chars.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="JOB_FUNCTION" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>INAIL Code (Istituto Nazionale per l'Assicurazione contro gli Infurtuni sul Lavoro code)
+
+The INAIL code classifies jobs according to the level of risk that is associated with the job and the related insurance that is required by the employer.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="SETID_SALARY" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>SetIDs differentiate rows of data in a table and identical setIDs make up tablesets</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="SAL_ADMIN_PLAN" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Denotes Salary Admin plan</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="GRADE" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Denotes the salary grade</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="STEP" type="xsd:byte" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>STEP is a field created when save a job code is saved .The system uses rate code defaulting rules (instead of the Job Code and Salary Step setup tables) for the compensation defaulting.One length integer with 2 decimal places.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="MANAGER_LEVEL" type="xsd:byte" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>MANAGER_LEVEL is the level of management associated with the employee.it is a 2 length character.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="SURVEY_SALARY" type="xsd:byte" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>SURVEY_SALARY is mapped Market Reference point. It is 8 length number.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="SURVEY_JOB_CODE" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>SURVEY_JOB_CODE is used to indicate the Survey Job Code. It is a 8 Length Number. </xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="UNION_CD" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Union Code is associated with the Job Code. It is 3 length Character.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="RETRO_RATE" type="xsd:byte" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>RETRO_RATE is used to indicate retroactive rate. It is a signed number with 2 integers and 4 decimals.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="RETRO_PERCENT" type="xsd:byte" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>RETRO_PERCENT is used to indicate retroactive percentage. It is a signed number with 2 integers and 4 decimals.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="CURRENCY_CD" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>CURRENCY_CD is used to indicate the currency code. It is a 3 length Character.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="STD_HOURS" type="xsd:byte" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>STD_HOURS is the value which is default for all workers who are associated with this job code. It must fall between the minimum standard hours and the maximum standard hours. A 7 Length NUmber</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="STD_HRS_FREQUENCY" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>STD_HRS_FREQUENCY indicates the Standard Work Period. It is 5 length Character.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="COMP_FREQUENCY" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>COMP_FREQUENCY indicates Compensation Frequency. It is 5 length Character.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="WORKERS_COMP_CD" type="xsd:short" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>WORKERS_COMP_CD specifies the workers' compensation plan to which this job code belongs.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="JOB_FAMILY" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>JOB_FAMILY used to categorize a job code into a more general grouping</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="JOB_KNOWHOW_POINTS" type="xsd:byte" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>JOB_KNOWHOW_POINTS used to indicate the Job Know how hours.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="JOB_ACCNTAB_POINTS" type="xsd:byte" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>JOB_ACCNTAB_POINTS indicates Accountability-Points.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="JOB_PROBSLV_POINTS" type="xsd:byte" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>JOB_PROBSLV_POINTS indicates Problem-Solving-Points.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="JOB_POINTS_TOTAL" type="xsd:byte" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>JOB_POINTS_TOTAL indicates the total points.The greater the know-how, accountability, and problem solving for this job, the higher the points.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="JOB_KNOWHOW_PCT" type="xsd:byte" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>JOB_KNOWHOW_PCT indicates the Knowhow-Percent.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="JOB_ACCNTAB_PCT" type="xsd:byte" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>JOB_ACCNTAB_PCT indicates Accountability-Percent. </xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="JOB_PROBSLV_PCT" type="xsd:byte" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>JOB_PROBSLV_PCT indicates Problem-Solving-Percent.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="REG_TEMP" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>REG_TEMP indicates whether position Regular/Temporary.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="DIRECTLY_TIPPED" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>DIRECTLY_TIPPED is an 1 length character which indicates the Tip.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="MED_CHKUP_REQ" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>MED_CHKUP_REQ indicates if this job code requires a onetime medical checkup when the worker is hired into the job</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="FLSA_STATUS" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>FLSA_STATUS  indicates whether this job is exempt or nonexempt according to the FLSA. This value becomes the default for the FLSA status on all worker job records that are associated with this job code.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="EEO1CODE" type="xsd:byte" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>EEO1CODE indicates Employee Job Category 1.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="EEO4CODE" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>EEO4CODE indicates Employee Job Category 4.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="EEO5CODE" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>EEO5CODE indicates Employee Job Category 5.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="EEO6CODE" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>EEO6CODE indicates Employee Job Category 6.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="EEO_JOB_GROUP" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>EEO_JOB_GROUP indicates EEO job group to which this job belongs.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="US_SOC_CD" type="xsd:int" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>US_SOC_CD indicates Standard Occupational Classification.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="IPEDSSCODE" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>IPEDSSCODE indiactes IPEDS-S Job Category.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="US_OCC_CD" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>US_OCC_CD indicates Occupational Classification Code.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="AVAIL_TELEWORK" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>AVAIL_TELEWORK, selected if this location allows workers to work remotely.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="BN_ACA_ELIG_IND" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>BN_ACA_ELIG_IND indicates ACA Eligibility Status.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="CAN_PAYEQ_JOB_CLS" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>CAN_PAYEQ_JOB_CLS is the Canadian Pay Equity Job Class.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="CAN_NOC_CD" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>CAN_NOC_CD is the National Occupational Classification Code.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="SEASONAL" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>SEASONAL used to determine if the job is seasonal.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="BPS_ACTIVITY_CD" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>BPS_ACTIVITY_CD is Business Payrolls Survey activity. If you are participating in the Statistics Canada Business Payrolls Survey, select the job code's business activity.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="ELS_STATUS" type="xsd:byte" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>ELS_STATUS indiactes Employment/Labour Standard Status.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="FUNCTION_CD" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>FUNCTION_CD is the code that best categorizes the job by function, such as administrative, legal, or management.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="BA_CD" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>BA_CD is Bundesanstalt fuer Arbeit code. Select this job code's BA code, if applicable.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="TECHNICAL" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>TECHNICAL indicates whether the job code is technical</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="MED_SURV_REQ" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>MED_SURV_REQ is Medical Surveillance Required. Select if ongoing medical surveillance is required for this job code.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="EMP_CATEGRY_FRA" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>EMP_CATEGRY_FRA also indicates Employee Category.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="ACTIVITY_TYPE_FRA" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>ACTIVITY_TYPE_FRA indicates Activity Type.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="INSEE_CD_FRA" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>INSEE_CD_FRA is National Institute for Statistical and Economic Studies code</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="JOB_CTG_FRA_CD" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>JOB_CTG_FRA_CD is Job Category Code.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="UK_SOC_CD" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>UK_SOC_CD is United Kingdom Standard Occupational Classification code. This code is required for Northern Ireland Fair Employment reporting.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="GVT_PAY_PLAN" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>GVT_PAY_PLAN indicates the pay plan to assign to pay group</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="GVT_OCC_SERIES" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>GVT_OCC_SERIES indicates Occupational Series.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="TRN_PROGRAM" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>TRN_PROGRAM is Training Program associated with  job code, which you'll find helpful in career planning. When you set up training and development programs for workers in this job code, you can use the default training program as the basis for an individual career-training plan.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="COMPANY" type="xsd:byte" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>COMPANY is the Company Code. Company is defined from the standpoint of how many subsidiaries, operations an organization has</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="GVT_FUNC_CLASS" type="xsd:byte" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>GVT_FUNC_CLASS indicates the Functional Class.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="GVT_POSN_TITLE_CD" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>GVT_POSN_TITLE_CD indiactes the Official Position Title Code.This field is available on the federalized database for users authorized to view federal information.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="GVT_OFFICIAL_DESCR" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>GVT_OFFICIAL_DESCR describes the Official Position Title.This field is available on the federalized database for users authorized to view federal information.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="GVT_ORG_TTL_CD" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>GVT_ORG_TTL_CD indicates the Organization Positionn Title Code.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="GVT_ORG_TTL_DESCR" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>GVT_ORG_TTL_DESCR indicates the Organization Positionn Title.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="GVT_PAY_BASIS" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>GVT_PAY_BASIS is pay basis for which you quote salaries for this job code; for example,  Per Annum, Per Hour. </xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="GVT_SUB_AGENCY" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>GVT_SUB_AGENCY indicates the Sub-Agency.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="GVT_POI" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>GVT_POI is the Personnel Office ID.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="GVT_PAREN_TITLE" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>GVT_PAREN_TITLE is the Parenthetical Title.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="GVT_OPM_CERT_NBR" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>GVT_OPM_CERT_NBR is office of personnel management certification number, associated with the job code. </xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="GVT_POSN_CLASS_STD" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>GVT_POSN_CLASS_STD describes the position classification standard that is used. </xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="GVT_POSN_SENS_CD" type="xsd:byte" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>GVT_POSN_SENS_CD indicates teh job Sensitivity Code.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="GVT_IA_ACTIONS" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>GVT_IA_ACTIONS is the IA Actions. It is an One length Character.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="GVT_EXEC_FIN_DISCL" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>GVT_EXEC_FIN_DISCL describes Executive Financial Disclosure.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="GVT_EMP_FIN_INT" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>GVT_EMP_FIN_INT is the Employee Financial Interests.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="GVT_PATCOB_CD" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>GVT_PATCOB_CD indicates the PATCOB Code.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="GVT_CLS_STANDARD" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>GVT_CLS_STANDARD indicates Classification Standard.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="GVT_CLASSIFIER_ID" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>GVT_CLASSIFIER_ID indicates the Classification Standard ID.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="GVT_DT_CLASSIFIED" type="xsd:date" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>GVT_DT_CLASSIFIED Date of Classification.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="BARG_UNIT" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>BARG_UNIT is the Bargaining Unit, the job code is associated with a union. </xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="GVT_FUND_SOURCE" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>GVT_FUND_SOURCE is the Fund Source.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="GVT_LEO_POSITION" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>GVT_LEO_POSITION is the LEO/Fire Position.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="GVT_PERF_PLAN" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>GVT_PERF_PLAN indicates the Performance Plan. It is a 8 Length Character.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="GVT_TARGET_GRADE" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>GVT_TARGET_GRADE describes the Target Grade of a Job.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="GVT_PI_UPD_IND" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>GVT_PI_UPD_IND is the PI or NFC Update Indicator. Status of the transaction in relation to NFC, as maintained by the user or system. </xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="GVT_NFC_FUNCTN_CD" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>GVT_NFC_FUNCTN_CD describes the NFC Function Code, identifies the task to be performed by NFC on a master record. Options in this field include Add, Change, Delete, Inactivate, and Reactivate.  </xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="GVT_OFF_TITLEPREFX" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>GVT_OFF_TITLEPREFX indicates Official Title Prefix,NFC-defined list of title prefixes. </xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="GVT_NFC_PI_IND_OVR" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>GVT_NFC_PI_IND_OVR is the Override NFC Indicator. Select this check box to override the value in the NFC Update Indicator field.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="ENCUMBER_INDC" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>ENCUMBER_INDC is Encumbrance Indicator, indicates if you want the system to encumber this job code immediately (Immediate), not at all (None), or upon requisition (Requistn). </xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="POSN_MGMT_INDC" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>POSN_MGMT_INDC describes whether Used by Position Management. Select if this job code is used by a position. If you specified full or partial position management on the Installation Table, this check box is selected by default.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="EG_ACADEMIC_RANK" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>EG_ACADEMIC_RANK is Academic Rank.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="EG_GROUP" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>EG_GROUP indicates Service Calculation Group.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="HP_STATS_DUTIES" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>HP_STATS_DUTIES indicates Stats-Can Duties. A 2 length Character.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="HP_STATS_RPT_FLAG" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>HP_STATS_RPT_FLAG is the Stats-Can Report Flag or Report Flag. Select the appropriate option if the job code is to be reported in one of the Statistics Canada Academic Teaching Surveys. This field is for Canadian higher education degree-granting institutions only.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="ENCUMB_SAL_OPTN" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>ENCUMB_SAL_OPTN is Encumber Salary Option. If Commitment Accounting is used to encumber salaries, the system uses the option that you select to determine the salary amount when it encumbers the salaries of vacant positions.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="ENCUMB_SAL_AMT" type="xsd:byte" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>ENCUMB_SAL_AMT describes the Encumber Salary Amount. If you select User Specas the Encumber Salary Option, enter the salary amount to encumber. </xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="INAIL_CODE" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>INAIL_CODE ( Istituto Nazionale per l'Assicurazione contro gli Infurtuni sul Lavoro code). The INAIL code classifies jobs according to the level of risk that is associated with the job and the related insurance that is required by the employer. </xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="CNO_ESP" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>CNO_ESP is Job Code CNO or National Occupation Code. Select a Canadian National Occupation classification code</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="ASCO_CD_AUS" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>ASCO_CD_AUS is the ASCO Code. Also can be used to determine Salary packaging Options.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="PKG_TEMPLATE_ID" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>PKG_TEMPLATE_ID is the Package Template ID. Use this field to associate the job code with the package rules and templates you set up as part of salary packaging for Australia. This ID act as defaults for this job in employee salary packaging modeling.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="PKG_RULE_ID" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>PKG_RULE_ID is the Package Rule ID. Use this field to associate the job code with the package rules and templates you set up as part of salary packaging for Australia. This ID act as defaults for this job in employee salary packaging modeling.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="FUNCTION_AUS" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>FUNCTION_AUS determines Job Function, the default job function for the organization. </xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="ANN_CNTACT_HRS_AUS" type="xsd:byte" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>ANN_CNTACT_HRS_AUS is the Annual Contact Hours, the number of contact hours. This depends on the type of work performed. See "Determining Contact Hours" to calculate this value. </xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="TEACH_WEEKS_AUS" type="xsd:byte" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>TEACH_WEEKS_AUS is the Teaching Weeks,the default number of teaching weeks. </xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="CASUAL_TYPE_AUS" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>CASUAL_TYPE_AUS is the type of work performed for the organization.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="WORK_DAY_HOURS" type="xsd:byte" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>WORK_DAY_HOURS indicates Number of Hours in a Work Day. The Standard workday hours that are used for payroll and leave calculations.  </xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="FA_PAY_PROGRAM" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>FA_PAY_PROGRAM is Festive Advance Pay Program. If you set up one or more festive advance pay programs that each cover all the festive holiday types (using the Festive Advance Pay Program page), associate a default festive advance pay program with a specific job code here. The program details for each festive holiday can be the same or different from each other.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="ELECTION_GROUP" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>ELECTION_GROUP indicates the Election Group.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="LABOR_AGREEMENT" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>LABOR_AGREEMENT indicates the LABOR AGREEMENT.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="FP_PROF_CATG" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>FP_PROF_CATG describes the labor agreement category for the job code.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="FP_JOB_FMLY" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>FP_JOB_FMLY is Job Family. Job family is selected to categorize a job code into a more general grouping. </xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="FP_OFF_COLAG" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>FP_OFF_COLAG is Job Outside the collective labor agreement.This check box is selected if the job code is not covered by a collective labor agreement. </xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="FP_MATRIX_TYP" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>FP_MATRIX_TYP indicates the Salary Grade Table Type.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="FP_MATRIX_CD" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>FP_MATRIX_CD indicates the Salary Grade Table Code.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="FP_BUSINESS_CD" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>FP_BUSINESS_CD indicates Occupation Code of a Job.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="FP_JOBCD_ACC" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>FP_JOBCD_ACC indicates Match Competencies.To be selected to have the system match the competencies associated with this job code with the qualifications of the person assuming the job.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="FP_ATCH_AREA" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>FP_ATCH_AREA is the Attachment Sector.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="FP_JOB_TYP" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>FP_JOB_TYP indicates Job Type whether this job is public, private, or public private combination. </xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="FP_AUTO_RATFY" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>FP_AUTO_RATFY is Auto Hire Validation . Selected to have the system automatically validate the newly hired person's qualifications with the job requirements. </xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="LAST_UPDATE_DATE" type="xsd:date" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>LAST_UPDATE_DATE is the last updated timestamp for the jobcode. </xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="REG_REGION" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>REG_REGION is the  job code's regulatory region.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="SAL_RANGE_MIN_RATE" type="xsd:byte" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>SAL_RANGE_MIN_RATE is the Minimum Salary.  Enter the minimum salary amount according to the frequency (which appears by default from the Job Code Profile page but can be overridden here) that is available to this job code.  </xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="SAL_RANGE_MID_RATE" type="xsd:byte" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>SAL_RANGE_MID_RATE is the Midpoint Salary.  Enter the midpoint salary amount according to the frequency (which appears by default from the Job Code Profile page but can be overridden here) that is available to this job code. </xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="SAL_RANGE_MAX_RATE" type="xsd:byte" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>SAL_RANGE_MAX_RATE is the  Maximum Salary.  Enter the maximum salary amount according to the frequency (which appears by default from the Job Code Profile page but can be overridden here) that is available to this job code. </xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="SAL_RANGE_CURRENCY" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>SAL_RANGE_CURRENCY is the Currency Frequency. Indicates the currency of the salary amounts if it is not the same as the default.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="SAL_RANGE_FREQ" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>SAL_RANGE_FREQ is the Salary Range Frequency.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="MILITARY_SERVICE" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>MILITARY_SERVICE is the military service to which the job belongs. This becomes the military service default value in Manage Positions when you associate this job code to a position</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="MIL_RANK" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>MIL_RANK is the military rank to which the job is classified. This becomes the military rank default value in Manage Positions when you associate the job code to a position.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="JOB_SUB_FUNC" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>JOB_SUB_FUNC indicates Job Subfunction. It is the code that best categorizes the job's subfunction. </xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="DESCRLONG" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>DESCRLONG is the Long Description.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="LASTUPDOPRID" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>LASTUPDOPRID indicates the Last updated by user information.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="LASTUPDDTTM" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>LASTUPDDTTM is the Last updated timestamp for the jobcode.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="KEY_JOBCODE" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>KEY_JOBCODE indicates if it is a key job for your organization's succession planning.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

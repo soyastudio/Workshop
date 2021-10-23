@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by Sachin Madduri (Albertson) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--!=============================================================================================-->
+	<!--!-->
+	<!--!      Noun: ProcurementOrganization-->
+	<!--!                                -->
+	<!--!-->
+	<!--!=============================================================================================-->
+	<!--08/11/2021 - v1.0 - Sachin Madduri - Initial version.-->
+	<xs:element name="ProcurementOrganization" type="ProcurementOrganizationType">
+		<xs:annotation>
+			<xs:documentation>This is the Buyer hierarchy in the Procurement Organization</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="ProcurementOrganizationType">
+		<xs:sequence>
+			<xs:element name="ProcurementGroup">
+				<xs:annotation>
+					<xs:documentation>Groups available in Procurement Organization</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="CodeWithDescription">
+							<xs:sequence>
+								<xs:element name="RegionalDirector" type="RegionalDirectorType" minOccurs="0" maxOccurs="unbounded"/>
+								<xs:element name="SeniorVicePresidentCd" type="xs:string" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Senior Vice President Code</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="SeniorVicePresidentNm" type="xs:string" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Senior Vice President Name</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="VicePresidentCd" type="xs:string">
+									<xs:annotation>
+										<xs:documentation>Vice President Code</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="VicePresidentNm" type="xs:string" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Vice President Name</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="BusinessGroup" type="CodeWithDescription"/>
+								<xs:element name="AreaOfResponsibility" type="CodeWithDescription"/>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ManagerDetail" type="TeamManagerDtlType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Team Manger Information for Procurement Organization</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="BuyerType">
+		<xs:sequence minOccurs="0">
+			<xs:element name="BuyerAreaCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BuyerDetails" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element ref="CorporationId"/>
+						<xs:element name="BuyerNbr">
+							<xs:annotation>
+								<xs:documentation>This identifies the buyer of this item or
+a person who handles bouncers, that is
+items in which the descrepency
+between our cost and the vendor's cost
+exceeds the threshold of what we
+accept as the variance.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DistributionCenterId" type="xs:string" minOccurs="0"/>
+						<xs:element name="BuyerNm" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="BuyerPhoneNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="FacilityId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CategoryManagerNm" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The buyer number of the category
+manager the buyer works for</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PrintDays" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field shows which days of the
+week to print a long format of the Item
+Status Report</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="5"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="WMD650DaysFwd" type="xs:int" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Number of days to look into the future
+for a deal from a possible arrival date.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ItemStatusReportInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates whether the buyer wants the
+Item Status Report or not.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LLRPD" type="DateTimeType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Date the last long report was printed.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CorpLevelInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This column allows certain buyers to
+obtain Corporate Level access across
+division boundaries when using WIMS
+screens in Inforem Phase II.
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AllTimesInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates if buyer wants all items they
+are responsible for on the Item Status
+Report or not.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="APClerkSw" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Identifies whether the buyer number is
+associated to an A/P Clerk.
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="NumericBuyerNbr" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Numeric buyer number is generated
+automatically to provide each buyer
+record with a numeric code in addition
+to the alphanumeric version currently
+used. This feature is needed by PACS</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PromotionCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Promotion code indicator. </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ForcePromoQtySw" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Switch to tell if we should force ordering
+of the complete promotional quantity
+requested by the buyer.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DisplayVendorUnitsSw" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>It is switch stored in WMBUYOPT
+which specified whether buyer wish to
+see SSV1 in terms vendor units. It is
+used by WMC210 and WMC470 and
+maintained by WMC260.
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="JobFunctionCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Identifies the job function of a user.
+Values differ by application. On the
+WIMS buyer option table
+(WMBUYOPT) this identifies the job
+function associated with this WIMS
+buyer number. The main use is to
+control access to specific functions in
+the AP/WIMS Bouncer system. This
+column may eventually replace
+AP_CLERK_SW. On the pricer option
+table (ADPRCOPT) this identifies the
+job title of the user.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="MultiDCInd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="UserId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is the LDAP logon id for the user. </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="8"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ContactType" type="ContactType" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TeamManagerDtlType">
+		<xs:sequence minOccurs="0">
+			<xs:element name="ManagerCd">
+				<xs:annotation>
+					<xs:documentation>DC Manager cross reference</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ManagerNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The name of the team manager. This
+provides the ablity to include the name
+of the team manager on reports that
+are rolled up to the team manager
+level.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ContactType" type="ContactType" minOccurs="0"/>
+			<xs:element name="Buyer" type="BuyerType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>This table's main use is to extract the buyer name or any other buyer-related
+information for a buyer number.
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ContactType">
+		<xs:sequence minOccurs="0">
+			<xs:element name="EmailAddressTxt" type="xs:string" minOccurs="0"/>
+			<xs:element name="PhoneNbr" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RegionalDirectorType">
+		<xs:sequence minOccurs="0">
+			<xs:element name="RegionalDirectorCd">
+				<xs:annotation>
+					<xs:documentation>Regional Director Code</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DistributionCenterGMNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>DC General Manager Name should
+contain a name but in cases when the
+person is not yet named a placeholder
+may be used.
+</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="34"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DistributionCenterGMCd">
+				<xs:annotation>
+					<xs:documentation>Distribution Center General Manager
+Code</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RegionalDirectorNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Regional Director Name</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="23"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RegionCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Each retail belongs to a region.its a
+character .. like S for south
+ N for north
+REGION - Region Code. Example “S”
+is the South Region. Each retail
+division belongs to a single Region.”
+· NORTH
+· SOUTH
+· SWY
+· ABS
+For CPS, the regions are SWY for
+Safeway and ABS for Albertsons.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ProcurmentGroupCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Will indicate the type of commodity
+being purchased via codes. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="Address" minOccurs="0"/>
+			<xs:element name="DCManagerType" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ManagerType" type="CodeWithDescription"/>
+						<xs:element name="ManagerNm" type="xs:string"/>
+						<xs:element name="ManagerCd" type="xs:string"/>
+						<xs:element ref="CorporationId"/>
+						<xs:element ref="DivisionId"/>
+						<xs:element ref="DistributionCenterId"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

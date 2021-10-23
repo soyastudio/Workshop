@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://collab.safeway.com/it/architecture/AbsOmMaster" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.1 Rosabel Macario 11/04/2020 - Added tag to resolve dateTimeStamp issue-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:complexType name="RetailSection">
+		<xs:annotation>
+			<xs:documentation>Defines various profiles maintianed at a retail section level to support business functions like billing profiles, pricing profiles, produt categorizations. Some of these profiles re maintained at Division level where as others are at ROG level.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="CorporationId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RetailSectionType" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Section" type="CodeWithDescription" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Defines the Cd that uniquely identified the  grouping of products or services within a department.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SectionType" type="CodeWithDescription" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Defines the Cd that uniquely identifies the different types of sections for a department. For example, backstage, retail, processing and warehouse.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="RetailDepartment" type="CodeWithName" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Parent retial department of the retail section.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="MerchandiseDepartment" type="CodeWithName" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Corresponding mercahndise department of the retail section.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="RetailSectionProfile" type="RetailSectionProfileType" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Business profiles defined at retail section level.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RetailSectionProfileType">
+		<xs:sequence>
+			<xs:element name="DivisionId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identifies the division that is subset of a corporation and responsible for a certain type of line of business.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DivisionNm" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the Safeway Divisionex: Norcal, Denver, Dominick&apos;s, Supply, Safeway Direct.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BillingDepartment" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>Billing departments defined for a retail section at division level.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="PriorityType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates billing department priority like primary or secondary.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element ref="DepartmentId" minOccurs="0"/>
+						<xs:element name="DepartmentNm" nillable="true" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ROGLevelProfile" type="ROGLevelProfileType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Different profiles of a retail section maintained at ROG level.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ROGLevelProfileType">
+		<xs:sequence>
+			<xs:element name="RogId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SendBIBInd" type="IndicatorType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Default value used for 'Send BIB Ind' when creating a new item price.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SendNewItemBIBInd" type="IndicatorType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Default value used for 'Send New Item BIB Ind' when creating a new item price.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CustomerAllowancePct" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The percentage of the allowance that will be passed through to the consumer. Used on the Promotional Pricing screens to help pricers determine the size of the promotional price reduction.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="5"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AdPriceLeadDaysNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>For Auto Pricing, this indicates the minimum number of days prior to the breaking of the Ad, that the system will attempt to automatically price items.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="5"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LTSPriceLeadDaysNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>For Auto Pricing, this indicates the minimum number of days prior to the breaking of the LTS - Long term specials, that the system will attempt to automatically price items.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="5"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AutoPriceInd" type="IndicatorType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Used to determine if an AD or LTS promotion should be automatically priced.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SendCouponOffInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> to indicate whether an "off-coupon" sign for an item should be sent to the stores. Valid values are 'Y', space or 'N'.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SectionProductGroupType">
+		<xs:sequence>
+			<xs:element name="ProductGroupCd" type="xs:integer" minOccurs="0"/>
+			<xs:element name="ProductGroupNm" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ProductCategoryCd" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ProductCategoryCd" type="xs:integer" minOccurs="0"/>
+						<xs:element name="ProductCategoryNm" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ProductClassCd" minOccurs="0" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="ProductClassCd" type="xs:integer" minOccurs="0"/>
+									<xs:element name="ProductClassNm" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="100"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Schema Owner: 	Safeway Inc
+   Date Created:      26 Mar 2018
+   Author:		Saikat Mazumdar
+   Description: Contains commonly used Safeway Personnel schema.
+   Name: /SFWY/Nouns/Personnel.xsd
+-->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.2 07/19/2021  HCM changes added job position, assginment and payroll relationship.-->
+	<!--V1.1 Rosabel Macario 11/04/2020 - Added tag to resolve dateTimeStamp issue-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="Personnel" type="PersonnelType">
+		<xs:annotation>
+			<xs:documentation>root</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="PersonnelType">
+		<xs:annotation>
+			<xs:documentation>Standard Albertsons companies schema for human resource information maintained for each employee. 
+			
+It includes data like job code, employee status, department or place in the organization, and job-related skills.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="EmployeeType">
+				<xs:sequence>
+					<xs:element name="HROrganizationHierarchy" type="HROrgHierarchyType" minOccurs="0"/>
+					<xs:element name="WorkLocation" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Assigned work location for an employee.</xs:documentation>
+						</xs:annotation>
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="Corp" type="CorporationType" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>This is the corporation to which employee is tagged including its name, address etc.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="Division" type="DivisionWithTypeType" minOccurs="0" maxOccurs="unbounded">
+									<xs:annotation>
+										<xs:documentation>This is the division to which employee is tagged including its name, address etc.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="OperatingArea" type="CodeWithName" minOccurs="0"/>
+								<xs:element name="District" type="CodeWithName" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>This is the Albertsons (safeway) District to which employee is tagged.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="Facility" type="FacilityType" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>This is the facility tagged to employee including its name, address etc.
+
+An employee can work from multiple facilities within a given time period. For example, someone working in facility 1 on 3 days of the week while working from Facility 2 for remaining days of the week.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="WorkContact" type="CommunicationType" minOccurs="0"/>
+								<xs:element name="LocationGroupTxt" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>common identifier for the geographic area of work location,  ex:  Sacramento Area, Bay area</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element ref="LocationID" minOccurs="0"/>
+								<xs:element ref="EffectiveTimePeriod" minOccurs="0"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:group ref="AccountingOrganization" minOccurs="0"/>
+					<xs:element ref="JobRestrictionCodes" minOccurs="0"/>
+					<xs:element ref="ScheduleTypeCd" minOccurs="0"/>
+					<xs:element ref="WorkShiftID" minOccurs="0"/>
+					<xs:element ref="WageTypeCd" minOccurs="0"/>
+					<xs:element ref="WageType" minOccurs="0"/>
+					<xs:element ref="WageGroupCd" minOccurs="0"/>
+					<xs:element name="LaborJobGroup" type="CodeWithName" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Job group as per labor contract, ex food clerk, non food clerk..etc</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element ref="OvertimeEligibleInd" minOccurs="0"/>
+					<xs:element name="Contract" type="LaborAgreementType" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element ref="EffectiveTimePeriod" minOccurs="0"/>
+					<xs:element name="AuditDataType" type="RecordAuditData" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Schema Owner: 	Safeway Inc
+   Date Created:     30 August 2017
+   Author:		Alex Nunes
+   Description: Albertsons Shipment Business Object
+   Name: /SFWY/Nouns/SwyShipment.xsd
+-->
+<!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by smadd37 (Albertsons) -->
+<xs:schema xmlns:oa="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--9/01/21  FuelTankInventory Version : 1.0 Sachin Madduri ES-3318-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="FuelTankInventory" type="FuelTankInventoryType">
+		<xs:annotation>
+			<xs:documentation>Fuel Tank Inventory Details</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="FuelTankInventoryType">
+		<xs:annotation>
+			<xs:documentation>root</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporationId"/>
+			<xs:element ref="DivisionId"/>
+			<xs:element ref="DistributionCenterId"/>
+			<xs:element name="SiteDetails" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="FacilityId" type="xs:string">
+							<xs:annotation>
+								<xs:documentation>This is Site Number</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="FacilityTypeCd"/>
+						<xs:element name="FacilityNm" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The name of the fueling site as configured in the source system</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element ref="Address"/>
+						<xs:element name="FacilityDescription" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="FuelTankDetails" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="TankId" type="xs:decimal">
+							<xs:annotation>
+								<xs:documentation>Unqiue Identifier for the tank within a site. </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="TankStatus" type="StatusType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Represents the status of the equipment where 1 is Active</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="TankProductType" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Code and description of the product filled in the Tank, EX: Diesel, RED DYE DIESEL.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="TankInventoryQty" type="xs:decimal">
+							<xs:annotation>
+								<xs:documentation>Volume of inventory in the tank measured in Gallons </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="InventoryUOM" type="UOMType">
+							<xs:annotation>
+								<xs:documentation>Ex : Gallons</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="OverfillLimitQty" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Volume where the level of fuel in the tank is considered high.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="TankCapacityQty" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Total Fuel Tank Capacity</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="TankAvailableCapacityQty" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Overfilllimit - Current inventory in the tank</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="TankType" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Different Tank Types Ex: Diesel, RED DYE DIESEL.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="TankDescriptionTxt" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The description configured for this fuel tank in the source system</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="InventoryTransactionNbr" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Number for Inventory Transaction</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="InventoryTransactionTs" type="xs:dateTimeStamp">
+							<xs:annotation>
+								<xs:documentation>Date and Time of the inventory Captured Tansaction</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CommentTxt" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Audit" type="RecordAuditData" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

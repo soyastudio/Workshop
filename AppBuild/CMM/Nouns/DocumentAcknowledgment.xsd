@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://collab.safeway.com/it/architecture/AbsOmMaster" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:complexType name="Acknowledgment">
+		<xs:annotation>
+			<xs:documentation>Defines a common message acknowledgment from the receiving party. Thi is a common BOD that can be used to communicate the message acknowledgement between sender and receiver of any BOD in the enterprise.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="AcknowledgmentData" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="System" type="CodeWithName" minOccurs="0"/>
+						<xs:element ref="Status" minOccurs="0"/>
+						<xs:element name="AcknowledgmentCreateTs" type="xs:dateTime" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ReferenceDocumentData" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Metadata of the reference BOD for which the acknowledgment has been generated. Ex PurchaseOrder, StoreOrder, Invoice.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="DocumentNm" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Name of the BOD for which the acknowledgement message is generated.
+Ex: PurchaseOrder, StoreOrder, Invoice</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DocumentId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>system generated unique id for each message payload.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AlternateDocumentId" type="xs:string" minOccurs="0"/>
+						<xs:element name="CreateTs" type="xs:dateTime" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Message create timestamp.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ReceiveTs" type="xs:dateTime" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Message received timestamp.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="DocumentBusinessKey" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Generic structure to define various business keys from message to identify the message from functional context. Ex Purchase Order message business keys like Purchase order nbr, PO date. This structure is used to capture keys from both header level as well s detail level.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="HeaderBusinessKey" type="BusinessKeyType" minOccurs="0" maxOccurs="unbounded">
+										<xs:annotation>
+											<xs:documentation>Business keys from document header level data. Ex PurchaseOrder header keys like Purchase order Nbr and PurchaserOrder date.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="DetailBusinessKey" type="BusinessKeyType" minOccurs="0" maxOccurs="unbounded">
+										<xs:annotation>
+											<xs:documentation>Business keys from document detail level data. Ex PurchaseOrder detail keys like Item Id, Order qty..etc</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

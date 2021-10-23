@@ -1,0 +1,665 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Schema Owner: 	Safeway Inc
+   Date Created:      07 May 2020
+   Author:		Patrick Oliver
+   Description: Contains commonly used Safeway Purchase order schema.
+   Name: /SFWY/Nouns/SwyPurchaseOrder.xsd
+-->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.0  Patrick Oliver 11/13/20: Initial Draft-->
+	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:complexType name="AccountingOrganization">
+		<xs:annotation>
+			<xs:documentation>The Accounting Organization object will be used to show attributes and values for the chart of account (COA) segments Legal Entity, Line of Business, Cost Center, Product, Account, Product Type Group, Customer Group and Cash Flow Movement. The object will also show the hierarchical relationships for Legal Entity, Cost Center, Line of Business and Account. Note that the COA segment 'Site' has its values and hierarchies and in its own BOD called 'Accounting Facility'</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="AccountingOrgType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines the chart of account segment message type       LE - Entity                          LOB - Line of Business  
+CC - Cost Center                PG - ProductGroup              Acnt - Account                    CG - CustomerGroup </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Entity" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Companies with EIN's allows for flexibility of hundreds if not thousands of legal entities and room for special purposes.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="CodeWithDescription">
+							<xs:sequence minOccurs="0">
+								<xs:element name="ParentEntity" minOccurs="0" maxOccurs="unbounded">
+									<xs:annotation>
+										<xs:documentation>Parent Entity segment values in the hierarchy.</xs:documentation>
+									</xs:annotation>
+									<xs:complexType>
+										<xs:complexContent>
+											<xs:extension base="CodeWithDescription">
+												<xs:sequence>
+													<xs:element ref="HierarchyNbr" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Hierarchy level number within a tree</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element ref="HierarchyTreeNm" minOccurs="0"/>
+												</xs:sequence>
+											</xs:extension>
+										</xs:complexContent>
+									</xs:complexType>
+								</xs:element>
+								<xs:element ref="HierarchyNbr" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Hierarchy level number within a tree</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="SummaryInd" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Confirms whether the segment is a child or parent. Valid values: Y, N.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="1"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="EnabledInd" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Confirms whether the segment value is enabled. Valid values: Y, N.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="1"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="AllowPostingInd" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Posting is allowed for the segment value. Valid values: Y, N.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="1"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="AllowBudegtingInd" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Budgeting is allowed for the segment value. Valid values: Y, N.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="1"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="AdditionalData" type="AdditionalDataType" minOccurs="0" maxOccurs="unbounded">
+									<xs:annotation>
+										<xs:documentation>This can be used for descriptive flex fields (additional attributes) for COA Segments</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="EffectiveTimePeriod" type="EffectiveDateTimeType" minOccurs="0"/>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="LineOfBusiness" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Represents the type of business based on the organizational structure, revenue channels and manufacturing. Used for high level management view of the organization that changes frequently</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="CodeWithDescription">
+							<xs:sequence>
+								<xs:element name="ParentLineofBusiness" minOccurs="0" maxOccurs="unbounded">
+									<xs:annotation>
+										<xs:documentation>Parent Line of Business segment values in the hierarchy.</xs:documentation>
+									</xs:annotation>
+									<xs:complexType>
+										<xs:complexContent>
+											<xs:extension base="CodeWithDescription">
+												<xs:sequence>
+													<xs:element ref="HierarchyNbr" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Hierarchy level number within a tree</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element ref="HierarchyTreeNm" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Hierarchy tree name</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+												</xs:sequence>
+											</xs:extension>
+										</xs:complexContent>
+									</xs:complexType>
+								</xs:element>
+								<xs:element ref="HierarchyNbr" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Hierarchy level number within a tree</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="SummaryInd" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Confirms whether the segment is a child or parent. Valid values: Y, N.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="1"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="EnabledInd" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Confirms whether the segment value is enabled. Valid values: Y, N.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="1"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="AllowPostingInd" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Posting is allowed for the segment value. Valid values: Y, N.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="1"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="AllowBudegtingInd" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Budgeting is allowed for the segment value. Valid values: Y, N.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="1"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="AdditionalData" type="AdditionalDataType" minOccurs="0" maxOccurs="unbounded">
+									<xs:annotation>
+										<xs:documentation>This can be used for descriptive flex fields (additional attributes) for COA Segments</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="EffectiveTimePeriod" type="EffectiveDateTimeType" minOccurs="0"/>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CostCenter" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A function that is responsible for the costs that are incurred related to normal business operations</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="CodeWithDescription">
+							<xs:sequence>
+								<xs:element name="ParentCostCenter" minOccurs="0" maxOccurs="unbounded">
+									<xs:annotation>
+										<xs:documentation>Parent Cost Center segment values in the hierarchy.</xs:documentation>
+									</xs:annotation>
+									<xs:complexType>
+										<xs:complexContent>
+											<xs:extension base="CodeWithDescription">
+												<xs:sequence>
+													<xs:element ref="HierarchyNbr" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Hierarchy level number within a tree</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element ref="HierarchyTreeNm" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Hierarchy tree name</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+												</xs:sequence>
+											</xs:extension>
+										</xs:complexContent>
+									</xs:complexType>
+								</xs:element>
+								<xs:element ref="HierarchyNbr" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Hierarchy level number within a tree</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="SummaryInd" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Confirms whether the segment is a child or parent. Valid values: Y, N.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="1"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="EnabledInd" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Confirms whether the segment value is enabled. Valid values: Y, N.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="1"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="AllowPostingInd" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Posting is allowed for the segment value. Valid values: Y, N.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="1"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="AllowBudegtingInd" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Budgeting is allowed for the segment value. Valid values: Y, N.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="1"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="AdditionalData" type="AdditionalDataType" minOccurs="0" maxOccurs="unbounded">
+									<xs:annotation>
+										<xs:documentation>This can be used for descriptive flex fields (additional attributes) for COA Segments</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="EffectiveTimePeriod" type="EffectiveDateTimeType" minOccurs="0"/>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Account" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Represents the natural account for transaction classifications </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="AltAccountId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is the account ID but in string format.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="25"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AccountTypeCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Type of UserAccount.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element ref="AccountNm" minOccurs="0"/>
+						<xs:element ref="AccountDsc" minOccurs="0"/>
+						<xs:element ref="SummaryAccountId" minOccurs="0"/>
+						<xs:element ref="SummaryAccountNm" minOccurs="0"/>
+						<xs:element name="ParentAccount" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Parent Account segment values in the hierarchy.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="AltAccountId" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the account ID but in string format.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="25"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element ref="AccountNm" minOccurs="0"/>
+									<xs:element ref="AccountDsc" minOccurs="0"/>
+									<xs:element name="AccountTypeCd" type="CodeWithDescription" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Type of UserAccount.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element ref="HierarchyNbr" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Hierarchy level number within a tree</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element ref="HierarchyTreeNm" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Hierarchy tree name</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element ref="HierarchyNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Hierarchy level number within a tree</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SummaryInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Confirms whether the segment is a child or parent. Valid values: Y, N.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="EnabledInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Confirms whether the segment value is enabled. Valid values: Y, N.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AllowPostingInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Posting is allowed for the segment value. Valid values: Y, N.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AllowBudegtingInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Budgeting is allowed for the segment value. Valid values: Y, N.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AdditionalData" type="AdditionalDataType" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>This can be used for descriptive flex fields (additional attributes) for COA Segments</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="EffectiveTimePeriod" type="EffectiveDateTimeType" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ProductTypeGroup" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Groupings of product types is based on a consolidated version of the organization's products that is needed for management reporting within distribution centers and manufacturing plants.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="CodeWithDescription">
+							<xs:sequence>
+								<xs:element name="ParentProductTypeGroup" minOccurs="0" maxOccurs="unbounded">
+									<xs:annotation>
+										<xs:documentation>Parent Entity segment values in the hierarchy.</xs:documentation>
+									</xs:annotation>
+									<xs:complexType>
+										<xs:complexContent>
+											<xs:extension base="CodeWithDescription">
+												<xs:sequence>
+													<xs:element ref="HierarchyNbr" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Hierarchy level number within a tree</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element ref="HierarchyTreeNm" minOccurs="0"/>
+												</xs:sequence>
+											</xs:extension>
+										</xs:complexContent>
+									</xs:complexType>
+								</xs:element>
+								<xs:element ref="HierarchyNbr" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Hierarchy level number within a tree</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="SummaryInd" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Confirms whether the segment is a child or parent. Valid values: Y, N.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="1"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="EnabledInd" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Confirms whether the segment value is enabled. Valid values: Y, N.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="1"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="AllowPostingInd" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Posting is allowed for the segment value. Valid values: Y, N.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="1"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="AllowBudegtingInd" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Budgeting is allowed for the segment value. Valid values: Y, N.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="1"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="AdditionalData" type="AdditionalDataType" minOccurs="0" maxOccurs="unbounded">
+									<xs:annotation>
+										<xs:documentation>This can be used for descriptive flex fields (additional attributes) for COA Segments</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="EffectiveTimePeriod" type="EffectiveDateTimeType" minOccurs="0"/>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CustomerGroup" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Groupings of customers is based on a consolidated version of the organization's customers that is needed for management reporting.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="CodeWithDescription">
+							<xs:sequence>
+								<xs:element name="ParentCustomerGroup" minOccurs="0" maxOccurs="unbounded">
+									<xs:annotation>
+										<xs:documentation>Parent Entity segment values in the hierarchy.</xs:documentation>
+									</xs:annotation>
+									<xs:complexType>
+										<xs:complexContent>
+											<xs:extension base="CodeWithDescription">
+												<xs:sequence>
+													<xs:element ref="HierarchyNbr" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Hierarchy level number within a tree</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element ref="HierarchyTreeNm" minOccurs="0"/>
+												</xs:sequence>
+											</xs:extension>
+										</xs:complexContent>
+									</xs:complexType>
+								</xs:element>
+								<xs:element ref="HierarchyNbr" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Hierarchy level number within a tree</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="SummaryInd" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Confirms whether the segment is a child or parent. Valid values: Y, N.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="1"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="EnabledInd" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Confirms whether the segment value is enabled. Valid values: Y, N.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="1"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="AllowPostingInd" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Posting is allowed for the segment value. Valid values: Y, N.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="1"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="AllowBudegtingInd" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Budgeting is allowed for the segment value. Valid values: Y, N.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="1"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="AdditionalData" type="AdditionalDataType" minOccurs="0" maxOccurs="unbounded">
+									<xs:annotation>
+										<xs:documentation>This can be used for descriptive flex fields (additional attributes) for COA Segments</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="EffectiveTimePeriod" type="EffectiveDateTimeType" minOccurs="0"/>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CashflowMovement" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Cash flows is based on the organization's cash flow and rollforward classifications with linkages to select balance sheet account activity.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="CodeWithDescription">
+							<xs:sequence>
+								<xs:element name="ParentProductTypeGroup" minOccurs="0" maxOccurs="unbounded">
+									<xs:annotation>
+										<xs:documentation>Parent Entity segment values in the hierarchy.</xs:documentation>
+									</xs:annotation>
+									<xs:complexType>
+										<xs:complexContent>
+											<xs:extension base="CodeWithDescription">
+												<xs:sequence>
+													<xs:element ref="HierarchyNbr" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Hierarchy level number within a tree</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element ref="HierarchyTreeNm" minOccurs="0"/>
+												</xs:sequence>
+											</xs:extension>
+										</xs:complexContent>
+									</xs:complexType>
+								</xs:element>
+								<xs:element ref="HierarchyNbr" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Hierarchy level number within a tree</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="SummaryInd" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Confirms whether the segment is a child or parent. Valid values: Y, N.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="1"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="EnabledInd" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Confirms whether the segment value is enabled. Valid values: Y, N.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="1"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="AllowPostingInd" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Posting is allowed for the segment value. Valid values: Y, N.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="1"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="AllowBudegtingInd" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Budgeting is allowed for the segment value. Valid values: Y, N.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="1"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="AdditionalData" type="AdditionalDataType" minOccurs="0" maxOccurs="unbounded">
+									<xs:annotation>
+										<xs:documentation>This can be used for descriptive flex fields (additional attributes) for COA Segments</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="EffectiveTimePeriod" type="EffectiveDateTimeType" minOccurs="0"/>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AdditionalDataType">
+		<xs:complexContent>
+			<xs:extension base="GenericDataStructureType"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="HierarchyNbr" type="xs:integer"/>
+	<xs:element name="HierarchyTreeNm">
+		<xs:annotation>
+			<xs:documentation>Hierarchy tree name</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="100"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

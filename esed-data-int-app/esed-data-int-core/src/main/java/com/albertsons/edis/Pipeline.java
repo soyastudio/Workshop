@@ -1,6 +1,5 @@
 package com.albertsons.edis;
 
-
 public class Pipeline {
     private Bod bod;
     private PipelinePattern<?> pattern;

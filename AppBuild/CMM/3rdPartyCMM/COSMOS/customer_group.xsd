@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://scoperetail.com/custgrp/default.aspx"
+           xmlns:cmn="http://scoperetail.com/common/default.aspx"
+           xmlns:mst="http://scoperetail.com/master/default.aspx"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
+           targetNamespace="http://scoperetail.com/custgrp/default.aspx"
+           elementFormDefault="qualified"
+           vc:minVersion="1.1">
+    <xs:import namespace="http://scoperetail.com/common/default.aspx" schemaLocation="common/scope_common.xsd"/>
+    <xs:import namespace="http://scoperetail.com/master/default.aspx" schemaLocation="common/scope_master.xsd"/>
+    <xs:simpleType name="CustomerGroupType" final="restriction">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="RELEASE_GROUP"/>
+            <xs:enumeration value="ORDER_GROUP"/>
+            <xs:enumeration value="ALLOCATION_GROUP"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="customerGroups" type="CustomerGroups"/>
+    <xs:complexType name="CustomerGroups">
+        <xs:sequence>
+            <xs:element name="action" type="mst:ActionType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="customerGroup" type="CustomerGroup" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="CustomerGroup">
+        <xs:sequence>
+            <xs:element name="customerGroupId" type="xs:positiveInteger" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Unique identifier for the customer Group</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="supplierDivisionId" type="cmn:divisionIdType" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="groupType" type="CustomerGroupType" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="label" type="cmn:string60" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Label or name of the provided by user</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="description" type="cmn:string60" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Description provided by user</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="createTimestamp" type="cmn:offSetDateTime" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Creation time of the rule</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="createdBy" type="cmn:string10" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>User Id of the user who created the rule</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="lastModifiedTimestamp" type="cmn:offSetDateTime" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Last Update time of the rule</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="lastModifiedBy" type="cmn:string10" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>User Id of the user who updated the rule</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="customerRecords" type="CustomerRecords" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Set of customer ids</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CustomerRecords">
+        <xs:sequence>
+            <xs:element name="customerRecord" type="CustomerRecord" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CustomerRecord">
+        <xs:sequence>
+            <xs:element name="customerId" type="cmn:customerIdType" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="customerType" type="mst:CustomerType" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
+
+
+
+
+
+
+
+
+
+
+
+

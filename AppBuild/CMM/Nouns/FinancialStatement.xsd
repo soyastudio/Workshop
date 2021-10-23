@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by  (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--v1.1 11/3/2020 - Rosabel M - Add tag to resolve dateTimeStamp issue-->
+	<!--v1.0 05/15/2020 - Jayson S  - Initial Version-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:include schemaLocation="FinanceMaster.xsd"/>
+	<xs:complexType name="FinancialStatementType">
+		<xs:annotation>
+			<xs:documentation>Financial statements are written records that convey the business activities and the financial performance of a company. Financial statements are often audited by government agencies, accountants, firms, etc. to ensure accuracy and for tax, financing, or investing purposes. 
+
+</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="FinancialStatementHeader" type="FinancialStatementHeaderType">
+				<xs:annotation>
+					<xs:documentation>Contains header level attributes for the financial statement. Includes the statement number, statement date, sending and receiving party, bank details of the transaction, total amount, and other information</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FinancialStatementDetail" type="FinancialStatementDetailType" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Contains detail level attributes for the financial statement. Includes the line number, individual transaction numbers, transaction date and time, transaction amount, and other information</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="FinancialStatementHeaderType">
+		<xs:annotation>
+			<xs:documentation>Contains header level attributes such as statement number, etc.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="FinancialStatementType" type="CodeWithDescription">
+				<xs:annotation>
+					<xs:documentation>Defines the type of financial statement. Example is Money Order or Bank Statement</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StatementNbr" type="xs:long">
+				<xs:annotation>
+					<xs:documentation>The bank-assigned reconciliation statement number. Used only for cash codes that require reconciliation statements.
+
+This is the cash code and date from vendor file timestamp (date portion). Example statement number is 999820200713.
+
+CSR-STMT-NBR</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StatementDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date when statement is generated.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SendingParty" type="PartyType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Person or Organization who sends the financial statement</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReceivingParty" type="PartyType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Person or Organization who receives the financial statement</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StatementSuffix" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Statement Suffix Code
+
+CSR-STMT-SUFFIX</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StatementStatusType" type="StatusType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field identifies the type of record defined. Valid values are: S = Summary D = Detail
+V = Void
+R = Reconcile
+" " = Reconcile
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BankType" type="BankType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines the details of the institution that issued the Financial Statement. 
+
+Example would be for Western Union, Bank Entity is 102, Account Number and Cash Code is 9998 (tied to Financial System), and Bank Transaction Cd or Institution Code is MO or Money Order. 
+
+CSR-BANK-ENTITY
+CSR-BANK-ACCT-NBR
+CSR-CASH-CODE
+CSR-BANK-INST-CODE
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StatementTotalAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains the total amount for this statement.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CreditDebitInd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if this is a Credit or Debit Transaction</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="FinancialStatementDetailType">
+		<xs:annotation>
+			<xs:documentation>Contains detail level attributes such as line number, individual transaction numbers and amounts, etc.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="LineNbr" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains the line number in the Financial statement. This is usually a sequential number.
+
+CSR-LINE-NBR</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TransactionNbr" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A unique, user-defined value used to identify the transaction. 
+
+CSR-TRANS-NBR</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TransactionDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Represents the date of the transaction. 
+CSR-RECON-DATE</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TransactionTm" type="xs:time" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Represents the time of the transaction</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TransactionAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Represents the amount for this transaction</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TransactionChargeAmt" type="AmountType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Represents any fee or charges related to this transaction. These can be transaction fees for money orders.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TransactionFacility" type="TransactionFacilityType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines the facility that carried out the transaction. Example for money orders, this is the retail store where the customer bought the money order.
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CreditDebitInd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if this is a Credit or Debit Transaction</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TransactionFacilityType">
+		<xs:annotation>
+			<xs:documentation>Defines the facility where the transaction happened</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="FacilityType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Type of the facility like, DC,  warehouse, Retail Store, Office building, manufacturing plant..etc.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityID" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A four character code that is used with corporation
+ and division to uniquely identify a facility. A facility may "belong" to
+ only one corporation and one division. A building may house one or more
+facilities. There are two categories for facilities:
+ 1) Operating facility
+ - actively supports the business of the Company
+ - is a distinct business operation within a building
+  - examples: office, processing plant, retail store, truck service
+ shop, or warehouse building  (A warehouse facility includes all warehouse departments that exist within a single building.)
+ - each type of division/business has a different set of possible types of operating facilities: i.e.,
+ - Retail: retail outlets and offices.
+- Wholesale: warehouse facilities, truck service shop, and offices.
+- Processing/Manufacturing: processing plants and offices.
+ 2) Non-operating Facility                                                     
+ - not currently being operated by the Company.
+ - facilities </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

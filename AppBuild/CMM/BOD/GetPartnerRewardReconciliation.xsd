@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Patrick Oliver (Albertsons) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/PartnerRewardReconciliation.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="GetPartnerRewardReconciliation" type="GetPartnerRewardReconciliationType">
+		<xs:annotation>
+			<xs:documentation>Root element: Business Object Document for Albertsons Partner Reward Reconciliation. Current Albertson’s partner reward programs include fuel discounts with partner’s such as Shell and Chevron where customers can redeem Deferred rewards which are earned over time. During fuel purchases customers are presented with their reward balances which they can choose to redeem, request additional information, or cancel. Partners capture this customer transactional data throughout the day and is sent back to Albertsons accounting. This object will capture the partner reward reconciliation messages which are an accounting disposition which determines if and how a given partner reward is treated for financial reporting and accounting purposes.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetPartnerRewardReconciliationType">
+		<xs:annotation>
+			<xs:documentation>Business Object Document for Albertsons Partner Reward Reconciliation. Current Albertson’s partner reward programs include fuel discounts with partner’s such as Shell and Chevron where customers can redeem Deferred rewards which are earned over time. During fuel purchases customers are presented with their reward balances which they can choose to redeem, request additional information, or cancel. Partners capture this customer transactional data throughout the day and is sent back to Albertsons accounting. This object will capture the partner reward reconciliation messages which are an accounting disposition which determines if and how a given partner reward is treated for financial reporting and accounting purposes.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PartnerRewardReconciliationData" type="Abs:PartnerRewardReconciliationType" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

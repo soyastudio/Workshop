@@ -1,0 +1,153 @@
+BROKER SCHEMA com.abs.cmnflows
+
+/*----------------------------------------------------------------------
+SUBFLOW NAME: MsgLogSubFlow.subflow
+DESCRIPTION	: This is a common flow to all the flows for capturing 
+			 Middle Audit messages and store into a common queue. 
+AUTHOR		: Snehansu (TCS)
+BU			: TCS
+CREATED DT	: 17/07/2018
+-------------------------------------------------------------------------
+Program History
+Project	Release	Version	 ChangeOwner		  Date		 Description
+------- ------- -------	----------  		---------  	 -----------
+EDIS    Drop2	0.1		Snehansu            12/06/2017	Initial Draft
+-------------------------------------------------------------------------*/
+CREATE COMPUTE MODULE Audit_Middle_Compute
+	--Main function of the Audit_Middle_Compute Module
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Reference to environment component table details
+		DECLARE cmpRef REFERENCE TO Environment.Variables.CMPNT;
+		CREATE FIELD Environment.Variables.msgLogInfo; 
+		DECLARE msgLogTemp REFERENCE TO Environment.Variables.msgLogInfo;
+		
+		/* Condition to check is enptypayload flag is set. 
+		This flag will be set to suppress the response. 
+		so, Validation reqired at out put flag is dymnamically set to N */
+		/*IF(Environment.Variables.EmptyPayload.IsEmptyPayload = 'Y') THEN 
+		   SET cmpRef.VALIDATION_REQD_TARGET = 'N';
+		END IF;*/
+		
+		--Route to validate node if Validaton is required at target
+		/*IF UPPER(cmpRef.VALIDATION_REQD_TARGET) = 'Y' THEN
+		   PROPAGATE TO TERMINAL 'out2' DELETE NONE ;
+		ELSE
+		   
+		   /* Suppress the message if enptpayload flag is set 
+		   otherwise propogate to out terminal */
+		   IF Environment.Variables.EmptyPayload.IsEmptyPayload = 'Y'  THEN 
+		   	 --No need to propogate out
+		   ELSE
+		     PROPAGATE TO TERMINAL 'out' DELETE NONE ;
+		   END IF;
+		END IF;*/
+		
+		--Condition to check if check if Audit is required
+		IF UPPER(cmpRef.AUDIT_REQD) = 'Y' THEN 
+			
+			CREATE FIELD OutputRoot.XMLNSC;
+			/* Environment.Variables.ResponseCode will be set in 
+			transformation compute node to populate in Misc data for Fault audit */ 
+			DECLARE RspCode CHARACTER;
+		    SET RspCode = Environment.Variables.ResponseCode;
+            
+            --Below flag should be set for the negative response codes 
+            IF Environment.Variables.isFault = 'Y'  THEN
+				SET msgLogTemp.MISC_DATA=
+					'Fault has occured,Negative Response has come from service.'
+					||'Response Code:'||RspCode;
+				SET msgLogTemp.DIRECTION = 'Fault' ;
+            
+            --Below Flag should be set when service down response code
+            ELSEIF Environment.Variables.serviceDown = 'Y'  THEN
+				SET msgLogTemp.MISC_DATA =
+					'Failure Has occured, Service is down or Not-reachable.'
+					||'Response Code:'||RspCode;
+				SET msgLogTemp.DIRECTION = 'Fault' ;
+				
+			/* Below flag should be set while suppressing the response to 
+			 generate Null auidt */
+			ELSEIF Environment.Variables.EmptyPayload.IsEmptyPayload = 'Y'  THEN
+				SET msgLogTemp.MISC_DATA = 
+					Environment.Variables.EmptyPayload.MISC_DATA;
+				SET msgLogTemp.DIRECTION = 'Null';
+				DELETE FIELD InputLocalEnvironment.Variables.Output_Type;
+            
+            --Below else condition will be excecuted for Middle audit
+            ELSE
+            	/*Miscdata environment varibale should be set in 
+            	 transformation compute node */
+            	SET msgLogTemp.MISC_DATA = Environment.Variables.MISC_DATA; 
+            	
+            	SET msgLogTemp.DIRECTION = 'Middle' ;
+            	
+            	--To capture TransactionId
+            	IF cmpRef.COMPONENT_TYPE = 'SF' AND 
+					EXISTS (InputRoot.HTTPInputHeader[]) THEN
+					SET msgLogTemp.TransactionId = 
+						Environment.Variables.SoapReplyIdentifier;
+				ELSEIF cmpRef.COMPONENT_TYPE = 'HF' AND 
+					EXISTS (InputRoot.HTTPInputHeader[]) THEN
+				    SET msgLogTemp.TransactionId = 
+						Environment.Variables.HttpReqIdentifier;
+			    ELSE 
+				     SET msgLogTemp.TransactionId = 
+						COALESCE(InputRoot.MQMD.MsgId,
+							InputLocalEnvironment.Destination.HTTP.ReplyIdentifier,
+						CAST(SUBSTRING(CAST(CURRENT_TIMESTAMP AS CHARACTER)FROM 4)AS BLOB CCSID 1208));
+		        END IF;
+		        
+			    --Below if condition is to capture the middle unique id
+			    IF UPPER(cmpRef.AUDIT_MDL_UNQ_ID) = 'Y' THEN
+			        SET msgLogTemp.MsgUnqId = 
+						COALESCE(EVAL(cmpRef.PATH_MDL_UNQ_ID),
+							'Invalid XPath in PATH_MDL_UNQ_ID');
+		        END IF;
+		    END IF;
+		    
+		    --To capture output message
+		    IF UPPER(cmpRef.STORE_MDL_MSG) = 'Y' THEN
+				SET msgLogTemp.storeMsg = 'Y';
+			END IF;
+		    
+		    /* Function to create Audit message. 
+			This is common for both Input and output audit */  
+		    CALL createMsgLog(InputRoot,OutputRoot,Environment);
+		    --Propogate the audit message to EDIS_MSG_LOG queue
+		    PROPAGATE TO TERMINAL 'out1' DELETE NONE ;
+		    
+		END IF;
+		
+		--Delete the environment valribales
+		    DELETE FIELD Environment.Variables.msgLogInfo; 
+		    DELETE FIELD Environment.Variables.isFault;
+		    DELETE FIELD Environment.Variables.serviceDown;
+		    DELETE FIELD Environment.Variables.EmptyPayload;
+		
+		--Delete the output message once after propogating 
+		DELETE FIELD OutputRoot;
+		
+		CALL CopyEntireMessage();
+		PROPAGATE TO TERMINAL 'out' DELETE NONE ;
+		
+		RETURN FALSE;
+	END;
+/*-----------------------------------------------------------------------------
+PROCEDURE NAME : CopyMessageHeaders
+DESCRIPTION : CopyMessageHeaders
+-----------------------------------------------------------------------------*/
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;

@@ -1,0 +1,1303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2021 rel. 2 sp1 (x64) (http://www.altova.com) by poliv02 (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.4 Patrick Oliver 07/20/21: Updated CouponBookInd to stirng(3) -->
+	<!--V1.3 Rosabel Macario 11/04/2020 - Added tag to resolve dateTimeStamp issue-->
+	<!--V1.2 Patrick Oliver 7/22/20 - Updated VendorId & VendorSubAccntId to string(20)-->
+	<!--V1.1 Patrick Oliver - Updated StoreLevelPromotionType with 'PromoPrice' element for Non-Cpn price from SSSPCRTL-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="Promotion">
+		<xs:annotation>
+			<xs:documentation>Promotion root element</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="PromotionVendorType">
+		<xs:annotation>
+			<xs:documentation>Contians information related to the Vendor who offers the promotion.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="VendorId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Corporate Vendor number that uniquely identifies a vendor within a corporation.
+A vendor is a Company we purchase from. 
+VEND-NUM is generally used with Vendor Sub-Account Number (VEND-SUB-ACNT) or WIMS Sub-Vendor Number (WIMS-SUB-VEND).</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorSubAccountNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identifies a particular outlet of a company we purchase from. EG. The Vancouver outlet of Nabob. This is used by the Accounts Payable System</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="WarehouseVendorId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identifies the WIMS Vendor number set up by the Buyer. 
+The first character of the number indicates the location e.g. V - Vancouver, E - Edmonton.  
+Buyer/Merchandisers may break a Vendor outlet into different WIMS Vendors to suit their own purposes. 
+Some of the reasons a Vendor may have several WIMS Vendor records are: 
+1. Several Buyers buying from the same Vendor. 
+2. A buyer buying different commodity groups from the same Vendor. 
+3. A Vendor offering different purchasing terms on different product lines. 
+4. A Buyer buying some products through a Broker and some directly from the Vendor.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PACSVendorNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This identifies the U.S. PACS/Tandem and OMI Char(8) vendor Nbr.  For warehouse vendors, the first four digits in PACS Vendor Nbr are the last four digits in the Corporate Vendor Nbr (VEND-NUM).  In DSD, the system generates a PACS Vendor Nbr after Cost Areas are added for a distributor. For vendors less than 10000, the PACS Vendor Nbr consists of: - The last four digits of the Corporate Vendor Nbr (VEND-NUM), plus - The three-digit Vendor Sub Account Nbr (VEND-SUB-ACNT), plus - The one-digit Cost Area. SSVENXRF</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorNm" type="xs:string" minOccurs="0"/>
+			<xs:element name="VendorDUNSNbr" type="xs:string" minOccurs="0"/>
+			<xs:element name="DominantVendorInd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Dominant vendor indicator specifies whether this vendor is the dominant vendor for the zone and item. The dominant vendor is based on the highe st Nbr of stores authorized to the vendor/cost area.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="StoreLevelPromotionType">
+		<xs:annotation>
+			<xs:documentation>Contains promotions created at Retail Store level. generally CMS promotions from SSCOUPON</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporationId" minOccurs="0"/>
+			<xs:element ref="DivisionId" minOccurs="0"/>
+			<xs:element ref="ROGCd" minOccurs="0"/>
+			<xs:element ref="RetailStoreId" minOccurs="0"/>
+			<xs:element name="RetailScanCd" type="UPC" minOccurs="0"/>
+			<xs:element name="PromotionPeriod">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="PromotionStartDt" type="xs:dateTime" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is the date the information on the record becomes effective</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PromotionEndDt" type="xs:dateTime" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is the final date the information on this record is effective.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PacsAdplanSequenceNbr" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is a sequence Nbr generated and maintained by the PACS/Adplan Bridge program (ADD760) to enforce uniqueness in SSPENADI by ROG, ADSELECT, CORPITEMCD, and UNITTYPE. For rows created online, this column will be zero. For rows created by the bridge program, this column will be set to 1 for the initial entry, and incremented for each subsequent row where the PACS row matches an existing ROG, ADSELECT, CORPITEMCD and UNITTYPE, but does not match on an existing PACS item key in SSPENADI (the X2 index). This enforces uniqueness and acommodates PACS items.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="12"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CouponData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="LinkPLUNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is the link number assigned for the electronic coupon. If non-zero, CPN_PLU must be zero.  The CMS application responsible for pricing electronic club card promotions currently has a pool of 5 digit link numbers attached to it for identifying promotions. The starting digit of all the links is 8. This is currently done to identify the electronic promotion links from paper coupon PLUs and grocery lookup codes at Point of Sales.  In order to increase the number of available links, so that business will have the flexibility to price significantly more promotions in coming years, the 5 digit link is being expanded to 12 digits starting with 248. </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="12"/>
+									<xs:fractionDigits value="0"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CouponPLUCd" type="xs:string" minOccurs="0"/>
+						<xs:element name="CouponTypeCd" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Signifies type of coupon.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CouponAmt" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is the value of the coupon when redeemed. It is used with coupon method Cd. This is the per unit Amt of the coupon. i.e. price factor is always 1 for coupons. Usage: This is the Amt deducted from the regular price. If Buy 1 Get 1 free this is zero. The item price may be different for each store. See Minimum Purchase Amt.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="5"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CouponMethodCd" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Promotion method Cds are for Club/Coupon promotions and come in pairs: CE - Cents Off for Eaches CW - Cents Off for Weighted items NE - Net for Eaches NW - Net for Weighted items PE - Percent Off for Eaches PW - Percent Off for Weighted items</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CouponLimitQty" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Tells maximum Amt of coupon to be redeemed per transaction.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="2"/>
+									<xs:fractionDigits value="0"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="OriginalCouponAmt" nillable="false" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="5"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="OriginalCouponFactor" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is used in conjunction with the CPNAMTORIG field. If the value in this field is greater than 1 that is the actual coupon values. The store controller does not support factors for coupons. The coupon management system determines the unit Amt for the coupon and moves this unit Amt to the CPNAMT field.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="2"/>
+									<xs:fractionDigits value="0"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="OriginalCouponMethodCd" nillable="false" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CouponAdjustedInd" nillable="false" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CouponDsc" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Description of the coupon as will appear on the till tape.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="18"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CouponPageNbr" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Page in coupon book where this coupon can be found.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="3"/>
+									<xs:fractionDigits value="0"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CouponOriginCd" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates from which system a coupon originated either CMS (blank or  C ) or Target Marketing ( T ).</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CouponBookInd" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Determines if coupon can be found in the coupon book.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PromotionCd" type="xs:integer" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the promotion Cd assigned for the coupon</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PromotionInd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates type of store level promotion.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PromoPrice" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates the Non-Cpn Promo Price from SSSPCRTL where PROMOTION_IND = 'A'</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="12"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PriceFactor" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the Nbr of shelf items received for the price e.g. it is the '2'  in '2/99 cents'.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="2"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PricingMethodCd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The method which is used to specify the Price Amount, Alternate Price Amount and the Limited Quantity Nbr fields.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AlternatePriceAmount" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The alternate (LQP) price advertised. This is the price charged if Price method is not R and the &apos;limits&apos; are achieved.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="7"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AlternatePriceFactor" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The Nbr of units purchased for the Alternate Price Amount. In the example of 2 for 99 cents, the Alternate Price Factor is 2.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="2"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LimitedQuantityNbr" type="xs:short" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is used in conjunction with the price Method. This amount will represent either : - the amount a customer can purchase at the Alternate Price. - Groupings that must be purchased to be charged the Alternate Price. - The minimum amount that must be purchased before the the Alternate Price will be charged.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PriceOverrideInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This tells the POS system that the normal price precedence rules do not apply, and that this price will override LTS and regular prices</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ReasonCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CommonCdUsedInd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if Common Cd was used to create Bib.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MinimumPurchaseQty" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Tells how many must be purchased before coupon is redeemed</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="2"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MinimumPurchaseAmt" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Tells how much money must be spent before coupon is redeemed</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="5"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MinimumPurchaseInd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Tells where the money must be spent (minpurch dollar) before coupon is redeemed.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BIBTypeCd" type="xs:string" minOccurs="0"/>
+			<xs:element name="BIBTagNbr" type="xs:string" minOccurs="0"/>
+			<xs:element name="SignHeaderId" type="xs:string" minOccurs="0"/>
+			<xs:element name="SignTypeCd" minOccurs="0"/>
+			<xs:element name="SignCount1" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> SGNCOUNT1 is the count of TALKER signs for this item.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="1"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SignCount2" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> SGNCOUNT2 is the count of the MOULDING signs for this item.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="1"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SignCount3" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>SGNCOUNT2 is the count of the DISPLAY signs for this item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="POSProcessedInd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This column identifies whether the row has been processed. The valid values for this column are: Spaces - The row has not been picked up for processing T - The POS system has been triggered to process the row E - The row has been processed F - Processing has been completed.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LimitByWeightInd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Limit by Weight Ind. For weighted items, this field specifies if the discount is to be limited by weight rather than by packages. The actual limit Qty can be found in the Limitpertxn field. Values y, n , .</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FundedInd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Tells if the coupon is a manufacturer coupon, ie, manuf will pay sfwy to promote item via a coupon</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FundedAmt" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Tells how much of the coupon Amt will be funded by the manufacturer</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="5"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PricerequiredInd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identifies that the cashier must key in a price for this item.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FrankingInd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is an indicator to the store controller to give the cashier the message that a specific document (cheque or coupon) must be franked, that is, the document must be inserted into the register to have transaction information printed on it.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OpenDrawerInd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is an indicator to the store controller to open the drawer at the front endafter the coupon is processed.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PerformanceDetailSourceId" type="xs:integer" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The value of this column is originated from DemandTec s Promotion Price Optimization (PPO) application and is maintained throughout the promotion s lifecycle to uniquely identify the promotion</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PerformanceDetailId" type="xs:integer" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Generated key for a promotion's Performance Detail information. Globally Unique</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CopientInd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ROGLevelPromotionType">
+		<xs:annotation>
+			<xs:documentation>Contains promotions created at ROG+PriceArea level. generally AdPlan promotions from SSPENADP</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PromotionWarehouseOrg">
+				<xs:annotation>
+					<xs:documentation>Organization Responsible for creation of the promotion and billing the vendor.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="WarehouseCorporationId" type="xs:string" minOccurs="0"/>
+						<xs:element name="WarehouseDivisionId" minOccurs="0"/>
+						<xs:element ref="WarehouseId" minOccurs="0"/>
+						<xs:element ref="DistributionCenterId" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PromotionOfferedOrg">
+				<xs:annotation>
+					<xs:documentation>Organization where the promotion has been offered.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="RetailCorporationId" nillable="false" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="RetailDivisionId" nillable="false" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element ref="ROGCd" minOccurs="0"/>
+						<xs:element name="StoreGroup" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Group of stores within a ROG where the promotion is being offered.(Replacement of Zone id in RTPP). Contains list of tables in a store group also. source: PPAPSG/PPAPPSG/ PPAPPRL tables from Apex. Actual promotions offered store info is in PPAPPRL.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="StoreGroupId" type="xs:string" minOccurs="0"/>
+									<xs:element name="StoreGroupDsc" type="xs:string" minOccurs="0"/>
+									<xs:element ref="RetailStoreId" minOccurs="0" maxOccurs="unbounded"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CostAreaCd" type="xs:short" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A cost area Cd defines an area that a DSD vendor supplies that has the same cost. Cost areas are found on the Distributor Cost Area Description table (DSDCADSCTABLE).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PromotionVendor" type="PromotionVendorType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Contains attributes of the Vendor who offered the Promotion.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PromotionVehicle" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A vehicle is a medium used to communicate the promoted items to the customers. Examples are: Savings Guide, Coupon Book, Weekly Ad, ROP Vehicles are defined on the vehicle table in the SPOT Informix database.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="PromotionVehicleType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="PromotionVehicleNm" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PromotionIds">
+				<xs:annotation>
+					<xs:documentation>Different identifiers related to promotion generated during the lifecycle of a promotion.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="PromotionId" type="xs:integer" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>A Promotion is an instance of a vehicle, which is attached to a specific time and a geographic location. A Promotion may span many Divisions and Zones. Examples are: Eastern Divisions July Savings Guide, Eastern Divisions Week 30 Weekly Flyer, Northern California Divisions Week 20 Weekly Flyer Promotions are defined on the promohdr table in the SPOT Informix database.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PromotionBoxId" type="xs:integer" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>A Box is a grouping of items or common promotion Cds which are promoted together. For printed vehicles, eg. Savings Guide, a promotion box often represents 1 physical box (printed media), which often has the same promotional retail within a Zone. For non-printed vehicles, eg. Unadvertised Promotions (UND), a promotio box often represents a logical grouping of items promoted together, often with the same promotion retail within a Zone or across Zones. Boxes are defined on the promozonebox table in the SPOT Informix database.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="VersionId" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Versions are dynamic groupings of stores within a Zone, which may vary from one promotion to the next. They allow Sales Managers to divide the stores in a Zone dynamically and vary the prices or other attribute of the promotion as necessary.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="5"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AllowanceBillingLogNbr" type="xs:integer" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This Nbr identifies an allowance billing work unit.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="VendorOfferNbr" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Vendor original Offer number captured in NOPA/eDeals</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="DivisionalADSelectId" type="xs:integer" default="0" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is an internal identification Nbr used by the Merchandisers to separate ADs that run in the same period.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ADPLANSequenceNbr" type="xs:short" default="0" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Adplan Sequence Nbr is used to uniquely identify items that have been inserted into ADPLAN. Each SPOT item in the PPTRANSL table is given a sequence Nbr of zero before it is processed by the SPOT/ADPLAN Bridge (PPD610). When PPD610 inserts the item into SSPENADI, the sequence iNbr s incremented for every SSPENADI row with the same ADPLAN key: ROG, ADSELECT, CORPITEMCD, and UNITTYPE. This enforces uniqueness in SSPENADI. The Adplan Sequence Nbr is updated after the row has been inserted into SSPENADI so that the Adplan keys in PPTRANSL and SSPENADI match.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PromotionItem">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="CorporateItemCd" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is the wholesale item Id, which is usually unique across the enterprise and quaranteed to be unique within a country. For Canada, the first 5 digits is the product class Cd (PRODCLASS) and the last 3 are system generated sequence Nbrs. For US, the first four digits are the SMIC Group and Category Cds and the last four digits are system generated sequence Nbrs.  A SSIMS generated Cd that identifies an item across divisions. A CIC always has 1 UPC, but may have more added to it. CIC is the main Nbr used in SIMS to work with items. More than one CIC may be assigned to an UPC.  The corpitemcd value can be changed. All SIMS tables that contain corpitemcd are re-Cdd. See program MED500, Tables SSITMCHG,SSITMCHH.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="8"/>
+									<xs:fractionDigits value="0"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ItemUnitTypeCd" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Shows which of the Consumer, Multipack, or Case UPCs is used to make up the right 5 digitis of the UPC. One of these must be chosen.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="1"/>
+									<xs:fractionDigits value="0"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PromotionPeriod">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="PromotionStartDt" type="xs:dateTime" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is the date the information on the record becomes effective</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PromotionEndDt" type="xs:dateTime" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is the final date the information on this record is effective.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PromotionStatus" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Status of the promotion.
+Active, Ended, Open, Reopened</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PromotionType" type="CodeWithDescription" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates what type of promotion this was. Example: ECP, PCP</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OriginalEndDt" type="xs:dateTime" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the original ending date of the promotion. Remarks : Used when the AD has been extended.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CommonCd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Common Cd links items with common pricing structures.  All packs of 60 gm jello jelly powder will have the same common Cd. They will get the same price. When used with the cost subCd similar packs will get the same cost.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="5"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CommonCostSubCd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identifies a pack within the group of common items when used with the Common Cd. Used to apply cost changes to a group of items. A common cost Cd of zero is used to identify a common retail Cd record in SSITMCCG.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="1"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ADGroupNbr" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This Nbr is used to group items so the advertising department can create layouts.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EstimatedTotalQty" type="xs:integer" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the Qty it was estimated the AD would sell in this ROG. This is currently maintained on-line in Adplan, and should be used instead of ESTQTYCORP.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WholesaleAdCost" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the wholesale cost to the store of this item while on AD.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="9"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ItemFirmOrderedInd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates that the item has been firm ordered and should not be ordered bow</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CorporateEsitmatedQty" type="xs:integer" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The estimated Qty from the multi ROG user. This column may no longer be maintained on-line in Adplan. Get the Sell Qty from ESTQTY - ESTQTYCORP should be referenced only if ESTQTY is zero.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AdvertisingInstructionsTxt" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Instructions to the advertising department</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PromotionInd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This indicates if the item is on Ad or Long Term Special on the delivery date, as  out of stock s do not have the selection list Qty adjusted for ADs, or LTSs.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DebitMemoReleasedInd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If set to  Y  then the debit memo has already been released for this item</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ADReasonCd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Show why the AD was created.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DSDItemInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if the item is a Direct Store Delivered Item.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PromotionSuggestions" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="SuggestedAdMethod" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Suggested advertisement method. R-Radio etc.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SuggestedLimitedQty" type="xs:short" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field is used to pass suggested Qty limites to divisional and also for high level simulation before the pricing is set up in PENPRC / PENADP Remark : For ADplan use only</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SuggestedRetailPrice" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field is used to pass suggested retails from corporate to divisional and also for high level simulation before the pricing is set up in PENPRC / PENADP Remark : For Adplan use only</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="7"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SuggestedPriceFactor" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field is used to pass suggested retails from corporate to divisional and also for high level simulation before the pricing is set up in PENPRC / PENADP Remarks : For Adplan use only</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="2"/>
+									<xs:fractionDigits value="0"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SuggestedUnitCd" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field is used by the Coupon Management System for coupon record(s) (i.e. where perform Cd 1, 2, 3, or 4 is 38 or feature type Cd is C). This field is used in conjunction with SUGGADMETHOD. SUGGADUNIT determines the unit for the discount. Valid Values are: E - each W - weight</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SuggestedRetailChangeInd" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Signals a change to the suggested price fields Remarks : For Adplan use only.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PromotionPerformance" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="PerformanceCd1" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is one of up to four Performance Cds that can be assigned to an item on promotion.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PerformanceCd2" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is the second of up to four Performance Cds that can be assigned to an item on promotion.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PerformanceCd3" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is the third of up to four Performance Cds that can be assigned to an item on promotion.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PerformanceCd4" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is the fourth of up to four Performance Cds that can be assigned to an item on promotion.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PerformanceStartDt" type="xs:date" minOccurs="0"/>
+						<xs:element name="PerformanceEndDt" type="xs:date" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="DefaultPriceData" type="PromotionPriceDataType" minOccurs="0"/>
+			<xs:element name="Allowances" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="AllowanceAmt" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The Amt of a promotional allowance for an item.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="9"/>
+									<xs:fractionDigits value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="OffInvoiceAllowanceAmt" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>These are the off invoice allowances with this item.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="5"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DebitAllowanceAmt" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>These are the Debit invoice allowances with this item.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="5"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="StrategyCd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is a Cd which identifies the importance of the Corporate Item Cd in terms of how it will be promoted. The Cd is user defined and helps to group Corporate Item Cds together in terms of promotional approach and importance to the business. Strategy Cds are defined on the strategy table in the SPOT Informix database.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LTSRetailCreatedInd" nillable="false" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FeatureTypeCd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is a PACS Cd used by Adplan.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SequenceNbr" type="xs:short" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field stores the sequence Nbr of a record or row. This is the same as a line Nbr.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ManuallyCreatedInd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This switch is no longer used for the purpose it was originally intended. It is now used as a Suppress Ad/LTS item from Pricing Indicator, and is set in the PACS/Adplan Bridge (ADD761) or via the SMIC Ad (/LTS) Pricing Screens (ADD860/ADD870).</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EstimatedShippingAmt" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the estimated Nbr of units that will be shipped from the warehouse for the promo. It is maintained by the PACS/Adplan Bridge from PACS. WIMS uses this info, and because it comes from PACS, which has a one-to-many relationship with Adplan, the Bridge maintains this Amt in only one row per PACS key. ie, the PACS key is RESDIVISION, REQDIVISION, VENDOR, LOG, ITEM, WHSE, SEQNBR. There may be three rows in SSPENADI for a specific PACS key (because of multiple ROGS - SNCA/SHAW/ PKSV). Only one of these rows will contain the Est Ship amt from PACS - the other two will be zero. This is for WIMS, and it doesnt matter which row contains the amt.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="9"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FundedInd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Tells if the coupon is a manufacturer coupon, ie, manuf will pay sfwy to promote item via a coupon</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FundedAmt" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Tells how much of the coupon Amt will be funded by the manufacturer</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="5"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FirmOrderWeekNbr" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A memo field to remind buyer the week Nbr to place a firm order for the item. This field is maintained on ADC120 and ADC140. Valid week# is between 0 - 53.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="2"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PerformanceDetailSourceId" type="xs:integer" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The value of this column is originated from DemandTec s Promotion Price Optimization (PPO) application and is maintained throughout the promotion s lifecycle to uniquely identify the promotion</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StoreCount" type="xs:short" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The Nbr of participating stores for a promotion in a ROG</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PriceAreaRetailScanData" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Contains promo prices at ROG + Price Rea + UPC lelvel for a given CIC. data from SSPENADP. PPAPPRL from Apex.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="RetailStoreId" minOccurs="0"/>
+						<xs:element name="PriceAreaCd" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Price areas are groups of stores within a ROG that have the same Pricing structure. This is the individual price area within the Price Area group. Price areas are found on the Price Area Facility Table (SSPAFACLTABLE).</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PromotionItem" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="CorporateItemCd" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the wholesale item Id, which is usually unique across the enterprise and quaranteed to be unique within a country. For Canada, the first 5 digits is the product class Cd (PRODCLASS) and the last 3 are system generated sequence Nbrs. For US, the first four digits are the SMIC Group and Category Cds and the last four digits are system generated sequence Nbrs.  A SSIMS generated Cd that identifies an item across divisions. A CIC always has 1 UPC, but may have more added to it. CIC is the main Nbr used in SIMS to work with items. More than one CIC may be assigned to an UPC.  The corpitemcd value can be changed. All SIMS tables that contain corpitemcd are re-Cdd. See program MED500, Tables SSITMCHG,SSITMCHH.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:decimal">
+												<xs:totalDigits value="8"/>
+												<xs:fractionDigits value="0"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ItemUnitTypeCd" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Shows which of the Consumer, Multipack, or Case UPCs is used to make up the right 5 digitis of the UPC. One of these must be chosen.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:decimal">
+												<xs:totalDigits value="1"/>
+												<xs:fractionDigits value="0"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="RetailScanCd" type="UPC" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Corresponding UPCs of the above CIC from SSITMURX.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="PromotionPeriod" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="PromotionStartDt" type="xs:dateTime" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the date the information on the record becomes effective</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="PromotionEndDt" type="xs:dateTime" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the final date the information on this record is effective.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="PromotionPriceData" type="PromotionPriceDataType" minOccurs="0"/>
+						<xs:element name="MixandMatchGroupCd" type="xs:short" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Used to group items that may be mixed in multiple pricing schemes. Allows correct use of the price factor.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="POSCd" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field is used by the Point of Sale system to determine if the price has been sent to the stores.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ADReasonCd" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Show why the AD was created.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="MarkdownProcessDt" type="xs:dateTime" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The week ending date of the last week for which a markdown bulletin has been created by the markdown print program</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ADDiscountMethodCd" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This indicates the method of discount being used on this item.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ADDiscountAmt" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>For special discounts such as cents off or percent off this field contains the cents or percent off.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="5"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PromotionTypeCd" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates what type of promotion this was. Example: Retail Division</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="BIBTypeCd" type="xs:string" minOccurs="0"/>
+						<xs:element name="BIBTagNbr" type="xs:string" minOccurs="0"/>
+						<xs:element name="SignHeaderId" type="xs:string" minOccurs="0"/>
+						<xs:element name="SignTypeCd" minOccurs="0"/>
+						<xs:element name="SignCount1" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation> SGNCOUNT1 is the count of TALKER signs for this item.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="1"/>
+									<xs:fractionDigits value="0"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SignCount2" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation> SGNCOUNT2 is the count of the MOULDING signs for this item.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="1"/>
+									<xs:fractionDigits value="0"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SignCount3" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>SGNCOUNT3 is the count of the DISPLAY signs for this item.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PerformanceDetailSourceId" type="xs:integer" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The value of this column is originated from DemandTec&apos;s Promotion Price Optimization (PPO) application and is maintained throughout the promotion&apos;s lifecycle to uniquely identify the promotion</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PerformanceDetailId" type="xs:integer" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Generated key for a promotion&apos;s Performance Detail information. Globally Unique</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="OrgMasterNameType" type="OrgMasterNameType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="CommentTxt" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PromotionType">
+		<xs:annotation>
+			<xs:documentation>Contains promotion data created / implemented  at various levels. 
+APEX (RTPP old) , CMS, ADPlan will be the main source systems for this message. It will contain Vendor promotions like STS / LTS / ECP and PCP type. Grain of the message is Promotion/Store/Item</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PromotionTypeCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if it is a coupon or non-coupon data. This BOD will publish only coupon data from SSCOUPON or noncoupon data from PENADI/ADP tables, but not both due to high volume data in the BOD.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ROGLevelPromotionData" type="ROGLevelPromotionType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains promotions created at ROG+PriceArea level. generally AdPlan promotions from SSPENADI/P. LTS/STS/ECP/PCP promotions. In Apex, promotions can be created at a lower level than ROG caleed a store group. A store group is a bunch of stores where the  promotion can be active.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StoreLevelPromotionData" type="StoreLevelPromotionType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains promotions/ Coupons created at Store level.  promotions data from SSCOUPON. ECP/PCP promotions</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PromotionPriceDataType">
+		<xs:sequence>
+			<xs:element name="PricingMethodCd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The method which is used to specify the Price Amount, Alternate Price Amount and the Limited Quantity Nbr fields.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PriceFactor" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the Nbr of shelf items received for the price e.g. it is the '2'  in '2/99 cents'.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="2"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PriceAmount" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the retail price charged to the customer for each shelf unit, or if the price factor is &gt; 1, for price factor Nbr of units. EG. It is the &apos;.99 cents&apos; in &apos;2/.99 cents&apos;. It is also used as the over the limit price.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="7"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AlternatePriceAmount" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The alternate (LQP) price advertised. This is the price charged if Price method is not R and the &apos;limits&apos; are achieved.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="7"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AlternatePriceFactor" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The Nbr of units purchased for the Alternate Price Amount. In the example of 2 for 99 cents, the Alternate Price Factor is 2.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="2"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LimitedQuantityNbr" type="xs:short" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is used in conjunction with the price Method. This amount will represent either : - the amount a customer can purchase at the Alternate Price. - Groupings that must be purchased to be charged the Alternate Price. - The minimum amount that must be purchased before the the Alternate Price will be charged.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

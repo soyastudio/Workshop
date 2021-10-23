@@ -1,0 +1,57 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"$id": "http://example.com/GetReceivable.json",
+	"title": "GetReceivable",
+	"additionalProperties": false,
+	"$ref": "#/definitions/.n1:GetReceivable",
+	"definitions": {
+		".n1:GetReceivable": {
+			"$ref": "#/definitions/n1:GetReceivableType",
+			"description": "Receivable is a transaction representing an invoice, credit memo or debit memo to a customer.  A receivable is an open (unpaid) item in the Accounts Receivable ledger.Defines open receivable items."
+		},
+		"n1:GetReceivableType": {
+			"description": "Receivable is a transaction representing an invoice, credit memo or debit memo to a customer.  A receivable is an open (unpaid) item in the Accounts Receivable ledger.Defines open receivable items.",
+			"type": "object",
+			"properties": {
+				"#": {
+					"type": "string"
+				},
+				"n1:DocumentData": {
+					"type": "array",
+					"minItems": 1,
+					"items": {
+						"type": "object",
+						"properties": {
+							"#": {
+								"type": "string"
+							},
+							"n1:Document": {
+								"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:DocumentType"
+							},
+							"n1:DocumentAction": {
+								"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:DocumentActionType"
+							}
+						},
+						"required": [
+							"n1:Document",
+							"n1:DocumentAction"
+						],
+						"additionalProperties": false
+					}
+				},
+				"n1:ReceivableData": {
+					"type": "array",
+					"minItems": 1,
+					"items": {
+						"$ref": "../Nouns/FinanceMaster.json#/definitions/Abs:ReceivableType"
+					}
+				}
+			},
+			"required": [
+				"n1:DocumentData",
+				"n1:ReceivableData"
+			],
+			"additionalProperties": false
+		}
+	}
+}

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://scoperetail.com/attribute/default.aspx"
+           xmlns:cmn="http://scoperetail.com/common/default.aspx"
+           xmlns:mst="http://scoperetail.com/master/default.aspx"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
+           targetNamespace="http://scoperetail.com/attribute/default.aspx"
+           elementFormDefault="qualified"
+           vc:minVersion="1.1">
+    <xs:import namespace="http://scoperetail.com/common/default.aspx" schemaLocation="common/scope_common.xsd"/>
+    <xs:import namespace="http://scoperetail.com/master/default.aspx" schemaLocation="common/scope_master.xsd"/>
+
+    <xs:simpleType name="Rules" final="restriction">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ITEMQTY_MIN"/>
+            <xs:enumeration value="ITEMQTY_MAX"/>
+            <xs:enumeration value="PALLET_ROUND_UP"/>
+            <xs:enumeration value="PALLET_ROUND_DOWN"/>
+            <xs:enumeration value="CASE_ROUND_UP"/>
+            <xs:enumeration value="CASE_ROUND_DOWN"/>
+            <xs:enumeration value="ORDERQTY_MIN"/>
+            <xs:enumeration value="ORDERQTY_MAX"/>
+            <xs:enumeration value="ON_HOLD"/>
+            <xs:enumeration value="AUTO_ALLOCATION"/>
+            <xs:enumeration value="AUTO_SUBSTITUTION"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Capability" final="restriction">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ORDER_TYPE"/>
+            <xs:enumeration value="COG"/>
+            <xs:enumeration value="SUPPLIER_COG"/>
+            <xs:enumeration value="COG_PRODUCT"/>
+            <xs:enumeration value="SUPPLIER_PRODUCT"/>
+            <xs:enumeration value="SUPPLIER"/>
+            <xs:enumeration value="ORDER_TYPE_SUPPLIER_CRG"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:element name="attributes" type="Attributes"/>
+    <xs:complexType name="Attributes">
+        <xs:sequence>
+            <xs:element name="action" type="mst:ActionType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="attribute" type="Attribute" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Attribute">
+        <xs:sequence>
+            <xs:element name="ruleId" type="xs:positiveInteger" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Unique Rule Id</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="ruleType" type="Rules" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Rule Type</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="capability" type="Capability" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Capability Type</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="orderType" type="cmn:OrderTypeCodes" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Order Type</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="productId" type="cmn:productIdType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Product Id or Item code</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="supplier" type="SupplierRecord" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Supplier info including division</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="customerGroupId" type="xs:positiveInteger" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Unique identifier for the customer Group</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="customerId" type="xs:positiveInteger" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Customer Id</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="enabled" type="xs:boolean" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Flag to indicate if the rule is enabled or disabled</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="effectiveDate" type="xs:date" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>For some rules like auto hold there is an effective and expiry date
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="expiryDate" type="xs:date" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>For some rules like auto hold there is an effective and expiry date
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="ruleData" type="RuleData" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Rule data depending on rule type. It will not be present if the rule is of type
+                        enable/disable
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="createTimestamp" type="cmn:offSetDateTime" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Creation time of the rule</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="createdBy" type="cmn:string10" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>User Id of the user who created the rule</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="lastModifiedTimestamp" type="cmn:offSetDateTime" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Last Update time of the rule</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="lastModifiedBy" type="cmn:string10" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>User Id of the user who updated the rule</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="RuleData">
+        <xs:sequence>
+            <xs:element name="quantity" type="cmn:quantityType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="roundPercent" type="xs:integer" minOccurs="0" maxOccurs="1" />
+            <xs:element name="processDate" type="xs:date" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="deliveryDate" type="xs:date" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="changeReasonId" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="customerType" type="mst:CustomerType" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="SupplierRecord">
+        <xs:sequence>
+        	<xs:element name="supplierId" type="cmn:supplierIdType" minOccurs="0" maxOccurs="1"/>         
+            <xs:element name="supplierType" type="mst:SupplierType" minOccurs="0" maxOccurs="1"/>
+             <xs:element name="corpId" type="cmn:corpIdType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="divisionId" type="cmn:divisionIdType" minOccurs="1" maxOccurs="1"/>          
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
+
+
+
+
+
+
+
+
+
+
+
+

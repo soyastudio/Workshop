@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2021 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--!=============================================================================================-->
+	<!--!-->
+	<!--!-->
+	<!--!      Noun: FreshProductionOverride-->
+	<!--!                                     Business object that represents fresh production override.-->
+	<!--!-->
+	<!--!=============================================================================================-->
+	<!--5/3/2021 - v1.0 - Alex Nunes - Initial version.-->
+	<!--5/5/2021 - v1.0 - Alex Nunes - Annotation added for the Noun. -->
+	<!--7/30/2021 - v1.0 - Alex Nunes - Changed SetProductionTs to DateTimeType type.-->
+	<xs:element name="FreshProductionOverride" type="FreshProductionOverrideType">
+		<xs:annotation>
+			<xs:documentation>Root element.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="FreshProductionOverrideType">
+		<xs:annotation>
+			<xs:documentation>This represents Fresh Department Production Planning store and item specific planning information, including system recommendation for production, any store overrides, current on-hand quantities, as well as shelf facing minimums</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporationId"/>
+			<xs:element ref="DivisionId"/>
+			<xs:element name="FacilityType" type="CodeWithDescription"/>
+			<xs:element name="FacilityId">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BatchId" type="xs:int">
+				<xs:annotation>
+					<xs:documentation>BatchId also known as WorksheetId. This element represents the work sheet for the unit of work related to the production.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UPC">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="UPC"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ProductionCycleType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Describe what type of production Cycle this information relates to. It could 'S' for Single Production cycle or 'M' for Multi Production cycle.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SetProductionTs" type="DateTimeType">
+				<xs:annotation>
+					<xs:documentation>For Single Cycle Production -If SetProduction done before
+scheduled date then this field represents the scheduled date and time, else it is the date and time when SetProduction was completed. For Multi Cycle Production - this field is always the scheduled start date and time.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RecommendationQty">
+				<xs:annotation>
+					<xs:documentation>Quantity recommended by the application of how much should be produced.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="10"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RecommendationOverrideQty" type="xs:int">
+				<xs:annotation>
+					<xs:documentation>Quantity recommended by the application of how many items should  be produced (default) or end user override item quantity.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InventoryOnHandQty" type="xs:int">
+				<xs:annotation>
+					<xs:documentation>Quantity on hand according to the system after spot checks have been completed.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ActualProductionQty">
+				<xs:annotation>
+					<xs:documentation>Needs annotation</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:int"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ProductionCycle">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ProductionCycleId" type="xs:int">
+							<xs:annotation>
+								<xs:documentation>Internal identifier for the production cycle.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ProductionCycleDsc" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Internal identifier for the production cycle.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="MinimumFacingQty">
+				<xs:annotation>
+					<xs:documentation>Minimum facing quantity (shelf apperance).</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:int"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AuditData" type="AuditType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Audit data elements.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AuditType">
+		<xs:annotation>
+			<xs:documentation>This type represents auditing data related to the message at source.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0">
+			<xs:element name="CreateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Time stamp of when message was created at source.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LastUpdateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time stamp of when message was last modified at source.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CreateUserId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Id of the client that created the message at source.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LastUpdateUserId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>User Id of who last modified the message at source.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EffetiveDateTimeType">
+		<xs:annotation>
+			<xs:documentation>Common type for Retail Customer effective date and time.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0">
+			<xs:element ref="Abs:FirstEffectiveDt" minOccurs="0"/>
+			<xs:element ref="Abs:FirstEffectiveTm" minOccurs="0"/>
+			<xs:element ref="Abs:LastEffectiveDt" minOccurs="0"/>
+			<xs:element ref="Abs:LastEffectiveTm" minOccurs="0"/>
+			<xs:element name="InclusiveInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates whether or not the dates and times are inclusive or not.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

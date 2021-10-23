@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Schema Owner: 	Safeway Inc
+   Date Created:      07 May 2020
+   Author:		Patrick Oliver
+   Description: Contains commonly used Safeway Purchase order schema.
+   Name: /SFWY/Nouns/SwyPurchaseOrder.xsd
+-->
+<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by Rosabel Macario (Albertsons) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.5 Rosabel Macario 06/10/21: Added Status under ChartOfAccountsTarget-->
+	<!--V1.4 Patrick Oliver: Added RestCd to COA source; Renamed GLCombinationId to LegacyFusionCd in COA source; Removed GLCombinationId from COA target-->
+	<!--V1.3 Patrick Oliver 11/20/20: Added complex types EffectiveDateTimeType and AuditDataType; added MappingNm to top level-->
+	<!--V1.2 Rosabel Macario 11/05/2020 - Added tag to resolve dateTimeStamp issue-->
+	<!--V1.1 Patrick Oliver - Added AccountTypeCd, InterCompanyCd , AltAccountId,  GLCombinationId to ChartOfAccount segment-->
+	<!--V1.0  Patrick Oliver 08/28/20: Initial Version-->
+	<xs:include schemaLocation="../Nouns/FinanceMaster.xsd"/>
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:complexType name="ChartOfAccountsCrossReferenceType">
+		<xs:annotation>
+			<xs:documentation>Chart Of Accounts cross reference will be used to map source and target chart of account data between systems. Note that the master data for chart of accounts will be contained in GLMaster BOD.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="MappingNm">
+				<xs:annotation>
+					<xs:documentation>This can be used to specify the type of mapping for COA (Enitty1, Entity2, LOB1, LOB2, etc.) </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ChartOfAccountsSource">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="SourceSystem" type="CodeWithName">
+							<xs:annotation>
+								<xs:documentation>Contains source system ID, name (Lawson, SIMS, etc.)</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SourceSegmentCd" type="CodeWithDescription">
+							<xs:annotation>
+								<xs:documentation>Identifies the segment number for legacy chart of account elemnet (Segment1 = Company, Segment2 = Facility, Segment3 = Section, etc.) </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element ref="CompanyId" minOccurs="0"/>
+						<xs:element name="CorporationId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CostCenterID" type="IDType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The Cost Center is an accumulator of cost information that may be an organizational unit or area of responsibility.  It is an organization code that allows a grouping of expenses and costs.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="GLPayType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="DivisionId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Identifies the division that is subset of a corporation and responsible for a certain type of line of business.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="FacilityId" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Unique identifier for a facility.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="FacilityType" type="xs:string" default="" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Type of the facility like, DC,  warehouse, Retail Store, Office building, manufacturing plant..etc.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element ref="DepartmentId" minOccurs="0"/>
+						<xs:element name="SectionCd" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Defines the Cd that uniquely identified the  grouping of products or services within a department.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AccountTypeCode" type="CodeWithDescription" id="oagis-id-21df83d0f9dc48c19471666506cfe363" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation source="http://www.openapplications.org/oagis/10/platform/2">Type of UserAccount.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="AccountingUnit" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element ref="AccountingUnitId" minOccurs="0"/>
+									<xs:element name="Account" minOccurs="0">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element ref="AccountId" minOccurs="0"/>
+												<xs:element ref="SubAccountId" minOccurs="0"/>
+												<xs:element ref="ChartOfAccountNm" minOccurs="0"/>
+												<xs:element ref="AccountNm" minOccurs="0"/>
+												<xs:element ref="AccountDsc" minOccurs="0"/>
+												<xs:element ref="VariableLevelNbr" minOccurs="0"/>
+												<xs:element name="PostingLevel" type="CodeWithDescription" minOccurs="0"/>
+												<xs:element name="PostingCurrency" minOccurs="0">
+													<xs:complexType>
+														<xs:complexContent>
+															<xs:extension base="CodeWithDescription">
+																<xs:sequence minOccurs="0">
+																	<xs:element ref="CurrencyExchangeRate" minOccurs="0"/>
+																</xs:sequence>
+															</xs:extension>
+														</xs:complexContent>
+													</xs:complexType>
+												</xs:element>
+												<xs:element name="LocalCurrency" minOccurs="0">
+													<xs:complexType>
+														<xs:complexContent>
+															<xs:extension base="CodeWithDescription">
+																<xs:sequence minOccurs="0">
+																	<xs:element ref="CurrencyExchangeRate" minOccurs="0"/>
+																</xs:sequence>
+															</xs:extension>
+														</xs:complexContent>
+													</xs:complexType>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element ref="OldAccountId" minOccurs="0"/>
+						<xs:element name="RestCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is used as additional padding to source segments for conversion </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LegacyFusionCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Concatination of legacy chart of Accounts segment Fields</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="250"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ChartOfAccountsTarget">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="TargetSystem" type="CodeWithName" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Identifies if processing accounting or merchandising chart of accounts (Lawson, MARS) </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="TargetSegmentCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Identifies the segment number for chart of account element (Segment1 = Entity, Segment2 = Line of Business, Segmen3 = Site, Segment4 = Cost Center, etc.)</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Entity" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Companies with EIN's allows for flexibility of hundreds if not thousands of legal entities and room for special purposes.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="LineOfBusiness" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Represents the type of business based on the organizational structure, revenue channels and manufacturing. Used for high level management view of the organization that changes frequently</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Site" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Represents physical space, captures a physical space at a facility or location. Allows for Hierarchy structure to capture multiple sites that roll up to facilities</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CostCenter" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>A function that is responsible for the costs that it incurs related to its normal business operations</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ProductTypeGroup" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Groupings of product types is based on a consolidated version of the organization's products that is needed for management reporting within distribution centers and manufacturing plants.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CustomerGroup" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Groupings of customers is based on a consolidated version of the organization's customers that is needed for management reporting.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CashflowMovement" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Cash flows is based on the organization's cash flow and rollforward classifications with linkages to select balance sheet account activity.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="InterCompanyCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Eliminate transactions occurring between its subsidiaries </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="AccountTypeCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Type of UserAccount.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="AltAccountId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Can be account ID but in string format.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="25"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="EffectiveTimePeriod" type="EffetiveDateTimeType" minOccurs="0"/>
+						<xs:element name="Status" type="StatusType" minOccurs="0"/>
+						<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EffetiveDateTimeType">
+		<xs:annotation>
+			<xs:documentation>Common type for Customer effective date and time.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0">
+			<xs:element ref="FirstEffectiveDt" minOccurs="0"/>
+			<xs:element ref="FirstEffectiveTm" minOccurs="0"/>
+			<xs:element ref="LastEffectiveDt" minOccurs="0"/>
+			<xs:element ref="LastEffectiveTm" minOccurs="0"/>
+			<xs:element name="DurationNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Number that represents the duration.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DurationUnitDsc" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Duration unit. D for Days, W for weeks.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InclusiveInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates whether or not the dates and times are inclusive or not.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute ref="typeCode"/>
+	</xs:complexType>
+</xs:schema>

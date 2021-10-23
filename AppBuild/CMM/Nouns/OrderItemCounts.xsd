@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (http://www.altova.com) by Devesh Kandpal (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--!=============================================================================================-->
+	<!--!-->
+	<!--!-->
+	<!--!      Noun: OrderItemCounts-->
+	<!--!                                     Business object that represents counts of warehouse items-->
+	<!--!-->
+	<!--!=============================================================================================-->
+	<!--07/15/2021 - v1.0 - Devesh Kandpal - Initial version.-->
+	<xs:element name="OrderItemCounts" type="OrderItemCountsType">
+		<xs:annotation>
+			<xs:documentation>Root element.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="OrderItemCountsType">
+		<xs:annotation>
+			<xs:documentation>This BOD Represents counts of warehouse items </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporationId"/>
+			<xs:element ref="DivisionId"/>
+			<xs:element ref="DistributionCenterId"/>
+			<xs:element ref="PhysicalWarehouseGroupId"/>
+			<xs:element ref="CorporateItemCd" minOccurs="0"/>
+			<xs:element name="BranchItemCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the old five digit item code used with the MCL branch to identify an item. This is Used to interface to detail files systems not converted to corporate item code and divisional users. It is sometimes referred to as Division Item Code.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FacilityId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A four character code that is used with corporation
+ and division to uniquely identify a facility. A facility may "belong" to
+ only one corporation and one division. A building may house one or more
+facilities. There are two categories for facilities:
+ 1) Operating facility
+ - actively supports the business of the Company
+ - is a distinct business operation within a building
+  - examples: office, processing plant, retail store, truck service
+ shop, or warehouse building  (A warehouse facility includes all warehouse departments that exist within a single building.)
+ - each type of division/business has a different set of possible types of operating facilities: i.e.,
+ - Retail: retail outlets and offices.
+- Wholesale: warehouse facilities, truck service shop, and offices.
+- Processing/Manufacturing: processing plants and offices.
+ 2) Non-operating Facility                                                     
+ - not currently being operated by the Company.
+ - facilities </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityType" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Type of the facility like, DC,  warehouse, Retail Store, Office building, manufacturing plant..etc.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrderType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Type code of an order. Ex: SR = Safeway Store Order SF = Firm Order             IN = Wholesale Order</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ProcessDt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date when the orders are process in WMS system</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ExtractDtTm" type="DateTimeBaseType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date time when orders are extract from WMS system</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrderItemQty" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DayTotalQty" minOccurs="0"/>
+			<xs:element name="QuantityUOM" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Unit of Measure. Ex each, case, pack, pallet</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrderStatus" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Status of the Order</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2021 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://www.openapplications.org/oagis/9" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/StoreItemSchematic.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--v1.1 - 2/4/2021 - Alex Nunes - Removed attributes at the BOD root level. -->
+	<!--v1.1 - 3/26/2021 - Alex Nunes - Namespace change. -->
+	<xs:element name="GetStoreItemSchematic" type="GetStoreItemSchematic">
+		<xs:annotation>
+			<xs:documentation>Business object that provides retail store schematics data. It provides information about the placement of items in retail store aisle and the corresponding planogram data with rack, shelf and slot information for each item. Schematics is meant for optimum utilization of the retial spce, inventory control and consumer experience. Basically this BOD gives information about planograms and items that can go with it. Data from this BOD need to be combined with 'GetStoreSchematic' BOD to get complete picture from a store perspective.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetStoreItemSchematic">
+		<xs:annotation>
+			<xs:documentation>Business object that provides retail store schematics data. It provides information about the placement of items in retail store aisle and the corresponding planogram data with rack, shelf and slot information for each item. Schematics is meant for optimum utilization of the retial spce, inventory control and consumer experience.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="StoreItemSchematicData" type="Abs:StoreItemSchematic"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

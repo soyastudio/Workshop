@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ComIbmCompute.msgnode="ComIbmCompute.msgnode" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:eflow="http://www.ibm.com/wbi/2005/eflow" xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility" nsURI="com/abs/ocrp/AirMilePoints/AirMilePoints_Details_Transformer.subflow" nsPrefix="com_abs_ocrp_AirMilePoints_AirMilePoints_Details_Transformer.subflow">
+  <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1" useDefaults="true" udpSupport="true">
+    <eSuperTypes href="http://www.ibm.com/wbi/2005/eflow#//FCMBlock"/>
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.VERSION_ID" name="VERSION_ID" defaultValueLiteral="1.1.4">
+      <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.SYSTEM_ENVIRONMENT_CODE" name="SYSTEM_ENVIRONMENT_CODE" defaultValueLiteral="PR">
+      <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <translation xmi:type="utility:TranslatableString" key="AirMilePoints_Details_Transformer" bundleName="com/abs/ocrp/AirMilePoints/AirMilePoints_Details_Transformer" pluginId="ESED_AirMilePoints_OCRP_IH_Publisher"/>
+    <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/ESED_AirMilePoints_OCRP_IH_Publisher/icons/full/obj16/AirMilePoints_Details_Transformer.gif"/>
+    <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/ESED_AirMilePoints_OCRP_IH_Publisher/icons/full/obj30/AirMilePoints_Details_Transformer.gif"/>
+    <composition>
+      <nodes xmi:type="eflow:FCMSource" xmi:id="InTerminal.Input" location="95,170">
+        <translation xmi:type="utility:TranslatableString" key="InTerminal.Input" bundleName="com/abs/ocrp/AirMilePoints/AirMilePoints_Details_Transformer" pluginId="ESED_AirMilePoints_OCRP_IH_Publisher"/>
+      </nodes>
+      <nodes xmi:type="eflow:FCMSink" xmi:id="OutTerminal.Output" location="652,171">
+        <translation xmi:type="utility:TranslatableString" key="OutTerminal.Output" bundleName="com/abs/ocrp/AirMilePoints/AirMilePoints_Details_Transformer" pluginId="ESED_AirMilePoints_OCRP_IH_Publisher"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="356,170" computeExpression="esql://routine/com.abs.ocrp.AirMilePoints#AirMilePoints_Details_Transformer_Compute.Main">
+        <translation xmi:type="utility:ConstantString" string="Compute"/>
+      </nodes>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_1" targetNode="FCMComposite_1_1" sourceNode="InTerminal.Input" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_2" targetNode="OutTerminal.Output" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+    </composition>
+    <propertyOrganizer>
+      <propertyDescriptor groupName="Group.Basic" configurable="true" userDefined="true" describedAttribute="Property.VERSION_ID">
+        <propertyName xmi:type="utility:TranslatableString" key="Property.VERSION_ID" bundleName="com/abs/ocrp/AirMilePoints/AirMilePoints_Details_Transformer" pluginId="ESED_AirMilePoints_OCRP_IH_Publisher"/>
+        <propertyDescriptor groupName="Group.Basic" configurable="true" userDefined="true" describedAttribute="Property.SYSTEM_ENVIRONMENT_CODE">
+          <propertyName xmi:type="utility:TranslatableString" key="Property.SYSTEM_ENVIRONMENT_CODE" bundleName="com/abs/ocrp/AirMilePoints/AirMilePoints_Details_Transformer" pluginId="ESED_AirMilePoints_OCRP_IH_Publisher"/>
+        </propertyDescriptor>
+      </propertyDescriptor>
+    </propertyOrganizer>
+    <stickyBoard/>
+  </eClassifiers>
+</ecore:EPackage>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:com_abs_cmnflows_Audit_Validate_Input.subflow="com/abs/cmnflows/Audit_Validate_Input.subflow" xmlns:com_abs_cmnflows_Audit_Validate_Output.subflow="com/abs/cmnflows/Audit_Validate_Output.subflow" xmlns:com_abs_cmnflows_EncryptedExceptionSubFlow.subflow="com/abs/cmnflows/EncryptedExceptionSubFlow.subflow" xmlns:com_abs_edis_commons_XML_TO_JSON_CONVERTER.subflow="com/abs/edis/commons/XML_TO_JSON_CONVERTER.subflow" xmlns:com_abs_erums_groceryorder_ESED_GroceryOrder_CMM_Transformer.subflow="com/abs/erums/groceryorder/ESED_GroceryOrder_CMM_Transformer.subflow"
+    xmlns:com_abs_erums_groceryorder_ESED_GroceryOrder_Input_Normalizer.subflow="com/abs/erums/groceryorder/ESED_GroceryOrder_Input_Normalizer.subflow" xmlns:com_ibm_connector_kafka_ComIbmEventInput.msgnode="com/ibm/connector/kafka/ComIbmEventInput.msgnode" xmlns:com_ibm_connector_kafka_ComIbmOutput.msgnode="com/ibm/connector/kafka/ComIbmOutput.msgnode" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:eflow="http://www.ibm.com/wbi/2005/eflow" xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility"
+    nsURI="com/abs/erums/groceryorder/ESED_GroceryOrder_eRUMS_IH_Publisher.msgflow" nsPrefix="com_abs_erums_groceryorder_ESED_GroceryOrder_eRUMS_IH_Publisher.msgflow">
+  <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1">
+    <eSuperTypes href="http://www.ibm.com/wbi/2005/eflow#//FCMBlock"/>
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.queueName" name="queueName" defaultValueLiteral="EDIS.EXCEPTION.MSG">
+      <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <translation xmi:type="utility:TranslatableString" key="ESED_GroceryOrder_eRUMS_IH_Publisher" bundleName="com/abs/erums/groceryorder/ESED_GroceryOrder_eRUMS_IH_Publisher" pluginId="ESED_GroceryOrder_eRUMS_IH_Publisher"/>
+    <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/ESED_GroceryOrder_eRUMS_IH_Publisher/icons/full/obj16/ESED_GroceryOrder_eRUMS_IH_Publisher.gif"/>
+    <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/ESED_GroceryOrder_eRUMS_IH_Publisher/icons/full/obj30/ESED_GroceryOrder_eRUMS_IH_Publisher.gif"/>
+    <composition>
+      <nodes xmi:type="com_abs_erums_groceryorder_ESED_GroceryOrder_Input_Normalizer.subflow:FCMComposite_1" xmi:id="FCMComposite_1_3" location="249,119">
+        <translation xmi:type="utility:ConstantString" string="ESED_GroceryOrder_Input_Normalizer"/>
+      </nodes>
+      <nodes xmi:type="com_abs_cmnflows_Audit_Validate_Input.subflow:FCMComposite_1" xmi:id="FCMComposite_1_4" location="455,250">
+        <translation xmi:type="utility:ConstantString" string="Audit_Validate_Input"/>
+      </nodes>
+      <nodes xmi:type="com_abs_erums_groceryorder_ESED_GroceryOrder_CMM_Transformer.subflow:FCMComposite_1" xmi:id="FCMComposite_1_5" location="608,250" LOG_OUTPUT_MSG="N">
+        <translation xmi:type="utility:ConstantString" string="ESED_GroceryOrder_CMM_Transformer"/>
+      </nodes>
+      <nodes xmi:type="com_abs_cmnflows_Audit_Validate_Output.subflow:FCMComposite_1" xmi:id="FCMComposite_1_6" location="895,118">
+        <translation xmi:type="utility:ConstantString" string="Audit_Validate_Output"/>
+      </nodes>
+      <nodes xmi:type="com_ibm_connector_kafka_ComIbmEventInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="113,257" connectorName="Kafka" topicName="OSMS-EMOM_C02_ORDER" bootstrapServers="localhost:9092" groupId="grocery_order_consumer_group" initialOffset="latest" enableAutoCommit="true" clientId="grocery_order_consumer" useClientIdSuffix="true" connectionTimeout="15" sessionTimeout="10" receiveBatchSize="1" securityProtocol="PLAINTEXT" sslProtocol="TLSv1.2" messageDomainProperty="JSON"
+          validateTiming="deferred" parserXmlnscBuildTreeUsingXMLSchema="false" parserXmlnscUseForXmlnsDomain="false" parserXmlnscMixedContentRetainMode="none" parserXmlnscCommentsRetainMode="none" parserXmlnscProcessingInstructionsRetainMode="none" validateMaster="none" validateFailureAction="exception" componentLevel="flow" additionalInstances="0">
+        <translation xmi:type="utility:ConstantString" string="KafkaConsumer"/>
+      </nodes>
+      <nodes xmi:type="com_ibm_connector_kafka_ComIbmOutput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="1118,118" connectorName="Kafka" topicName="ESED_C01_GroceryOrder" bootstrapServers="localhost:9092" clientId="grocery_order_producer" useClientIdSuffix="true" acks="1" timeout="60" securityProtocol="PLAINTEXT" sslProtocol="TLSv1.2" validateMaster="inherit" validateFailureAction="exception">
+        <translation xmi:type="utility:ConstantString" string="KafkaProducer"/>
+      </nodes>
+      <nodes xmi:type="com_abs_cmnflows_EncryptedExceptionSubFlow.subflow:FCMComposite_1" xmi:id="FCMComposite_1_7" location="276,526" HOSTNAME="IIBPR" APPLICATIONNAME="ESED_GroceryOrder_eRUMS_IH_Publisher" INPUTTYPE="KAFKA" INPUTNAME="OSMS-EMOM_C02_ORDER" REPLAYRULE="Y" MAXREPLAYCOUNT="3" COMPONENTNAME="OSMS-EMOM_C02_ORDER">
+        <translation xmi:type="utility:ConstantString" string="EncryptedExceptionSubFlow"/>
+      </nodes>
+      <nodes xmi:type="com_ibm_connector_kafka_ComIbmOutput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_9" location="1138,423" connectorName="Kafka" topicName="ESED_C01_GroceryOrder_JSON" bootstrapServers="localhost:9092" useClientIdSuffix="true" acks="0" timeout="60" securityProtocol="PLAINTEXT" sslProtocol="TLSv1.2" validateMaster="inherit" validateFailureAction="exception">
+        <translation xmi:type="utility:ConstantString" string="JsonProducer"/>
+      </nodes>
+      <nodes xmi:type="com_abs_edis_commons_XML_TO_JSON_CONVERTER.subflow:FCMComposite_1" xmi:id="FCMComposite_1_8" location="891,423">
+        <translation xmi:type="utility:ConstantString" string="XML_TO_JSON_CONVERTER"/>
+      </nodes>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_3" targetNode="FCMComposite_1_5" sourceNode="FCMComposite_1_4" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_4" targetNode="FCMComposite_1_6" sourceNode="FCMComposite_1_5" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_8" targetNode="FCMComposite_1_2" sourceNode="FCMComposite_1_6" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_10" targetNode="FCMComposite_1_3" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_11" targetNode="FCMComposite_1_4" sourceNode="FCMComposite_1_3" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_1" targetNode="FCMComposite_1_7" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_2" targetNode="FCMComposite_1_7" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.catch" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_5" targetNode="FCMComposite_1_8" sourceNode="FCMComposite_1_5" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_6" targetNode="FCMComposite_1_9" sourceNode="FCMComposite_1_8" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.in"/>
+    </composition>
+    <propertyOrganizer>
+      <propertyDescriptor groupName="Group.Basic" propertyEditor="com.ibm.etools.mft.ibmnodes.editors.mq.MQQueueNameEditor" configurable="true" describedAttribute="Property.queueName">
+        <propertyName xmi:type="utility:TranslatableString" key="Property.queueName" bundleName="ComIbmMQOutput" pluginId="com.ibm.etools.mft.ibmnodes.definitions"/>
+      </propertyDescriptor>
+    </propertyOrganizer>
+    <attributeLinks promotedAttribute="Property.queueName" overriddenNodes="FCMComposite_1_7">
+      <overriddenAttribute href="com/abs/cmnflows/EncryptedExceptionSubFlow.subflow#Property.queueName"/>
+    </attributeLinks>
+    <stickyBoard/>
+  </eClassifiers>
+</ecore:EPackage>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<xs:schema xmlns="Abs" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="abs" xmlns:ns2="http://collab.safeway.com/it/architecture/AbsGlobalElements" xmlns:ns3="http://collab.safeway.com/it/architecture/info/AbsOmMaster" xmlns:ns4="http://collab.safeway.com/it/architecture/AbsOmMaster" xmlns:ns11="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="Abs" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.1 06/18/2021 initial version-->
+	<xs:include schemaLocation="../Nouns/OrgMaster.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="GetOMDistrict" type="GetOMDistrictType">
+		<xs:annotation>
+			<xs:documentation>Business object that provides Albertsons District organization Information.  For operations reasons each division is subdivided into multiple districts. Districts can be retail districts, manufacturing plant districts. Non opoerating facilites are also grouped with in a district.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetOMDistrictType">
+		<xs:annotation>
+			<xs:documentation>Business object that provides Albertsons District organization Information.  For operations reasons each division is subdivided into multiple districts. Districts can be retail districts, manufacturing plant districts. Non opoerating facilites are also grouped with in a district.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="ns11:DocumentType"/>
+						<xs:element name="DocumentAction" type="ns11:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="OMDistrictData" type="OMDistrictType"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

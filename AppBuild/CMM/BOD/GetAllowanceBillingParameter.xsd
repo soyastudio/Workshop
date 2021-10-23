@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://www.openapplications.org/oagis/9" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" vc:minVersion="1.1"  elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--!=============================================================================================-->
+	<!--!-->
+	<!--!-->
+	<!--!      GetAllowanceBillingParameter: -->
+	<!--!                                     BOD that represents vendor Allocances Billing Parameter related to vendor offer incentives.             -->
+	<!--!-->
+	<!--!=============================================================================================-->
+	<!--V1.0 Alex Nunes - 6/16/2020 - Initial version.-->
+	<!--V1.0 Alex Nunes - 6/19/2020 - Changes reflecting meeting with Tech Lead. -->
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/AllowanceBillingParameter.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="GetAllowanceBillingParameter" type="GetAllowanceBillingParameterType">
+		<xs:annotation>
+			<xs:documentation>root</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetAllowanceBillingParameterType">
+		<xs:annotation>
+			<xs:documentation>BOD represents Standard Albertson companies schema for Allowance Billing parameter related to vendor offer incentives.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AllowanceBillingParamData" type="Abs:AllowanceBillingParameterType"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

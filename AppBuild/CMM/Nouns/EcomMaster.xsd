@@ -1,0 +1,720 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2021 rel. 2 sp1 (x64) (http://www.altova.com) by poliv02 (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.0  02142020  Sai Nuthakki   Initial Version-->
+	<!--V1.1  06092020  Sai Nuthakki   Added ShoppingCartType-->
+	<!--V1.2  08032020 Sai Nuthakki Added Business EventType-->
+	<!--V1.3 11052020  Rosabel Macario - Added tag to resolve dateTimeStamp issue-->
+	<!--V1.4 01/22/21 Patrick Oliver: (1) Added CustomerId to Customer 
+(2) Added complex type ShoppingCartProfileType to EcomMaster.xsd
+(3) Added ShoppingCartProfile to ShoppingCartType in EcomMaster.xsd-->
+	<!--V1.5 012221 Sai Added ShiftNbr in BusinessEventType-->
+	<!--V1.6 05/10/21: Added EventOverrideType to BusinessEventType-->
+	<!--V1.7 05/12/21 Patrick Oliver: Updated EventStartTs and EventEndTs to dateTimeStamp-->
+	<!--V2.0 08/15/21 Patrick Oliver: Added EventStorageUnitData, EventTotalStorageUnitQty, EventOrderType, BatchHandoffInd to BusinessEventType-->
+	<!--V2.1 09/10/21 Patrick Oliver: BusinessEventType:
+• Removed typeCode from EventTotalStorageUnitQty
+• Changed ActivityStorageUnitType to EventStorageUnitType (same in GOF)
+• Added MFCInd
+• Added EventStorageUnitOverrides
+• Added BatchHandoffInd, ByPassBagHotCnt
+• Change EventOverrideType to EventOverrideSubCd
+• Added EventStorageUnitQtyByUnitType (for storage unit counts) (also moved unbounded to element from sequence Updated EventStorageUnitData to move unbounded to element from sequence
+V2.1 10/05/21 Patrick Oliver: CustomerDeliverySlotType:
+• Added StartTs  (WGD -white glove delivery), Added BookingInd (WGD), Added BookingServiceLevelType (WGD) -->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:complexType name="ShoppingCartType">
+		<xs:annotation>
+			<xs:documentation>Defines customer shopping cart with items selected to include in customer order.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CartNbr"/>
+			<xs:element ref="RetailStoreId"/>
+			<xs:element name="CartStatus" type="StatusType" minOccurs="0"/>
+			<xs:element ref="CustomerType" minOccurs="0"/>
+			<xs:element ref="Customer" minOccurs="0"/>
+			<xs:element ref="DeliveryServiceType" minOccurs="0"/>
+			<xs:element ref="DeliveryReceiveType" minOccurs="0"/>
+			<xs:element name="CartSourceType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Source system for the Shopping cart data </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CartCreateTs" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="CartUpdateTs" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="MFCInd" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if the shopping cart i screated for an MFC(Micro Fullfilment Center) fullfillment.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="BookingNbr" minOccurs="0"/>
+			<xs:element name="ShoppingCartProfile" type="ShoppingCartProfileType" minOccurs="0"/>
+			<xs:element name="CartItem" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="UPCId" type="UPC" minOccurs="0"/>
+						<xs:element ref="BaseProductNbr" minOccurs="0"/>
+						<xs:element name="ItemQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="UOM" type="UOMType" minOccurs="0"/>
+						<xs:element name="AllowedQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SubstitutionTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Customer item substitution preferences in cas primary item is not available.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="500"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CommentTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>customer comments for an item.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2000"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CreateTs" type="xs:dateTime" minOccurs="0"/>
+						<xs:element name="UpdateTs" type="xs:dateTime" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="BusinessEventType">
+		<xs:annotation>
+			<xs:documentation>Defines the eCom business event and the status of the event at various stages.
+Ex: Abs Door delivery, 3Pl delivery, store picking..etc</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="EventType" type="CodeWithDescription">
+				<xs:annotation>
+					<xs:documentation>Defines the type of event.
+Ex: Grocery order Delivery, Order status.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EventSubType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>sub events with in main event.
+ex: Grocery Delivery is the main event.
+Driver started, on the way, reached, delivered are the sub events.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EventBusinessAreaType" type="DeliveryAreaType">
+				<xs:annotation>
+					<xs:documentation>Geographic area that covers eCom business event.
+Ex: a store, group of stores or a zip cd.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EventTransactionType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Business transiaction Id attached to an event.
+Ex: Customer grocery order nbr</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="TransactionId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Business transaction Id.
+Ex Customer Order Nbr</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="TransactionType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="ReferenceNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>cross reference nbr from external systems for internal transaction id.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AltTransaction" minOccurs="0" maxOccurs="5">
+							<xs:annotation>
+								<xs:documentation>Alternate transaction Ids linked to the business event, like fulfillment order id.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="AltTransactionId" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="100"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AltTransactionType" type="CodeWithDescription" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="EventSourceType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Source of the event data. ex 3pl or internal trucking system</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EventPartnerType" minOccurs="0">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="CodeWithDescription">
+							<xs:sequence>
+								<xs:element name="EventPartnerId" minOccurs="0">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="50"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="EventPartnerNm" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Name of the business partner performing th event.
+Could be internal or external.
+Ex: Instacart, Doordash..etc</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="100"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="EventPersonId" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Id of the person performaing the event.
+Ex  driver's Id in case of delivery event.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="50"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="EventPersonNm" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Name of the person performaing the event.
+Ex  driver's Name in case of delivery event.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="100"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="EventPersonIdType" type="CodeWithDescription" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Type of the person Id, ex Emp id, Drivers license</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="VehicleId" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Vehicle used in the event.
+ex: delivery truck nbr</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="VehicleType" type="CodeWithDescription" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Type of the vehicle used in the business event.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="EventOverrideType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Various event override profiles (ex: Override partner.)</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="EventOverrideCd" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="EventOverrideSubCd" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="EventOverrideInd" type="xs:boolean" minOccurs="0"/>
+						<xs:element name="EventOverrideStatus" type="StatusType" minOccurs="0"/>
+						<xs:element name="EventOverrideReasonType" type="CodeWithDescription" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="EventPhaseType" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="EventStatusType" minOccurs="0">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="StatusType">
+							<xs:sequence>
+								<xs:element name="EventStartTs" type="xs:dateTimeStamp" minOccurs="0"/>
+								<xs:element name="EventEndTs" type="xs:dateTimeStamp" minOccurs="0"/>
+								<xs:element name="TimeZoneCd" minOccurs="0">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="50"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="ShiftNbr" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Facility work shift nbr.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="50"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="StatusReason" type="CodeWithDescription" minOccurs="0"/>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="EventLocationType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Location of a particular event status.
+ex: pickup location, delivery location, in-transit location</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="LocationAddress" type="AddressBaseType" minOccurs="0"/>
+						<xs:element name="LatitudeDegree" type="xs:decimal" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Defines the angular distance north or south from the equator of a point on the earth&apos;s surface, measured on the meridian of the point. Half of a pair of coordinates (the other being longitude).&#10;&#10;A latitude can have negative values.&#10;</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="LongitudeDegree" type="xs:decimal" nillable="true" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Defines the angular distance east or west on the earth&apos;s surface, measured by the angle contained between the meridian of a given point and a prime meridian.  Half of a pair of coordinates (the other being latitude) assigned via a point geocoding procedure.  &#10;&#10;Unlike latitude, which has the equator as a natural starting position, there is no natural starting position for longitude&#10;&#10;Longitude can have negative values.&#10;&#10;</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="EventStorageUnitData" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="EventStorageUnitType" type="StorageUnitType" minOccurs="0"/>
+						<xs:element ref="StorageUnitId" minOccurs="0"/>
+						<xs:element name="StorageUnitWt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>total weight of the storage unit.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element ref="StorageUnitItemQty" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="EventStorageUnitQtyByUnitType" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="EventStorageUnitType" type="StorageUnitType" minOccurs="0"/>
+						<xs:element name="StorageUnitQty" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Number of storage units. 
+Ex: Number of Bins, number of Bags, number of Bags per Tote, etc.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="EventTotalStorageUnitQty" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>total number of bins/ totes/bags used in the event.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EventStorageUnitOverrides" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="BatchHandoffInd" type="xs:boolean" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicator for customer batch handoff. </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ByPassBagHotCnt" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Counter to show number of hot bags customer choose not to have oven stored. </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="EventOrderType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Specifies the event customer order type. 
+Ex: 'Regular', 'Custom', etc.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EventRequestType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Specifies the event execution request type. 
+Ex: 'Pickup Only', 'Pick and Deliver', etc.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ShoppingCartProfileType">
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="ProfileType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines various order profiles.
+Ex WYSIWYG</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ProfileValueInd" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="ProfileValueTxt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CustomerDeliverySlotType">
+		<xs:annotation>
+			<xs:documentation>Available time window slot for an online customer to place an order and receive goods with in a business area.
+</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DeliveryAreaType" type="DeliveryAreaType" minOccurs="0"/>
+			<xs:element ref="SlotId" minOccurs="0"/>
+			<xs:element name="SlotWindow" type="SlotWindowType" minOccurs="0"/>
+			<xs:element name="SlotType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines the type of slot as 1 hr slot, 4 hr slot..etc</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SlotPlanType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Slot planning type,
+standard or non-standard</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SlotStatus" type="StatusType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines status of the slot, active, inactive or Deleted</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MaxDeliveryCnt" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Maximum nuber of delivaries that can be served in a given time slot.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="DeliveryServiceType" minOccurs="0"/>
+			<xs:element ref="DeliveryReceiveType" minOccurs="0" maxOccurs="5"/>
+			<xs:element ref="DeliveryChargeType" minOccurs="0" maxOccurs="10"/>
+			<xs:element name="ReservedInd" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if the slot has been already reserved by any customer.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SlotBookingType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Bookings made during a particular slot.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="Customer" minOccurs="0"/>
+						<xs:element ref="CartNbr" minOccurs="0"/>
+						<xs:element name="StartTs" type="xs:dateTime" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Time for booking start</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ExpiryTs" type="xs:dateTime" minOccurs="0"/>
+						<xs:element ref="BookingNbr" minOccurs="0"/>
+						<xs:element name="BookingInd" type="xs:boolean" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Flag for active booking</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="VersionNbr" type="xs:integer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Booking version nbr</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element ref="OrderId" minOccurs="0"/>
+						<xs:element ref="DeliveryServiceType" minOccurs="0"/>
+						<xs:element name="BookingCategoryType" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Defines the booking as original booking or Re-Booking.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="BookingServiceLevelType" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Defines the type of service level that delivery service must provide.
+Ex: ‘In-Home’, ‘In-Refrigerator, ‘Attended’, etc. </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Auditdata" type="RecordAuditData" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DeliveryAreaType">
+		<xs:annotation>
+			<xs:documentation>Defined Business operation area for ecom delivaries, could be a store, group of stores, zip code or microfullfilment center or any other grouping.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="DivisionId" minOccurs="0"/>
+			<xs:element name="DeliveryAreaTypeCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Delivery area type. 
+values: 
+"store",  
+"store group", 
+"zip cd"</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DeliveryAreaValueTxt" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>store id, or store group id or a MFC id or a zip cd.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MFCInd" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if a facility is a Micro Fulfillment Center (MFC)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="SlotId" type="xs:string">
+		<xs:annotation>
+			<xs:documentation>unique identiifer for each slot window.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="SlotWindowType">
+		<xs:annotation>
+			<xs:documentation>Defines time window for a given slot in a business area.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StartTs" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="EndTs" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="ExpiryTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Timestamp when dleivery slot expires. no more active.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EditCutoffTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Cut off time for customer to make changes in the order for a given slot.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DayOfWeek" type="xs:string" minOccurs="0"/>
+			<xs:element name="Shift" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>Identifies store shift fall with in slot window.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ShiftId" type="xs:string" minOccurs="0"/>
+						<xs:element name="StartTs" type="xs:dateTime" minOccurs="0"/>
+						<xs:element name="EndTs" type="xs:dateTime" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="TimeZone" type="CodeWithDescription" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="DeliveryServiceType" type="CodeWithDescription">
+		<xs:annotation>
+			<xs:documentation>eCommerce delivery service type. ex Door delivery, Drivr up and Go (DUG)</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="CustomerType" type="CodeWithDescription">
+		<xs:annotation>
+			<xs:documentation>Identifies Customer type.
+Residential or
+Business</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="DeliveryChargeType">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="CustomerType" minOccurs="0"/>
+				<xs:element name="DeliveryChargeId" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Identifier for the delivery charge like a scan code or upc.</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="50"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="DeliveryChargeAmt" minOccurs="0">
+					<xs:simpleType>
+						<xs:restriction base="xs:decimal">
+							<xs:totalDigits value="6"/>
+							<xs:fractionDigits value="2"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="DiscountedDeliveryChargeId" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Identifier for the discounted delivery charge like a scan code or upc.</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="50"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="DiscountedDeliveryChargeAmt" minOccurs="0">
+					<xs:simpleType>
+						<xs:restriction base="xs:decimal">
+							<xs:totalDigits value="6"/>
+							<xs:fractionDigits value="2"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="ItemDeliveryChargeAmt" minOccurs="0">
+					<xs:simpleType>
+						<xs:restriction base="xs:decimal">
+							<xs:totalDigits value="6"/>
+							<xs:fractionDigits value="2"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="ItemDiscountedDeliveryChargeAmt" minOccurs="0">
+					<xs:simpleType>
+						<xs:restriction base="xs:decimal">
+							<xs:totalDigits value="6"/>
+							<xs:fractionDigits value="2"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="BasketSizeCnt" minOccurs="0">
+					<xs:simpleType>
+						<xs:restriction base="xs:decimal">
+							<xs:totalDigits value="10"/>
+							<xs:fractionDigits value="4"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="AlertBasketSizeCnt" minOccurs="0">
+					<xs:simpleType>
+						<xs:restriction base="xs:decimal">
+							<xs:totalDigits value="10"/>
+							<xs:fractionDigits value="4"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CartNbr" type="xs:long">
+		<xs:annotation>
+			<xs:documentation>Shopping cart number generated by the system when customer selects items for online ordering.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="OrderId" type="xs:string">
+		<xs:annotation>
+			<xs:documentation>Grocery order id generated by system to fulfill a customer booking</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="BookingNbr" type="xs:long">
+		<xs:annotation>
+			<xs:documentation>Online booking number generated when customer cart becomes a booking for goods delivery.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="Customer" type="CustomerRelationshipType">
+		<xs:annotation>
+			<xs:documentation>Defines the customer who receives the offer and clipping the coupons.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="DeliveryReceiveType" type="CodeWithDescription">
+		<xs:annotation>
+			<xs:documentation>Customer delivery receive type. 
+Attended - need to hand over the delivery to the customer.
+UnAttended - Deliery can be placed at the door.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="BaseProductNbr">
+		<xs:annotation>
+			<xs:documentation>Popularly known as BPN number in eCommerce world. Identifier generated in eCom for a group of similar elements. BPN can represent multiple CICs or UPCs. BPN is used to dispaly items in safeway.com online sales site.
+ Ex Seedless red grapes will have one BPN but there may be multiple varities with in red grapes like crimson red, dark red or light red with different cic/upcs.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:decimal">
+				<xs:totalDigits value="14"/>
+				<xs:fractionDigits value="0"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:complexType name="StorageUnitType">
+		<xs:annotation>
+			<xs:documentation>Defines the type of storage used in assignment, ex bin, tote, bag or a container.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StorageUnitType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Type of the storage unit like Bin, Bag, Tote..etc</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StorageUnitSubType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>sub type of storage unit. like types of bins ex Frozen, Chilled, Dry</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StorageUnitCapacity" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>different types of storage bin/container capacities like weight, vol..etc</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="CapacityType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="CapacityValueNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="StorageUnitId">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="100"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="StorageUnitItemQty" type="xs:integer">
+		<xs:annotation>
+			<xs:documentation>Number of Items stored in each storage unit.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+</xs:schema>

@@ -1,0 +1,745 @@
+<?xml version="1.0"?> 
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/salaryplan" elementFormDefault="qualified" targetNamespace="http://collab.safeway.com/it/architecture/info/salaryplan"> 
+  <xsd:element name="SALARY_PLAN_SYNC" type="SALARY_PLAN_SYNC_TypeShape"/> 
+  <xsd:complexType name="SALARY_PLAN_SYNC_TypeShape"> 
+    <xsd:sequence> 
+      <xsd:element name="FieldTypes" type="FieldTypes_TypeShape"/> 
+      <xsd:element name="MsgData" type="MsgData_TypeShape"/> 
+    </xsd:sequence> 
+  </xsd:complexType> 
+  <xsd:complexType name="FieldTypes_TypeShape"> 
+    <xsd:all> 
+      <xsd:element name="SAL_PLAN_TBL" type="FieldTypesSAL_PLAN_TBL_TypeShape"/> 
+      <xsd:element name="PSCAMA" type="FieldTypesPSCAMA_TypeShape"/> 
+    </xsd:all> 
+  </xsd:complexType> 
+  <xsd:complexType name="FieldTypesSAL_PLAN_TBL_TypeShape"> 
+    <xsd:sequence> 
+      <xsd:element name="SETID" type="FieldTypesCharFieldType"/> 
+      <xsd:element name="SAL_ADMIN_PLAN" type="FieldTypesCharFieldType"/> 
+      <xsd:element name="EFFDT" type="FieldTypesDateFieldType"/> 
+      <xsd:element name="EFF_STATUS" type="FieldTypesCharFieldType"/> 
+      <xsd:element name="DESCR" type="FieldTypesCharFieldType"/> 
+      <xsd:element minOccurs="0" name="DESCRSHORT" type="FieldTypesCharFieldType"/> 
+      <xsd:element name="STD_HOURS" type="FieldTypesNumberFieldType"/> 
+      <xsd:element minOccurs="0" name="STD_HRS_FREQUENCY" type="FieldTypesCharFieldType"/> 
+      <xsd:element name="CURRENCY_CD" type="FieldTypesCharFieldType"/> 
+      <xsd:element minOccurs="0" name="SALARY_MATRIX_CD" type="FieldTypesCharFieldType"/> 
+      <xsd:element minOccurs="0" name="COMPANY" type="FieldTypesCharFieldType"/> 
+      <xsd:element minOccurs="0" name="FREQ_ID_MONTHLY" type="FieldTypesCharFieldType"/> 
+      <xsd:element minOccurs="0" name="FREQ_ID_DAILY" type="FieldTypesCharFieldType"/> 
+      <xsd:element minOccurs="0" name="FREQ_ID_HOURLY" type="FieldTypesCharFieldType"/> 
+      <xsd:element minOccurs="0" name="AUTO_CALC_PREM_SW" type="FieldTypesCharFieldType"/> 
+      <xsd:element minOccurs="0" name="CMP_RTCD_PREM_ABS" type="FieldTypesCharFieldType"/> 
+      <xsd:element minOccurs="0" name="CMP_RTCD_PREM_NONA" type="FieldTypesCharFieldType"/> 
+      <xsd:element minOccurs="0" name="GVT_SAL_BASIS" type="FieldTypesCharFieldType"/> 
+      <xsd:element minOccurs="0" name="GVT_GEOG_SCOPE" type="FieldTypesCharFieldType"/> 
+      <xsd:element minOccurs="0" name="GVT_NEXT_PAY_ADJ" type="FieldTypesDateFieldType"/> 
+      <xsd:element minOccurs="0" name="TARIFF_GER" type="FieldTypesCharFieldType"/> 
+      <xsd:element minOccurs="0" name="TARIFF_AREA_GER" type="FieldTypesCharFieldType"/> 
+      <xsd:element minOccurs="0" name="ATTACHSYSFILENAME" type="FieldTypesCharFieldType"/> 
+      <xsd:element minOccurs="0" name="ATTACHUSERFILE" type="FieldTypesCharFieldType"/> 
+      <xsd:element minOccurs="0" name="URL_ID" type="FieldTypesCharFieldType"/> 
+      <xsd:element minOccurs="0" name="DESCR254" type="FieldTypesCharFieldType"/> 
+      <xsd:element minOccurs="0" name="ADDED_BY" type="FieldTypesCharFieldType"/> 
+      <xsd:element minOccurs="0" name="ADDED_DT" type="FieldTypesDateFieldType"/> 
+      <xsd:element minOccurs="0" name="WAGE_PROG_FLAG" type="FieldTypesCharFieldType"/> 
+    </xsd:sequence> 
+    <xsd:attribute fixed="R" name="class" type="xsd:string" use="required"/> 
+  </xsd:complexType> 
+  <xsd:complexType name="FieldTypesPSCAMA_TypeShape"> 
+    <xsd:sequence> 
+      <xsd:element minOccurs="0" name="LANGUAGE_CD" type="FieldTypesCharFieldType"/> 
+      <xsd:element minOccurs="0" name="AUDIT_ACTN" type="FieldTypesCharFieldType"/> 
+      <xsd:element minOccurs="0" name="BASE_LANGUAGE_CD" type="FieldTypesCharFieldType"/> 
+      <xsd:element minOccurs="0" name="MSG_SEQ_FLG" type="FieldTypesCharFieldType"/> 
+      <xsd:element minOccurs="0" name="PROCESS_INSTANCE" type="FieldTypesNumberFieldType"/> 
+      <xsd:element minOccurs="0" name="PUBLISH_RULE_ID" type="FieldTypesCharFieldType"/> 
+      <xsd:element minOccurs="0" name="MSGNODENAME" type="FieldTypesCharFieldType"/> 
+    </xsd:sequence> 
+    <xsd:attribute fixed="R" name="class" type="xsd:string" use="required"/> 
+  </xsd:complexType> 
+  <xsd:complexType name="FieldTypesCharFieldType"> 
+    <xsd:attribute fixed="CHAR" name="type" type="xsd:string" use="required"/> 
+  </xsd:complexType> 
+  <xsd:complexType name="FieldTypesNumberFieldType"> 
+    <xsd:attribute fixed="NUMBER" name="type" type="xsd:string" use="required"/> 
+  </xsd:complexType> 
+  <xsd:complexType name="FieldTypesDateFieldType"> 
+    <xsd:attribute fixed="DATE" name="type" type="xsd:string" use="required"/> 
+  </xsd:complexType> 
+  <xsd:complexType name="FieldTypesTimeFieldType"> 
+    <xsd:attribute fixed="TIME" name="type" type="xsd:string" use="required"/> 
+  </xsd:complexType> 
+  <xsd:complexType name="FieldTypesDateTimeFieldType"> 
+    <xsd:attribute fixed="DATETIME" name="type" type="xsd:string" use="required"/> 
+  </xsd:complexType> 
+  <xsd:complexType name="FieldTypesImageRefFieldType"> 
+    <xsd:attribute fixed="IMAGEREFERENCE" name="type" type="xsd:string" use="required"/> 
+  </xsd:complexType> 
+  <xsd:complexType name="MsgData_TypeShape"> 
+    <xsd:sequence> 
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Transaction" type="Transaction_TypeShape"/> 
+    </xsd:sequence> 
+  </xsd:complexType> 
+  <xsd:complexType name="Transaction_TypeShape"> 
+    <xsd:all> 
+      <xsd:element minOccurs="0" name="SAL_PLAN_TBL" type="SAL_PLAN_TBLMsgDataRecord_TypeShape"/> 
+      <xsd:element name="PSCAMA" type="PSCAMAMsgDataRecord_TypeShape"/> 
+    </xsd:all> 
+  </xsd:complexType> 
+  <xsd:complexType name="SAL_PLAN_TBLMsgDataRecord_TypeShape"> 
+    <xsd:sequence> 
+      <xsd:element name="SETID" type="SETID_TypeShape"/> 
+      <xsd:element name="SAL_ADMIN_PLAN" type="SAL_ADMIN_PLAN_TypeShape"/> 
+      <xsd:element name="EFFDT" type="EFFDT_TypeShape"/> 
+      <xsd:element name="EFF_STATUS" type="EFF_STATUS_TypeShape"/> 
+      <xsd:element name="DESCR" type="DESCR_TypeShape"/> 
+      <xsd:element minOccurs="0" name="DESCRSHORT" type="DESCRSHORT_TypeShape"/> 
+      <xsd:element name="STD_HOURS" type="STD_HOURS_TypeShape"/> 
+      <xsd:element minOccurs="0" name="STD_HRS_FREQUENCY" type="STD_HRS_FREQUENCY_TypeShape"/> 
+      <xsd:element name="CURRENCY_CD" type="CURRENCY_CD_TypeShape"/> 
+      <xsd:element minOccurs="0" name="SALARY_MATRIX_CD" type="SALARY_MATRIX_CD_TypeShape"/> 
+      <xsd:element minOccurs="0" name="COMPANY" type="COMPANY_TypeShape"/> 
+      <xsd:element minOccurs="0" name="FREQ_ID_MONTHLY" type="FREQ_ID_MONTHLY_TypeShape"/> 
+      <xsd:element minOccurs="0" name="FREQ_ID_DAILY" type="FREQ_ID_DAILY_TypeShape"/> 
+      <xsd:element minOccurs="0" name="FREQ_ID_HOURLY" type="FREQ_ID_HOURLY_TypeShape"/> 
+      <xsd:element minOccurs="0" name="AUTO_CALC_PREM_SW" type="AUTO_CALC_PREM_SW_TypeShape"/> 
+      <xsd:element minOccurs="0" name="CMP_RTCD_PREM_ABS" type="CMP_RTCD_PREM_ABS_TypeShape"/> 
+      <xsd:element minOccurs="0" name="CMP_RTCD_PREM_NONA" type="CMP_RTCD_PREM_NONA_TypeShape"/> 
+      <xsd:element minOccurs="0" name="GVT_SAL_BASIS" type="GVT_SAL_BASIS_TypeShape"/> 
+      <xsd:element minOccurs="0" name="GVT_GEOG_SCOPE" type="GVT_GEOG_SCOPE_TypeShape"/> 
+      <xsd:element minOccurs="0" name="GVT_NEXT_PAY_ADJ" type="GVT_NEXT_PAY_ADJ_TypeShape"/> 
+      <xsd:element minOccurs="0" name="TARIFF_GER" type="TARIFF_GER_TypeShape"/> 
+      <xsd:element minOccurs="0" name="TARIFF_AREA_GER" type="TARIFF_AREA_GER_TypeShape"/> 
+      <xsd:element minOccurs="0" name="ATTACHSYSFILENAME" type="ATTACHSYSFILENAME_TypeShape"/> 
+      <xsd:element minOccurs="0" name="ATTACHUSERFILE" type="ATTACHUSERFILE_TypeShape"/> 
+      <xsd:element minOccurs="0" name="URL_ID" type="URL_ID_TypeShape"/> 
+      <xsd:element minOccurs="0" name="DESCR254" type="DESCR254_TypeShape"/> 
+      <xsd:element minOccurs="0" name="ADDED_BY" type="ADDED_BY_TypeShape"/> 
+      <xsd:element minOccurs="0" name="ADDED_DT" type="ADDED_DT_TypeShape"/> 
+      <xsd:element minOccurs="0" name="WAGE_PROG_FLAG" type="WAGE_PROG_FLAG_TypeShape"/> 
+    </xsd:sequence> 
+    <xsd:attribute fixed="R" name="class" type="xsd:string" use="required"/> 
+  </xsd:complexType> 
+  <xsd:complexType name="SETID_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="SETID_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="SAL_ADMIN_PLAN_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="SAL_ADMIN_PLAN_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="EFFDT_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="EFFDT_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="EFF_STATUS_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="EFF_STATUS_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="DESCR_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="DESCR_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="DESCRSHORT_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="DESCRSHORT_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="STD_HOURS_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="STD_HOURS_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="STD_HRS_FREQUENCY_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="STD_HRS_FREQUENCY_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="CURRENCY_CD_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="CURRENCY_CD_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="SALARY_MATRIX_CD_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="SALARY_MATRIX_CD_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="COMPANY_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="COMPANY_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="FREQ_ID_MONTHLY_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="FREQ_ID_MONTHLY_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="FREQ_ID_DAILY_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="FREQ_ID_DAILY_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="FREQ_ID_HOURLY_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="FREQ_ID_HOURLY_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="AUTO_CALC_PREM_SW_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="AUTO_CALC_PREM_SW_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="CMP_RTCD_PREM_ABS_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="CMP_RTCD_PREM_ABS_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="CMP_RTCD_PREM_NONA_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="CMP_RTCD_PREM_NONA_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="GVT_SAL_BASIS_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="GVT_SAL_BASIS_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="GVT_GEOG_SCOPE_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="GVT_GEOG_SCOPE_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="GVT_NEXT_PAY_ADJ_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="GVT_NEXT_PAY_ADJ_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="TARIFF_GER_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="TARIFF_GER_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="TARIFF_AREA_GER_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="TARIFF_AREA_GER_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="ATTACHSYSFILENAME_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="ATTACHSYSFILENAME_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="ATTACHUSERFILE_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="ATTACHUSERFILE_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="URL_ID_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="URL_ID_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="DESCR254_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="DESCR254_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="ADDED_BY_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="ADDED_BY_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="ADDED_DT_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="ADDED_DT_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="WAGE_PROG_FLAG_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="WAGE_PROG_FLAG_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:simpleType name="SETID_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>SetID</xsd:documentation> 
+      <xsd:documentation>SETID is a character of length 5. Allows Uppercase characters including numbers</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:maxLength value="5"/> 
+      <xsd:whiteSpace value="preserve"/> 
+      <xsd:pattern value="([A-Z]|[0-9]|\p{Z}|\p{P}|\p{Lu})*"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="SAL_ADMIN_PLAN_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>SAL_ADMIN_PLAN is a character of length 4. Allows Uppercase characters including numbers</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:maxLength value="4"/> 
+      <xsd:whiteSpace value="preserve"/> 
+      <xsd:pattern value="([A-Z]|[0-9]|\p{Z}|\p{P}|\p{Lu})*"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="EFFDT_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>Effective Date</xsd:documentation> 
+      <xsd:documentation>EFFDT is a date.</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:date"> 
+      <xsd:pattern value="(\d{4}-\d{2}-\d{2})"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="EFF_STATUS_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>Effective Status</xsd:documentation> 
+      <xsd:documentation>EFF_STATUS is a character of length 1. Allows Uppercase characters including numbers</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:enumeration value="A"/> 
+      <xsd:enumeration value="I"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="DESCR_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>Description</xsd:documentation> 
+      <xsd:documentation>DESCR is a character of length 30</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:maxLength value="30"/> 
+      <xsd:whiteSpace value="preserve"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="DESCRSHORT_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>Short Description</xsd:documentation> 
+      <xsd:documentation>DESCRSHORT is a character of length 10</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:maxLength value="10"/> 
+      <xsd:whiteSpace value="preserve"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="STD_HOURS_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>STD_HOURS is a number of length 7 with a decimal position of 2</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:decimal"> 
+      <xsd:fractionDigits value="2"/> 
+      <xsd:totalDigits value="7"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="STD_HRS_FREQUENCY_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>STD_HRS_FREQUENCY is a character of length 5. Allows Uppercase characters including numbers</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:maxLength value="5"/> 
+      <xsd:whiteSpace value="preserve"/> 
+      <xsd:pattern value="([A-Z]|[0-9]|\p{Z}|\p{P}|\p{Lu})*"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="CURRENCY_CD_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>Currency Code</xsd:documentation> 
+      <xsd:documentation>CURRENCY_CD is a character of length 3. Allows Uppercase characters including numbers</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:maxLength value="3"/> 
+      <xsd:whiteSpace value="preserve"/> 
+      <xsd:pattern value="([A-Z]|[0-9]|\p{Z}|\p{P}|\p{Lu})*"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="SALARY_MATRIX_CD_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>SALARY_MATRIX_CD is a character of length 5. Allows Uppercase characters including numbers</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:maxLength value="5"/> 
+      <xsd:whiteSpace value="preserve"/> 
+      <xsd:pattern value="([A-Z]|[0-9]|\p{Z}|\p{P}|\p{Lu})*"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="COMPANY_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>COMPANY is a character of length 3. Allows Uppercase characters including numbers</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:maxLength value="3"/> 
+      <xsd:whiteSpace value="preserve"/> 
+      <xsd:pattern value="([A-Z]|[0-9]|\p{Z}|\p{P}|\p{Lu})*"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="FREQ_ID_MONTHLY_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>FREQ_ID_MONTHLY is a character of length 5. Allows Uppercase characters including numbers</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:maxLength value="5"/> 
+      <xsd:whiteSpace value="preserve"/> 
+      <xsd:pattern value="([A-Z]|[0-9]|\p{Z}|\p{P}|\p{Lu})*"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="FREQ_ID_DAILY_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>FREQ_ID_DAILY is a character of length 5. Allows Uppercase characters including numbers</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:maxLength value="5"/> 
+      <xsd:whiteSpace value="preserve"/> 
+      <xsd:pattern value="([A-Z]|[0-9]|\p{Z}|\p{P}|\p{Lu})*"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="FREQ_ID_HOURLY_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>FREQ_ID_HOURLY is a character of length 5. Allows Uppercase characters including numbers</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:maxLength value="5"/> 
+      <xsd:whiteSpace value="preserve"/> 
+      <xsd:pattern value="([A-Z]|[0-9]|\p{Z}|\p{P}|\p{Lu})*"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="AUTO_CALC_PREM_SW_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>Auto Calculated Premium</xsd:documentation> 
+      <xsd:documentation>AUTO_CALC_PREM_SW is a character of length 1. Allows Uppercase characters including numbers</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:maxLength value="1"/> 
+      <xsd:whiteSpace value="preserve"/> 
+      <xsd:pattern value="([A-Z]|[0-9]|\p{Z}|\p{P}|\p{Lu})*"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="CMP_RTCD_PREM_ABS_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>Absorbing Premium Rate Code</xsd:documentation> 
+      <xsd:documentation>CMP_RTCD_PREM_ABS is a character of length 6. Allows Uppercase characters including numbers</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:maxLength value="6"/> 
+      <xsd:whiteSpace value="preserve"/> 
+      <xsd:pattern value="([A-Z]|[0-9]|\p{Z}|\p{P}|\p{Lu})*"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="CMP_RTCD_PREM_NONA_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>Non-Absorbing Premium Rate Code</xsd:documentation> 
+      <xsd:documentation>CMP_RTCD_PREM_NONA is a character of length 6. Allows Uppercase characters including numbers</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:maxLength value="6"/> 
+      <xsd:whiteSpace value="preserve"/> 
+      <xsd:pattern value="([A-Z]|[0-9]|\p{Z}|\p{P}|\p{Lu})*"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="GVT_SAL_BASIS_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>GVT_SAL_BASIS is a character of length 1. Allows Uppercase characters including numbers</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:maxLength value="1"/> 
+      <xsd:whiteSpace value="preserve"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="GVT_GEOG_SCOPE_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>GVT_GEOG_SCOPE is a character of length 1. Allows Uppercase characters including numbers</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:maxLength value="1"/> 
+      <xsd:whiteSpace value="preserve"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="GVT_NEXT_PAY_ADJ_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>GVT_NEXT_PAY_ADJ is a date.</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:date"> 
+      <xsd:pattern value="(\d{4}-\d{2}-\d{2})"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="TARIFF_GER_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>TARIFF_GER is a character of length 2. Allows Uppercase characters including numbers</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:maxLength value="2"/> 
+      <xsd:whiteSpace value="preserve"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="TARIFF_AREA_GER_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>TARIFF_AREA_GER is a character of length 3. Allows Uppercase characters including numbers</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:maxLength value="3"/> 
+      <xsd:whiteSpace value="preserve"/> 
+      <xsd:pattern value="([A-Z]|[0-9]|\p{Z}|\p{P}|\p{Lu})*"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="ATTACHSYSFILENAME_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>ATTACHSYSFILENAME is a character of length 128</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:maxLength value="128"/> 
+      <xsd:whiteSpace value="preserve"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="ATTACHUSERFILE_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>ATTACHUSERFILE is a character of length 64</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:maxLength value="64"/> 
+      <xsd:whiteSpace value="preserve"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="URL_ID_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>URL Identifier                </xsd:documentation> 
+      <xsd:documentation>URL_ID is a character of length 30. Allows Uppercase characters including numbers</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:maxLength value="30"/> 
+      <xsd:whiteSpace value="preserve"/> 
+      <xsd:pattern value="([A-Z]|[0-9]|\p{Z}|\p{P}|\p{Lu})*"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="DESCR254_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>Description of length 254</xsd:documentation> 
+      <xsd:documentation>DESCR254 is a character of length 254</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:maxLength value="254"/> 
+      <xsd:whiteSpace value="preserve"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="ADDED_BY_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>ADDED_BY is a character of length 50. Allows Uppercase characters including numbers</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:maxLength value="50"/> 
+      <xsd:whiteSpace value="preserve"/> 
+      <xsd:pattern value="([A-Z]|[0-9]|\p{Z}|\p{P}|\p{Lu})*"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="ADDED_DT_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>ADDED_DT is a date.</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:date"> 
+      <xsd:pattern value="(\d{4}-\d{2}-\d{2})"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="WAGE_PROG_FLAG_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>WAGE_PROG_FLAG is a character of length 1. Allows Uppercase characters including numbers</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:maxLength value="1"/> 
+      <xsd:whiteSpace value="preserve"/> 
+      <xsd:pattern value="([A-Z]|[0-9]|\p{Z}|\p{P}|\p{Lu})*"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:complexType name="PSCAMAMsgDataRecord_TypeShape"> 
+    <xsd:sequence> 
+      <xsd:element minOccurs="0" name="LANGUAGE_CD" type="LANGUAGE_CD_TypeShape"/> 
+      <xsd:element minOccurs="0" name="AUDIT_ACTN" type="AUDIT_ACTN_TypeShape"/> 
+      <xsd:element minOccurs="0" name="BASE_LANGUAGE_CD" type="BASE_LANGUAGE_CD_TypeShape"/> 
+      <xsd:element minOccurs="0" name="MSG_SEQ_FLG" type="MSG_SEQ_FLG_TypeShape"/> 
+      <xsd:element minOccurs="0" name="PROCESS_INSTANCE" type="PROCESS_INSTANCE_TypeShape"/> 
+      <xsd:element minOccurs="0" name="PUBLISH_RULE_ID" type="PUBLISH_RULE_ID_TypeShape"/> 
+      <xsd:element minOccurs="0" name="MSGNODENAME" type="MSGNODENAME_TypeShape"/> 
+    </xsd:sequence> 
+    <xsd:attribute fixed="R" name="class" type="xsd:string" use="required"/> 
+  </xsd:complexType> 
+  <xsd:complexType name="LANGUAGE_CD_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="LANGUAGE_CD_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="AUDIT_ACTN_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="AUDIT_ACTN_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="BASE_LANGUAGE_CD_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="BASE_LANGUAGE_CD_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="MSG_SEQ_FLG_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="MSG_SEQ_FLG_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="PROCESS_INSTANCE_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="PROCESS_INSTANCE_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="PUBLISH_RULE_ID_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="PUBLISH_RULE_ID_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:complexType name="MSGNODENAME_TypeShape"> 
+    <xsd:simpleContent> 
+      <xsd:extension base="MSGNODENAME_TypeDef"> 
+        <xsd:attribute name="IsChanged" type="xsd:string" use="optional"/> 
+      </xsd:extension> 
+    </xsd:simpleContent> 
+  </xsd:complexType> 
+  <xsd:simpleType name="LANGUAGE_CD_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>Language Code</xsd:documentation> 
+      <xsd:documentation>LANGUAGE_CD is a character of length 3. Allows Uppercase characters including numbers</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:maxLength value="3"/> 
+      <xsd:whiteSpace value="preserve"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="AUDIT_ACTN_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>Audit Action Code for Application Messages.  This tells the subscriber whether the row has been added, changed, or deleted.</xsd:documentation> 
+      <xsd:documentation>AUDIT_ACTN is a character of length 1. Allows Uppercase characters including numbers</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:maxLength value="1"/> 
+      <xsd:whiteSpace value="preserve"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="BASE_LANGUAGE_CD_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>BASE_LANGUAGE_CD is a character of length 3. Allows Uppercase characters including numbers</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:maxLength value="3"/> 
+      <xsd:whiteSpace value="preserve"/> 
+      <xsd:pattern value="([A-Z]|[0-9]|\p{Z}|\p{P}|\p{Lu})*"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="MSG_SEQ_FLG_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>MSG_SEQ_FLG is a character of length 1. Allows Uppercase characters including numbers</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:maxLength value="1"/> 
+      <xsd:whiteSpace value="preserve"/> 
+      <xsd:pattern value="([A-Z]|[0-9]|\p{Z}|\p{P}|\p{Lu})*"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="PROCESS_INSTANCE_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>Process Instance</xsd:documentation> 
+      <xsd:documentation>PROCESS_INSTANCE is a number of length 10 with a decimal position of 0</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:integer"> 
+      <xsd:totalDigits value="10"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="PUBLISH_RULE_ID_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>Publish Rule ID</xsd:documentation> 
+      <xsd:documentation>PUBLISH_RULE_ID is a character of length 30. Allows Uppercase characters including numbers</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:maxLength value="30"/> 
+      <xsd:whiteSpace value="preserve"/> 
+      <xsd:pattern value="([A-Z]|[0-9]|\p{Z}|\p{P}|\p{Lu})*"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+  <xsd:simpleType name="MSGNODENAME_TypeDef"> 
+    <xsd:annotation> 
+      <xsd:documentation>Application Message Node Name.  Name of the Application Message Node Definition.</xsd:documentation> 
+      <xsd:documentation>MSGNODENAME is a character of length 30. Allows Uppercase characters including numbers</xsd:documentation> 
+    </xsd:annotation> 
+    <xsd:restriction base="xsd:string"> 
+      <xsd:maxLength value="30"/> 
+      <xsd:whiteSpace value="preserve"/> 
+      <xsd:pattern value="([A-Z]|[0-9]|\p{Z}|\p{P}|\p{Lu})*"/> 
+    </xsd:restriction> 
+  </xsd:simpleType> 
+</xsd:schema>  

@@ -1,0 +1,492 @@
+/* -----------------------------------------------------------------------------------------------------------------
+APPLICATION ID : ESED
+INTERFACE NAME : ESED_GroceryOrderFulfillment_IH_Publisher
+FLOW NAME : ESED_GroceryOrderFulfillment_IH_Publisher.msgflow
+DESCRIPTION : PRODUCER :GroceryOrderFulfillment  to EDM
+AUTHOR : Albertson
+CREATED DT : Oct/15/2020
+---------------------------------------------------------------------------------------------------------------------
+Program History
+Project Drop Version Change          Owner                   Description
+------- ------- ------- ------------ ---- ----------------------------------------------------------------------------
+MappingVer 1.1.2        21/10/2020     Anjana P              New BoD development for GroceryOrderFulfillment 
+MappingVer 1.2.2        01/19/2021     Anjana P              Update formapping ver 1.2.2 for GroceryOrderFulfillment
+1.3.2.009				02/25/2021 	   Anjana				 Tokenization for ldapId
+1.4.1.011               05/26/2021     Qun Wen               Substitute fields
+1.5.1.034               05/26/2021     Qun Wen               Substitute fields
+--------------------------------------------------------------------------------------------------------------------*/
+
+BROKER SCHEMA com.abs.azure.groceryOrderFulfillment 
+
+CREATE COMPUTE MODULE ESED_GroceryOrderFulfillment_IH_SF_Compute
+	
+	DECLARE VERSION_ID EXTERNAL CHARACTER '1.5.1';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		
+		 --CALL CopyMessageHeaders();
+		 --CALL CopyEntireMessage();
+		 -- Declare Namespace
+		DECLARE Abs NAMESPACE 'https://collab.safeway.com/it/architecture/info/default.aspx';
+		DECLARE ipRef REFERENCE TO InputRoot.JSON.Data;
+		DECLARE ipRefCount INTEGER 1;
+		DECLARE cmmCount INTEGER 0;
+		DECLARE swyApiKey CHARACTER '';
+		DECLARE SysEnvCd CHAR '';
+		DECLARE patternInt CHARACTER '#####';
+		DECLARE profileCount INTEGER  1;
+		DECLARE itemActivitiesCount INTEGER 1;
+		DECLARE pickedItemsCount INTEGER 1;
+		DECLARE locationTypeCount INTEGER 1;
+		DECLARE shortedItemsCount INTEGER 1;
+		DECLARE eventCount INTEGER 1;
+		DECLARE storageUnitDataCount INTEGER 1;
+		
+		-- Declare Output Message Root 
+		CREATE LASTCHILD OF OutputRoot DOMAIN 'XMLNSC';
+		DECLARE outRef REFERENCE TO OutputRoot.XMLNSC.GetGroceryOrderFulfillment;
+		-- DECLARE xmlDocRoot REFERENCE TO OutputRoot.XMLNSC.GetOfferRequestType;
+		CREATE LASTCHILD OF OutputRoot.XMLNSC AS outRef TYPE XMLNSC.Folder NAME 'GetGroceryOrderFulfillment';
+
+		SET OutputRoot.XMLNSC.GetGroceryOrderFulfillment.(XMLNSC.NamespaceDecl)xmlns:Abs=Abs;
+		-- Declare Input Reference
+		-- GetGroceryOrderFulfillment/DocumentData
+		CREATE FIELD outRef.DocumentData;
+		DECLARE outDocDataRef REFERENCE TO outRef.DocumentData;
+		
+		-- GetGroceryOrderFulfillment/DocumentData/Document
+		CREATE FIELD outDocDataRef.Document;
+		DECLARE outDocRef REFERENCE TO outDocDataRef.Document;
+
+		-- GetGroceryOrderFulfillment/DocumentData/Document/@ReleaseId
+		SET outDocRef.(XMLNSC.Attribute)ReleaseId = '';
+		
+		-- GetGroceryOrderFulfillment/DocumentData/Document/@VersionId
+		SET outDocRef.(XMLNSC.Attribute)VersionId = VERSION_ID; 
+		
+		-- GetGroceryOrderFulfillment/DocumentData/Document/@SystemEnvironmentCd
+		IF BrokerName like '%DV%' THEN
+			SET SysEnvCd = 'DEV';
+		ELSEIF BrokerName like '%QA%' THEN
+			SET SysEnvCd = 'QA';
+		ELSEIF BrokerName like '%PR%' THEN
+			SET SysEnvCd = 'PROD';
+		END IF;
+
+		SET outDocRef.(XMLNSC.Attribute)SystemEnvironmentCd = SysEnvCd;
+		
+		-- GetGroceryOrderFulfillment/DocumentData/Document/DocumentID
+		SET outDocRef.Abs:DocumentID ='ESED_C01_GroceryOrderFulfillment_'  || CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT 'IU');
+		
+		-- GetGroceryOrderFulfillment/DocumentData/Document/AlternateDocumentID
+		SET outDocRef.Abs:AlternateDocumentID = 'ESED_C01_GroceryOrderFulfillment_' ||InputLocalEnvironment.Kafka.Input.partition||'_'||InputLocalEnvironment.Kafka.Input.offset||'_'|| CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT 'IU');
+		
+		-- GetGroceryOrderFulfillment/DocumentData/Document/DocumentNm
+		SET outDocRef.Abs:DocumentNm = 'GroceryOrderFulfillment';
+		
+		-- GetGroceryOrderFulfillment/DocumentData/Document/CreationDt
+		SET outDocRef.Abs:CreationDt = CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT 'IU');
+		
+		-- GetGroceryOrderFulfillment/DocumentData/Document/Description
+		SET outDocRef.Abs:Description = 'GroceryOrderFulfillmentDetail';
+		
+		-- GetGroceryOrderFulfillment/DocumentData/Document/SourceApplicationCd
+		SET outDocRef.Abs:SourceApplicationCd = 'AcuPick';
+		
+		-- GetGroceryOrderFulfillment/DocumentData/Document/TargetApplicationCd
+		SET outDocRef.Abs:TargetApplicationCd = 'EDIS';
+		
+		-- GetGroceryOrderFulfillment/DocumentData/Document/SenderId
+		SET outDocRef.Abs:SenderId =ipRef.id;
+		
+		-- GetGroceryOrderFulfillment/DocumentData/Document/InternalFileTransferInd
+		SET outDocRef.Abs:InternalFileTransferInd = 'Y';
+		
+		-- GetGroceryOrderFulfillment/DocumentData/Document/DataClassification/DataClassificationLevel/Code
+		SET outDocRef.Abs:DataClassification.Abs:DataClassificationLevel.Abs:Code = 'Internal';
+		
+		-- GetGroceryOrderFulfillment/DocumentData/Document/DataClassification/BusinessSensitivityLevel/Code
+		SET outDocRef.Abs:DataClassification.Abs:BusinessSensitivityLevel.Abs:Code = 'Low';
+		
+		-- GetGroceryOrderFulfillment/DocumentData/Document/DataClassification/PHIdataInd
+		SET outDocRef.Abs:DataClassification.Abs:PHIdataInd = 'N';
+		
+		-- GetGroceryOrderFulfillment/DocumentData/Document/DataClassification/PCIdataInd
+		SET outDocRef.Abs:DataClassification.Abs:PCIdataInd = 'Y';
+		
+		-- GetGroceryOrderFulfillment/DocumentData/Document/DataClassification/PIIdataInd
+		SET outDocRef.Abs:DataClassification.Abs:PIIdataInd = 'Y';
+		
+		-- GetGroceryOrderFulfillment/DocumentData/DocumentAction/ActionTypeCd
+		SET  outDocDataRef.DocumentAction.Abs:ActionTypeCd ='UPDATE';
+		
+		-- GetGroceryOrderFulfillment/DocumentData/DocumentAction/RecordTypeCd
+		SET outDocDataRef.DocumentAction.Abs:RecordTypeCd = 'CHANGE';
+		
+		SET ipRefCount=1;
+		WHILE LASTMOVE(ipRef) DO
+			-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData
+			CREATE FIELD outRef.GroceryOrderFulfillmentData;
+			DECLARE outGetGroceryRef REFERENCE TO outRef.GroceryOrderFulfillmentData;
+ 			
+ 			SET Environment.Variable.Batch = PASSTHRU('with cte as 
+				(Select Distinct omo.DIV,omo.CORP,DATE_LAST_ACTIVE
+				from RDS_SRCSSIMS.OMOPFAC omo inner join RDS_SRCSSIMS.OMFRTL omf
+				on  omo.DIV=omf.DIV where
+				LPAD(?,4,''0'') = omo.FAC and omo.FAC_TYPE = ''RT'' and  
+				current_date between omf.DATE_VSN_FIRST_EFF AND omf.DATE_VSN_LAST_EFF 
+				AND (DATE_LAST_ACTIVE > current_date )  )
+				Select DIV,CORP from CTE where DIV =
+				(Select distinct case when (select count(*) from cte)>''1''  then (select min(div) from cte where div not in (''17''))
+				else (select min(div) from cte) end as DIV from cte);',ipRef.siteId);  
+				
+				-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/CorporationId
+				IF (LENGTH(Environment.Variable.Batch.CORP)>0) THEN   
+							SET outGetGroceryRef.Abs:CorporationId = Environment.Variable.Batch.CORP;
+				ELSE 
+							  THROW USER EXCEPTION VALUES('ESED','GroceryOrderFulfillment','CorporationId not Present');  
+				END IF;
+				
+				-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/DivisionId
+				IF (LENGTH(Environment.Variable.Batch.DIV)>0) THEN   
+							SET outGetGroceryRef.Abs:DivisionId = Environment.Variable.Batch.DIV;
+				ELSE 
+							  THROW USER EXCEPTION VALUES('ESED','GroceryOrderFulfillment','DivisionId not Present');  
+				END IF; 
+				 
+				-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/FacilityId
+ 				IF LENGTH (ipRef.siteId) > 0 THEN	 
+							SET outGetGroceryRef.Abs:FacilityId = ipRef.siteId;
+				ELSE 
+							 THROW USER EXCEPTION VALUES('ESED','GroceryOrderFulfillment','FacilityId not Present');  
+				END IF;
+ 
+ 				-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/FacilityType/Code
+				SET outGetGroceryRef.Abs:FacilityType.Abs:Code =ipRef.facilityType;-- this mapping need to correct it is complex type 
+				
+				-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData
+				CREATE FIELD outGetGroceryRef.Abs:OrderFulfillmentData;
+				DECLARE outGetOrderFulfillmentDataRef REFERENCE TO outGetGroceryRef.Abs:OrderFulfillmentData;
+				
+				-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/Assignment
+				CREATE FIELD outGetOrderFulfillmentDataRef.Abs:Assignment;
+				DECLARE outGetAssignmentRef REFERENCE TO outGetOrderFulfillmentDataRef.Abs:Assignment;
+				
+				-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/Assignment/AssignmentId
+				IF LENGTH (ipRef.activityNo) > 0 THEN	 
+							SET outGetAssignmentRef.Abs:AssignmentId = ipRef.activityNo;
+				ELSE 
+							 THROW USER EXCEPTION VALUES('ESED','GroceryOrderFulfillment','AssignmentId not Present');  
+				END IF;
+				
+				-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/Assignment/PicklistId
+				SET outGetAssignmentRef.Abs:PicklistId = ipRef.activityNo;
+				
+				-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/Assignment/FulfillmentSystemType
+				CREATE FIELD outGetAssignmentRef.Abs:FulfillmentSystemType;
+				DECLARE outGetFulfillSysTypeRef REFERENCE TO outGetAssignmentRef.Abs:FulfillmentSystemType;
+				
+				-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/Assignment/FulfillmentSystemType/Code
+				SET outGetFulfillSysTypeRef.Abs:Code = ipRef.fulfillmentSystemId;
+				
+				-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/Assignment/FacilityEmployee
+				CREATE FIELD outGetAssignmentRef.Abs:FacilityEmployee;
+				DECLARE outGetFacilityEmployeeRef REFERENCE TO outGetAssignmentRef.Abs:FacilityEmployee; 
+				
+				
+				-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/Assignment/FacilityEmployee/EmployeeId
+				SET outGetFacilityEmployeeRef.Abs:EmployeeId = CAST(ipRef.userId AS INTEGER);
+				
+				-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/Assignment/FacilityEmployee/EmployeeAltId
+				CREATE FIELD outGetFacilityEmployeeRef.Abs:EmployeeAltId;
+				DECLARE outGetFacilityLdapID REFERENCE TO outGetFacilityEmployeeRef.Abs:EmployeeAltId;
+				
+				-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/Assignment/FacilityEmployee/EmployeeAltId/AlternateIdTxt
+				SET outGetFacilityLdapID.Abs:AlternateIdTxt = ipRef.alternateIdNbr;
+				
+				-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/Assignment/AssignmentStatus
+				CREATE FIELD outGetAssignmentRef.Abs:AssignmentStatus;
+				DECLARE outGetAssignmentStatusRef REFERENCE TO outGetAssignmentRef.Abs:AssignmentStatus;
+				
+				-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/Assignment/AssignmentStatus/StatusTypeCd
+				SET outGetAssignmentStatusRef.Abs:StatusTypeCd = ipRef.reProcess;
+				
+				--Mapping version 1.3.1
+				-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/Assignment/AssignmentStatus/Description
+				SET outGetAssignmentStatusRef.Abs:Description = 'ReProcess';
+				
+				--Mapping sheet version 1.2.2;
+				-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/Assignment/ScheduledStartTS
+				SET outGetAssignmentRef.Abs:ScheduledStartTS = ipRef.stageByDateTime;
+				
+				-- Mapping version 1.3.1
+				-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/Assignment/ShiftNbr
+				SET outGetAssignmentRef.Abs:ShiftNbr = ipRef.shiftNo;
+				
+				SET storageUnitDataCount=1; 
+				DECLARE storageUnitDataRef REFERENCE TO ipRef.storageTypes.Item;
+				WHILE LASTMOVE(storageUnitDataRef) DO
+					-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/Assignment/StorageUnitData
+					CREATE FIELD outGetAssignmentRef.Abs:StorageUnitData;
+					DECLARE outActivityStorageUnityTypeRef REFERENCE TO outGetAssignmentRef.Abs:StorageUnitData;
+					
+					-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/Assignment/StorageUnitData/ActivityStorageUnitType
+					CREATE FIELD outGetAssignmentRef.Abs:StorageUnitData.Abs:ActivityStorageUnitType[storageUnitDataCount];
+					DECLARE outActivityStorageUnitTypeRef REFERENCE TO outGetAssignmentRef.Abs:StorageUnitData.Abs:ActivityStorageUnitType[storageUnitDataCount];
+				
+					-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/Assignment/StorageUnitData/ActivityStorageUnitType/StorageUnitSubType/Code
+					SET outActivityStorageUnitTypeRef.Abs:StorageUnitSubType.Abs:Code = storageUnitDataRef;
+				
+					SET storageUnitDataCount =storageUnitDataCount+1;
+					MOVE storageUnitDataRef NEXTSIBLING REPEAT TYPE NAME;
+				END WHILE;
+				  
+				SET eventCount=1;
+				DECLARE itemEventRef REFERENCE TO ipRef.events.Item;
+				WHILE LASTMOVE(itemEventRef) DO
+					
+					-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent
+					CREATE FIELD outGetOrderFulfillmentDataRef.Abs:AssignmentEvent[eventCount];
+					DECLARE outGetAssignmentEvtRef REFERENCE TO outGetOrderFulfillmentDataRef.Abs:AssignmentEvent[eventCount];
+					
+					-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/AssignmentEventType/Code
+					SET outGetAssignmentEvtRef.Abs:AssignmentEventType.Abs:Code =itemEventRef.activityType ;
+				
+					-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/AssignmentEventSubType
+					CREATE FIELD outGetAssignmentEvtRef.Abs:AssignmentEventSubType;
+					DECLARE outGetAssignEvtSubTypeRef REFERENCE TO outGetAssignmentEvtRef.Abs:AssignmentEventSubType;
+				
+					-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/AssignmentEventSubType/Code
+					SET outGetAssignEvtSubTypeRef.Abs:Code = itemEventRef.eventId;
+					
+					-- Since v1.5.1
+					IF itemEventRef.eventId = 'PICKLIST_SELECTION_SEQUENCE' THEN
+						-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/PickListSelectedType
+						DECLARE PickListSelectedType_ REFERENCE TO outGetAssignmentEvtRef;
+						CREATE LASTCHILD OF outGetAssignmentEvtRef AS PickListSelectedType_ TYPE XMLNSC.Folder NAME 'Abs:PickListSelectedType';
+											
+							-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/PickListSelectedType/Code
+							SET PickListSelectedType_.(XMLNSC.Field)Abs:Code = 'pickListSelected';					
+						
+					END IF;
+				
+					-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/EventStartTs
+					SET outGetAssignmentEvtRef.Abs:EventStartTs =itemEventRef.eventDateTime;
+				
+				--Mapping sheet version 1.2.2
+				--SET outGetAssignmentEvtRef.Abs:ScheduledEndts =ipRef.stageByDateTime ;
+				--Mapping array for ItemSelection
+				SET itemActivitiesCount=1;
+					IF (itemEventRef.activityType='PICK_PACK' AND itemEventRef.eventId='ACTIVITY_COMPLETED') THEN
+				DECLARE itemActivitiesRef REFERENCE TO ipRef.itemActivities.Item;
+				WHILE LASTMOVE(itemActivitiesRef) DO
+					
+					-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/ItemSelection
+					CREATE FIELD outGetAssignmentEvtRef.Abs:ItemSelection[itemActivitiesCount];
+					DECLARE outGetItemSelectionRef REFERENCE TO outGetAssignmentEvtRef.Abs:ItemSelection[itemActivitiesCount];
+					
+					-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/ItemSelection/PickListId
+					SET outGetItemSelectionRef.Abs:PickListId =ipRef.activityNo;
+										
+					-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/ItemSelection/FulfillmentOrderId
+					SET outGetItemSelectionRef.Abs:FulfillmentOrderId =itemActivitiesRef.fulfillmentOrderNo;
+					
+					-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/ItemSelection/OrderId
+					SET outGetItemSelectionRef.Abs:OrderId =itemActivitiesRef.customerOrderNo;
+					
+					-- Since v1.5.1
+					-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/ItemSelection/OrderBatch
+					DECLARE OrderBatch_ REFERENCE TO outGetItemSelectionRef;
+					CREATE LASTCHILD OF outGetItemSelectionRef AS OrderBatch_ TYPE XMLNSC.Folder NAME 'Abs:OrderBatch';
+					
+						-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/ItemSelection/OrderBatch/OrderBatchInd
+						SET OrderBatch_.Abs:OrderBatchInd = ipRef.isBatch;
+					
+					-- SET outGetItemSelectionRef.Abs:OrderedItem.Abs:BaseProductNbr= itemActivitiesRef.itemId; 
+					
+					-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/ItemSelection/OrderedItem/BaseProductNbr
+					SET outGetItemSelectionRef.Abs:OrderedItem.Abs:BaseProductNbr =CAST(itemActivitiesRef.itemId AS DECIMAL(14,0));
+					
+					-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/ItemSelection/OrderedItem/ItemDescription
+					SET outGetItemSelectionRef.Abs:OrderedItem.Abs:ItemDescription= itemActivitiesRef.itemDescription; 
+					
+					-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/ItemSelection/SubstitutionAllowedInd
+					SET outGetItemSelectionRef.Abs:SubstitutionAllowedInd= itemActivitiesRef.subAllowed; 
+					
+					--Mapping for SubstituteItem Start
+					-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/ItemSelection/SubstitutionType/Code
+					SET outGetItemSelectionRef.Abs:SubstitutionType.Abs:Code= itemActivitiesRef.subCode;
+					
+					-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/ItemSelection/SubstitutionType/Description
+					SET outGetItemSelectionRef.Abs:SubstitutionType.Abs:Description= itemActivitiesRef.subValue;
+					
+					-- Since v1.3.3
+					DECLARE _substituteItem REFERENCE TO itemActivitiesRef.substituteItems.Item;
+					substituteItem : WHILE LASTMOVE(_substituteItem) DO
+						
+						-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/ItemSelection/SubstituteItem
+						DECLARE SubstituteItem_ REFERENCE TO outGetItemSelectionRef;
+						CREATE LASTCHILD OF outGetItemSelectionRef AS SubstituteItem_ TYPE XMLNSC.Folder NAME 'Abs:SubstituteItem';
+						
+							-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/ItemSelection/SubstituteItem/SystemSpecificItemId
+							SET SubstituteItem_.Abs:SystemSpecificItemId = _substituteItem.itemId;
+							
+							-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/ItemSelection/SubstituteItem/ItemDescription
+							SET SubstituteItem_.Abs:ItemDescription = _substituteItem.itemDescription;
+							
+							-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/ItemSelection/SubstituteItem/SubstituteItemRankNbr
+							SET SubstituteItem_.Abs:SubstituteItemRankNbr = _substituteItem.rank;
+						
+					MOVE _substituteItem NEXTSIBLING;
+					END WHILE substituteItem;
+					
+					--Mapping array for pickedItem Start
+					SET pickedItemsCount=1;
+					DECLARE  pickedItemsRef REFERENCE TO itemActivitiesRef.pickedItems.Item;
+				    WHILE LASTMOVE(pickedItemsRef) DO
+				   	    -- Mapping version 1.2.2 UPCTxt Mapping version 1.3.1 UPCNbr
+				   	    DECLARE FulfilledItem_ REFERENCE TO outGetItemSelectionRef;
+						CREATE LASTCHILD OF outGetItemSelectionRef AS FulfilledItem_ TYPE XMLNSC.Folder NAME 'Abs:FulfilledItem';
+						
+				   	    	DECLARE UPC_ REFERENCE TO FulfilledItem_;
+							CREATE LASTCHILD OF FulfilledItem_ AS UPC_ TYPE XMLNSC.Folder NAME 'Abs:UPC';
+				   	    
+				   	    		-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/ItemSelection/FulfilledItem/UPC/UPCNbr
+				   	    		SET UPC_.Abs:UPCNbr= CAST(pickedItemsRef.upc AS DECIMAL(14,0));
+				   	    
+				   	    		-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/ItemSelection/FulfilledItem/UPC/UPCTxt
+								SET UPC_.Abs:UPCTxt= pickedItemsRef.upc;
+						
+							-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/ItemSelection/FulfilledItem/SubstituteItemInd
+							SET FulfilledItem_.Abs:SubstituteItemInd= pickedItemsRef.isSubstitution;
+						
+							-- Since v1.3.3
+							-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/ItemSelection/FulfilledItem/SmartSubstituteItemInd
+							SET FulfilledItem_.Abs:SmartSubstituteItemInd = pickedItemsRef.isSmartSubItem;
+						
+							-- Since v1.3.3
+							-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/ItemSelection/FulfilledItem/SubstituteItemReasonCd
+							SET FulfilledItem_.Abs:SubstituteItemReasonCd = pickedItemsRef.subReasonCode;
+						
+							-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/ItemSelection/FulfilledItem/StorageUnitId
+							SET FulfilledItem_.Abs:StorageUnitId= pickedItemsRef.containerId;
+						
+							-- SET outGetItemSelectionRef.Abs:ItemQty= pickedItemsRef.upcQty; 
+						
+							-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/ItemSelection/ItemQty
+							SET FulfilledItem_.Abs:ItemQty = CAST(pickedItemsRef.upcQty AS DECIMAL(14,4));
+						
+							-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/ItemSelection/ScheduledStartTs
+							SET FulfilledItem_.Abs:ScheduledStartTs= pickedItemsRef.pickedTime;
+						
+						SET pickedItemsCount = pickedItemsCount +1;
+						MOVE pickedItemsRef NEXTSIBLING REPEAT TYPE NAME;
+				    END WHILE;
+					--Mapping array for pickedItem End
+					
+					-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/ItemSelection/OrderQty
+					SET outGetItemSelectionRef.Abs:OrderQty =CAST(itemActivitiesRef.orderedQty AS DECIMAL(14,4));
+					
+					--mapping aaray for location type start
+					SET locationTypeCount = 1; 
+						
+						-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/ItemSelection/SelectionLocation/LocationType/Code
+						-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/ItemSelection/SelectionLocation/LocationType/Name
+						IF EXISTS(itemActivitiesRef.itemLocation.aisle[]) THEN 
+							CREATE FIELD outGetItemSelectionRef.Abs:SelectionLocation.Abs:LocationType[locationTypeCount];
+							DECLARE outGetlocationTypeRef REFERENCE TO outGetItemSelectionRef.Abs:SelectionLocation.Abs:LocationType[locationTypeCount];
+							
+							SET outGetlocationTypeRef.Abs:Code= itemActivitiesRef.itemLocation.aisle; 
+							SET outGetlocationTypeRef.Abs:Name= 'aisle'; 
+							
+							SET locationTypeCount =locationTypeCount +1;
+						END IF; 
+						 
+						IF EXISTS(itemActivitiesRef.itemLocation.side[]) THEN 
+							CREATE FIELD outGetItemSelectionRef.Abs:SelectionLocation.Abs:LocationType[locationTypeCount];
+							DECLARE outGetlocationTypeRef REFERENCE TO outGetItemSelectionRef.Abs:SelectionLocation.Abs:LocationType[locationTypeCount];
+							SET outGetlocationTypeRef.Abs:Code= itemActivitiesRef.itemLocation.side; 
+							SET outGetlocationTypeRef.Abs:Name='side'; 
+							SET locationTypeCount =locationTypeCount +1;
+						END IF; 
+					
+						IF EXISTS(itemActivitiesRef.itemLocation.bay[]) THEN 
+							CREATE FIELD outGetItemSelectionRef.Abs:SelectionLocation.Abs:LocationType[locationTypeCount];
+							DECLARE outGetlocationTypeRef REFERENCE TO outGetItemSelectionRef.Abs:SelectionLocation.Abs:LocationType[locationTypeCount];
+							SET outGetlocationTypeRef.Abs:Code= itemActivitiesRef.itemLocation.bay; 
+							SET outGetlocationTypeRef.Abs:Name= 'bay'; 
+							SET locationTypeCount =locationTypeCount +1;
+						END IF; 
+						 
+						IF EXISTS(itemActivitiesRef.itemLocation.level[]) THEN 
+							CREATE FIELD outGetItemSelectionRef.Abs:SelectionLocation.Abs:LocationType[locationTypeCount];
+							DECLARE outGetlocationTypeRef REFERENCE TO outGetItemSelectionRef.Abs:SelectionLocation.Abs:LocationType[locationTypeCount];
+							SET outGetlocationTypeRef.Abs:Code= itemActivitiesRef.itemLocation.level; 
+							SET outGetlocationTypeRef.Abs:Name= 'level'; 
+							SET locationTypeCount =locationTypeCount +1;
+						END IF;  
+					--Mapping array for location type end
+					
+					-- Mapping array OrderLineExceptions start
+					SET shortedItemsCount = 1;
+					DECLARE  shortedItemsRef REFERENCE TO itemActivitiesRef.shortedItems.Item;
+					WHILE LASTMOVE(shortedItemsRef) DO
+						
+						-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/ItemSelection/OrderLineExceptions/ExceptionReasonType
+						CREATE FIELD outGetItemSelectionRef.Abs:OrderLineExceptions[shortedItemsCount];
+						DECLARE outGetExceptionRef REFERENCE TO outGetItemSelectionRef.Abs:OrderLineExceptions[shortedItemsCount];
+						
+						-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/ItemSelection/OrderLineExceptions/ExceptionReasonType/Code
+						SET outGetExceptionRef.Abs:ExceptionReasonType.Abs:Code= shortedItemsRef.exceptionReasonCode; 
+						
+						-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/ItemSelection/OrderLineExceptions/ExceptionItemQty
+						SET outGetExceptionRef.Abs:ExceptionItemQty =CAST(shortedItemsRef.exceptionQty AS DECIMAL(14,4));
+						
+						-- GetGroceryOrderFulfillment/GroceryOrderFulfillmentData/OrderFulfillmentData/AssignmentEvent/ItemSelection/OrderLineExceptions/ExceptionCreateTs
+						SET outGetExceptionRef.Abs:ExceptionCreateTs= shortedItemsRef.exceptionDateTime;
+						
+						SET shortedItemsCount =shortedItemsCount +1;
+						MOVE shortedItemsRef NEXTSIBLING REPEAT TYPE NAME;
+					END WHILE;
+					-- Mapping array OrderLineExceptions end 
+					
+				
+				SET	itemActivitiesCount = itemActivitiesCount+1;
+				MOVE itemActivitiesRef NEXTSIBLING REPEAT TYPE NAME;
+				END WHILE;
+				END IF;
+				--End Array for ItemSelection
+				SET eventCount=eventCount+1;
+				MOVE itemEventRef NEXTSIBLING REPEAT TYPE NAME;
+				END WHILE;
+				
+			SET ipRefCount = ipRefCount + 1;
+			MOVE ipRef NEXTSIBLING REPEAT TYPE NAME;
+		END WHILE;
+		
+		SET cmmCount = cmmCount+1;
+		PROPAGATE TO TERMINAL 'out' DELETE NONE;
+		
+		IF(cmmCount <> 0) THEN
+			 SET Environment.Variables.MISC_DATA = COALESCE(cmmCount,' ');
+			 PROPAGATE TO TERMINAL 'out' DELETE NONE;
+		END IF;	
+		RETURN FALSE;
+		END; 
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;
+		

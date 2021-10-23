@@ -1,0 +1,276 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"$id": "http://example.com/RiskEvent.json",
+	"title": "RiskEvent",
+	"additionalProperties": false,
+	"$ref": "#/definitions/RiskEventType",
+	"definitions": {
+		"RiskEventFacilityType": {
+			"description": "Defines the facility where the risk event that resulted in injuries, damages happened",
+			"type": "object",
+			"items": {
+				"type": "object",
+				"additionalProperties": false
+			},
+			"properties": {
+				"CorporationId": {
+					"$ref": "../AbsMaster/AbsOmMaster.json#/definitions/CorporationId"
+				},
+				"DivisionId": {
+					"$ref": "../AbsMaster/AbsOmMaster.json#/definitions/DivisionId"
+				},
+				"FacilityId": {
+					"type": "string"
+				},
+				"FacilityType": {
+					"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:CodeWithDescription"
+				},
+				"Department": {
+					"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:CodeWithDescription"
+				},
+				"FacilityAddress": {
+					"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:AddressType"
+				}
+			},
+			"additionalProperties": false
+		},
+		"RiskEventOSHAType": {
+			"description": "Defines OSHA - occupational safety nd hazard admin data for the event.",
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"OSHARecordableInd": {
+						"type": "boolean"
+					},
+					"OSHAEventDsc": {
+						"description": "activity described for OSHA",
+						"type": "string"
+					},
+					"OSHACasePrivacyInd": {
+						"type": "boolean"
+					}
+				}
+			}
+		},
+		"ClaimantType": {
+			"description": "A party or person who makes a claim for compensation / insurance / benefits.\r\n\r\nFor workers comp claims, all claimants will be in Person Involved entity.\r\nFor liability claims, some of the claimants may not be in person involved entity.",
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"ClaimantId": {
+						"type": "string"
+					},
+					"ClaimantNm": {
+						"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:PersonNameType"
+					},
+					"ClaimantType": {
+						"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:CodeWithDescription"
+					},
+					"Address": {
+						"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:AddressType"
+					},
+					"Gender": {
+						"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:CodeWithDescription"
+					},
+					"MaritalStatus": {
+						"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:CodeWithDescription"
+					},
+					"Language": {
+						"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:CodeWithDescription"
+					},
+					"BirthDt": {
+						"type": "string"
+					},
+					"DeathDt": {
+						"type": "string"
+					},
+					"EmployerNm": {
+						"type": "string"
+					},
+					"EmployerContact": {
+						"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:PhoneType"
+					}
+				},
+				"additionalProperties": false
+			}
+		},
+		"PersonInvolvedType": {
+			"description": "Defines person who is involved in  risk event occured. Could be victim, witness, medical staff..",
+			"type": "object",
+			"items": {
+				"type": "object"
+			},
+			"properties": {
+				"PersonInvolvedId": {
+					"type": "string"
+				},
+				"PersonInvolvedType": {
+					"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:CodeWithDescription"
+				},
+				"PersonInvolvedNm": {
+					"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:PersonNameType"
+				},
+				"EmployeeType": {
+					"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:EmployeeType"
+				},
+				"Address": {
+					"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:AddressType"
+				},
+				"DriverLicenseType": {
+					"$ref": "../Global/AbsGlobalComponents.json#/definitions/DriverLicenseType"
+				},
+				"WorkersCompNbr": {
+					"description": "Workers comp filing nbr for the person.",
+					"type": "string"
+				}
+			}
+		},
+		"RiskEventType": {
+			"description": "Defines the risk event happened and reported either in Safeway facility or other location resulted in a claim for payment.",
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"RiskEventId": {
+						"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:IdWithNameType"
+					},
+					"RiskEventShortDsc": {
+						"description": "Short description of the event happened. Ex: Slipped on the floor while carrying food tray.",
+						"type": "string"
+					},
+					"RiskEventLongDsc": {
+						"description": "Long description of hte risk event.",
+						"type": "string"
+					},
+					"LocationDsc": {
+						"description": "Description of the location where risk event happened. ex: in side deli dept of store nbr 1455",
+						"type": "string"
+					},
+					"OnPremiseInd": {
+						"description": "Indicates that the event happened with in Safeway premise.",
+						"type": "boolean"
+					},
+					"InternalFacility": {
+						"$ref": "#/definitions/RiskEventFacilityType"
+					},
+					"ExternalLocation": {
+						"type": "object",
+						"properties": {
+							"LocationNm": {
+								"type": "string"
+							},
+							"LocationAddress": {
+								"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:AddressType"
+							}
+						},
+						"additionalProperties": false
+					},
+					"RiskEventDt": {
+						"description": "event happeneed date",
+						"type": "string"
+					},
+					"RiskEventTm": {
+						"description": "Event happened time.",
+						"type": "string"
+					},
+					"ReportedDt": {
+						"type": "string"
+					},
+					"ReportedTm": {
+						"type": "string"
+					},
+					"EventReason": {
+						"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:CodeWithDescription"
+					},
+					"OSHA": {
+						"$ref": "#/definitions/RiskEventOSHAType"
+					},
+					"EventCause": {
+						"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:CodeWithDescription"
+					},
+					"PersonInvolved": {
+						"type": "array",
+						"minItems": 1,
+						"items": {
+							"$ref": "#/definitions/PersonInvolvedType"
+						}
+					},
+					"Claimant": {
+						"$ref": "#/definitions/ClaimantType"
+					}
+				}
+			},
+			"properties": {
+				"RiskEventId": {
+					"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:IdWithNameType"
+				},
+				"RiskEventShortDsc": {
+					"description": "Short description of the event happened. Ex: Slipped on the floor while carrying food tray.",
+					"type": "string"
+				},
+				"RiskEventLongDsc": {
+					"description": "Long description of hte risk event.",
+					"type": "string"
+				},
+				"LocationDsc": {
+					"description": "Description of the location where risk event happened. ex: in side deli dept of store nbr 1455",
+					"type": "string"
+				},
+				"OnPremiseInd": {
+					"description": "Indicates that the event happened with in Safeway premise.",
+					"type": "boolean"
+				},
+				"InternalFacility": {
+					"$ref": "#/definitions/RiskEventFacilityType"
+				},
+				"ExternalLocation": {
+					"type": "object",
+					"properties": {
+						"LocationNm": {
+							"type": "string"
+						},
+						"LocationAddress": {
+							"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:AddressType"
+						}
+					},
+					"additionalProperties": false
+				},
+				"RiskEventDt": {
+					"description": "event happeneed date",
+					"type": "string"
+				},
+				"RiskEventTm": {
+					"description": "Event happened time.",
+					"type": "string"
+				},
+				"ReportedDt": {
+					"type": "string"
+				},
+				"ReportedTm": {
+					"type": "string"
+				},
+				"EventReason": {
+					"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:CodeWithDescription"
+				},
+				"OSHA": {
+					"$ref": "#/definitions/RiskEventOSHAType"
+				},
+				"EventCause": {
+					"$ref": "../Global/AbsGlobalComponents.json#/definitions/n1:CodeWithDescription"
+				},
+				"PersonInvolved": {
+					"type": "array",
+					"minItems": 1,
+					"items": {
+						"$ref": "#/definitions/PersonInvolvedType"
+					}
+				},
+				"Claimant": {
+					"$ref": "#/definitions/ClaimantType"
+				}
+			}
+		}
+	}
+}

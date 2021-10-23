@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (http://www.altova.com) by Devesh Kandpal (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--!=============================================================================================-->
+	<!--!-->
+	<!--!      Noun: TrailerMovement-->
+	<!--!                                     Business object that provides various trailer operational movement in a warehouse facility. -->
+	<!--!-->
+	<!--!=============================================================================================-->
+	<!--07/13/2021 - v1.0 - Devesh Kandpal - Initial version.-->
+	<xs:element name="TrailerMovement" type="TrailerMovementType">
+		<xs:annotation>
+			<xs:documentation>Root element.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="TrailerMovementType">
+		<xs:annotation>
+			<xs:documentation>This BOD represeents various trailer operational movement in a warehouse facility. For Ex Request , Release , Re-assign Trailer etc</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporationId"/>
+			<xs:element ref="DivisionId"/>
+			<xs:element ref="DistributionCenterId"/>
+			<xs:element name="DistributionCenterAltId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Alternate identifier for a DC like dst_cntr. For ex WNCA, PONCA </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="WarehouseId" minOccurs="0"/>
+			<xs:element name="FacilityId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A four character code that is used with corporation
+ and division to uniquely identify a facility. A facility may "belong" to
+ only one corporation and one division. A building may house one or more
+facilities. There are two categories for facilities:
+ 1) Operating facility
+ - actively supports the business of the Company
+ - is a distinct business operation within a building
+  - examples: office, processing plant, retail store, truck service
+ shop, or warehouse building  (A warehouse facility includes all warehouse departments that exist within a single building.)
+ - each type of division/business has a different set of possible types of operating facilities: i.e.,
+ - Retail: retail outlets and offices.
+- Wholesale: warehouse facilities, truck service shop, and offices.
+- Processing/Manufacturing: processing plants and offices.
+ 2) Non-operating Facility                                                     
+ - not currently being operated by the Company.
+ - facilities </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityType" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="MovementType">
+				<xs:annotation>
+					<xs:documentation>Ex Request Trailer , Release Trailer, Load Trailer</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="CodeWithDescription">
+							<xs:sequence minOccurs="0">
+								<xs:element name="MovementTs" type="DateTimeBaseType" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Timestamp of the trailer operation. Ex Request Timestamp , Release Timestamp</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="BombingWaveType" type="BombingWaveType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Inventory reduction reference or Bill of Materials reference for a route in WMS system</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DockDetailType" type="DockDetailTypeType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="TrailerStatus" type="CodeWithDescription" minOccurs="0" maxOccurs="5"/>
+			<xs:element name="CommodityType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Various load type in the Warehouse. Ex Frozen Groceries, Frozen Meat , Perishable</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReleaseType" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="OperatorId" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>ID of the person operating trailer</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OperatorNm" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the person operating trailer</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AuditData" type="AuditDataType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Audit data elements.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DockDetailTypeType">
+		<xs:sequence>
+			<xs:element name="ActualDepartureTm" type="DateTimeBaseType" minOccurs="0"/>
+			<xs:element name="EstimatedDepartureTm" type="DateTimeBaseType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Planned time of departure of truck notifying trailer is ready for pick-up</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RouteId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Unique identifier generated by transportaion system for the shipment delivery route of a particular site.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RouteDsc" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DockDoorId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Location Id where trailer arrives for docking and loading items</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DockDoorType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Location Name where trailer arrives</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Carrier" type="CarrierEquipment" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Idenitfies the party that serves as the carrier of the goods or services for the shipment.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TrailerAssetId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Id of the trailer attached to a truck</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TrailerType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Type of Trailer Ex Request , Release Trailer</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LeaveAtDockInd" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="InstructionsTxt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="2000"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AuditDataType">
+		<xs:sequence minOccurs="0">
+			<xs:element name="CreateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Time stamp of when message was created at source.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LastUpdateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time stamp of when message was last modified at source.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CreateUserId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Id of the client that created the message at source.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LastUpdateUserId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>User Id of who last modified the message at source.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

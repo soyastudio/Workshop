@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2021 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--v1.0 - Alex Nunes - 1/12/21 - Introduction of new system of record.-->
+	<!--v1.0 - Alex Nunes - 2/17/21 - Change on planogram shelf cardinality reverted to unbounded.-->
+	<!--v1.0 - Alex Nunes - 3/16/21 - Removed complex type AisleType -->
+		<!--v1.0 - Alex Nunes - 3/26/21 - Namespace change. -->
+	<xs:complexType name="Schematic">
+		<xs:annotation>
+			<xs:documentation>Defines the drawings of retail store layout with special attention on product placement.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PlanogramId" type="xs:integer">
+				<xs:annotation>
+					<xs:documentation>Unique identifier of the planogram.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PlanogramNm" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Planogram name.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PlanogramType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>NICI or Reset</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CreateDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Planogram create date</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PublishDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Planogram release date for publishing.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PlanogramSourceSysCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Source system where the plaonogram is created. ex Galleria</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PlanogramLgth" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Level five of the hierarchy.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="32"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PlanogramDimensions" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Dimensions of the planogram.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="DimensionsType"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="StockingSectionNbr" type="xs:integer" minOccurs="0"/>
+			<xs:element name="StockingSectionNm" type="xs:string" minOccurs="0"/>
+			<xs:element name="SchematicVersion" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Version information on the planogram.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="VersionId" type="xs:string" minOccurs="0"/>
+						<xs:element name="VersionDescription" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ExternalSectionId" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Section identification by external system. Ex: Apollo.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PlanogramShelf" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>represents each of the individual areas on a FIXTURE that can be used to display ITEMs for sale or to store ITEMs, as detailed on a PLANOGRAM. Typically it is similar to the concept of a "shelf" in a traditional "bookcase", but can take on other forms as well in the case of more unusual/ creatively shaped STORE FIXTUREs (i.e., pegboard, pallet, slot wall).  </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ShelfNbr" type="xs:integer"/>
+						<xs:element name="ShelfCoordinates" type="CoordinatesType" minOccurs="0"/>
+						<xs:element name="ShelfPositionNbr" type="xs:integer" minOccurs="0"/>
+						<xs:element name="ShelfDimensions" type="DimensionsType" minOccurs="0"/>
+						<xs:element name="ShelfThicknessNbr" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="9"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ShelfThicknessUOMCd" type="xs:string" minOccurs="0"/>
+						<xs:element name="ShelfSurface" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="ShelfWellInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Bottom shelf indicator.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ResponsibleParty" type="ResponsiblePartyType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Merchandising responsible party in the org. Generally category director reviews and approves the final planogram before it is published for each store.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SuperSectionNbr" minOccurs="0"/>
+			<xs:element name="SuperSectionNm" minOccurs="0"/>
+			<xs:element name="Status" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Planogram status code. ex: published, under review</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AdjacentPlanogram" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>Information about the corresponding adjacent planograms.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="AdjacentPlanogramId" type="xs:integer" minOccurs="0"/>
+						<xs:element name="AdjacentPlanogramNm" type="xs:string" minOccurs="0"/>
+						<xs:element name="AdjacentPosition" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="EffectiveStartDt" type="xs:date" minOccurs="0"/>
+						<xs:element name="EffectiveEndDt" type="xs:date" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="OrgEntityType" type="OrgMasterNameType" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>To capture org entities like dept, retail section info.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CoordinatesType">
+		<xs:sequence>
+			<xs:element name="XCoordinateNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="10"/>
+						<xs:fractionDigits value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="YCoordinateNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="10"/>
+						<xs:fractionDigits value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ZCoordinateNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="10"/>
+						<xs:fractionDigits value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CoordinateUOMCd" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DimensionsType">
+		<xs:sequence>
+			<xs:element name="Height" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="10"/>
+						<xs:fractionDigits value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Width" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="10"/>
+						<xs:fractionDigits value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Depth" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="10"/>
+						<xs:fractionDigits value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="UOMCd" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ResponsiblePartyType">
+		<xs:annotation>
+			<xs:documentation>Merchandising responsible party in the org like business unit group manager, category director and category manager.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="BUGMNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Business unit group manager id/nbr.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BUGMNm" minOccurs="0"/>
+			<xs:element name="CategoryDirectorNbr" minOccurs="0"/>
+			<xs:element name="CategoryDirectorNm" minOccurs="0"/>
+			<xs:element name="CategoryManagerNbr" minOccurs="0"/>
+			<xs:element name="CategoryManagerNm" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

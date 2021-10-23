@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2019 rel. 3 sp1 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" 
+vc:minVersion="1.1"
+elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--V1.0         Sai Nuthakki       06/28/2019    Initial Version-->
+	<xs:include schemaLocation="../Nouns/WasteItem.xsd"/>
+	<xs:element name="GetWasteManagement" type="GetWasteManagementType">
+		<xs:annotation>
+			<xs:documentation>Business object that provides informaiton about all the Waste items dispose transactions in a facility. It contains information about the waste items and the  service provider disposing the waste from a retail or warehouse or plant facility.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetWasteManagementType">
+		<xs:annotation>
+			<xs:documentation>Business object that provides informaiton about all the Waste items dispose transactions in a facility. It contains information about the waste items and the  service provider disposing the waste from a retail or warehouse or plant facility.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="WasteManagementData" type="WasteDisposeTransaction" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Business object that provides informaiton about all the Waste items dispose transactions in a facility. It contains information about the waste items and the  service provider disposing the waste from a retail or warehouse or plant facility. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

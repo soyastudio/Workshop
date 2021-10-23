@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by SKATK01 (Albertsons) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/ForwardingWarehouse.xsd"/>
+	<!--V 1.0 Sridhar Katkuri 9/1/2021  Designed ForwardingWarehouse BOD from GetWarehouse BOD-->
+	<xs:complexType name="ForwardingWarehouseType">
+		<xs:annotation>
+			<xs:documentation>Business object that provides Warehousefacilities data along with parent organization. It has basic warehouse attributes along with specific atrributes from item ordering point as well. Business object that provides Warehousefacilities data along with parent organization. Warehouse can be a physical facility or a logical warehouse that can be a department within a distribution center where goods from vendors/suppliers can be received. Retail stores places orders to the warehouse facility for item replenishment on a regular basis.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ForwardingWarehouseFacilityData" type="Abs:ForwardingWarehouse" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="GetForwardingWarehouse" type="ForwardingWarehouseType">
+		<xs:annotation>
+			<xs:documentation>Business object that provides Forwarding Warehousefacilities data along with parent organization.  Retail stores places orders to the Forwarding warehouse facility for item replenishment on a regular basis.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+</xs:schema>

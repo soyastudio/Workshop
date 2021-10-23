@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2021 rel. 2 sp1 (x64) (http://www.altova.com) by poliv02 (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.1 Patrick Oliver 09/28/21 - Updated PromotionGroupId to string -->
+	<!--V1.0 - Patrick Oliver 7/27/2020 - Initial version.-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="PromotionGroup" type="PromotionGroupType">
+		<xs:annotation>
+			<xs:documentation>Root element</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="PromotionGroupType">
+		<xs:annotation>
+			<xs:documentation>This object defines data and attributes associated to Promotion Groups. A Promotion Group is a collection of items and/or Common Item Groups (CIGs) setup by Division, Group, and Category. Promotion Groups are tied to vendor companies that negotiate deals and own the promo groups for funding.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PromotionGroupOrg">
+				<xs:annotation>
+					<xs:documentation>Organization structure for the Promotion Group. </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="CorporationId" minOccurs="0"/>
+						<xs:element ref="DivisionId" minOccurs="0"/>
+						<xs:element ref="WarehouseId" minOccurs="0"/>
+						<xs:element ref="ROGCd" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PromotionGroupId" type="xs:string" nillable="false">
+				<xs:annotation>
+					<xs:documentation>System generated identifier field for a Promotion Group. A Promotion Group is a collection of items and/or CIGs by Division, Group, Category, led vendor and broker. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PromotionGroupNm">
+				<xs:annotation>
+					<xs:documentation>Name of the Promo Group </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PromotionGroupTypeCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicator if the Promo Group is made from CICs, CIGs or a mix of both.  CICs = I, CIGs = C, Mix = M</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PromotionGroupSMIC" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Promo Groups are built for first two levels of the Safeway Merchandising Item Classification(SMIC) which are Group and Category. </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="GroupCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Group code. Represents the first two digits of SMIC (Safeway Merchandise Item Configuaration).</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:int">
+									<xs:totalDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CategoryCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Category code. Represents the thrid and fourth digits of SMIC (Safeway Merchandise Item Configuaration).</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:int">
+									<xs:totalDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CategoryManager" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="CategoryManagerNbr" type="xs:string" minOccurs="0"/>
+						<xs:element name="CategoryManagerNm" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PromotionGroupItem" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Defines the iitems that are part of the Promo Group. Note that it is possible to build Promo Groups with items from divisions outside of the Promo Group division. </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="CorporationId" minOccurs="0"/>
+						<xs:element ref="DivisionId" minOccurs="0"/>
+						<xs:element name="CorporateItemCd" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is the wholesale item Id, which is usually unique across the enterprise and quaranteed to be unique within a country. For Canada, the first 5 digits is the product class Cd (PRODCLASS) and the last 3 are system generated sequence Nbrs. For US, the first four digits are the SMIC Group and Category Cds and the last four digits are system generated sequence Nbrs.  A SSIMS generated Cd that identifies an item across divisions. A CIC always has 1 UPC, but may have more added to it. CIC is the main Nbr used in SIMS to work with items. More than one CIC may be assigned to an UPC.  The corpitemcd value can be changed. All SIMS tables that contain corpitemcd are re-Cdd. See program MED500, Tables SSITMCHG,SSITMCHH.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="8"/>
+									<xs:fractionDigits value="0"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ItemDescription" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Corporate Item Code description</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="RetailSectionCd" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Retail section associated to the Corporate Item Code. </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="RetailDepartmentId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Retail department Id.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PromoGroupCIG" type="CommonItemGroupType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Defines the 'Common Item Groups', aka CIGs, that are part of the Promo Group. Note that it is possible to build Promo Groups with CIGs from divisions outside of the Promo Group division. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PromoGroupUnitTypeCd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Promo Groups are built using the same item Unit Type. Unit Type   Values of 1, 2, 3 are indicators for Shelf, Multi-Pack and Case respectively.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="1"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Vendor" type="PromoGroupPartyType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Vendor company that negotiates the deals and funding for the Promo Group.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Broker" type="PromoGroupPartyType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A vendor may also negotiate with a broker company for funding for the Promo Group.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PromoGroupAuditData" type="RecordAuditData" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CommonItemGroupType">
+		<xs:annotation>
+			<xs:documentation>Defines common item group aka CIG, for a CIC at retail division level.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporationId" minOccurs="0"/>
+			<xs:element ref="DivisionId" minOccurs="0"/>
+			<xs:element name="CommonItemGroup" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="CommonItemGroupCd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CommonItemGroupNm" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CommonItemGroupDsc" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="200"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PromoGroupVendorType">
+		<xs:annotation>
+			<xs:documentation>This defines vendor identification companies that negotiate deals and own the promo groups. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="VendorId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>System generated identifier field for a Promotion Group Vendor. A Promotion Group vendor is generally the ABS primary vendor that negotiate deals and "owns" the promo groups. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorNm" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Promo Group Vendor name</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VendorOfferNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Vendor Offer number captured in NOPA/eDeals</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PromoGroupBrokerType">
+		<xs:annotation>
+			<xs:documentation>This defines identification for broker companies broker companies that broker contacts are employed by</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="VendorId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>System generated identifier field for a Promotion Group Vendor. A Promotion Group vendor is generally the ABS primary vendor that negotiate deals and "owns" the promo groups. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorNm" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Promo Group Vendor name</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ContactType">
+		<xs:annotation>
+			<xs:documentation>This object allows for multiple addresses and contacts for Promo Group contacts to be held. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ContactId" type="ContactAddrsType" minOccurs="0"/>
+			<xs:element name="ContactTypeCode" type="ContactCodeType" minOccurs="0"/>
+			<xs:element name="ContactAddrs" type="AddressType" nillable="false" minOccurs="0"/>
+			<xs:element name="AddressTypeCd" type="AddressCodeType" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Alphanumeric code of Adress Type. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrganizationType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Organization type to show where the contact operates within the organization.
+Ex: Corporation, Division, Rog, Banner, etc. </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="OrganizationTypeCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Partner profiles can be at different levels such as Corp, Store, Store Group. Valid values are ‘Division’, ‘Store’, ‘Store Group’, etc. </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="OrganizationValueTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Valid are DivsionId, StoreID, StoreGroupId ,etc. </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ContactAddrsType">
+		<xs:annotation>
+			<xs:documentation>Contact information that pertains to a Promo Group contact.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ContactId" type="xs:ID" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contact Identifier. This is an uniquely identifier for Contacts related to the company.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EmailAddrs" nillable="true" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Alphanumeric text of Email Address. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="125"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="WebSite" nillable="true" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Alphanumeric text of Web Site, in case Contact has one. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Salutation" nillable="true" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Alphanumeric value of Salutation such as Mr, Ms, Mrs, Master, etc...</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ContactNm" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the Contact. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="JobTitle" nillable="true" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The title of the job the Contact currently has.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Department" nillable="true" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Department in which the Contact works or represents.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="32"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="WorkPhoneNbr" nillable="true" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Land line business phone number.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CellMobilePhoneNbr" nillable="true" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Cellular/Mobile phone number.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FaxNbr" nillable="true" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Fax Number of the Contact.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OtherContactDetails" type="xs:string" nillable="true" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Other details about the Contact.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LabelResponseCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>User defined field for label assignment to contacts.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ContactLevelNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>System generated assignment that can be  over-ridden at input.  To distinguish and prioritize contacts.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CurrentAddressInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if this is the current vendor address.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AddressCodeType">
+		<xs:annotation>
+			<xs:documentation>Type necessary to differentiate addresses. Whenever an address is linked to a contact, it is necessary to specify an Address Type. This allows for multiple addresses to be held. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="AddressTypeCd" type="xs:ID" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Alphanumeric code of Adress Type. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AddressTypeDsc" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Alphanumeric description of Address Type</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="55"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ContactCodeType">
+		<xs:annotation>
+			<xs:documentation>Type necesserary to differentiate contacts. Whenever an address is linked to a contact, it is necessary to specify a Contact Type. This allows for multiple addresses to be held. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ContactTypeCd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Alphanumeric code for different types of Contacts.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ContactTypeDsc" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Description of Contact Type.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="55"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PromoGroupPartyType">
+		<xs:annotation>
+			<xs:documentation>Common object used to identify various business parties like, vendor, broker, etc.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PartyTypeCd" type="xs:string" minOccurs="0"/>
+			<xs:element name="PartyId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Generic identifier field for party. A party can have multiple types of Idntifiers that can be qualified by Type.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string"/>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PartyNm" type="xs:string" minOccurs="0"/>
+			<xs:element name="PartyAltNm" type="xs:string" minOccurs="0"/>
+			<xs:element name="PartyAddress" minOccurs="0" maxOccurs="5">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="AddressType"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ContactNm" default="" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>Contact person or party name</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="Type" type="xs:string" default=""/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ContactPhoneNbr" type="PromoGroupPhoneType" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>contact person or party phone number.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EmailAddressTxt" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>party email</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="Type" type="xs:string" default=""/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PromoGroupPhoneType">
+		<xs:annotation>
+			<xs:documentation>common object used to identify the usage type of phone like business, home</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="AreaCd" type="xs:integer" minOccurs="0"/>
+			<xs:element name="PhoneNbr" type="xs:integer" minOccurs="0"/>
+			<xs:element name="AreaCdTxt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PhoneNbrTxt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ExtensionNbr" type="xs:string" minOccurs="0"/>
+			<xs:element name="CountryCd" type="xs:integer" minOccurs="0"/>
+			<xs:element name="CountryCdTxt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute ref="typeCode"/>
+		<xs:attribute name="PrimaryFlag" type="xs:boolean" use="optional" default="0"/>
+	</xs:complexType>
+</xs:schema>

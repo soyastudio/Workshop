@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.2 Patrick Oliver 7/22/20 - Updated VendorId & VendorSubAccountNbr to string(20)-->
+	<!--V 1.1  Alex Nunes  12/14/2018 Change BOD Structure based on consuming application needs (OMS). Some warehouse data regarding the item is also required.-->
+	<!--V1.2 Rosabel Macario 11/05/2020 - Added tag to resolve dateTimeStamp issue-->
+	<!--v1.3 - Alex Nunes - 2/3/2021 - Added 'SelectedItemCd' to the item details to support WHSE DSD orders Jira ticket:  EBC-13652-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:include schemaLocation="ItemMaster.xsd"/>
+	<xs:element name="VendorItem">
+		<xs:annotation>
+			<xs:documentation>All the items supplied by a vendor at division level.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="VendorItemType">
+		<xs:annotation>
+			<xs:documentation>All the items supplied by a vendor at division level.  For DSD items the source is SSITMVCC and SSITMVPL</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporationId"/>
+			<xs:element ref="DivisionId"/>
+			<xs:element name="VendorSuppliedItem" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Vendor" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="VendorId" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>6 digit corporate Nbr that uniquely identifies a vendor within a corporation. A vendor is a Company we purchase from. VEND-NUM is generally used with Vendor Sub-Account Nbr (VEND-SUB-ACNT) or WIMS Sub-Vendor Nbr (WIMS-SUB-VEND).</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="20"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="VendorSubAccountNbr" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Identifies a particular outlet of a company we purchase from. EG. The Vancouver outlet of Nabob. This is used by the Accounts Payable System</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="20"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="WarehouseVendorId" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Identifies the WIMS Vendor Nbr set up by the Buyer. The first character of the Nbr indicates the location e.g. V - Vancouver, E - Edmonton.  Buyer/Merchandisers may break a Vendor outlet into different WIMS Vendors to suit their own purposes. Some of the reasons a Vendor may have several WIMS Vendor records are: 1. Several Buyers buying from the same Vendor. 2. A buyer buying different commodity groups from the same Vendor. 3. A Vendor offering different purchasing terms on different product lines. 4. A Buyer buying some products through a Broker and some directly from the Vendor.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string"/>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="BDRVendorId" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Unique vendor id within store Back door receiving system.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="20"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="VendorNm" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="100"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="SuppliedItem" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element ref="CorporateItemCd" minOccurs="0"/>
+									<xs:element name="ItemId" minOccurs="0">
+										<xs:complexType>
+											<xs:complexContent>
+												<xs:extension base="ItemId">
+													<xs:sequence>
+														<xs:element name="VendorUPC" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>Identiifes the vendor UPC</xs:documentation>
+															</xs:annotation>
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:maxLength value="14"/>
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:element>
+														<xs:element name="VendorUPCComponents" minOccurs="0">
+															<xs:complexType>
+																<xs:sequence>
+																	<xs:element name="PackInd" minOccurs="0">
+																		<xs:annotation>
+																			<xs:documentation>for GTIN specific UPCs.</xs:documentation>
+																		</xs:annotation>
+																		<xs:simpleType>
+																			<xs:restriction base="xs:decimal">
+																				<xs:totalDigits value="1"/>
+																				<xs:fractionDigits value="0"/>
+																			</xs:restriction>
+																		</xs:simpleType>
+																	</xs:element>
+																	<xs:element name="ManufacturerId" minOccurs="0">
+																		<xs:simpleType>
+																			<xs:restriction base="xs:decimal">
+																				<xs:totalDigits value="5"/>
+																				<xs:fractionDigits value="0"/>
+																			</xs:restriction>
+																		</xs:simpleType>
+																	</xs:element>
+																	<xs:element name="SalesId" minOccurs="0">
+																		<xs:simpleType>
+																			<xs:restriction base="xs:decimal">
+																				<xs:totalDigits value="5"/>
+																				<xs:fractionDigits value="0"/>
+																			</xs:restriction>
+																		</xs:simpleType>
+																	</xs:element>
+																	<xs:element name="CountryId" minOccurs="0">
+																		<xs:simpleType>
+																			<xs:restriction base="xs:decimal">
+																				<xs:totalDigits value="1"/>
+																				<xs:fractionDigits value="0"/>
+																			</xs:restriction>
+																		</xs:simpleType>
+																	</xs:element>
+																	<xs:element name="SystemId" minOccurs="0">
+																		<xs:simpleType>
+																			<xs:restriction base="xs:decimal">
+																				<xs:totalDigits value="1"/>
+																				<xs:fractionDigits value="0"/>
+																			</xs:restriction>
+																		</xs:simpleType>
+																	</xs:element>
+																	<xs:element name="CheckDigit" minOccurs="0">
+																		<xs:simpleType>
+																			<xs:restriction base="xs:decimal">
+																				<xs:totalDigits value="1"/>
+																				<xs:fractionDigits value="0"/>
+																			</xs:restriction>
+																		</xs:simpleType>
+																	</xs:element>
+																</xs:sequence>
+															</xs:complexType>
+														</xs:element>
+														<xs:element name="VendorConversionFactor" type="xs:short" nillable="false" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>Factor used to convert a vendor pack to a warehouse pack.</xs:documentation>
+															</xs:annotation>
+														</xs:element>
+														<xs:element name="VendorProductNbr" nillable="false" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>A short version of the Nbr used by the vendor to identify their products.  When it was found that vendors had internal reference Nbrs that were larger than 6, a new CHAR(12) element was set up, VEND-PROD-CDE on the SSITMVPL table. The shorter VEND-PROD-NUM element was kept because of the many programs that have to be changed to use the longer version. text line:  USE VEND-PROD-CDE rather than VEND-PROD-NUM in new tables.</xs:documentation>
+															</xs:annotation>
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:maxLength value="20"/>
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:element>
+														<xs:element name="VendorItemDimensions" minOccurs="0">
+															<xs:complexType>
+																<xs:sequence>
+																	<xs:element name="VendorPackCd" nillable="false" minOccurs="0">
+																		<xs:annotation>
+																			<xs:documentation>The package in which the vendor unit is shipped. For example: case or bag, etc.</xs:documentation>
+																		</xs:annotation>
+																		<xs:simpleType>
+																			<xs:restriction base="xs:string">
+																				<xs:maxLength value="20"/>
+																			</xs:restriction>
+																		</xs:simpleType>
+																	</xs:element>
+																	<xs:element name="VendorPackCube" nillable="false" minOccurs="0">
+																		<xs:annotation>
+																			<xs:documentation>Warehouse case cube size in feet, of a warehouse unit. Recalculated when the width, length or height is changed.</xs:documentation>
+																		</xs:annotation>
+																		<xs:simpleType>
+																			<xs:restriction base="xs:decimal">
+																				<xs:totalDigits value="7"/>
+																				<xs:fractionDigits value="2"/>
+																			</xs:restriction>
+																		</xs:simpleType>
+																	</xs:element>
+																	<xs:element name="PalletLayer" type="xs:short" nillable="false" minOccurs="0">
+																		<xs:annotation>
+																			<xs:documentation>Nbr of units that make up a layer on a warehouse pallet.</xs:documentation>
+																		</xs:annotation>
+																	</xs:element>
+																	<xs:element name="PalletHeight" type="xs:short" nillable="false" minOccurs="0">
+																		<xs:annotation>
+																			<xs:documentation>Nbr of layers of cases on a warehouse pallet.</xs:documentation>
+																		</xs:annotation>
+																	</xs:element>
+																	<xs:element name="ItemUnitNbr" type="xs:integer" minOccurs="0"/>
+																	<xs:element name="ItemSizeNbr" minOccurs="0">
+																		<xs:simpleType>
+																			<xs:restriction base="xs:decimal">
+																				<xs:totalDigits value="7"/>
+																				<xs:fractionDigits value="3"/>
+																			</xs:restriction>
+																		</xs:simpleType>
+																	</xs:element>
+																	<xs:element name="UOMCd" minOccurs="0">
+																		<xs:simpleType>
+																			<xs:restriction base="xs:string">
+																				<xs:maxLength value="20"/>
+																			</xs:restriction>
+																		</xs:simpleType>
+																	</xs:element>
+																</xs:sequence>
+															</xs:complexType>
+														</xs:element>
+														<xs:element name="VendorTermsId" type="xs:integer" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>Terms identifier identifies a vendors terms. On SSITMVPL TERMS_ID will contain zero for warehoused items and it contains a value which is matched against DSDTERMS (along with CORP, DIVISION, VEND_NUM and VEND_SUB_ACNT) to get the appropriate set of cash discount percentage, cash discount days, net days, payment method, and terms description for DSD items. If an item is both DSD and warehoused, the TERMS_ID is set based on DSD requirements.</xs:documentation>
+															</xs:annotation>
+														</xs:element>
+													</xs:sequence>
+												</xs:extension>
+											</xs:complexContent>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="ItemStatus" type="CodeWithDescription" minOccurs="0"/>
+									<xs:element name="SuppliedToLocationType" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicates where the item is delivered to by the supplier. DSD or Warehouse or Both.</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="DSDInd" minOccurs="0">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:maxLength value="10"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="WarehouseInd" minOccurs="0">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:maxLength value="10"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="ShipUnitPackQty" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The quantity of shelf units in a warehouse unit, or pack for the item at a corporate level. e.g. 24 shelf units in a warehouse unit. Nbr of consumer units per warehouse shipping pack (or store receiving pack for DSD) with Descriptive Size, appears on Purchase Orders for warehoused items. This tells our retail operations how many shelf units are in the warehouse pack (Itempack) Known as PACK_WHSE in SSITMCDS</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:decimal">
+												<xs:totalDigits value="7"/>
+												<xs:fractionDigits value="2"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ShipUnitPackTypeCd" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>A 3-character Cd that identifies the pack type in which an Item is received/ shipped from the Warehouse or Vendor to a Store.  Example: SHP, PLT, CTN, XDP (StorePackType)</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="3"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ItemUnitNbr" type="xs:integer" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Vendor Item dimensions, size description. </xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="ShelfPackageCd" type="xs:short" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>type of shelf package in which an item is sold (box, can, bottle, etc.). This is also used to show the type of material of which a container is made (glass, plastic, aluminum, etc.).</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="ShelfPackDsc" minOccurs="0"/>
+									<xs:element name="WarehouseItemStatus" type="WarehouseItemStatusType" minOccurs="0"/>
+									<xs:element name="ItemSize" type="CodeWithDescription" minOccurs="0"/>
+									<xs:element name="ItemCreateDt" type="xs:date" minOccurs="0"/>
+									<xs:element name="ItemLastUpdateDt" type="xs:date" minOccurs="0"/>
+									<xs:element name="SelectedItemCd" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>An indicator used to identify what type of store may purchase an item affiliated with this column. To control items from selling to outside customers.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

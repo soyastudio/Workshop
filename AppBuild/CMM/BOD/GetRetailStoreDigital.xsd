@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.2  07/28/21 Patrick Oliver: RetailStoreDigital changes (GetRetailStoreDigital v1.2):
+• PickUpLocationDetail to unbounded and removed unbounded from the PickUpLocationDetail sequence  
+• EcomBusinessHours.BusinessHrs StartHr and EndHr to strings
+• AlternateBusinessHrs added BusinessHrs  
+• AlternateBusinessHrs StartHr and EndHr to strings 
+• AlternateBusinessHrs added HrsTypeCd  
+• Change all typeCode to string
+• FacilityProfileType.EffectiveStartDt to FacilityProfileType.EffectiveStartDtTm
+• FacilityProfileType.EffectiveEndDt to FacilityProfileType.EffectiveEndDtTm
+• AltStoreId to optional
+•FulfillmentStoreId to integer-->
+	<!--V1.1 07/12/21 Patrick Oliver: Added DivisionNm-->
+	<!--V 1.0   6/01/2021 Sai: Initial Version-->
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/RetailStore.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="GetRetailStoreDigital" type="GetRetailStoreDigital">
+		<xs:annotation>
+			<xs:documentation>root</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetRetailStoreDigital">
+		<xs:annotation>
+			<xs:documentation>Business object that provides retail store online profile data to support online business operations.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="RetailStoreDigitalData" type="Abs:RetailStoreDigital" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

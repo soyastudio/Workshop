@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by  (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.0  06052019 Sai Nuthakki   Initial Version-->
+	<!--V1.1 11/05/2020 Rosabel Macario - Added tag to resolve dateTimeStamp issue-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="CouponClip" type="CouponClipType">
+		<xs:annotation>
+			<xs:documentation>CouponClip root element</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="CouponClipType">
+		<xs:annotation>
+			<xs:documentation>Contains customer coupon clips thru mobile or web.
+</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ClipPublisher" type="CodeWithName" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>System that publishes the clip data. ex  emjoc</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ClipCustomer" type="CustomerRelationshipType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines the customer who receives the offer and clipping the coupons.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ClipSource" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Source system where the clip data originated. Ex emmd -Mobile or emjou - Web</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="CodeWithName">
+							<xs:sequence>
+								<xs:element name="VersionId" minOccurs="0">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="20"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element ref="RetailStoreId" minOccurs="0"/>
+			<xs:element name="PostalZoneId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="BannerCd" minOccurs="0"/>
+			<xs:element name="BannerNm" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ClipData" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ClipId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="0"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="OfferId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="0"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ExternalOfferId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Offer id from external systems like vendor / manufacturere offer id.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="OfferProgram" type="CodeWithName" minOccurs="0"/>
+						<xs:element name="OfferProvider" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="OfferType" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Defines the type of the offer - store offer, manufacturer offer, personalized deal..etc</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ClipType" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>defines the type of the clip as clip(C) or shopping list (L).</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ClipTime" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Date and time when the coupon was clipped.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="ClipDt" type="xs:date" minOccurs="0"/>
+									<xs:element name="ClipTm" type="xs:time" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="ClipSource" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Source system where the clip data originated. Ex emmd -Mobile or emjou - Web</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:complexContent>
+									<xs:extension base="CodeWithName">
+										<xs:sequence>
+											<xs:element name="VersionId" minOccurs="0">
+												<xs:simpleType>
+													<xs:restriction base="xs:string">
+														<xs:maxLength value="20"/>
+													</xs:restriction>
+												</xs:simpleType>
+											</xs:element>
+										</xs:sequence>
+									</xs:extension>
+								</xs:complexContent>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="OfferVendor" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element ref="RetailStoreId" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

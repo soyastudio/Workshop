@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (http://www.altova.com) by Devesh Kandpal (Albertsons) -->
+<xs:schema xmlns="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://www.openapplications.org/oagis/9" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/WarehouseActivitySummary.xsd"/>
+	<!--!=============================================================================================-->
+	<!--!-->
+	<!--!-->
+	<!--!      GetWarehouseActivity-->
+	<!--!                                     Business object that represents various activties within a warehouse related to pallet, case lifting, selector performance etc used to dervice warehouse performance at a given time-->
+	<!--!-->
+	<!--!=============================================================================================-->
+	<!--09/08/2021 - v1.0 - Devesh Kandpal - Initial version.-->
+	<xs:element name="GetWarehouseActivitySummary" type="GetWarehouseActivitySummary">
+		<xs:annotation>
+			<xs:documentation>represents various activties within a warehouse related to pallet, case lifting, selector performance etc used to dervice warehouse performance at a given time</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetWarehouseActivitySummary">
+		<xs:annotation>
+			<xs:documentation>This BOD represents represents various activties within a warehouse related to pallet, case lifting, selector performance etc used to dervice warehouse performance at a given time</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="WarehouseActivitySummaryData" type="Abs:WarehouseActivitySummaryType" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

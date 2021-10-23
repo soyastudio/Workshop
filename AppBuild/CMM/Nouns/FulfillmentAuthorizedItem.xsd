@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Schema Owner: 	Safeway Inc
+   Date Created:      11 Jan 2017
+   Author:		Sai Nuthakki
+   Dsc: contains commonly used Albertson's Purchase order schema.
+   Name: /ABS_CMM_Platform/Nouns/StoreOrder.xsd
+-->
+<!-- edited with XMLSpy v2021 rel. 2 sp1 (x64) (http://www.altova.com) by poliv02 (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.1 Patrick Oliver 09/22/21 - Initial version-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="FulfillmentAuthorizedItem" type="FulfillmentAuthorizedItemType">
+		<xs:annotation>
+			<xs:documentation>root</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="FulfillmentAuthorizedItemType">
+		<xs:annotation>
+			<xs:documentation>This object will items that are authorized to a Micro Fulfillment Center (MFC). The authorization data determines exactly which items are authorized within the MFC which can be leveraged by forecasting and replenishment applications. Authorized item data will include store and MFC locations, authorized item types, authorized item dates, and user audit data. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="FulfillmentAuthorizedItemSource" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates source of the fulfillment authorized item data.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="CorporationId"/>
+			<xs:element ref="DivisionId"/>
+			<xs:element name="FulfillmentFacility" type="FulfillmentFacilityType" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Fulfillment and retail facility for the authorized items. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FulfillmentAuthorizedItemData" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="AuthorizedItem" type="AuthorizedItemType" minOccurs="0"/>
+						<xs:element name="AuthorizedItemInd" type="xs:boolean" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates if item should be procurred for the Fulfillment facility.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="EffectiveStartDt" type="xs:dateTimeStamp" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Authorized Start date for MFC item.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="EffectiveEndDt" type="xs:dateTimeStamp" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Authorized end date for MFC item. </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="AuthorizedBy" type="AuthorizedByType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates user data who authorized MFC items.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PublishDtTm" type="xs:dateTimeStamp" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Date and time when authorized item data record published.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="FulfillmentFacilityType">
+		<xs:annotation>
+			<xs:documentation>Contains store related information.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="FacilityId">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FacilityType" type="CodeWithDescription"/>
+			<xs:element name="FacilityAltId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="BannerCd" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AuthorizedItemType">
+		<xs:annotation>
+			<xs:documentation>MFC Item identifiers generally used in albertsons ecommerce business.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="UPC" minOccurs="0">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="Abs:UPC"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="UPCComponents" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>UPC ID broken into individual Components.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="UPCComponentsType"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PrimaryUPCInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Since a CIC or BPN can have mutiple UPCs associated with it over a period of time, need to identify one of the UPC as primary for pricing and ordering perspective.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="GTINID" type="xs:string" minOccurs="0"/>
+			<xs:element name="SystemSpecificItemId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Like NDA id for Drugs.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BaseProductNbr" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Popularly known as BPN number in eCommerce world. Identifier generated in eCom for a group of similar elements. BPN can represent multiple CICs or UPCs. BPN is used to dispaly items in safeway.com online sales site.
+ Ex Seedless red grapes will have one BPN but there may be multiple varities with in red grapes like crimson red, dark red or light red with different cic/upcs.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PLUCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Product look up code.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ItemDescription" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Item description which generally will be the online ecommmerce description</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AuthorizedByType">
+		<xs:annotation>
+			<xs:documentation>Indicates user data who authorized MFC items.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="UserId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FirstNm" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LastNm" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AuthorizedReasonType" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="AuthorizedDtTm" type="xs:dateTimeStamp" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AuthorizedVendor">
+		<xs:annotation>
+			<xs:documentation>Vendor Authorized to supply items to store facility,</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="VendorId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Corporate Vendor Nbr that uniquely identifies a vendor within a corporation. A vendor is a Company we purchase from. VEND-NUM is generally used with Vendor Sub-Account Nbr (VEND-SUB-ACNT) or WIMS Sub-Vendor Nbr (WIMS-SUB-VEND).</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorSubAccountNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identifies a particular outlet of a company we purchase from. EG. The Vancouver outlet of Nabob. This is used by the Accounts Payable System</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BDRVendorId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Unique vendor id within store Back door receiving system.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorNm" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

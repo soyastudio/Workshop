@@ -1,0 +1,3236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (http://www.altova.com) by Devesh Kandpal (Albertsons) -->
+<!--
+   Schema agency: 	Safeway Inc
+   Date:                11 Jan 2016
+   Author:		Sai Nuthakki
+   Description: contains all Safeway Global Components as a common schema to include.
+   Name: /SFWY/Global/SwyGlobalComponents.xsd
+-->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" xmlns:ns="xs:string" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:include schemaLocation="AbsGlobalFields.xsd"/>
+	<xs:element name="Address" type="AddressType">
+		<xs:annotation>
+			<xs:documentation>Provides the information about the address or semantic address of an associated entity.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="AddressBaseType">
+		<xs:annotation>
+			<xs:documentation>Address BaseType provides the information about the address or semantic address of an associated entity.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="AddressUsageTypeCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AddressLine1txt" default="" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AddressLine2txt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AddressLine3txt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AddressLine4txt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AddressLine5txt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CityNm" nillable="true" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CountyNm" nillable="true" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CountyCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PostalZoneCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="StateCd" nillable="true" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="StateNm" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CountryCd" nillable="true" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CountryNm" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AddressEncryptedType">
+		<xs:annotation>
+			<xs:documentation> to accommdate encrypted address fields which are quite large compared to unencrypted fields.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="AddressUsageTypeCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AddressLine1txt" default="" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AddressLine2txt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AddressLine3txt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AddressLine4txt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AddressLine5txt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CityNm" nillable="true" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CountyNm" nillable="true" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PostalZoneCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="StateCd" nillable="true" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CountryCd" nillable="true" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LatitudeDegree" nillable="true" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines the angular distance north or south from the equator of a point on the earth&apos;s surface, measured on the meridian of the point. Half of a pair of coordinates (the other being longitude).&#10;&#10;A latitude can have negative values.&#10;</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LongitudeDegree" nillable="true" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines the angular distance east or west on the earth&apos;s surface, measured by the angle contained between the meridian of a given point and a prime meridian.  Half of a pair of coordinates (the other being latitude) assigned via a point geocoding procedure.  &#10;&#10;Unlike latitude, which has the equator as a natural starting position, there is no natural starting position for longitude&#10;&#10;Longitude can have negative values.&#10;&#10;</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TimeZoneCd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Cd that defines the time zone in which the store facility is located.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PhoneNbr" minOccurs="0" maxOccurs="3">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FaxNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="GenericDataStructureType">
+		<xs:annotation>
+			<xs:documentation>Generic structure to accommdate any kind of additinal data elements from input sources.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="SequenceNbr" type="xs:integer" minOccurs="0"/>
+			<xs:element name="ElementNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of descriptive flex field</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ElementValueTxt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>For string flex field values</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="500"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ElementValueNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>For number flex field values</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ElementValueDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>For date flex field values</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ElementValueDsc" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Can be used to describe the flex value </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EffectiveStartDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="EffectiveEndDt" type="xs:date" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AddressType" abstract="false" mixed="false">
+		<xs:annotation>
+			<xs:documentation>Address information including timezone, and contact coordinates.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="AddressBaseType">
+				<xs:sequence>
+					<xs:element name="LatitudeDegree" type="xs:decimal" nillable="true" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Defines the angular distance north or south from the equator of a point on the earth&apos;s surface, measured on the meridian of the point. Half of a pair of coordinates (the other being longitude).&#10;&#10;A latitude can have negative values.&#10;</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="LongitudeDegree" type="xs:decimal" nillable="true" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Defines the angular distance east or west on the earth&apos;s surface, measured by the angle contained between the meridian of a given point and a prime meridian.  Half of a pair of coordinates (the other being latitude) assigned via a point geocoding procedure.  &#10;&#10;Unlike latitude, which has the equator as a natural starting position, there is no natural starting position for longitude&#10;&#10;Longitude can have negative values.&#10;&#10;</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="TimeZoneCd" type="xs:string" nillable="false" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Cd that defines the time zone in which the store facility is located.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="PhoneNbr" type="xs:string" minOccurs="0" maxOccurs="3"/>
+					<xs:element name="FaxNbr" type="xs:string" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AllowancesType">
+		<xs:annotation>
+			<xs:documentation>contains various attributes related to vendor allowances.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="AllowanceMethod" default="" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AllowanceCd" default="" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BasisAmt" default="0" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Base Amt from which the allowance is derived</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BasisQty" default="0" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Base quantity for which allwance Amt is calculated</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="QuantityUOM" default="" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AllowanceRate" default="0" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AllowanceAmt" default="0" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AllowancePercent" default="0" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="6"/>
+						<xs:fractionDigits value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AllowanceDsc" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Description for the allowance</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ReasonCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EffectiveStartDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="EffectiveEndDt" type="xs:date" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="TypeCd" type="xs:string" default=""/>
+	</xs:complexType>
+	<xs:complexType name="AlternateIdType">
+		<xs:annotation>
+			<xs:documentation>Used to store alternate IDs (ex: GUID)</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="AlternateIdTxt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AlternateIdNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="24"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute ref="typeCode"/>
+		<xs:attribute ref="sequenceNbr"/>
+	</xs:complexType>
+	<xs:complexType name="BeneficiaryType">
+		<xs:annotation>
+			<xs:documentation>Represents an entity or a person that receives items or property from the company.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="BeneficiaryId">
+				<xs:annotation>
+					<xs:documentation>Unique identifier of the beneficiary/charity.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:totalDigits value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BeneficiaryNm">
+				<xs:annotation>
+					<xs:documentation>Name or description of the Charity.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="60"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AltCharityNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Alternate name or description of the charity.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="35"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BeneficiaryType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Type of beneficiary.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="Address"/>
+			<xs:element name="TaxId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Beneficiary tax identification.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AccountingInd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ApprovalDt" type="DateBaseType" minOccurs="0"/>
+			<xs:element name="ApprovalUserId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="TypeCd" type="xs:string" default=""/>
+	</xs:complexType>
+	<xs:complexType name="BusinessKeyType">
+		<xs:annotation>
+			<xs:documentation>Gneric structure to define differnt business keys in a document.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="HierachyLevelNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This can be used when there are multi-level xref between source and target (ex: source vendor/sub_act to Supplier/Site)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="KeyFieldNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the business key field like 'Purchase Order Nbr', 'Invoice Nbr'</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="KeyFieldValue" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Value for the business key field. ex actual purchase order nbr like  'PO907843' and purchase order dt like '2020-04-22'. Select any one of value field based on data type of the key field value. Repeat the segment if there are multiple business keys in a document.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="KeyFieldValueTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>PurchaseOrderNbr, StoreId, DivisionId, UPC..etc</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="200"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="KyFieldValueId" type="xs:integer" minOccurs="0"/>
+						<xs:element name="KeyFieldValueNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Ex: InvoiceNbr, CorporateItemCd, OrfderQty</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="KeyFieldValueDt" type="xs:dateTime" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Ex PurchaseOrderDt, StoreoRderDt, InvoiceDt</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="KeyFieldValueInd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CarrierEquipment">
+		<xs:annotation>
+			<xs:documentation>Contains carrier equipment details like container details, tractor details, or any other</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="CarrierTransportationMethodCd" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Transportation method code.Type of transportation.
+H = CUSTOMER PICKUP
+M = MOTOR (COMMON CARRIER)
+R = RAIL
+D = PARCEL POST
+U = PRIVATE PARCEL SERVICE
+A = AIR
+T = BEST WAY (SHIPPERS OPTION)
+X = PIGGYBACK
+O = OCEAN</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CarrierNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the transportation carrier.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CarrierCd" default="" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CarrierStandardCd" default="" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EquipmentNbr" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Truck number , container number, Trailer number</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EquipmentType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Type of equipment used during transportation</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Routing" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Carrier shipment delivery routing specific to an equipment.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="StatusCode" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>carrier transportation status Cd.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ChargesType">
+		<xs:annotation>
+			<xs:documentation>contains various attributes related to Charges applied in a document like invoice.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ChargeCd" default="" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BasisAmt" default="0" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Base Amt from which the charge is derived</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BasisQty" default="0" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Base quantity for which charge Amt is calculated</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="QuantityUOM" default="" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ChargeRate" default="0" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ChargeAmt" default="0" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ChargePercent" default="0" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="6"/>
+						<xs:fractionDigits value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ChargeDsc" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Description for the Charge</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ReasonCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="TypeCd" type="xs:string" default=""/>
+	</xs:complexType>
+	<xs:element name="Classification" type="ClassificationType">
+		<xs:annotation>
+			<xs:documentation>This identifies the classification of an entity. An entity may be classified into mulitple groups for different reasons.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="ClassificationType" abstract="false" mixed="false">
+		<xs:annotation>
+			<xs:documentation>Common type for specifying classification of associated component.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="Id" minOccurs="0"/>
+			<xs:element ref="Codes" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The ClassificationCodes that identify a single or hierarchical association of classifications.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CommunicationBaseType" abstract="false" mixed="false">
+		<xs:annotation>
+			<xs:documentation>Common type for specifying basic communication details including voice and digital channels.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="PhoneFaxContact" minOccurs="0"/>
+			<xs:element ref="DigitalContact" minOccurs="0"/>
+			<xs:element ref="Address" minOccurs="0"/>
+			<xs:element ref="EncryptionOneWayDigest" minOccurs="0"/>
+			<xs:element ref="EffectiveTimePeriod" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CommunicationType" abstract="false" mixed="false">
+		<xs:annotation>
+			<xs:documentation>Common type for specifying communication details along with preferrences.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CommunicationBaseType">
+				<xs:attribute ref="typeCode">
+					<xs:annotation>
+						<xs:documentation>Type of Communication Address.
+
+Examples are - Home, Work, Permanent, Seasonal etc.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute ref="sequenceNbr"/>
+				<xs:attribute ref="preferredInd"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CompetitorType">
+		<xs:annotation>
+			<xs:documentation>Contains information about Albertsons Competitors. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="CompetitorCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field indicates a competitor to Safeway by using a     
+code such as SAVEON to represent Save-On Foods.             
+</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CompetitorNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the descriptive name of the competitor.  </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CompetitorShortNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the descriptive short name of the competitor.    </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="Contact" type="CommunicationType">
+		<xs:annotation>
+			<xs:documentation>Represents communication details including address, voice, fax, and digital channels.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="CoordinateType">
+		<xs:annotation>
+			<xs:documentation>This CoordinateType allows the use of another coordinate system for the use within a warehousing and inventory environment and the geographic coordinat system.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Latitude" type="PositionType" minOccurs="0"/>
+			<xs:element name="Longitude" type="PositionType" minOccurs="0"/>
+			<xs:element name="AltitudeMeasure" type="MeasureType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Is the value and unit of measure in the z-axis in a thrre dimensional system.
+
+Examples of this maybe the Altitude in the case of a map of the world, or the height or shelf in a rack system in the case of a manufacturing or warehouse facility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SystemId" type="IDType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Is the system in which the userid applies.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CoordinateReference" type="SequencedIDsType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="CorporateItemCd" default="0">
+		<xs:annotation>
+			<xs:documentation>This is the wholesale item identifier, which is usually unique across the enterprise and quaranteed to be unique within a country. For Canada, the first 5 digits is the product class Cd (PROD_CLASS) and the last 3 are system generated sequence numbers.  For US, the first four digits are the SMIC Group and Category Cds and the last four digits are system generated sequence numbers.A SSIMS generated Cd that identifies an item across divisions. A CIC always has 1 UPC, but may have more added to it.  CIC is the main number used in SIMS to work with items. More than one CIC may be assigned to an UPC.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:decimal">
+				<xs:totalDigits value="14"/>
+				<xs:fractionDigits value="0"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:complexType name="CustomerRelationshipType">
+		<xs:annotation>
+			<xs:documentation>Customer relationship data used in loyalty, rewards and online marketing.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="HouseholdId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CustomerAccountNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ClubCardNbr" nillable="true" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CustomerAlternateId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="StartDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="StatusCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EmployeeInd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="GUID" minOccurs="0"/>
+			<xs:element name="CustomerId" type="IDType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Customer Identification.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DataClassificationType">
+		<xs:annotation>
+			<xs:documentation>Common type to classify the data in a BOD. It helps to identify the type of data in a BOD from security and confidentiality perspective and alert BOD publishers and consumers to encrypt the data in rest and data in motion.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DataClassificationLevel" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>various levels of data classification
+
+1- Confidential/Restricted, data encryption needed for data in motion and data in rest. Business Approval needed to publish and consume the data. ex: ssn, credit card, payroll, phi,pci data
+
+2- Internal - No encryption but approval needed to store and transmit, ex PO, Store Order, Org Master
+
+3- Public - no approval/authentication needed</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BusinessSensitivityLevel" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Data sensitivity from the internal business perspective, not related to regulatory restrictions.
+
+Critical 
+High
+Medium
+Low</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PHIdataInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if the BOD carries any PHI (personal Health Info) data elements.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1"/>
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PCIdataInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if the BOD carries any PCI (payment card info) data elements.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1"/>
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PIIdataInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if the BOD carries any PII (person identification Info) data elements.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1"/>
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DigitalAddressType1.1">
+		<xs:annotation>
+			<xs:documentation>Contains digital address like email id, facebook id, instagram id, linkedin URL and the type of address like id, URL etc.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<!--SM 16-Apr: As defined below it makes digitial address to have at least one value / entry. Is this intentional?-->
+			<xs:element name="AddressType" type="CodeWithName" minOccurs="0"/>
+			<xs:element name="DigitalAddress" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="500"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EmailStatus" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="EmailStatusCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Code of the email status</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="EmailStatusDsc" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Description of the email status</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="EmailStatusVal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Phone status value.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ResponseTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Phone status response text.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="200"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ReferenceId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Reference Id</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="200"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="Sources" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="BannerCd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Banner code.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="StoreNbr" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Store number.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="SourceNm" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Source name.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Codes" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Cd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Code.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="CodeDsc" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Code text or description.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="200"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+					<xs:attribute ref="typeCode"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="EmailPurpose" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="PurposeCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Code of the purpose.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PurposeDsc" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Description of the purpose.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="EffectivePeriod" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="FirstEffectiveDt" type="xs:date" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The first Dt on which a condition or a version of an object is, was, or will be in effect.  In order to simplify joins that must match a transaction record to reference data with a Dt filter, First Effective Dt should never contain null values.  When the First Effective Dt is unknown, it should be set to a default of 01/01/0001 or the lowest Dt value supported by the DBMS.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="FirstEffectiveTm" type="xs:time" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The first time on which a condition or a version of an object is, was, or will be in effect. When the First Effective time is unknown, it should be set to a default of 00:00:00 or the lowest time value supported by the DBMS.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="LastEffectiveDt" type="xs:date" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The last Dt on which a condition or a version of an object was, or will be in effect.  In order to simplify joins that must match a transaction record to reference data with a Dt filter, Last Effective Dt should never contain null values.  When the Last Effective Dt is unknown, it should be set to a default of 12/31/9999 or the highest Dt value supported by the DBMS.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="LastEffectiveTm" type="xs:time" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The last time on which a condition or a version of an object is, was, or will be in effect. When the First Effective time is unknown, it should be set to a default of 23:59:59 or the lowest time value supported by the DBMS.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="DurationNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Number that represents the duration.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DurationUnitDsc" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Duration unit. D for Days, W for weeks.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="InclusiveInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates whether or not the dates and times are inclusive or not.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+					<xs:attribute ref="typeCode"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DigitalAddressType">
+		<xs:annotation>
+			<xs:documentation>Contains digital address like email id, facebook id, instagram id, linkedin URL and the type of address like id, URL etc.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<!--SM 16-Apr: As defined below it makes digitial address to have at least one value / entry. Is this intentional?-->
+			<xs:element name="AddressType" type="CodeWithName" minOccurs="0"/>
+			<xs:element name="DigitalAddress" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EmailPurposes" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="PurposeCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Code of the purpose.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PurposeDsc" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Description of the purpose.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="EmailStatuses" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="EmailStatusCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Code of the email status</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="EmailStatusDsc" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Description of the email status</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="EmailStatusVal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Phone status value.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ResponseTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Phone status response text.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="200"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ReferenceId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Reference Id</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="200"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="Sources" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="BannerCd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Banner code.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="StoreNbr" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Store number.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="SourceNm" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Source name.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Codes" minOccurs="0" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Cd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Code.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="CodeDsc" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Code text or description.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="200"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="StatusCd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Code status</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="20"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ReasonCd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Code reason</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="20"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="EffectivePeriod" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Note same status can have multiple effective times  period types ("SUCCESS", "FAILED" ,etc.)</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence minOccurs="0">
+									<xs:element name="FirstEffectiveDt" type="xs:date" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The first Dt on which a condition or a version of an object is, was, or will be in effect.  In order to simplify joins that must match a transaction record to reference data with a Dt filter, First Effective Dt should never contain null values.  When the First Effective Dt is unknown, it should be set to a default of 01/01/0001 or the lowest Dt value supported by the DBMS.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="FirstEffectiveTm" type="xs:time" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The first time on which a condition or a version of an object is, was, or will be in effect. When the First Effective time is unknown, it should be set to a default of 00:00:00 or the lowest time value supported by the DBMS.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="LastEffectiveDt" type="xs:date" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The last Dt on which a condition or a version of an object was, or will be in effect.  In order to simplify joins that must match a transaction record to reference data with a Dt filter, Last Effective Dt should never contain null values.  When the Last Effective Dt is unknown, it should be set to a default of 12/31/9999 or the highest Dt value supported by the DBMS.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="LastEffectiveTm" type="xs:time" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The last time on which a condition or a version of an object is, was, or will be in effect. When the First Effective time is unknown, it should be set to a default of 23:59:59 or the lowest time value supported by the DBMS.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="DurationNbr" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Number that represents the duration.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="DurationUnitDsc" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Duration unit. D for Days, W for weeks.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="20"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="InclusiveInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicates whether or not the dates and times are inclusive or not.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="2"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+								<xs:attribute ref="typeCode"/>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+					<xs:attribute ref="typeCode"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="DigitalContact" type="DigitalAddressType">
+		<xs:annotation>
+			<xs:documentation>Provides information about email address, social media id, URI etc. of an associated entity.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="DocumentActionType">
+		<xs:sequence>
+			<xs:element name="ActionTypeCd" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Identifies the type of action needed for BOD consumer like Insert - New record that need to be inserted, Update - existing record need to be updated,delete - delete the record.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RecordTypeCd" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Identifies the record type as full - All the attributes are populated,                          change - Only updated attributes are populated, History - Historic records.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DocumentType">
+		<xs:annotation>
+			<xs:documentation>Provides the Identifier(s) of the document being communicated.
+
+Uniquily identifies a Document within an organization. Typically there is only an ID for a document within one system. However, with the use of different business applications there maybe different ids assigned to the same document within an organization from the different systems and in the case of B2B transactions different businesses may have different Identifiers for the same document. 
+
+This construct is designed to allow for these different identifications.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DocumentID" default="0" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AlternateDocumentID" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InboundOutboundInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if the document is inbound to Albertson companies or outbound from Albertson companies.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DocumentNm" default="PurchaseOrder" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the doc, ex Purchase order, Sales Order, Invoice.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CreationDt" type="xs:dateTime">
+				<xs:annotation>
+					<xs:documentation>Date and time the document( PO or Invoice or any other messages) created.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Description" default="" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>Dsc of the document. ex safeway purchase order, safeway invoice..etc</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SourceApplicationCd" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Applications from where the data is being sourced from into the message.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TargetApplicationCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Target Application that consumes the message.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Note" default="" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="GatewayNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the EDI gateway. Ex: Gentran, Axaway, Oracle B2B</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SenderId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>EDI message sender Id</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ReceiverId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>EDI message Receiver Id</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RoutingSystemNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the routing system. Ex iTrade, wims Fax</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InternalFileTransferInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates that the source of the messages is from an internal file transfer from Albertsons applications.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InterchangeDate" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>EDI Data interchange date</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InterchangeTime" type="xs:time" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>EDI Data interchange time</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ExternalTargetInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if the target system receiving the message is an External or Internal to Albertsons cos. Ex: outbound invoice to wholesale customers is an external message where as outbound invoice to Albertsons Lawson is an Internal message.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MessageSequenceNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>assigned sequence number in case of processing a batch of input data.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ExpectedMessageCnt" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Total number of messages expected from a batch processing of input data.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DataClassification" type="DataClassificationType" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="ReleaseId" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>ReleaseId for the BOD instance</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="VersionId" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>Version Id for the BOD instance</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="SystemEnvironmentCd" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>Prod, Test, QA</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="DonationType">
+		<xs:annotation>
+			<xs:documentation>Represents items or property given by the company to a charity or beneficiary.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DonationHeader"/>
+			<xs:element name="DonationDetail"/>
+		</xs:sequence>
+		<xs:attribute name="TypeCd" type="xs:string" default=""/>
+	</xs:complexType>
+	<xs:complexType name="DriverLicenseType">
+		<xs:annotation>
+			<xs:documentation>Defines Person's Driver License details</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DriverLicenseNbr" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ExpiryDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="IssuedState" type="CodeWithName" minOccurs="0"/>
+			<xs:element name="IssuedDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="DriverLicenseType" type="CodeWithName" minOccurs="0"/>
+			<xs:element name="RestrictionType" type="CodeWithDescription" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="EffectiveTimePeriod" type="TimePeriodType">
+		<xs:annotation>
+			<xs:documentation>Indicates the time period in which the associated component is effective.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="EmergencyCommunicationType" abstract="false" mixed="false">
+		<xs:annotation>
+			<xs:documentation>Common type for "Emergency Contact" communication details along with preferrences.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CommunicationType">
+				<xs:sequence>
+					<xs:element ref="PersonNm" minOccurs="0"/>
+				</xs:sequence>
+				<xs:attribute name="relationCode">
+					<xs:annotation>
+						<xs:documentation>Type of relationshop with the Emergency Contact.
+
+Examples are Spouse, Parent, Sibling, Relative, Friend etc.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="EmergencyContact" type="EmergencyCommunicationType">
+		<xs:annotation>
+			<xs:documentation>Represents communication details including address, voice, fax, and digital channels for Emergency Contact of associated entity.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="Employee" type="EmployeeType" nillable="false">
+		<xs:annotation>
+			<xs:documentation>Represents employee information.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="EmployeeBaseType" abstract="false" mixed="false">
+		<xs:annotation>
+			<xs:documentation>Common type for specifying employee information.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="PersonDetailType">
+				<xs:sequence>
+					<xs:group ref="EmployeeProfile" minOccurs="0"/>
+					<xs:element ref="Status" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:group name="EmployeeProfile">
+		<xs:annotation>
+			<xs:documentation>Component for grouping together employee related details.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="EmployeeTypeCd" minOccurs="0"/>
+			<xs:element name="RecruitedAsType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Employee recruited as Regular employee or Temporary employee.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="HRStatus" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Current HR status of the employee, Active, inactive.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LOAStatus" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Employee leave of Absence status.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WorkStatus" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Employee current work status, fulltime, part time.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="JobTitle" minOccurs="0"/>
+			<xs:element ref="JobCd" minOccurs="0"/>
+			<xs:element name="JobEntryDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date when the employee joined in the job mentioned in the job code.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="JobPositionType" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="JobPositionId" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>One Job code can have multiple job positions. It idetiifes the position employee is recruited. These positions have different BU, Collective agreement, departments etc</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="JobPositionNm" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="250"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AssignmentType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>It uniquely identifies every assignment that exists for an employee. An employee can have one or more than one assignment, and therefore more than one assignment number</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="AssignmentId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AssignmentNm" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="250"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AssignmentStartDt" type="xs:date" minOccurs="0"/>
+						<xs:element name="AssignmentEndDt" type="xs:date" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PayrollRelationshipNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A payroll relationship represents the association between a person and a payroll statutory unit, which is the legal entity responsible for employee payment.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PayrollResponsiblePartyType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Businessunit responsible for the payroll of the employee.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="PayrollResponsiblePartyId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PayrollResponsiblePartyNm" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="250"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element ref="HRDepartment" minOccurs="0"/>
+			<xs:element ref="Qualification" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element ref="ProfessionalSkill" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element ref="HireDt" minOccurs="0"/>
+			<xs:element ref="OriginalHireDt" minOccurs="0"/>
+			<xs:element ref="LastHireDt" minOccurs="0"/>
+			<xs:element ref="LastTerminationDt" minOccurs="0"/>
+			<xs:element ref="TerminationDt" minOccurs="0"/>
+			<!--<xs:element ref="EmergencyContact" minOccurs="0" maxOccurs="unbounded"/>-->
+			<xs:element name="SeniorityDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date to consider the seniority of an employee.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:group>
+	<xs:complexType name="EmployeeType" abstract="false" mixed="false">
+		<xs:annotation>
+			<xs:documentation>Common type for specifying employee information.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="EmployeeBaseType">
+				<xs:sequence>
+					<xs:element ref="EmergencyContact" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="MilitaryStatus" type="CodeWithDescription" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Military/veteran status like Armed Forces Service Medal,Active War/Campaign Medal, protected veteran, Active Wartime or Campaign Badge Veteran.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="EncryptionOneWayDigest" type="EncryptionOneWayDigestType">
+		<xs:annotation>
+			<xs:documentation>Contains one-way encryption hash value for different types of communication eg. email.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="EncryptionOneWayDigestType">
+		<xs:annotation>
+			<xs:documentation>Common type for one-way encryption hash value for different types of communication eg. email.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="HashValueTxt" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="AddressType">
+								<xs:annotation>
+									<xs:documentation>Ex: Email address.</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="HashValueBinaryVal" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:base64Binary">
+							<xs:attribute name="AddressType">
+								<xs:annotation>
+									<xs:documentation>Ex: Email address</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="GUID">
+		<xs:annotation>
+			<xs:documentation>This ID represents a Globally Unique Identifier.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="50"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:complexType name="GUIDType">
+		<xs:annotation>
+			<xs:documentation>Common type for specifying GUID.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="GUID" minOccurs="0"/>
+			<xs:element name="GUIDStdTxt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Represents GUID in a global standard formatted manner, hyphenated and in-between brackets that is.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:pattern value="\{[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}\}"/>
+						<xs:pattern value=""/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="GUIDAbsTxt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Represents GUID in company's standard format. 999-999-9999999999999.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:pattern value="[0-9]{3}-[0-9]{3}-[0-9]{13}"/>
+						<xs:pattern value=""/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="HRDepartment" type="HRDeptType">
+		<xs:annotation>
+			<xs:documentation>Represents the department in which the associated entity belongs within the given organization.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="HRDeptType">
+		<xs:annotation>
+			<xs:documentation>Common type that specifies the department in which the associated entity belongs within the given organization.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DepartmentId" type="IDType" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines a Cd that uniquely identifies the departments based on its function.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DepartmentNm" type="NameBaseType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines the name of the department.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DepartmentEntryDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date when employee joined in the dept he bolngs to.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="HROrgHierarchy" type="HROrgHierarchyType">
+		<xs:annotation>
+			<xs:documentation>This is the HR Organization hierarchy for the employee.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="HROrgHierarchyType" abstract="false" mixed="false">
+		<xs:annotation>
+			<xs:documentation>Common type for specifying HR Organization hierarchy.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="Supervisor" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="IDs" type="SequencedIDsType" nillable="false">
+		<xs:annotation>
+			<xs:documentation>List of IDs and their sequencing relative to each other.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="LaborAgreement" type="LaborAgreementType">
+		<xs:annotation>
+			<xs:documentation>Identifies the union status and labor agreement details of the employee.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="LaborAgreementType" mixed="false">
+		<xs:annotation>
+			<xs:documentation>Common type for specifying Labor agreement details including union, contract details etc.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="Id" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identifier for the Labor Agreement.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UnionInd" type="IndicatorType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Is indicator for Union or Non-Union.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UnionCd" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="UnionChapterNm" type="NameBaseType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Is name of the Union Chapter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Name" type="NameBaseType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of or general information about the Labor Agreement.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ContractReference" type="TextType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Is a reference to a contract.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ContractLevelNbr" type="xs:integer" minOccurs="0"/>
+			<xs:element name="ContractEntryDt" type="xs:date" minOccurs="0"/>
+			<xs:element ref="Status" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="LumperType">
+		<xs:annotation>
+			<xs:documentation>Contains lumper instructions either from a consignee or shipper. A lumper will unload the freight from a trailer and break down the pallets into smaller bundles if required per the receiver's instructions. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="LumperMessageCd" default="" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LumperMessageTxt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="500"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MessageType">
+		<xs:annotation>
+			<xs:documentation>Contains the details of the message type, like direction (inbound/outbound) and type of the message like store order, warehouse order, customer order or invoice.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="InboundOutboundInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates whether the message is inbound to the context system or outbund from the context system point of view.
+Ex: M3 -Albertsons manufactirung system, can have both inbound and outbound purchase orders</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="InternalMessageInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates whether the message is inbound from Albertsons internal systems or from external parties like customers and vendors. Similarly for outbound messages, it indicates whether it is for internal systems or external parties.
+Ex: M3 -Albertsons manufactirung system, can have inbound purchase orders from internal systems as well as external customers.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MessageType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines the type of the message.
+ex: store order, warehouse fulfillment order, wholesale customer order, invoice..etc</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="NameType" type="xs:string">
+		<xs:annotation>
+			<xs:documentation>Common type for all kinds of Names</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="PalletExchangeType">
+		<xs:annotation>
+			<xs:documentation>Pallet exchange instructions between the buyer and seller</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PalletExchangeCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>1 = NO EXCHANGE/NO RETURN
+2 = EXCHANGE PALLETS
+3 = RETURN PALLETS
+4 = PALLETS PURCHASED BY CUSTOMER</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PalletExchangeInstructionsTxt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PartyType">
+		<xs:annotation>
+			<xs:documentation>Common object used to identify various business parties like, customer, shipper, vendor, bilto, ship to..etc</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PartyTypeCd" type="xs:string" minOccurs="0"/>
+			<xs:element name="PartyNm" type="xs:string" minOccurs="0"/>
+			<xs:element name="PartyId" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>Generic identifier field for party. A party can have multiple types of Idntifiers that can be qualified by Type.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="Issuer" type="xs:string" default=""/>
+							<xs:attribute name="IdentificationType" type="xs:string" default="">
+								<xs:annotation>
+									<xs:documentation>Identification type of the party. ex EMP Nbr, Facility Nbr, DUNS Nbr, EDI Received id, EIN Nbr, Drivers License Nbr</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PartyAddress" minOccurs="0" maxOccurs="5">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="AddressType"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ContactNm" default="" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>Contact person or party name</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="Type" type="xs:string" default=""/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ContactPhoneNbr" type="PhoneType" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>contact person or party phone number.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EmailAddressTxt" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>party email</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PartyAltNm" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PatientPersonType">
+		<xs:annotation>
+			<xs:documentation>Personal details of a patient</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="Id" minOccurs="0"/>
+			<xs:element name="AlternateId" type="IDType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Alternate Identitifers for a patient like EPR ID, Source system patient Id, or any other identifiers. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PatientNm" type="PersonNameType" minOccurs="0"/>
+			<xs:element ref="BirthDt" minOccurs="0"/>
+			<xs:element ref="DeathDt" minOccurs="0"/>
+			<xs:element name="PatientGender" type="PersonGenderType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A gender (sex) of the individual in which it is associated.
+
+Examples are Male, Female, Undeclared.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PatientLanguage" type="LanguageType" minOccurs="0" maxOccurs="5">
+				<xs:annotation>
+					<xs:documentation>Patient languages that can be used in communications.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PatientReligion" type="ReligionType" minOccurs="0"/>
+			<xs:element name="PatientEthnicity" type="EthnicityType" minOccurs="0"/>
+			<!--<xs:element ref="Address" minOccurs="0" maxOccurs="unbounded"/>-->
+			<xs:element ref="Contact" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element ref="EmergencyContact" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PaymentMethodType">
+		<xs:annotation>
+			<xs:documentation>Identifies the way a Customer chooses to compensate the company for a purchase of a good that is also acceptable to the company. The most common type of payments are debit cards, charge cards, prepaid cards, bank transfers, phone and mobile payments, money orders and cash payments.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Description" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Description of the payment method.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FinancialInstitutionNm" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the financial institution responsible for the payment method.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute ref="typeCode"/>
+		<xs:attribute ref="preferredInd"/>
+	</xs:complexType>
+	<xs:complexType name="PaymentTermType">
+		<xs:annotation>
+			<xs:documentation>Identifies the payment term for an Order or Invoice. Supports the abiility to specify an absolute due date, a number of days from a start daye, a percent discount or an absolute discount. A common term like "Net30Days" is explicitly Cd as either a calculated DueDateTime or a PaymentTermsDateTime and NumberOfDays.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PaymentTermCd" type="xs:string" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates the Cd type of payment terms.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Description" type="xs:string" default="" minOccurs="0" maxOccurs="5"/>
+			<xs:element name="Term" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="BasisCd" type="xs:string" default="" minOccurs="0"/>
+						<xs:element name="BasisDt" type="xs:dateTime" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Date and time when payment terms go into effective.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="DueDateQualifierCd" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Qualifies the due date, ex mail date, receipt by date, electronics fund transfer settelement date or funds deposit by date.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="DueDtTm" type="xs:dateTime" minOccurs="0"/>
+						<xs:element name="Duration" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The number of days in which the net Amt of the invoice is due for   
+payment. NET DAYS is one of the vendor terms elements.   
+It must be greater then the cash discount days.                        
+</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="DiscountPercent" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>indicates the percentage of discount available against a price.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="DiscountDays" type="xs:decimal" default="0" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates the number of days the percentage cash discount is available.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Discountype" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates the type of cash discount</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="DiscountDueDt" type="xs:dateTime" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Date till term discount is valid</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="DiscountDueAmt" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Amt due after term dicount. Suppose original invoice Amt is $100, and discount percent is 10%, them DiscountDueAmt will be $90 and Discount Amt will be $10.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="DiscountAmt" type="xs:decimal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Amt discounted</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="TermNotes" type="xs:string" default="" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="Type" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="PersonABIEType" abstract="true" mixed="false">
+		<xs:annotation>
+			<xs:documentation>The base type for person. Person and Party are logically related.
+
+PersonABIEType is logically derived from UN/CEFACT TBG17 ABIE PersonType as defined in the Reusable Aggregate Business Information Entity (RUABIE) XML Schema file.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Id" type="IDType" minOccurs="0"/>
+			<xs:element name="AlternateId" type="AlternateIdType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element ref="PersonNm" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Represents specific individuals designator.
+					
+Defined as multi-occurrence to allow for different instances of names. Examples are Preferred Name, Short Name etc.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="Gender" minOccurs="0"/>
+			<xs:element ref="GenderCd" minOccurs="0"/>
+			<xs:element ref="MaritalStatus" minOccurs="0"/>
+			<xs:element ref="MaritalStatusCd" minOccurs="0"/>
+			<xs:element ref="BirthDt" minOccurs="0"/>
+			<xs:element ref="MarriageDt" minOccurs="0"/>
+			<xs:element ref="DeathDt" minOccurs="0"/>
+			<xs:element ref="Language" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element ref="LanguageCd" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element ref="NationalityCountry" minOccurs="0"/>
+			<xs:element ref="NationalityCountryCd" minOccurs="0"/>
+			<!--<xs:element ref="Address" minOccurs="0" maxOccurs="unbounded"/>-->
+			<xs:element ref="Contact" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PersonDetailType" abstract="false" mixed="false">
+		<xs:annotation>
+			<xs:documentation>Common type for specifying detailed person demographics information.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="PersonABIEType">
+				<xs:sequence>
+					<xs:element ref="BirthCountry" minOccurs="0"/>
+					<xs:element ref="BirthCountryCd" minOccurs="0"/>
+					<xs:element name="EthnicityType" minOccurs="0" maxOccurs="10">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="PrimaryInd" minOccurs="0">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="1"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element ref="EthnicCd" minOccurs="0"/>
+								<xs:element ref="Ethnicity" minOccurs="0"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="ReligionType" minOccurs="0" maxOccurs="10">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element ref="Religion" minOccurs="0"/>
+								<xs:element ref="ReligionCd" minOccurs="0"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="PersonNameType">
+		<xs:annotation>
+			<xs:documentation>Common type for specifying a specific individuals designator.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="FormattedNm" minOccurs="0"/>
+			<xs:element ref="PreferredSalutationCd" minOccurs="0"/>
+			<xs:element ref="TitleCd" minOccurs="0"/>
+			<xs:element ref="GivenNm" minOccurs="0"/>
+			<xs:element ref="NickNm" minOccurs="0"/>
+			<xs:element ref="MiddleNm" minOccurs="0"/>
+			<xs:element ref="FamilyNm" minOccurs="0"/>
+			<xs:element ref="MaidenNm" minOccurs="0"/>
+			<xs:element ref="GenerationAffixCd" minOccurs="0"/>
+			<xs:element ref="QualificationAffixCd" minOccurs="0"/>
+			<xs:element ref="EffectiveTimePeriod" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute ref="typeCode">
+			<xs:annotation>
+				<xs:documentation>Type of name.
+
+Examples are - Preferred Name, Short Name etc.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute ref="sequenceNbr"/>
+		<xs:attribute ref="preferredInd"/>
+	</xs:complexType>
+	<xs:element name="PersonNm" type="PersonNameType">
+		<xs:annotation>
+			<xs:documentation>Represents specific individuals designator.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="PhoneFaxContact">
+		<xs:annotation>
+			<xs:documentation>Provides information about phone and fax of an associated entity.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="PhoneType"/>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="PhoneType">
+		<xs:annotation>
+			<xs:documentation>common object used to identify the usage type of phone like business, home</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="AreaCd" type="xs:integer" minOccurs="0"/>
+			<xs:element name="PhoneNbr" type="xs:integer" minOccurs="0"/>
+			<xs:element name="AreaCdTxt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PhoneNbrTxt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ExtensionNbr" type="xs:string" minOccurs="0"/>
+			<xs:element name="CountryCd" type="xs:integer" minOccurs="0"/>
+			<xs:element name="CountryCdTxt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PhonePurposes" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="PurposeCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Code of the purpose.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PurposeDsc" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Description of the purpose.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PhoneStatuses" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="PhoneStatusCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Code of the phone status</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PhoneStatusDsc" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Description of the phone status</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PhoneStatusVal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Phone status value.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ResponseTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Phone status response text.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="200"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ReferenceId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Reference Id</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="200"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="Sources" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="BannerCd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Banner code.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="StoreNbr" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Store number.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="SourceNm" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Source name.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Codes" minOccurs="0" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Cd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Code.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="CodeDsc" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Code text or description.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="200"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="EffectivePeriod" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Note a phone status can have multiple effective time period types ("SUCCESS", "FAILURE", etc.) </xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence minOccurs="0">
+									<xs:element name="FirstEffectiveDt" type="xs:date" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The first Dt on which a condition or a version of an object is, was, or will be in effect.  In order to simplify joins that must match a transaction record to reference data with a Dt filter, First Effective Dt should never contain null values.  When the First Effective Dt is unknown, it should be set to a default of 01/01/0001 or the lowest Dt value supported by the DBMS.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="FirstEffectiveTm" type="xs:time" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The first time on which a condition or a version of an object is, was, or will be in effect. When the First Effective time is unknown, it should be set to a default of 00:00:00 or the lowest time value supported by the DBMS.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="LastEffectiveDt" type="xs:date" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The last Dt on which a condition or a version of an object was, or will be in effect.  In order to simplify joins that must match a transaction record to reference data with a Dt filter, Last Effective Dt should never contain null values.  When the Last Effective Dt is unknown, it should be set to a default of 12/31/9999 or the highest Dt value supported by the DBMS.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="LastEffectiveTm" type="xs:time" nillable="false" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The last time on which a condition or a version of an object is, was, or will be in effect. When the First Effective time is unknown, it should be set to a default of 23:59:59 or the lowest time value supported by the DBMS.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="DurationNbr" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Number that represents the duration.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="DurationUnitDsc" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Duration unit. D for Days, W for weeks.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="20"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="InclusiveInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicates whether or not the dates and times are inclusive or not.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="2"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+								<xs:attribute ref="typeCode"/>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+					<xs:attribute ref="typeCode"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute ref="typeCode"/>
+		<xs:attribute name="PrimaryFlag" type="xs:boolean" use="optional" default="0"/>
+	</xs:complexType>
+	<xs:complexType name="PositionType">
+		<xs:annotation>
+			<xs:documentation>The positionType allows to provide information about 3D geo position.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DegreeMeasure" type="MeasureType" nillable="true" minOccurs="0"/>
+			<xs:element name="MinuteMeasure" type="MeasureType" nillable="true" minOccurs="0"/>
+			<xs:element name="SecondMeasure" type="MeasureType" nillable="true" minOccurs="0"/>
+			<xs:element name="DirectionCode" type="CodeType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="ProfessionalSkill" type="ProfessionalSkillType" nillable="false">
+		<xs:annotation>
+			<xs:documentation>Represents the skills of the associated component.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="ProfessionalSkillType" abstract="false" mixed="false">
+		<xs:annotation>
+			<xs:documentation>Common type for providing information on the skills of the associated component.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="Code" minOccurs="0"/>
+			<xs:element ref="Name" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="CompetencyCd" type="CodeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Inidicates the competency level</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LastUsedDateTime" type="DateTimeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Last time the employee used this skill.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TrainingDateTime" type="DateTimeType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Indicates the dates in which training was received for this skill.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="EffectiveTimePeriod" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates the time period in which the associated component is effective.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="Qualification" type="QualificationType" nillable="false">
+		<xs:annotation>
+			<xs:documentation>Represents the qualification of the associated component.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="QualificationType" abstract="false" mixed="false">
+		<xs:annotation>
+			<xs:documentation>Common type for specifying the qualification of the associated comment.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="Code" minOccurs="0"/>
+			<xs:element ref="Name" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="QualificationDt" type="DateType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The date in which the qualification was acheived.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="EffectiveTimePeriod" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates the time period in which the associated component is effective.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ReceivingAppointmentType">
+		<xs:annotation>
+			<xs:documentation>Appointment details for goods receiving at warehuse or DC or a store</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="AppointmentCd" type="xs:string" default="" minOccurs="0"/>
+			<xs:element name="AppointmentDtTm" type="xs:dateTime" minOccurs="0" maxOccurs="2"/>
+			<xs:element name="AppointmentNotesTxt" type="xs:long" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RetailStoreGroup">
+		<xs:annotation>
+			<xs:documentation>Group of stores defined by a particular type, Ex Ad group, Promo group, ROG..etc.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StoreGroupTypeNm" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Type of the store group like retail order group, promo group..etc</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StoreGroupId" type="xs:string" minOccurs="0"/>
+			<xs:element name="StoreGroupNm" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:group name="SequencedIDsGroup">
+		<xs:annotation>
+			<xs:documentation>Indicates the ID of the associated component or noun. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="Id" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:group>
+	<xs:complexType name="SequencedIDsType" mixed="false">
+		<xs:annotation>
+			<xs:documentation>Common type that contains the sequenced identifier for the associated component or noun.</xs:documentation>
+		</xs:annotation>
+		<xs:group ref="SequencedIDsGroup" minOccurs="0"/>
+	</xs:complexType>
+	<xs:complexType name="ShapeDimType">
+		<xs:annotation>
+			<xs:documentation>Dimensions of an object  across height, length, and width.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Height" type="xs:decimal" nillable="true" minOccurs="0"/>
+			<xs:element name="Length" type="xs:decimal" nillable="true" minOccurs="0"/>
+			<xs:element name="Width" type="xs:decimal" nillable="true" minOccurs="0"/>
+			<xs:element name="DimUOMCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="Status" type="StatusABIEType">
+		<xs:annotation>
+			<xs:documentation>Indicates the status of the associated object by providing the Status Code along with a description and when the status is effective.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="StatusABIEType" abstract="false" mixed="false">
+		<xs:annotation>
+			<xs:documentation>StatusABIEType is logically derived from UN/CEFACT TBG17 ABIE StatusType as defined in the Reusable Aggregate Business Information Entity (RUABIE) XML Schema file.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="StatusBasisType">
+				<xs:sequence>
+					<xs:element ref="TimePeriod" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>An explicit period of time for the bucket.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="StatusBasisType">
+		<xs:annotation>
+			<xs:documentation>Common type for specifying status, effective time period, and reasons thereof.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="Code" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Element for the communication of all codes.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Description" type="TextType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the detailed description if any of the status and effective date ranges.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EffectiveDateTime" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the DateTime the associated object is made effective.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReasonCd" type="CodeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identifies the reason for an activity.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Reason" type="TextType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="StatusType">
+		<xs:annotation>
+			<xs:documentation>conatins data about various types of status Cds.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StatusTypeCd" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Status Code</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="Type" type="xs:string">
+								<xs:annotation>
+									<xs:documentation>Type of Status code</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Description" default="" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EffectiveDtTm" type="xs:dateTime" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="Supervisor" type="SupervisorType">
+		<xs:annotation>
+			<xs:documentation>Represents Supervisor with details like ID, Job title etc. for employee (manager) to whom an employee reports.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="SupervisorType">
+		<xs:annotation>
+			<xs:documentation>Common type for specifying Supervisor details including their ID, and Job code.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Id" type="IDType" minOccurs="0"/>
+			<xs:element name="AlternateId" type="AlternateIdType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element ref="PersonNm" minOccurs="0"/>
+			<xs:element ref="JobTitle" minOccurs="0"/>
+			<xs:element ref="JobCd" minOccurs="0"/>
+			<xs:element name="EffectiveTimePeriod" type="TimePeriodType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates the time period in which the associated component is effective.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="level" type="xs:positiveInteger" use="required">
+			<xs:annotation>
+				<xs:documentation>Is the level of the supervisor vis-a-vis current entity with Level 1 being for immediate supervisor, Level 2 for next level up and so on.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="TaxType">
+		<xs:annotation>
+			<xs:documentation>contains various attributes related to Tax.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="TaxTypeCd" type="xs:string" default="" minOccurs="0"/>
+			<xs:element name="BasisAmt" type="xs:decimal" default="0" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Base Amt from which the Tax is derived</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BasisQty" type="xs:decimal" default="0" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Base quantity for which tax Amt is calculated</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="QuantityUOM" type="xs:string" default="" minOccurs="0"/>
+			<xs:element name="TaxRate" type="xs:decimal" default="0" minOccurs="0"/>
+			<xs:element name="TaxAmt" type="xs:decimal" default="0" minOccurs="0"/>
+			<xs:element name="CurrencyCd" minOccurs="0"/>
+			<xs:element name="TaxDsc" type="xs:string" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Description of the Tax</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReasonCd" type="xs:string" minOccurs="0"/>
+			<xs:element name="ExemptionCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Tax exemption code</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ExemptionAmt" type="xs:decimal" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Exempted tax amount</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TaxPointDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Tax point date is used to update the Lawson Tax system for released (open)
+and historical status invoices with a tax code.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TaxSequenceNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Tax Seq Nbr</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="TypeCd" type="xs:string" default=""/>
+	</xs:complexType>
+	<xs:element name="TimePeriod" type="TimePeriodType" nillable="false">
+		<xs:annotation>
+			<xs:documentation>An explicit period of time for the bucket.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="TimePeriodABIEType" abstract="false" mixed="false">
+		<xs:annotation>
+			<xs:documentation>TimePeriodABIEType is logically derived from UN/CEFACT TBG17 ABIE PeriodType as defined in the Reusable Aggregate Business Information Entity (RUABIE) XML Schema file.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="InclusiveInd" type="IndicatorType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is used to identify whether the range values should be an included or excluded component of the result set.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StartTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Start timestamp indicating the starting point of the event.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Duration" type="xs:decimal" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates the duration of time as represented by ISO 8601. Where the value space is a six dimensional space where the coordinates designate the Gregorian year, month, day, hour, minute, and second. The number of seconds can include decimal digits to arbitary pecision.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EndTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Is the ending timestamp of the event.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TimeZoneCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TimePeriodType" abstract="false" mixed="false">
+		<xs:annotation>
+			<xs:documentation>Common type that provides the structure to indicate a Date/Time period where the Time is provided with in the Start and Duration or EndDateTime.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="TimePeriodABIEType"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="TransferLocationType">
+		<xs:annotation>
+			<xs:documentation>FOB Point where transfer of goods change ownership.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="TransferLocationNm" type="xs:string" minOccurs="0"/>
+			<xs:element name="TransferLocationFacilityId" type="xs:string" minOccurs="0"/>
+			<xs:element name="TransferLocationAddress" type="AddressType" minOccurs="0"/>
+			<xs:element name="TransferLocationContactNm" type="xs:string" minOccurs="0"/>
+			<xs:element name="TransferLocationContactPhoneNbr" type="xs:string" minOccurs="0"/>
+			<xs:element name="TransferLocationEmailAddressTxt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TransportationTermType">
+		<xs:annotation>
+			<xs:documentation>When a seller ships something via common to a buyer in accordance with the Uniform Commerical Cd and international legal agreements, you must specify a particular "phrase" that states who assumes the risk of shipment, who is responsible for loading and unloading the goods, where ownership or title to the goods passes, who paid or pays the carrirer, etc. Examples of these "phrases" include: - "FOB Origin Prepaid and Add" (Free On Board - no cost for loading, title passes at seller's dock, seller prepaid freight cost and delivery insurance, seller will freight costs to cost of goods) - "FOB Destination" or "FOB Destination Prepaid" (Free On Board - no cost for loading, title passes at buyer's dock, seller prepaid freight cost and delivery insurance)  In software applications, this phrase is commonly split into two Cdd pieces, a "legal terms" risk and responsibility component for use with common carriers (FOB Destination) and some kind of qualifying component (Prepaid and Add).</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="IncotermsCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Is a contractual Cd used to describe the point where delivery occurs (goods ownership is transferred) in a contract of sale.  It identifies the rights and obligations of each partner  (supplier, carrier and customer) in the transaction and may specify the requirements to assume ownership (i.e. paying for the cost of the goods and/or transportation).
+
+The United Nations Trade Facilitation Information Exchange (UN/TraFIX) has established the following Cds (INCOTERMS 2010) for use in international trade. (See http://www.unece.org/cefact/recommendations/rec_index.htm).  These terms may also be found in the United States Uniform Commercial Cd (UCC).
+
+EXAMPLES 
+General transport	
+EXW - Ex Works ... (named place) 
+FCA - Free Carrier ... (named place)
+CPT - Carriage Paid ... (named place of destination)
+CIP - Carriage and Insurance Paid To ... (named place of destination)
+DAT - Delivered at Terminal
+DAP - Delivered at Place ... (named place of destination)
+DDP - Delivered Duty Paid ... (destination place)
+Water transportation
+FAS - Free Along Ship ... (named port of shipment)
+FOB - Free On Board ... (named port of shipment)
+CFR - Cost and Freight ... (named port of destination)
+CIF - Cost, Insurance and Freight ... (named port of destination)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FreightTermCd" type="xs:string" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Describes how the freight cost for a shipment of goods should be billed. EXAMPLES:  Prepaid, Collect, Third Party, Prepaid and Add, Consignee Billed</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PlaceOfOwnershipTransferLocation" type="TransferLocationType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Location where ownership of goods change from one party to another party. Ex FOB point</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Description" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="UOMType">
+		<xs:annotation>
+			<xs:documentation>UOM type including details on UOM code and its description.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="UOMCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="UOMNm" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="25"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="UPC">
+		<xs:annotation>
+			<xs:documentation>upc identifier for the item, could be a case upc or retial scan upc.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="UPCNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>UPC as decimal(14)</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="UPCTxt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>UPC as text</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="14"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="UPCDsc" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>UPC full description.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="120"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="Qualifier" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="UPCComponentsType">
+		<xs:annotation>
+			<xs:documentation>UPC broken into individual componenet atributes.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PackInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>for GTIN specific UPCs.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="1"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ManufacturerId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The 5 digit manufacturer's identification portion of the UPC code or
+ a LAC(locally assigned code) which is an internally assigned identifer for random dollar or random weight items.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="5"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SalesId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the sales unit identification portion of the UPC. In a true UPC, it designates the item. In a LAC, it contains the sequence number part of the corp. item code and 2 digits to separate selling units where there is more than 1 selling unit for a warehouse unit.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="5"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CountryId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This indicates the UPC's country of origin.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="1"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SystemId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the system part of the UPC that indicates what type of UPC is stored in the UPC fields and how the price is found for the item.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="1"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CheckDigit" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the check digit for the numeric UPC code. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="1"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="UUID" type="xs:string">
+		<xs:annotation>
+			<xs:documentation>This ID represents an Universal Unique Identifier.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="VolumeType">
+		<xs:annotation>
+			<xs:documentation>Details of volume and UOM</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Volume" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VolumeUOM" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WeightType">
+		<xs:annotation>
+			<xs:documentation>Weight type including details on weight and its UOM.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Weight" nillable="true" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="WeightUOMCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="BombingWaveType">
+		<xs:annotation>
+			<xs:documentation>Inventory reduction reference or Bill of Materials reference for a route in WMS system</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="WaveId" type="xs:string" minOccurs="0"/>
+			<xs:element name="WaveNm" type="xs:string" minOccurs="0"/>
+			<xs:element name="WaveTs" type="DateTimeBaseType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

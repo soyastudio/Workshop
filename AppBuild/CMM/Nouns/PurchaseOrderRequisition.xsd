@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Schema Owner: 	Safeway Inc
+   Date Created:      11 Jan 2017
+   Author:		Sai Nuthakki
+   Dsc: contains commonly used Albertson's Purchase order schema.
+   Name: /ABS_CMM_Platform/Nouns/StoreOrder.xsd
+-->
+<!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by Devesh (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.0 Devesh Kandpal 10/07/21 -  ES-4265 - Draft Version-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="PurchaseOrderRequisition" type="PurchaseOrderRequisitionType">
+		<xs:annotation>
+			<xs:documentation>Represents PO Requisition which is a request for the purchase of goods or services leading to the creation of a purchase order to a specific supplier</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="PurchaseOrderRequisitionType">
+		<xs:annotation>
+			<xs:documentation>It Represent Requisition/quote which will be presented to supplier in lieu of PO creation. One Requisition can be spliited to multiple PO's based on buyer/supplier negotiation </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PurchaseOrderRequisitionHeader">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="CorporationId"/>
+						<xs:element ref="DivisionId"/>
+						<xs:element ref="DistributionCenterId" minOccurs="0"/>
+						<xs:element name="DistributionCenterAltId" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Alternate identifier for a DC like dst_cntr. For ex WNCA, PONCA </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PhysicalWarehouseId" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Physical warehouse in a distribution Center</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PurchaseOrderRequisitionNbr" type="xs:string">
+							<xs:annotation>
+								<xs:documentation>Identifier for Purchase Order  requstion assigned by the buyer (DA)</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PurchaseOrderRequisitionType" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>type of Purchase Order Ex BD = Bidding</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PurchaseOrderRequisitionDt" type="xs:date">
+							<xs:annotation>
+								<xs:documentation>Purchase Order  requistion creation date</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Vendor" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Contains vendor information related to the PO. External Vendors may receive purchase orders from manufacturing plants or warehouses or stores for item procurement</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="VendorId" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>It uniquely identifies a vendor within a corporation. A vendor is a Company we purchase from. </xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="VendorNm" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Name of the Vendor</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element ref="Address" minOccurs="0"/>
+									<xs:element name="DUNSNbr" type="xs:string" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Buyer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Party responsible for ordering the Qty. It could be a Buyer, Forecaster or any other party.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="BuyerId" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string"/>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="BuyerNm" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string"/>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="FacilityId" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string"/>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="BuyerPhoneNbr" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string"/>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="BuyerEmailId" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string"/>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="CustomerType" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Defines the type of customer Valid values are: 
+1.	STORE
+2.	WAREHOUSE
+3.	WHOLESALER
+4.	ECOMM
+5.	PLANT
+6.	BACKSTAGE
+7.	CHARITY</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Customer" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Customer Party that receives goods and services.  This can be a warehouse, wholesale customer or a store id</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="CustomerId" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Unique identifier to catergorize various customer types - Store, warehouse, backstage, charity, plants</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="CustomerNm" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The name or description of the customer</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element ref="Address" minOccurs="0"/>
+									<xs:element name="DUNSNbr" type="xs:string" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="ShipTo" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="ShipToFacilityType" type="CodeWithDescription" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Type of the facility like, DC,  warehouse, Retail Store, Office building, manufacturing plant..etc</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="ShipToFacilityId" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Can be any facility like a warehouse,retail store or micro fullfillment center or any other Albertsons location facility</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="ShipToFacilityNm" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicates the name of facility receiving the goods/shipment</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element ref="Address" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="RequistionScheduleType" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="RequiredDeliveryDt" type="xs:date" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>date and time when the goods are received at the facility</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="RequiredShipDt" type="xs:date" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>date and time when the goods are shipped</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="FOBTerms" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>It relates to freight on board involved in PO and who is responsible for payment. Freight need to be picked up by buyer or delivered by supplier. Valid values as PP = Delivered by Supplier , PB = Picked by Albertson's</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="RequisitionNotesTxt" type="xs:string" minOccurs="0" maxOccurs="30">
+							<xs:annotation>
+								<xs:documentation>General instructions on shipment.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PurchaseOrderRequisitionDetail" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="CorporateItemCd"/>
+						<xs:element name="ItemDesc" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Description of an item</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="RequiredQty">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="QtyNbr" type="xs:int"/>
+									<xs:element name="UOMCd" type="xs:string"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="ItemWgt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Weight of the ordered item</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Weight" type="xs:decimal" minOccurs="0"/>
+									<xs:element name="UOMCd" type="xs:string" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="ItemVol" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Volume of the ordered item.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Volume" type="xs:decimal" minOccurs="0"/>
+									<xs:element name="UOMCd" type="xs:string" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="RequisitionItemId" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Identifier for matching the item in the source system (Ex Requsition Nbr in DA)</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ShippingRegionCd" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>For FOB load, this represent code for location where truck should be sent to pick up the load. For 'Delivered' load it can be blank or DLVD, For FOB it can have different values based on location - AL01, AZ02</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="BalancingItemInd" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates priority of item based on volume and load. Valid value are Y = Low Priority, N = High Priority and Space</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ItemNotesTxt" type="xs:string" minOccurs="0"/>
+						<xs:element name="AuditData" type="AuditType" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AuditType">
+		<xs:annotation>
+			<xs:documentation>This type represents auditing data related to the message at source.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0">
+			<xs:element name="CreateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Time stamp of when message was created at source.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LastUpdateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time stamp of when message was last modified at source.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CreateUserId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Id of the client that created the message at source.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LastUpdateUserId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>User Id of who last modified the message at source.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

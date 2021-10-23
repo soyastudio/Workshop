@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2021 rel. 2 sp1 (x64) (http://www.altova.com) by poliv02 (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.5 Patrick Oliver 10/07/21: Moved AirMilePointsSourceType back to top of BOD -->
+	<!--V1.4 Patrick Oliver 10/05/21: Moved AirMilePointsSourceType to AirMilePointsSummary and AirMilePointsDetail; Changed AirMilePointsDetail to single occurence-->
+	<!--V1.3 Patrick Oliver 10/01/21: Updated TransactionTs and AltTransactionDtTs to DateTime-->
+	<!--V1.2 Patrick Oliver : Removed Qualifier attribute; Changed BatchStartDt, BatchEndDt, TransactionDt, AirMileProgramId to string;  Updated description for BatchStartDt, BatchEndDt-->
+	<!--V1.1 Patrick Oliver 08/30/21: BOD name change to AirMilePoints-->
+	<!--v1.0 Patrick Oliver 08/16/21: Initial Version-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:complexType name="AirMilePointsType">
+		<xs:annotation>
+			<xs:documentation>AirmilePoints Data and Summary transactional information. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="AirMilePointsSourceType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if the AirMilePoints are Summary or Detail payload. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AirMilePointsSummary" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>AirMile points summary details.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="BatchId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>BatchId also known as External BatchId. This represents identifier to the batch file containing the summary of AirMiles records.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="BatchStartDt" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Start date of the batch file. </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="BatchEndDt" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>End date of the batch file.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="AttachmentType" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Files and link urls assocoiated with AirMiles information.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence minOccurs="0">
+									<xs:element name="FileNm" minOccurs="0">
+										<xs:complexType>
+											<xs:simpleContent>
+												<xs:extension base="xs:string"/>
+											</xs:simpleContent>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="LinkURL" minOccurs="0">
+										<xs:complexType>
+											<xs:simpleContent>
+												<xs:extension base="xs:string"/>
+											</xs:simpleContent>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="TotalAirMilePointsQty" type="xs:long" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Total number of AirMiles in the batch file. Note that AirMiles are calculated from  customer's rewards/points they have earned.  </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="RecordCnt" type="xs:long" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Total number of records in the AirMiles batch file. </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="TotalRejectedAirMilePointsQty" type="xs:long" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Total number of rejected AirMiles. </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="RejectedRecordCnt" type="xs:long" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Total number of records in the AirMiles batch file. </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="AuditData" type="AirMilePointsRecordAuditData" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AirMilePointsDetail" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Air Mile points transactional details. </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="BatchId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>BatchId also known as External BatchId. This element represents the batch of AirMiles records that will be processed at summary and detail level. </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="HouseholdId" type="xs:long" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Unique identifier of the Household. The 'aggregateId' in CHMS service is the HHID unlike the other services where the 'aggegatedid' we map to the CustomerId</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="TransactionType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Transaction Id(s) attached to a AirMiles event.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="TransactionId" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Transaction Id for AirMiles.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="100"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="TransactionDt" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the date when the transaction was updated.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="TransactionTs" type="xs:dateTime" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>This is the timestamp when the transaction was updated.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="TransactionTypeCd" type="CodeWithDescription" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Transaction type code for the transaction.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="TransactionReasonCd" type="CodeWithDescription" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Transaction type code for the transaction.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="ReferenceNbr" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Can be used as a cross reference nbr from external systems for the internal transaction id.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="100"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AltTransaction" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Alternate transaction Ids linked to the partner transaction.</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="AltTransactionId" minOccurs="0">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:maxLength value="100"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="AltTransactionType" type="CodeWithDescription" minOccurs="0"/>
+												<xs:element name="AltTransactionDtTs" type="xs:dateTime" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>This is the timestamp when the transaction was updated.</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="RecordType" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Can be used to specify type of record. </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="AttachmentType" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Files and link urls assocoiated with AirMiles information.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence minOccurs="0">
+									<xs:element name="FileNm" minOccurs="0">
+										<xs:complexType>
+											<xs:simpleContent>
+												<xs:extension base="xs:string"/>
+											</xs:simpleContent>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="LinkURL" minOccurs="0">
+										<xs:complexType>
+											<xs:simpleContent>
+												<xs:extension base="xs:string"/>
+											</xs:simpleContent>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="AirMileProgram" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="AirMileProgramId" type="xs:string" minOccurs="0"/>
+									<xs:element name="AirMileProgramNm" minOccurs="0">
+										<xs:annotation>
+											<xs:appinfo/>
+											<xs:documentation>ex AirmilePoints program name</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="200"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AirMileTier" type="AirMilePointsTierType" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="CustomerNm" type="AirMilePointsPersonNameType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Customer name invloved with the transaction. </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="AuditData" type="AirMilePointsRecordAuditData" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AirMilePointsRecordAuditData">
+		<xs:annotation>
+			<xs:documentation>Defines create time, last update time and users performed those DB actions on Source data.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="CreateDtTm" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time when the record was created in the source system.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CreateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>the record create timestamp in the source system.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CreateUserId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="UpdateDtTm" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date and time when the record was last updated in the source system.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UpdateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Last updated timestamp of the source sytem record.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UpdateUserId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AirMilePointsPersonNameType">
+		<xs:annotation>
+			<xs:documentation>Common type for specifying a specific individuals designator.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="FormattedNm" minOccurs="0"/>
+			<xs:element ref="PreferredSalutationCd" minOccurs="0"/>
+			<xs:element ref="TitleCd" minOccurs="0"/>
+			<xs:element ref="GivenNm" minOccurs="0"/>
+			<xs:element ref="NickNm" minOccurs="0"/>
+			<xs:element ref="MiddleNm" minOccurs="0"/>
+			<xs:element ref="FamilyNm" minOccurs="0"/>
+			<xs:element ref="MaidenNm" minOccurs="0"/>
+			<xs:element ref="GenerationAffixCd" minOccurs="0"/>
+			<xs:element ref="QualificationAffixCd" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AirMilePointsTierType">
+		<xs:sequence>
+			<xs:element name="AirMileTierNm" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AirMilePointQty" type="xs:integer" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

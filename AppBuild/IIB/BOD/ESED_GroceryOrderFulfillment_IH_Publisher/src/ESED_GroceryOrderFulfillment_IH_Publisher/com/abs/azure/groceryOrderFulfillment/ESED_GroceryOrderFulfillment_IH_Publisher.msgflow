@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:com_abs_azure_groceryOrderFulfillment_ESED_GroceryOrderFulfillment_IH_SF.subflow="com/abs/azure/groceryOrderFulfillment/ESED_GroceryOrderFulfillment_IH_SF.subflow" xmlns:com_abs_azure_groceryOrderFulfillment_ESED_GroceryOrderFulfillment_Tokenization.subflow="com/abs/azure/groceryOrderFulfillment/ESED_GroceryOrderFulfillment_Tokenization.subflow" xmlns:com_abs_cmnflows_Audit_Validate_Input.subflow="com/abs/cmnflows/Audit_Validate_Input.subflow"
+    xmlns:com_abs_cmnflows_Audit_Validate_Output.subflow="com/abs/cmnflows/Audit_Validate_Output.subflow" xmlns:com_abs_cmnflows_EncryptedExceptionSubFlow.subflow="com/abs/cmnflows/EncryptedExceptionSubFlow.subflow" xmlns:com_ibm_connector_kafka_ComIbmEventInput.msgnode="com/ibm/connector/kafka/ComIbmEventInput.msgnode" xmlns:com_ibm_connector_kafka_ComIbmOutput.msgnode="com/ibm/connector/kafka/ComIbmOutput.msgnode" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:eflow="http://www.ibm.com/wbi/2005/eflow"
+    xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility" nsURI="com/abs/azure/groceryOrderFulfillment/ESED_GroceryOrderFulfillment_IH_Publisher.msgflow" nsPrefix="com_abs_azure_groceryOrderFulfillment_ESED_GroceryOrderFulfillment_IH_Publisher.msgflow">
+  <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1">
+    <eSuperTypes href="http://www.ibm.com/wbi/2005/eflow#//FCMBlock"/>
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.dataSource" name="dataSource" defaultValueLiteral="esedpdata">
+      <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.ProtegityAppID" name="ProtegityAppID" lowerBound="1" defaultValueLiteral="es00ed">
+      <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <translation xmi:type="utility:TranslatableString" key="ESED_GroceryOrderFulfillment_IH_Publisher" bundleName="com/abs/azure/groceryOrderFulfillment/ESED_GroceryOrderFulfillment_IH_Publisher" pluginId="ESED_GroceryOrderFulfillment_IH_Publisher"/>
+    <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/ESED_GroceryOrderFulfillment_IH_Publisher/icons/full/obj16/ESED_GroceryOrderFulfillment_IH_Publisher.gif"/>
+    <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/ESED_GroceryOrderFulfillment_IH_Publisher/icons/full/obj30/ESED_GroceryOrderFulfillment_IH_Publisher.gif"/>
+    <composition>
+      <nodes xmi:type="com_ibm_connector_kafka_ComIbmEventInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_12" location="39,156" connectorName="Kafka" topicName="OSPK_ESED_C02_PICKLIST_DETAIL" bootstrapServers="pgv013e8b.safeway.com:9093,pgv013e8d.safeway.com:9093,pgv013e8e.safeway.com:9093,pgv013e8f.safeway.com:9093,pgv013e90.safeway.com:9093,pgv013e91.safeway.com:9093" groupId="GroceryOrderFulfillment" initialOffset="latest" enableAutoCommit="true" clientId="GroceryOrderFulfillment" useClientIdSuffix="true"
+          connectionTimeout="15" sessionTimeout="10" receiveBatchSize="1" securityProtocol="SSL" sslProtocol="TLSv1.2" messageDomainProperty="JSON" validateTiming="deferred" parserXmlnscBuildTreeUsingXMLSchema="false" parserXmlnscUseForXmlnsDomain="false" parserXmlnscMixedContentRetainMode="none" parserXmlnscCommentsRetainMode="none" parserXmlnscProcessingInstructionsRetainMode="none" validateMaster="none" validateFailureAction="exception" componentLevel="flow" additionalInstances="0">
+        <translation xmi:type="utility:ConstantString" string="KafkaConsumer"/>
+      </nodes>
+      <nodes xmi:type="com_ibm_connector_kafka_ComIbmOutput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_13" location="1074,170" connectorName="Kafka" topicName="ESED_C01_GroceryOrderFulfillment" bootstrapServers="pgv013e8b.safeway.com:9093,pgv013e8d.safeway.com:9093,pgv013e8e.safeway.com:9093,pgv013e8f.safeway.com:9093,pgv013e90.safeway.com:9093,pgv013e91.safeway.com:9093" clientId="GroceryOrderFulfillment" useClientIdSuffix="true" acks="1" timeout="60" securityProtocol="SSL" sslProtocol="TLSv1.2"
+          validateMaster="inherit" validateFailureAction="exception">
+        <translation xmi:type="utility:ConstantString" string="KafkaProducer"/>
+      </nodes>
+      <nodes xmi:type="com_abs_azure_groceryOrderFulfillment_ESED_GroceryOrderFulfillment_IH_SF.subflow:FCMComposite_1" xmi:id="FCMComposite_1_3" location="592,158">
+        <translation xmi:type="utility:ConstantString" string="ESED_GroceryOrderFulfillment_IH_SF"/>
+      </nodes>
+      <nodes xmi:type="com_abs_cmnflows_EncryptedExceptionSubFlow.subflow:FCMComposite_1" xmi:id="FCMComposite_1_2" location="318,404" HOSTNAME="IIBPR" APPLICATIONNAME="ESED_GroceryOrderFulfillment_IH_Publisher" INPUTTYPE="Kafka" INPUTNAME="ESED_C01_GroceryOrderFulfillment" REPLAYRULE="N" MAXREPLAYCOUNT="3" COMPONENTNAME="ESED_GroceryOrderFulfillment_IH_Publisher" queueName="ESEDPR.EXCEPTION.MSG">
+        <translation xmi:type="utility:ConstantString" string="EncryptedExceptionSubFlow"/>
+      </nodes>
+      <nodes xmi:type="com_abs_azure_groceryOrderFulfillment_ESED_GroceryOrderFulfillment_Tokenization.subflow:FCMComposite_1" xmi:id="FCMComposite_1_6" location="184,52">
+        <translation xmi:type="utility:ConstantString" string="ESED_GroceryOrderFulfillment_Tokenization"/>
+      </nodes>
+      <nodes xmi:type="com_abs_cmnflows_Audit_Validate_Output.subflow:FCMComposite_1" xmi:id="FCMComposite_1_8" location="834,62" queueName="ESEDPR.AUDIT.MSG">
+        <translation xmi:type="utility:ConstantString" string="Audit_Validate_Output"/>
+      </nodes>
+      <nodes xmi:type="com_abs_cmnflows_Audit_Validate_Input.subflow:FCMComposite_1" xmi:id="FCMComposite_1_9" location="430,52" APPLICATION_DESC="Publisher Flow for GroceryOrderFulfillment Data from AcuPick" COMPONENT_DESC="Transforms GroceryOrderFulfillment Data from AcuPick to CMM" SOURCE_SYSTEM_NAME="AcuPick">
+        <translation xmi:type="utility:ConstantString" string="Audit_Validate_Input"/>
+      </nodes>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_6" targetNode="FCMComposite_1_2" sourceNode="FCMComposite_1_12" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_7" targetNode="FCMComposite_1_2" sourceNode="FCMComposite_1_12" sourceTerminalName="OutTerminal.catch" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_9" targetNode="FCMComposite_1_6" sourceNode="FCMComposite_1_12" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_12" targetNode="FCMComposite_1_13" sourceNode="FCMComposite_1_8" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_13" targetNode="FCMComposite_1_8" sourceNode="FCMComposite_1_3" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_14" targetNode="FCMComposite_1_3" sourceNode="FCMComposite_1_9" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_15" targetNode="FCMComposite_1_9" sourceNode="FCMComposite_1_6" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.Input"/>
+    </composition>
+    <propertyOrganizer>
+      <propertyDescriptor groupName="Group.Basic" configurable="true" describedAttribute="Property.dataSource">
+        <propertyName xmi:type="utility:TranslatableString" key="Property.dataSource" bundleName="ComIbmCompute" pluginId="com.ibm.etools.mft.ibmnodes.definitions"/>
+        <propertyDescriptor groupName="Group.Basic" configurable="true" userDefined="true" describedAttribute="Property.ProtegityAppID">
+          <propertyName xmi:type="utility:TranslatableString" key="Property.ProtegityAppID" bundleName="com/abs/azure/groceryOrderFulfillment/ESED_GroceryOrderFulfillment_Tokenization" pluginId="ESED_GroceryOrderFulfillment_IH_Publisher"/>
+        </propertyDescriptor>
+      </propertyDescriptor>
+    </propertyOrganizer>
+    <attributeLinks promotedAttribute="Property.dataSource" overriddenNodes="FCMComposite_1_3">
+      <overriddenAttribute href="com/abs/azure/groceryOrderFulfillment/ESED_GroceryOrderFulfillment_IH_SF.subflow#Property.dataSource"/>
+    </attributeLinks>
+    <attributeLinks promotedAttribute="Property.ProtegityAppID" overriddenNodes="FCMComposite_1_6">
+      <overriddenAttribute href="com/abs/azure/groceryOrderFulfillment/ESED_GroceryOrderFulfillment_Tokenization.subflow#Property.ProtegityAppID"/>
+    </attributeLinks>
+    <stickyBoard/>
+  </eClassifiers>
+</ecore:EPackage>

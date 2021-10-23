@@ -1,0 +1,1588 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.4 Alex Nunes 12/8/2020 - Removed: Property/CommercialData/MerchantPasswordTxt Added: FacilityId -->
+	<!--V1.3 Rosabel Macario 11/04/2020 - Added tag to resolve dateTimeStamp issue-->
+	<!--V1.2 Patrick Oliver - Updated MgmtFeeVendorId to string(20)-->
+	<!--V1.0  Alex Nunes 9/9/2019 Initial version -->
+	<!--V1.1 Alex Nunes 9/11/2019 Added Commercial Management component-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="Property" type="PropertyType">
+		<xs:annotation>
+			<xs:documentation>root element.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="PropertyType">
+		<xs:annotation>
+			<xs:documentation>It represents the Commercial Management segment of our company's properties whereas it refers to as company owning the properties with income leases. It also represents the Corporate Management Real Estate segment of our company's properties whereas it refers to as company being the tenants with expense leases.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporationId"/>
+			<xs:element ref="DivisionId"/>
+			<xs:element name="PropertyId">
+				<xs:annotation>
+					<xs:documentation>Unique identifier of the real estate property.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="12"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FacilityID" default="" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A four character code that is used with corporation
+ and division to uniquely identify a facility. A facility may "belong" to
+ only one corporation and one division. A building may house one or more
+facilities. There are two categories for facilities:
+ 1) Operating facility
+ - actively supports the business of the Company
+ - is a distinct business operation within a building
+  - examples: office, processing plant, retail store, truck service
+ shop, or warehouse building  (A warehouse facility includes all warehouse departments that exist within a single building.)
+ - each type of division/business has a different set of possible types of operating facilities: i.e.,
+ - Retail: retail outlets and offices.
+- Wholesale: warehouse facilities, truck service shop, and offices.
+- Processing/Manufacturing: processing plants and offices.
+ 2) Non-operating Facility                                                     
+ - not currently being operated by the Company.
+ - facilities </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PropertyNm">
+				<xs:annotation>
+					<xs:documentation>Name or description of the property.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PropertyType" type="CodeWithDescription">
+				<xs:annotation>
+					<xs:documentation>Corporate real estate property type.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="Address"/>
+			<xs:element name="ClassificationType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Corporate real estate classification.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Contact" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Contacts for the property.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="ContactTypeCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Type of contact, example: landlord.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="12"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ContactStatusCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Status of the contact.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="12"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ContactId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Unique identifier for the contact.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="12"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PrimaryContactId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This is the primary or parent contact Id.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="12"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ContactTitleTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Title description of the contact.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="40"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ContactNm" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Name or description of the contact.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence minOccurs="0">
+									<xs:element name="PrefixTxt" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Prefix description.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="15"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="SuffixTxt" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Suffix description.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="15"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ContactFullNm" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Full name of the contact</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="125"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ContactFirstNm" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>First name.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="35"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ContactLastNm" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Last name.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="35"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ContactMiddleNm" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Middle name.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="35"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element ref="Address" minOccurs="0"/>
+						<xs:element name="EmailTxt" minOccurs="0" maxOccurs="5">
+							<xs:annotation>
+								<xs:documentation>Emails of the contact.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="60"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="NoteTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Note and or comments about the contact.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1000"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PropertyManager" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Company's property manager.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element ref="EffectiveTimePeriod" minOccurs="0"/>
+						<xs:element name="ManagerId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Unique identifier of the property manager.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="6"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ManagerNm" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Name or description of the property manager.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ManagerTypeCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Type of property manager. Ex: INTERNAL, THIRD, FORMER.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ManagerNoteTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Any comments related to the property manager.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1000"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="EmailTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Property manager email address.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Portfolio" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Unique identifier of the portfolio associated with the property.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PropertyArea" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="EffectiveTimePeriod" minOccurs="0"/>
+						<xs:element name="AreaType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="FrontageSz" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Size of the frontage.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AreaSz" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Area size.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AcreageSz" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Acreage size.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AreaDpth" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Area Depth.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Contract" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ContractId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ContractNm" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ContractType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="NoteTxt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="120"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element ref="Status" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="UOMTxt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Property unit of measure.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="6"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RegionId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="15"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PossessionTs" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="DisposalTs" type="xs:dateTime" minOccurs="0"/>
+			<xs:element ref="Status" minOccurs="0"/>
+			<xs:element name="BusinessUnitCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Property business unit.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="8"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ActiveInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Status of the property. Active or Not active.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OwnershipCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Property ownership code. Calues are: G, L, GL, O.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FinalLocationDsc" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Final allocation description of the property.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AccountCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>General Ledger account code.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CampusId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Unique identified of a campus. It's legacy information.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="12"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CurrencyCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Currency code.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ADAId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Legacy information. Used in previous system(s).</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="6"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EntityId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Entity is made up of the 2 digit division number, 4 digit building number, and two digit sub facility number. Entity therefore is a transaction class for property. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="8"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DealMaker" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Deal maker is used in the context of a stand alone manager on the Property Management side.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="DMKRId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Unique identifier of the deal meaker.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="12"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DealMakerNm" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Name or description of the deal maker.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="EmailTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Property manager email address.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="FMRId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Legacy Real Estate unique identifier.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="6"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ConvTAGAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>CONVTAG deals with former MRI ID’s that was used to switch between sub factor types, and contracts. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="StrategyCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="6"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TierCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Legacy system. Use is not clear.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PropertyOriginId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="12"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EntityOriginId" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="8"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CloseTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Store close date and time.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TransferTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Property data transferred.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="REId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Real Estate Id which relates to the physical ID in REM.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="15"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LegalPhysicalId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Legal physical Id in REM-Real Estate Management system (legacy system).</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="15"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AltLegalPhysicalId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Intermmidiate RE id assigned during the mergers.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="15"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CommercialData" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="PayToTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Make payable to text.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="GrossLivingArea" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence minOccurs="0">
+									<xs:element name="GrossLivingAreaSz" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Size of the gross living area.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:decimal">
+												<xs:totalDigits value="15"/>
+												<xs:fractionDigits value="4"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="UOM" type="UOMType" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Unit of measure.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="GrossLivingAreaOccupiedSz" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Size of gross living area occupied.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:decimal">
+												<xs:totalDigits value="15"/>
+												<xs:fractionDigits value="4"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AlternateUOM" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Alternate unit of measure.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="6"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="AlternateUOMInd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicator of use of alternate unit of measure.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="SecDepInterestAmt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Security deposit interest amount.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="15"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="BillingDt" type="DateType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The date of billing.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="TotalUnitNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Total number of suites.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="5"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="StatementInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Print statement indicator.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DueDy" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Day which lease or rent is due.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DelqDy" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Delinquency day.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DelqInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Delinquency indicator.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LateFlatAmt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Late flat fee amount.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="15"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LateRateAmt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Late flat fee rate.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="15"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LateCalculationInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicator for late fee calculation.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="MgmtRateAmt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Management fee rate amount. </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="15"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="NonCashInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Non-cash reversal flag.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="InactiveInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Inactive building indicador.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="IncomeCashTypeCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Income cash type code.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DepositCashTypeCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Deposit cash type code.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ConsumerIndexCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Consumer price index code.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PorterWageId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Porter wage table unique identifier.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AlternateAddress" type="AddressType" minOccurs="0"/>
+						<xs:element name="CloseDayCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Code of the standard closing day.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="TaxpayerTypeCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Code of Taxpayer type.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="MgmtFeeMethodCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Method code for the management fee.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="MgmtFeeFlatAmt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Management fee flat amount.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="15"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="MgmtFeeAccountNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Management fee account number.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="9"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="MgmtFeeCashTypeCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Management fee cash type code.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="RentRefundAccountNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Account number for rent refunds.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="9"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="RentRefundCashTypeCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Cash type code for rent refund.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SecurityDeposityAccountNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Account number of the security deposit.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="9"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SecurityDeposityCashTypeCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Security Deposit cash type code.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="RentupProcessingDt" type="DateTimeType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Rent-up processing date.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CMInterAccountNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Commercial Management inter account number.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="9"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="TotalUnitOccupiedNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Total number of suites occupied.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="8"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="GeneralLedgerDetailCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>General ledger detail, values are: 'D'- Details of GL Journal  Entries, 'S' - Summary GL Journal Entries. 'B'- GL Journal Entries by Posted Batch
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="StartingInvoiceNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Starting invoice number.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="FASB13Ind" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Financial accounting standards board indicator.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="FASBStartDt" type="DateType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Financial accounting standards board start date.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SqFtTypeCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Charge square footage type code.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="WorkOrderProfileId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Work order profile Identification.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="WorkOrderCategoryCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Work order category code.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DefaultWorkOrderMarkupAmt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Default mark-up amount for the work order,</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="15"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DefaultWorkOrderMarkupCategoryCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Default category code of the the work order.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="TicketFormCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Ticket form code.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DefaultScanCodeId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Default Scan code Id.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ReportedSalesPriorityTxt" minOccurs="0" maxOccurs="5">
+							<xs:annotation>
+								<xs:documentation>Reported sales priority text.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="RequiredBillingLvl" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Billing level required.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="RequiredEstimatedLvl" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Estimated level required.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="RequiredReconciliationLvl" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Reconciliation level required.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="NatualBkPtInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Natural breakpoint indicator.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="NaturalBkPtIncomeCd" minOccurs="0" maxOccurs="3">
+							<xs:annotation>
+								<xs:documentation>Natural breakpoint income code.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="EstimatedMethodCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Code of the estimated method.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="BillInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Bill at breakpoint or calculation frequency indicator. </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CalculationInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Calculation Estimate when billed indicator.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ReportTypeCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Required report type code.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ForecastReportTypeCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Forecast report type code.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PercentageChangeAmt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Percentage change amount.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="15"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="RetailInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates whether the building is used for retail.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ReceiptGroupId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Receipt group identification.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="6"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AccountingBasisInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Basis indicator for accounting purposes.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="NonTenantMgmtFeeInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates whether non-tenant is included in management fees.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SecurityMgmtFeeInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates whether security is included in management fees.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CreditMgmtFeeInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates whether credit applies to management fees.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="MgmtFeeVendorId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Management fee vendor unique identifier.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LateFeeCalDaysNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Late fees calendar days number.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LateFeeCutOffAmt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Late fees cut-off amount.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="15"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="MgmtFeeRangeTypeCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Code of the manegement fee range type.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="MgmtFeeDeptCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Department code for the magement fee.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="MgmtRentTaxGroupId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Rent tax group id.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="BillFlatRateInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicator to bill Flat Rate If There Is Activity</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="MerchantId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Merchant Id for ACH processing.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="6"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ReceiptTypeCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Default receipt type code.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ApplyPriorityInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Bulding apply priority indicator.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="BuildingURLTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Building URL.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="MatrixOptionInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Date period matrix option indicator.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="MatrixGroupId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Matrix group unique identifier.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AttachmentId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Attachement Id.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="8"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LotParkingNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Number of the parking Lot.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="GarageParkingNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Garage parking number.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DeckParkingNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Deck parking number.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:totalDigits value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PortfolioCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Portfolio code.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SeconfManagerId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Second manager Id.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="6"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="StmtManagerId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Manager Id for statement.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="6"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="FederalId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Federal binary text.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1000"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="GoogleMapTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Google map text.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="500"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ServiceFeeCreditAccountNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Credit service fee account number.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="9"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ServiceFeeDebitAccountNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Debit service fee acount number.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="9"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AllowPartialPymtInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Allow partial payments indicator.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CreditOnStmtInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Allow credit on statement indicator.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="CreditApplicationOnStmtInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Allow application credit on statement indicator.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ACHProviderNm" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Automatic Clearing House Hosted Payment Provider name or description.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="HostPymtProviderNm" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Hosted payment provider name or description.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="RECCProviderNm" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LogoRefTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Logo reference text.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ProviderLogoDisplayInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Provider logo display option indicator.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>
