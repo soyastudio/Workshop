@@ -15,7 +15,7 @@ import java.util.*;
 public class MappingService {
 
     private static String XPATH_SCHEMA_FILE = "xpath-schema.properties";
-    private static String XPATH_MAPPING_FILE = "xpath-mapping.properties";
+    private static String XPATH_MAPPINGS_FILE = "xpath-mappings.properties";
     private static String XPATH_ADJUSTMENT_FILE = "xpath-adjustment.properties";
 
     private static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -430,11 +430,11 @@ public class MappingService {
             this.requirementDir = new File(base, "requirement");
             this.workDir = new File(base, "work");
 
-            File xpathDataTypeFile = new File(workDir, XPATH_SCHEMA_FILE);
-            if (!xpathDataTypeFile.exists()) {
-                throw new IllegalStateException("File '" + xpathDataTypeFile.getAbsolutePath() + "' does not exist.");
+            File xpathSchemaFile = new File(workDir, XPATH_SCHEMA_FILE);
+            if (!xpathSchemaFile.exists()) {
+                throw new IllegalStateException("File '" + xpathSchemaFile.getAbsolutePath() + "' does not exist.");
             }
-            this.schema = fromPropertiesFile(xpathDataTypeFile);
+            this.schema = fromPropertiesFile(xpathSchemaFile);
 
             this.mappingFile = new File(requirementDir, request.mappingFile);
             if (!mappingFile.exists()) {
@@ -1044,10 +1044,6 @@ public class MappingService {
         }
     }
 
-    interface Command {
-        String execute(Session session) throws Exception;
-    }
-
     static class MappingCommand implements Command {
 
         @Override
@@ -1083,21 +1079,6 @@ public class MappingService {
 
             return builder.toString();
         }
-    }
-
-    static abstract class TreeBasedCommand implements Command {
-
-        @Override
-        public String execute(Session session) throws Exception {
-            session.construct();
-            CodeBuilder builder = CodeBuilder.newInstance();
-
-            render(session, builder);
-
-            return builder.toString();
-        }
-
-        protected abstract void render(Session session, CodeBuilder builder);
     }
 
     static class MappingTreeCommand extends TreeBasedCommand {
@@ -1138,6 +1119,45 @@ public class MappingService {
                     printNode(e, builder);
                 });
             }
+        }
+    }
+
+    static class ConstructCommand extends TreeBasedCommand {
+
+        @Override
+        protected void render(Session session, CodeBuilder builder) {
+            printTreeNode(session.mappingTree, builder);
+        }
+
+        private void printTreeNode(TreeNode node, CodeBuilder builder) {
+            XPathMapping mapping = node.mapping;
+            if (mapping.assignment == null && mapping.construction == null) {
+                return;
+            }
+
+            builder.append(mapping.target).append("=");
+            if (mapping.assignment != null) {
+                printAssignment(mapping.assignment, builder);
+
+            } else if (mapping.construction != null) {
+                printConstruction(mapping.construction, builder);
+            }
+
+            builder.appendLine();
+
+            if (node.children != null && node.children.size() > 0) {
+                node.children.forEach(e -> {
+                    printTreeNode(e, builder);
+                });
+            }
+        }
+
+        private void printAssignment(Assignment assignment, CodeBuilder builder) {
+            builder.append("assign(").append(assignment.evaluation).append(")");
+        }
+
+        private void printConstruction(Construction construction, CodeBuilder builder) {
+            builder.append("construct()");
         }
     }
 
@@ -1220,45 +1240,6 @@ public class MappingService {
                     check(e, schema, builder);
                 });
             }
-        }
-    }
-
-    static class ConstructCommand extends TreeBasedCommand {
-
-        @Override
-        protected void render(Session session, CodeBuilder builder) {
-            printTreeNode(session.mappingTree, builder);
-        }
-
-        private void printTreeNode(TreeNode node, CodeBuilder builder) {
-            XPathMapping mapping = node.mapping;
-            if (mapping.assignment == null && mapping.construction == null) {
-                return;
-            }
-
-            builder.append(mapping.target).append("=");
-            if (mapping.assignment != null) {
-                printAssignment(mapping.assignment, builder);
-
-            } else if (mapping.construction != null) {
-                printConstruction(mapping.construction, builder);
-            }
-
-            builder.appendLine();
-
-            if (node.children != null && node.children.size() > 0) {
-                node.children.forEach(e -> {
-                    printTreeNode(e, builder);
-                });
-            }
-        }
-
-        private void printAssignment(Assignment assignment, CodeBuilder builder) {
-            builder.append("assign(").append(assignment.evaluation).append(")");
-        }
-
-        private void printConstruction(Construction construction, CodeBuilder builder) {
-            builder.append("construct()");
         }
     }
 
@@ -1484,7 +1465,6 @@ public class MappingService {
         }
     }
 
-
     static class UnknownPathsCommand implements Command {
 
         @Override
@@ -1668,6 +1648,25 @@ public class MappingService {
                 builder.append("</").append(mapping.name).append(">");
             }
         }
+    }
+
+    interface Command {
+        String execute(Session session) throws Exception;
+    }
+
+    static abstract class TreeBasedCommand implements Command {
+
+        @Override
+        public String execute(Session session) throws Exception {
+            session.construct();
+            CodeBuilder builder = CodeBuilder.newInstance();
+
+            render(session, builder);
+
+            return builder.toString();
+        }
+
+        protected abstract void render(Session session, CodeBuilder builder);
     }
 
 }

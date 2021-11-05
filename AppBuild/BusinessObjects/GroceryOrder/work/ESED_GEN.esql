@@ -1,0 +1,2135 @@
+BROKER SCHEMA com.abs.oms.groceryorder
+
+CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
+
+	-- Declare UDPs
+	DECLARE VERSION_ID EXTERNAL CHARACTER '1.0.0';
+	DECLARE SYSTEM_ENVIRONMENT_CODE EXTERNAL CHARACTER 'PROD';
+
+	-- Declare Namespace
+	DECLARE Abs NAMESPACE 'https://collab.safeway.com/it/architecture/info/default.aspx';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- Declare Input Message Root
+		DECLARE _inputRootNode REFERENCE TO InputRoot.JSON.Data;
+
+		-- Declare Output Message Root
+		CREATE LASTCHILD OF OutputRoot DOMAIN 'XMLNSC';
+
+		DECLARE GetGroceryOrder_ REFERENCE TO OutputRoot.XMLNSC;
+		CREATE LASTCHILD OF OutputRoot.XMLNSC AS GetGroceryOrder_ TYPE XMLNSC.Folder NAME 'GetGroceryOrder';
+		SET OutputRoot.XMLNSC.GetGroceryOrder.(XMLNSC.NamespaceDecl)xmlns:Abs=Abs;
+
+		-- GetGroceryOrder/DocumentData
+		DECLARE DocumentData_ REFERENCE TO GetGroceryOrder_;
+		CREATE LASTCHILD OF GetGroceryOrder_ AS DocumentData_ TYPE XMLNSC.Folder NAME 'DocumentData';
+
+			-- GetGroceryOrder/DocumentData/Document
+			DECLARE Document_ REFERENCE TO DocumentData_;
+			CREATE LASTCHILD OF DocumentData_ AS Document_ TYPE XMLNSC.Folder NAME 'Abs:Document';
+
+				-- GetGroceryOrder/DocumentData/Document/@VersionId
+				SET Document_.(XMLNSC.Attribute)VersionId = VERSION_ID;
+
+				-- GetGroceryOrder/DocumentData/Document/@SystemEnvironmentCd
+				SET Document_.(XMLNSC.Attribute)SystemEnvironmentCd = SYSTEM_ENVIRONMENT_CODE;
+
+				-- GetGroceryOrder/DocumentData/Document/DocumentID
+				SET Document_.(XMLNSC.Field)Abs:DocumentID = 'GROCERY_ORDER';
+
+				-- GetGroceryOrder/DocumentData/Document/AlternateDocumentID
+				SET Document_.(XMLNSC.Field)Abs:AlternateDocumentID = InputLocalEnvironment.Kafka.Input.topicName ||'_'||InputLocalEnvironment.Kafka.Input.partition||'_'||InputLocalEnvironment.Kafka.Input.offset||'_'||CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT 'YYYYMMddHHmmssSSSSSS';
+
+				-- GetGroceryOrder/DocumentData/Document/DocumentNm
+				SET Document_.(XMLNSC.Field)Abs:DocumentNm = 'GroceryOrder';
+
+				-- GetGroceryOrder/DocumentData/Document/CreationDt
+				SET Document_.(XMLNSC.Field)Abs:CreationDt = CURRENT_TIMESTAMP;
+
+				-- GetGroceryOrder/DocumentData/Document/Description
+				SET Document_.(XMLNSC.Field)Abs:Description = 'GroceryOrderDetail';
+
+				-- GetGroceryOrder/DocumentData/Document/SourceApplicationCd
+				SET Document_.(XMLNSC.Field)Abs:SourceApplicationCd = 'OMS';
+
+				-- GetGroceryOrder/DocumentData/Document/TargetApplicationCd
+				SET Document_.(XMLNSC.Field)Abs:TargetApplicationCd = 'EDIS';
+
+				-- GetGroceryOrder/DocumentData/Document/SenderId
+				SET Document_.(XMLNSC.Field)Abs:SenderId = _inputRootNode.id;
+
+				-- GetGroceryOrder/DocumentData/Document/InternalFileTransferInd
+				SET Document_.(XMLNSC.Field)Abs:InternalFileTransferInd = 'Y';
+
+				-- GetGroceryOrder/DocumentData/Document/DataClassification
+				DECLARE DataClassification_ REFERENCE TO Document_;
+				CREATE LASTCHILD OF Document_ AS DataClassification_ TYPE XMLNSC.Folder NAME 'Abs:DataClassification';
+
+					-- GetGroceryOrder/DocumentData/Document/DataClassification/DataClassificationLevel
+					DECLARE DataClassificationLevel_ REFERENCE TO DataClassification_;
+					CREATE LASTCHILD OF DataClassification_ AS DataClassificationLevel_ TYPE XMLNSC.Folder NAME 'Abs:DataClassificationLevel';
+
+						-- GetGroceryOrder/DocumentData/Document/DataClassification/DataClassificationLevel/Code
+						SET DataClassificationLevel_.(XMLNSC.Field)Abs:Code = 'Internal';
+
+					-- GetGroceryOrder/DocumentData/Document/DataClassification/BusinessSensitivityLevel
+					DECLARE BusinessSensitivityLevel_ REFERENCE TO DataClassification_;
+					CREATE LASTCHILD OF DataClassification_ AS BusinessSensitivityLevel_ TYPE XMLNSC.Folder NAME 'Abs:BusinessSensitivityLevel';
+
+						-- GetGroceryOrder/DocumentData/Document/DataClassification/BusinessSensitivityLevel/Code
+						SET BusinessSensitivityLevel_.(XMLNSC.Field)Abs:Code = 'Low';
+
+					-- GetGroceryOrder/DocumentData/Document/DataClassification/PHIdataInd
+					SET DataClassification_.(XMLNSC.Field)Abs:PHIdataInd = 'N';
+
+					-- GetGroceryOrder/DocumentData/Document/DataClassification/PCIdataInd
+					SET DataClassification_.(XMLNSC.Field)Abs:PCIdataInd = 'Y';
+
+					-- GetGroceryOrder/DocumentData/Document/DataClassification/PIIdataInd
+					SET DataClassification_.(XMLNSC.Field)Abs:PIIdataInd = 'Y';
+
+			-- GetGroceryOrder/DocumentData/DocumentAction
+			DECLARE DocumentAction_ REFERENCE TO DocumentData_;
+			CREATE LASTCHILD OF DocumentData_ AS DocumentAction_ TYPE XMLNSC.Folder NAME 'Abs:DocumentAction';
+
+				-- GetGroceryOrder/DocumentData/DocumentAction/ActionTypeCd
+				SET DocumentAction_.(XMLNSC.Field)Abs:ActionTypeCd = 'UPDATE';
+
+				-- GetGroceryOrder/DocumentData/DocumentAction/RecordTypeCd
+				SET DocumentAction_.(XMLNSC.Field)Abs:RecordTypeCd = 'CHANGE';
+
+		-- GetGroceryOrder/GroceryOrderData
+		DECLARE GroceryOrderData_ REFERENCE TO GetGroceryOrder_;
+		CREATE LASTCHILD OF GetGroceryOrder_ AS GroceryOrderData_ TYPE XMLNSC.Folder NAME 'GroceryOrderData';
+
+			-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader
+			DECLARE GroceryOrderHeader_ REFERENCE TO GroceryOrderData_;
+			CREATE LASTCHILD OF GroceryOrderData_ AS GroceryOrderHeader_ TYPE XMLNSC.Folder NAME 'Abs:GroceryOrderHeader';
+
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderId
+				SET GroceryOrderHeader_.(XMLNSC.Field)Abs:OrderId = _inputRootNode.orderNumber;
+
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderCreateTS
+				SET GroceryOrderHeader_.(XMLNSC.Field)Abs:OrderCreateTS = _inputRootNode.orderCreatedDate;
+
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderModifyTS
+				SET GroceryOrderHeader_.(XMLNSC.Field)Abs:OrderModifyTS = _inputRootNode.modifiedDate;
+
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CompanyId
+				SET GroceryOrderHeader_.(XMLNSC.Field)Abs:CompanyId = _inputRootNode.companyId;
+
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/VersionNbr
+				SET GroceryOrderHeader_.(XMLNSC.Field)Abs:VersionNbr = _inputRootNode.versionNumber;
+
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderStatus
+				DECLARE OrderStatus_ REFERENCE TO GroceryOrderHeader_;
+				CREATE LASTCHILD OF GroceryOrderHeader_ AS OrderStatus_ TYPE XMLNSC.Folder NAME 'Abs:OrderStatus';
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderStatus/StatusTypeCd
+					SET OrderStatus_.(XMLNSC.Field)Abs:StatusTypeCd = _inputRootNode.orderStatus;
+
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderStatusReasonType
+				DECLARE OrderStatusReasonType_ REFERENCE TO GroceryOrderHeader_;
+				CREATE LASTCHILD OF GroceryOrderHeader_ AS OrderStatusReasonType_ TYPE XMLNSC.Folder NAME 'Abs:OrderStatusReasonType';
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderStatusReasonType/Code
+					SET OrderStatusReasonType_.(XMLNSC.Field)Abs:Code = _inputRootNode.orderStatusReasonCode;
+
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderActionStatus
+				DECLARE OrderActionStatus_ REFERENCE TO GroceryOrderHeader_;
+				CREATE LASTCHILD OF GroceryOrderHeader_ AS OrderActionStatus_ TYPE XMLNSC.Folder NAME 'Abs:OrderActionStatus';
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderActionStatus/StatusTypeCd
+					SET OrderActionStatus_.(XMLNSC.Field)Abs:StatusTypeCd = _inputRootNode.messageAction;
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderActionStatus/Description
+					SET OrderActionStatus_.(XMLNSC.Field)Abs:Description = _inputRootNode.messageActionReason;
+
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/EditCutoffDtTm
+				SET GroceryOrderHeader_.(XMLNSC.Field)Abs:EditCutoffDtTm = _inputRootNode.orderEditCutoffDate;
+
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/EditReasonType
+				DECLARE EditReasonType_ REFERENCE TO GroceryOrderHeader_;
+				CREATE LASTCHILD OF GroceryOrderHeader_ AS EditReasonType_ TYPE XMLNSC.Folder NAME 'Abs:EditReasonType';
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/EditReasonType/Code
+					SET EditReasonType_.(XMLNSC.Field)Abs:Code = _inputRootNode.modifiedReasonCode;
+
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility
+				DECLARE FulfillingFacility_ REFERENCE TO GroceryOrderHeader_;
+				CREATE LASTCHILD OF GroceryOrderHeader_ AS FulfillingFacility_ TYPE XMLNSC.Folder NAME 'Abs:FulfillingFacility';
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility/RetailStoreId
+					SET FulfillingFacility_.(XMLNSC.Field)Abs:RetailStoreId = _inputRootNode.storeNumber;
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility/BannerCd
+					SET FulfillingFacility_.(XMLNSC.Field)Abs:BannerCd = _inputRootNode.banner;
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility/MFCInd
+					SET FulfillingFacility_.(XMLNSC.Field)Abs:MFCInd = '???';
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility/HybridStoreInd
+					SET FulfillingFacility_.(XMLNSC.Field)Abs:HybridStoreInd = '???';
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility/PremiumStoreInd
+					SET FulfillingFacility_.(XMLNSC.Field)Abs:PremiumStoreInd = '???';
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility/ThirdPartyDeliveryOnlyInd
+					SET FulfillingFacility_.(XMLNSC.Field)Abs:ThirdPartyDeliveryOnlyInd = '???';
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility/ERUMSEnabledInd
+					SET FulfillingFacility_.(XMLNSC.Field)Abs:ERUMSEnabledInd = '???';
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulfillingFacility/FulfillmentStoreId
+					SET FulfillingFacility_.(XMLNSC.Field)Abs:FulfillmentStoreId = _inputRootNode.fulfillmentStoreNumber;
+
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer
+				DECLARE RetailCustomer_ REFERENCE TO GroceryOrderHeader_;
+				CREATE LASTCHILD OF GroceryOrderHeader_ AS RetailCustomer_ TYPE XMLNSC.Folder NAME 'Abs:RetailCustomer';
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerId
+					SET RetailCustomer_.(XMLNSC.Field)Abs:CustomerId = _inputRootNode.customer.customerId;
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerAlternateId
+					DECLARE CustomerAlternateId_ REFERENCE TO RetailCustomer_;
+					CREATE LASTCHILD OF RetailCustomer_ AS CustomerAlternateId_ TYPE XMLNSC.Folder NAME 'Abs:CustomerAlternateId';
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerAlternateId/@sequenceNbr
+						SET CustomerAlternateId_.(XMLNSC.Attribute)sequenceNbr = _inputRootNode.customer.memberId;
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerNm
+					DECLARE CustomerNm_ REFERENCE TO RetailCustomer_;
+					CREATE LASTCHILD OF RetailCustomer_ AS CustomerNm_ TYPE XMLNSC.Folder NAME 'Abs:CustomerNm';
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerNm/GivenNm
+						SET CustomerNm_.(XMLNSC.Field)Abs:GivenNm = _inputRootNode.customer.name.firstName;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerNm/MiddleNm
+						SET CustomerNm_.(XMLNSC.Field)Abs:MiddleNm = _inputRootNode.customer.name.middleName;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerNm/FamilyNm
+						SET CustomerNm_.(XMLNSC.Field)Abs:FamilyNm = _inputRootNode.customer.name.lastName;
+
+					-- LOOP FROM customer/contact[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact
+					DECLARE _arr1 REFERENCE TO _inputRootNode.customer.contact.Item;
+					loop_arr1 : WHILE LASTMOVE(_arr1) DO
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact
+						DECLARE Contact_ REFERENCE TO RetailCustomer_;
+						CREATE LASTCHILD OF RetailCustomer_ AS Contact_ TYPE XMLNSC.Folder NAME 'Abs:Contact';
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact
+							DECLARE PhoneFaxContact_ REFERENCE TO Contact_;
+							CREATE LASTCHILD OF Contact_ AS PhoneFaxContact_ TYPE XMLNSC.Folder NAME 'Abs:PhoneFaxContact';
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/@TypeCode
+								SET PhoneFaxContact_.(XMLNSC.Attribute)TypeCode = _arr1.type;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/PhoneNbrTxt
+								SET PhoneFaxContact_.(XMLNSC.Field)Abs:PhoneNbrTxt = _arr1.number;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/@TypeCode
+								SET PhoneFaxContact_.(XMLNSC.Attribute)TypeCode = _arr1.type;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/PhoneFaxContact/PhoneNbrTxt
+								SET PhoneFaxContact_.(XMLNSC.Field)Abs:PhoneNbrTxt = _arr1.number;
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address
+							DECLARE Address_ REFERENCE TO Contact_;
+							CREATE LASTCHILD OF Contact_ AS Address_ TYPE XMLNSC.Folder NAME 'Abs:Address';
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/AddressUsageTypeCd
+								SET Address_.(XMLNSC.Field)Abs:AddressUsageTypeCd = _arr3.addressType;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/AddressLine1txt
+								SET Address_.(XMLNSC.Field)Abs:AddressLine1txt = _arr3.addressLine1;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/AddressLine2txt
+								SET Address_.(XMLNSC.Field)Abs:AddressLine2txt = _arr3.addressLine2;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/CityNm
+								SET Address_.(XMLNSC.Field)Abs:CityNm = _arr3.city;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/PostalZoneCd
+								SET Address_.(XMLNSC.Field)Abs:PostalZoneCd = _arr3.zipcode;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/StateCd
+								SET Address_.(XMLNSC.Field)Abs:StateCd = _arr3.state;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/CountryCd
+								SET Address_.(XMLNSC.Field)Abs:CountryCd = _arr3.country;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/PhoneNbr
+								SET Address_.(XMLNSC.Field)Abs:PhoneNbr = _arr1.number;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/PhoneNbr
+								SET Address_.(XMLNSC.Field)Abs:PhoneNbr = _arr1.number;
+
+					MOVE _arr1 NEXTSIBLING;
+					END WHILE loop_arr1;
+
+					-- LOOP FROM customer/email[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact
+					DECLARE _arr2 REFERENCE TO _inputRootNode.customer.email.Item;
+					loop_arr2 : WHILE LASTMOVE(_arr2) DO
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact
+						DECLARE Contact_ REFERENCE TO RetailCustomer_;
+						CREATE LASTCHILD OF RetailCustomer_ AS Contact_ TYPE XMLNSC.Folder NAME 'Abs:Contact';
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact
+							DECLARE DigitalContact_ REFERENCE TO Contact_;
+							CREATE LASTCHILD OF Contact_ AS DigitalContact_ TYPE XMLNSC.Folder NAME 'Abs:DigitalContact';
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact/DigitalAddress
+								SET DigitalContact_.(XMLNSC.Field)Abs:DigitalAddress = _arr2.id;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact/EmailStatuses
+								DECLARE EmailStatuses_ REFERENCE TO DigitalContact_;
+								CREATE LASTCHILD OF DigitalContact_ AS EmailStatuses_ TYPE XMLNSC.Folder NAME 'Abs:EmailStatuses';
+
+									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact/EmailStatuses/@typeCode
+									SET EmailStatuses_.(XMLNSC.Attribute)typeCode = _arr2.type;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact/DigitalAddress
+								SET DigitalContact_.(XMLNSC.Field)Abs:DigitalAddress = _arr2.id;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact/EmailStatuses
+								DECLARE EmailStatuses_ REFERENCE TO DigitalContact_;
+								CREATE LASTCHILD OF DigitalContact_ AS EmailStatuses_ TYPE XMLNSC.Folder NAME 'Abs:EmailStatuses';
+
+									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact/EmailStatuses/@typeCode
+									SET EmailStatuses_.(XMLNSC.Attribute)typeCode = _arr2.type;
+
+									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/DigitalContact/EmailStatuses/@typeCode
+									SET EmailStatuses_.(XMLNSC.Attribute)typeCode = _arr2.type;
+
+					MOVE _arr2 NEXTSIBLING;
+					END WHILE loop_arr2;
+
+					-- LOOP FROM customer/address[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact
+					DECLARE _arr3 REFERENCE TO _inputRootNode.customer.address.Item;
+					loop_arr3 : WHILE LASTMOVE(_arr3) DO
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact
+						DECLARE Contact_ REFERENCE TO RetailCustomer_;
+						CREATE LASTCHILD OF RetailCustomer_ AS Contact_ TYPE XMLNSC.Folder NAME 'Abs:Contact';
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address
+							DECLARE Address_ REFERENCE TO Contact_;
+							CREATE LASTCHILD OF Contact_ AS Address_ TYPE XMLNSC.Folder NAME 'Abs:Address';
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/AddressUsageTypeCd
+								SET Address_.(XMLNSC.Field)Abs:AddressUsageTypeCd = _arr3.addressType;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/AddressLine1txt
+								SET Address_.(XMLNSC.Field)Abs:AddressLine1txt = _arr3.addressLine1;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/AddressLine2txt
+								SET Address_.(XMLNSC.Field)Abs:AddressLine2txt = _arr3.addressLine2;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/CityNm
+								SET Address_.(XMLNSC.Field)Abs:CityNm = _arr3.city;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/PostalZoneCd
+								SET Address_.(XMLNSC.Field)Abs:PostalZoneCd = _arr3.zipcode;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/StateCd
+								SET Address_.(XMLNSC.Field)Abs:StateCd = _arr3.state;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/CountryCd
+								SET Address_.(XMLNSC.Field)Abs:CountryCd = _arr3.country;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/PhoneNbr
+								SET Address_.(XMLNSC.Field)Abs:PhoneNbr = _arr1.number;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/AddressUsageTypeCd
+								SET Address_.(XMLNSC.Field)Abs:AddressUsageTypeCd = _arr3.addressType;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/AddressLine1txt
+								SET Address_.(XMLNSC.Field)Abs:AddressLine1txt = _arr3.addressLine1;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/AddressLine2txt
+								SET Address_.(XMLNSC.Field)Abs:AddressLine2txt = _arr3.addressLine2;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/CityNm
+								SET Address_.(XMLNSC.Field)Abs:CityNm = _arr3.city;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/PostalZoneCd
+								SET Address_.(XMLNSC.Field)Abs:PostalZoneCd = _arr3.zipcode;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/StateCd
+								SET Address_.(XMLNSC.Field)Abs:StateCd = _arr3.state;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/Contact/Address/CountryCd
+								SET Address_.(XMLNSC.Field)Abs:CountryCd = _arr3.country;
+
+					MOVE _arr3 NEXTSIBLING;
+					END WHILE loop_arr3;
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/ClubCardNbr
+					SET RetailCustomer_.(XMLNSC.Field)Abs:ClubCardNbr = _inputRootNode.customer.clubCardNumber;
+
+					-- LOOP FROM customer/preference/optIn[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerPreference
+					DECLARE _arr4 REFERENCE TO _inputRootNode.customer.preference.optIn.Item;
+					loop_arr4 : WHILE LASTMOVE(_arr4) DO
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerPreference
+						DECLARE CustomerPreference_ REFERENCE TO RetailCustomer_;
+						CREATE LASTCHILD OF RetailCustomer_ AS CustomerPreference_ TYPE XMLNSC.Folder NAME 'Abs:CustomerPreference';
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerPreference/OptInContactNbr
+							SET CustomerPreference_.(XMLNSC.Field)Abs:OptInContactNbr = _arr4.id;
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerPreference/OptInInd
+							SET CustomerPreference_.(XMLNSC.Field)Abs:OptInInd = _arr4.isOptin;
+
+					MOVE _arr4 NEXTSIBLING;
+					END WHILE loop_arr4;
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerSubscription
+					DECLARE CustomerSubscription_ REFERENCE TO RetailCustomer_;
+					CREATE LASTCHILD OF RetailCustomer_ AS CustomerSubscription_ TYPE XMLNSC.Folder NAME 'Abs:CustomerSubscription';
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerSubscription/SubscriptionTypeCd
+						SET CustomerSubscription_.(XMLNSC.Field)Abs:SubscriptionTypeCd = '???';
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerSubscription/OptInInd
+						SET CustomerSubscription_.(XMLNSC.Field)Abs:OptInInd = _inputRootNode.customer.isSubscription;
+
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CurrencyCd
+				SET GroceryOrderHeader_.(XMLNSC.Field)Abs:CurrencyCd = _inputRootNode.orderTotal.currency;
+
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/TotalAmt
+				SET GroceryOrderHeader_.(XMLNSC.Field)Abs:TotalAmt = _inputRootNode.orderTotal.amount;
+
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/SNAPTotalAmt
+				SET GroceryOrderHeader_.(XMLNSC.Field)Abs:SNAPTotalAmt = _inputRootNode.orderTotal.snapEligibleTotal;
+
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/NonSNAPTotalAmt
+				SET GroceryOrderHeader_.(XMLNSC.Field)Abs:NonSNAPTotalAmt = _inputRootNode.orderTotal.nonsnapEligibleTotal;
+
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/TotalBasePriceAmt
+				SET GroceryOrderHeader_.(XMLNSC.Field)Abs:TotalBasePriceAmt = _inputRootNode.orderTotal.itemTotalAmount;
+
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/EstimatedTotalPriceAmt
+				SET GroceryOrderHeader_.(XMLNSC.Field)Abs:EstimatedTotalPriceAmt = _inputRootNode.orderTotal.itemTotalAfterSavingsAmount;
+
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/TotalTaxFeeAmt
+				SET GroceryOrderHeader_.(XMLNSC.Folder)Abs:TotalTaxFeeAmt = _inputRootNode.orderTotal.taxAndFees.totalTaxesAndFeesAmount;
+
+				-- LOOP FROM orderTotal/taxAndFees/details[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/MiscChargesType
+				DECLARE _arr5 REFERENCE TO _inputRootNode.orderTotal.taxAndFees.details.Item;
+				loop_arr5 : WHILE LASTMOVE(_arr5) DO
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/MiscChargesType
+					DECLARE MiscChargesType_ REFERENCE TO GroceryOrderHeader_;
+					CREATE LASTCHILD OF GroceryOrderHeader_ AS MiscChargesType_ TYPE XMLNSC.Folder NAME 'Abs:MiscChargesType';
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/MiscChargesType/ChargeCd
+						SET MiscChargesType_.(XMLNSC.Field)Abs:ChargeCd = _arr5.key;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/MiscChargesType/ChargeAmt
+						SET MiscChargesType_.(XMLNSC.Field)Abs:ChargeAmt = _arr5.value;
+
+				MOVE _arr5 NEXTSIBLING;
+				END WHILE loop_arr5;
+
+				-- LOOP FROM orderTotal/txnLevelSavings[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerOffers
+				DECLARE _arr6 REFERENCE TO _inputRootNode.orderTotal.txnLevelSavings.Item;
+				loop_arr6 : WHILE LASTMOVE(_arr6) DO
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerOffers
+					DECLARE CustomerOffers_ REFERENCE TO GroceryOrderHeader_;
+					CREATE LASTCHILD OF GroceryOrderHeader_ AS CustomerOffers_ TYPE XMLNSC.Folder NAME 'Abs:CustomerOffers';
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerOffers/OfferId
+						SET CustomerOffers_.(XMLNSC.Field)Abs:OfferId = _arr6.offerId;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerOffers/ReferenceOfferId
+						SET CustomerOffers_.(XMLNSC.Field)Abs:ReferenceOfferId = _arr6.externalOfferId;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerOffers/OfferDiscountAmt
+						SET CustomerOffers_.(XMLNSC.Field)Abs:OfferDiscountAmt = _arr6.discountAmount;
+
+						-- LOOP FROM orderTotal/txnLevelSavings[*]/points[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerOffers/CustomerRewards
+						DECLARE _arr7 REFERENCE TO _arr6.points.Item;
+						loop_arr7 : WHILE LASTMOVE(_arr7) DO
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerOffers/CustomerRewards
+							DECLARE CustomerRewards_ REFERENCE TO CustomerOffers_;
+							CREATE LASTCHILD OF CustomerOffers_ AS CustomerRewards_ TYPE XMLNSC.Folder NAME 'Abs:CustomerRewards';
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerOffers/CustomerRewards/RewardsProgramNm
+								SET CustomerRewards_.(XMLNSC.Field)Abs:RewardsProgramNm = _arr7.programName;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerOffers/CustomerRewards/PointsEarnedQty
+								SET CustomerRewards_.(XMLNSC.Field)Abs:PointsEarnedQty = _arr7.earn;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerOffers/CustomerRewards/PointsUsedQty
+								SET CustomerRewards_.(XMLNSC.Field)Abs:PointsUsedQty = _arr7.burn;
+
+						MOVE _arr7 NEXTSIBLING;
+						END WHILE loop_arr7;
+
+				MOVE _arr6 NEXTSIBLING;
+				END WHILE loop_arr6;
+
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment
+				DECLARE CustomerPayment_ REFERENCE TO GroceryOrderHeader_;
+				CREATE LASTCHILD OF GroceryOrderHeader_ AS CustomerPayment_ TYPE XMLNSC.Folder NAME 'Abs:CustomerPayment';
+
+					-- LOOP FROM paymentDetails[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender
+					DECLARE _arr8 REFERENCE TO _inputRootNode.paymentDetails.Item;
+					loop_arr8 : WHILE LASTMOVE(_arr8) DO
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender
+						DECLARE Tender_ REFERENCE TO CustomerPayment_;
+						CREATE LASTCHILD OF CustomerPayment_ AS Tender_ TYPE XMLNSC.Folder NAME 'Abs:Tender';
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/TenderId
+							SET Tender_.(XMLNSC.Field)Abs:TenderId = _arr8.tokenNumber;
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/TenderTypeCd
+							SET Tender_.(XMLNSC.Field)Abs:TenderTypeCd = _arr8.paymentType;
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/TenderSubTypeCd
+							SET Tender_.(XMLNSC.Field)Abs:TenderSubTypeCd = _arr8.paymentSubType;
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/HolderNm
+							SET Tender_.(XMLNSC.Field)Abs:HolderNm = _arr8.cardHolderName;
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/BillingAddress
+							DECLARE BillingAddress_ REFERENCE TO Tender_;
+							CREATE LASTCHILD OF Tender_ AS BillingAddress_ TYPE XMLNSC.Folder NAME 'Abs:BillingAddress';
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/BillingAddress/AddressLine1txt
+								SET BillingAddress_.(XMLNSC.Field)Abs:AddressLine1txt = _arr8.address.addressLine1;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/BillingAddress/AddressLine2txt
+								SET BillingAddress_.(XMLNSC.Field)Abs:AddressLine2txt = _arr8.address.addressLine2;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/BillingAddress/CityNm
+								SET BillingAddress_.(XMLNSC.Field)Abs:CityNm = _arr8.address.city;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/BillingAddress/PostalZoneCd
+								SET BillingAddress_.(XMLNSC.Field)Abs:PostalZoneCd = _arr8.address.zipCode;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/BillingAddress/StateCd
+								SET BillingAddress_.(XMLNSC.Field)Abs:StateCd = _arr8.address.state;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/BillingAddress/AddressLine1txt
+								SET BillingAddress_.(XMLNSC.Field)Abs:AddressLine1txt = _arr8.address.addressLine1;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/BillingAddress/AddressLine2txt
+								SET BillingAddress_.(XMLNSC.Field)Abs:AddressLine2txt = _arr8.address.addressLine2;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/BillingAddress/CityNm
+								SET BillingAddress_.(XMLNSC.Field)Abs:CityNm = _arr8.address.city;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/BillingAddress/PostalZoneCd
+								SET BillingAddress_.(XMLNSC.Field)Abs:PostalZoneCd = _arr8.address.zipCode;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/BillingAddress/StateCd
+								SET BillingAddress_.(XMLNSC.Field)Abs:StateCd = _arr8.address.state;
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/PostalCd
+							SET Tender_.(XMLNSC.Field)Abs:PostalCd = _arr8.zipcode;
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Token
+							DECLARE Token_ REFERENCE TO Tender_;
+							CREATE LASTCHILD OF Tender_ AS Token_ TYPE XMLNSC.Folder NAME 'Abs:Token';
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Token/TokenId
+								SET Token_.(XMLNSC.Field)Abs:TokenId = _arr8.tokenNumber;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Token/TokenTypeCd
+								SET Token_.(XMLNSC.Field)Abs:TokenTypeCd = _arr8.paymentType;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Token/TokenId
+								SET Token_.(XMLNSC.Field)Abs:TokenId = _arr8.tokenNumber;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Token/TokenTypeCd
+								SET Token_.(XMLNSC.Field)Abs:TokenTypeCd = _arr8.paymentType;
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Status
+							DECLARE Status_ REFERENCE TO Tender_;
+							CREATE LASTCHILD OF Tender_ AS Status_ TYPE XMLNSC.Folder NAME 'Abs:Status';
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Status/StatusCd
+								SET Status_.(XMLNSC.Field)Abs:StatusCd = _arr8.paymentStatus.status;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Status/StatusCd
+								SET Status_.(XMLNSC.Field)Abs:StatusCd = _arr8.paymentStatus.status;
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/RequiredAuthAmt
+							SET Tender_.(XMLNSC.Field)Abs:RequiredAuthAmt = _arr8.reqAuthorizationAmount;
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/AuthCd
+							SET Tender_.(XMLNSC.Field)Abs:AuthCd = _arr8.paymentStatus.authorizationCode;
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/AuthDt
+							SET Tender_.(XMLNSC.Field)Abs:AuthDt = _arr8.paymentStatus.authorizationDate;
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/TransactionTagId
+							SET Tender_.(XMLNSC.Field)Abs:TransactionTagId = _arr8.transactionType;
+
+					MOVE _arr8 NEXTSIBLING;
+					END WHILE loop_arr8;
+
+					-- LOOP FROM tender[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender
+					DECLARE _arr9 REFERENCE TO _inputRootNode.tender.Item;
+					loop_arr9 : WHILE LASTMOVE(_arr9) DO
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender
+						DECLARE Tender_ REFERENCE TO CustomerPayment_;
+						CREATE LASTCHILD OF CustomerPayment_ AS Tender_ TYPE XMLNSC.Folder NAME 'Abs:Tender';
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/TenderOriginCd
+							DECLARE TenderOriginCd_ REFERENCE TO Tender_;
+							CREATE LASTCHILD OF Tender_ AS TenderOriginCd_ TYPE XMLNSC.Folder NAME 'Abs:TenderOriginCd';
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/TenderOriginCd/Code
+								SET TenderOriginCd_.(XMLNSC.Field)Abs:Code = _arr9.stateOfOrigin;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/TenderOriginCd/Code
+								SET TenderOriginCd_.(XMLNSC.Field)Abs:Code = _arr9.stateOfOrigin;
+
+					MOVE _arr9 NEXTSIBLING;
+					END WHILE loop_arr9;
+
+				-- LOOP FROM tender[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund
+				DECLARE _arr10 REFERENCE TO _inputRootNode.tender.Item;
+				loop_arr10 : WHILE LASTMOVE(_arr10) DO
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund
+					DECLARE CustomerRefund_ REFERENCE TO GroceryOrderHeader_;
+					CREATE LASTCHILD OF GroceryOrderHeader_ AS CustomerRefund_ TYPE XMLNSC.Folder NAME 'Abs:CustomerRefund';
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/SequenceNbr
+						SET CustomerRefund_.(XMLNSC.Field)Abs:SequenceNbr = _arr10.sequenceId;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/RefundId
+						SET CustomerRefund_.(XMLNSC.Field)Abs:RefundId = _arr10.refundId;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/TenderId
+						SET CustomerRefund_.(XMLNSC.Field)Abs:TenderId = _arr10.tokenNumber;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/TenderTypeCd
+						SET CustomerRefund_.(XMLNSC.Field)Abs:TenderTypeCd = _arr10.tenderType;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/TenderSubTypeCd
+						SET CustomerRefund_.(XMLNSC.Field)Abs:TenderSubTypeCd = _arr10.tenderSubType;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/Token
+						DECLARE Token_ REFERENCE TO CustomerRefund_;
+						CREATE LASTCHILD OF CustomerRefund_ AS Token_ TYPE XMLNSC.Folder NAME 'Abs:Token';
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/Token/TokenId
+							SET Token_.(XMLNSC.Field)Abs:TokenId = _arr10.tokenNumber;
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/Token/TokenId
+							SET Token_.(XMLNSC.Field)Abs:TokenId = _arr10.tokenNumber;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/TenderStatus
+						DECLARE TenderStatus_ REFERENCE TO CustomerRefund_;
+						CREATE LASTCHILD OF CustomerRefund_ AS TenderStatus_ TYPE XMLNSC.Folder NAME 'Abs:TenderStatus';
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/TenderStatus/StatusCd
+							SET TenderStatus_.(XMLNSC.Field)Abs:StatusCd = _arr10.tenderStatus.paymentStatus.status;
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/TenderStatus/StatusCd
+							SET TenderStatus_.(XMLNSC.Field)Abs:StatusCd = _arr10.tenderStatus.paymentStatus.status;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/CurrencyCd
+						SET CustomerRefund_.(XMLNSC.Field)Abs:CurrencyCd = _arr10.chargeAmount.currency;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/BalanceAmt
+						SET CustomerRefund_.(XMLNSC.Field)Abs:BalanceAmt = _arr10.chargeAmount.amount;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/AuthCd
+						SET CustomerRefund_.(XMLNSC.Field)Abs:AuthCd = _arr10.tenderStatus.paymentStatus.authorizationCode;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/AuthDt
+						SET CustomerRefund_.(XMLNSC.Field)Abs:AuthDt = _arr10.tenderStatus.paymentStatus.authorizationDate;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/TenderOriginCd
+						SET CustomerRefund_.(XMLNSC.Folder)Abs:TenderOriginCd = _arr10.stateOfOrigin;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/CreditOnAccntId
+						SET CustomerRefund_.(XMLNSC.Field)Abs:CreditOnAccntId = _arr10.coaId;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/RefundByType
+						DECLARE RefundByType_ REFERENCE TO CustomerRefund_;
+						CREATE LASTCHILD OF CustomerRefund_ AS RefundByType_ TYPE XMLNSC.Folder NAME 'Abs:RefundByType';
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/RefundByType/UserId
+							SET RefundByType_.(XMLNSC.Field)Abs:UserId = _arr10.refundedBy;
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/RefundByType/RefundByReasonType
+							DECLARE RefundByReasonType_ REFERENCE TO RefundByType_;
+							CREATE LASTCHILD OF RefundByType_ AS RefundByReasonType_ TYPE XMLNSC.Folder NAME 'Abs:RefundByReasonType';
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/RefundByType/RefundByReasonType/Code
+								SET RefundByReasonType_.(XMLNSC.Field)Abs:Code = _arr10.refundReason;
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/RefundByType/UserId
+							SET RefundByType_.(XMLNSC.Field)Abs:UserId = _arr10.refundedBy;
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/RefundByType/RefundByReasonType
+							DECLARE RefundByReasonType_ REFERENCE TO RefundByType_;
+							CREATE LASTCHILD OF RefundByType_ AS RefundByReasonType_ TYPE XMLNSC.Folder NAME 'Abs:RefundByReasonType';
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/RefundByType/RefundByReasonType/Code
+								SET RefundByReasonType_.(XMLNSC.Field)Abs:Code = _arr10.refundReason;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/RefundByType/RefundByReasonType/Code
+								SET RefundByReasonType_.(XMLNSC.Field)Abs:Code = _arr10.refundReason;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/CancellationEligibleInd
+						SET CustomerRefund_.(XMLNSC.Field)Abs:CancellationEligibleInd = _arr10.refundEligibleForCancellation;
+
+				MOVE _arr10 NEXTSIBLING;
+				END WHILE loop_arr10;
+
+				-- LOOP FROM tender[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation
+				DECLARE _arr11 REFERENCE TO _inputRootNode.tender.Item;
+				loop_arr11 : WHILE LASTMOVE(_arr11) DO
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation
+					DECLARE CustomerRefundCancellation_ REFERENCE TO GroceryOrderHeader_;
+					CREATE LASTCHILD OF GroceryOrderHeader_ AS CustomerRefundCancellation_ TYPE XMLNSC.Folder NAME 'Abs:CustomerRefundCancellation';
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/SequenceNbr
+						SET CustomerRefundCancellation_.(XMLNSC.Field)Abs:SequenceNbr = _arr11.sequenceId;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/RefundId
+						SET CustomerRefundCancellation_.(XMLNSC.Field)Abs:RefundId = _arr11.refundId;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/TenderTypeCd
+						SET CustomerRefundCancellation_.(XMLNSC.Field)Abs:TenderTypeCd = _arr11.tenderType;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/TenderSubTypeCd
+						SET CustomerRefundCancellation_.(XMLNSC.Field)Abs:TenderSubTypeCd = _arr11.tenderSubType;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/CurrencyCd
+						SET CustomerRefundCancellation_.(XMLNSC.Field)Abs:CurrencyCd = _arr11.chargeAmount.currency;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/RequiredAuthAmt
+						SET CustomerRefundCancellation_.(XMLNSC.Field)Abs:RequiredAuthAmt = _arr11.chargeAmount.amount;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/CancelByType
+						DECLARE CancelByType_ REFERENCE TO CustomerRefundCancellation_;
+						CREATE LASTCHILD OF CustomerRefundCancellation_ AS CancelByType_ TYPE XMLNSC.Folder NAME 'Abs:CancelByType';
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/CancelByType/UserId
+							SET CancelByType_.(XMLNSC.Field)Abs:UserId = _arr11.cancelledBy;
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/CancelByType/CancelByDtTm
+							SET CancelByType_.(XMLNSC.Field)Abs:CancelByDtTm = _arr11.cancelledDate;
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/CancelByType/UserId
+							SET CancelByType_.(XMLNSC.Field)Abs:UserId = _arr11.cancelledBy;
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/CancelByType/CancelByDtTm
+							SET CancelByType_.(XMLNSC.Field)Abs:CancelByDtTm = _arr11.cancelledDate;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/RefundByType
+						DECLARE RefundByType_ REFERENCE TO CustomerRefundCancellation_;
+						CREATE LASTCHILD OF CustomerRefundCancellation_ AS RefundByType_ TYPE XMLNSC.Folder NAME 'Abs:RefundByType';
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/RefundByType/UserId
+							SET RefundByType_.(XMLNSC.Field)Abs:UserId = _arr11.refundedBy;
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/RefundByType/RefundByReasonType
+							DECLARE RefundByReasonType_ REFERENCE TO RefundByType_;
+							CREATE LASTCHILD OF RefundByType_ AS RefundByReasonType_ TYPE XMLNSC.Folder NAME 'Abs:RefundByReasonType';
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/RefundByType/RefundByReasonType/Code
+								SET RefundByReasonType_.(XMLNSC.Field)Abs:Code = _arr11.refundReason;
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/RefundByType/UserId
+							SET RefundByType_.(XMLNSC.Field)Abs:UserId = _arr11.refundedBy;
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/RefundByType/RefundByReasonType
+							DECLARE RefundByReasonType_ REFERENCE TO RefundByType_;
+							CREATE LASTCHILD OF RefundByType_ AS RefundByReasonType_ TYPE XMLNSC.Folder NAME 'Abs:RefundByReasonType';
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/RefundByType/RefundByReasonType/Code
+								SET RefundByReasonType_.(XMLNSC.Field)Abs:Code = _arr11.refundReason;
+
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/RefundByType/RefundByReasonType/Code
+								SET RefundByReasonType_.(XMLNSC.Field)Abs:Code = _arr11.refundReason;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/TenderOriginCd
+						SET CustomerRefundCancellation_.(XMLNSC.Folder)Abs:TenderOriginCd = _arr11.stateOfOrigin;
+
+				MOVE _arr11 NEXTSIBLING;
+				END WHILE loop_arr11;
+
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerSavings
+				DECLARE CustomerSavings_ REFERENCE TO GroceryOrderHeader_;
+				CREATE LASTCHILD OF GroceryOrderHeader_ AS CustomerSavings_ TYPE XMLNSC.Folder NAME 'Abs:CustomerSavings';
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerSavings/TotalCustomerSavingsAmt
+					SET CustomerSavings_.(XMLNSC.Field)Abs:TotalCustomerSavingsAmt = _inputRootNode.orderTotal.totalCardSavings;
+
+					-- LOOP FROM orderTotal/cardSavings[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerSavings/SavingsCategoryType
+					DECLARE _arr12 REFERENCE TO _inputRootNode.orderTotal.cardSavings.Item;
+					loop_arr12 : WHILE LASTMOVE(_arr12) DO
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerSavings/SavingsCategoryType
+						DECLARE SavingsCategoryType_ REFERENCE TO CustomerSavings_;
+						CREATE LASTCHILD OF CustomerSavings_ AS SavingsCategoryType_ TYPE XMLNSC.Folder NAME 'Abs:SavingsCategoryType';
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerSavings/SavingsCategoryType/SavingsCategoryId
+							SET SavingsCategoryType_.(XMLNSC.Field)Abs:SavingsCategoryId = _arr12.savingsCategoryId;
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerSavings/SavingsCategoryType/SavingsCategoryNm
+							SET SavingsCategoryType_.(XMLNSC.Field)Abs:SavingsCategoryNm = _arr12.savingsCategoryName;
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerSavings/SavingsCategoryType/SavingsAmt
+							SET SavingsCategoryType_.(XMLNSC.Field)Abs:SavingsAmt = _arr12.savingsAmount;
+
+					MOVE _arr12 NEXTSIBLING;
+					END WHILE loop_arr12;
+
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderRecordDateInfo
+				DECLARE OrderRecordDateInfo_ REFERENCE TO GroceryOrderHeader_;
+				CREATE LASTCHILD OF GroceryOrderHeader_ AS OrderRecordDateInfo_ TYPE XMLNSC.Folder NAME 'Abs:OrderRecordDateInfo';
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderRecordDateInfo/CreateDtTm
+					SET OrderRecordDateInfo_.(XMLNSC.Field)Abs:CreateDtTm = _inputRootNode.audit.createDate;
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderRecordDateInfo/CreateUserId
+					SET OrderRecordDateInfo_.(XMLNSC.Field)Abs:CreateUserId = _inputRootNode.sourceInfo.enteredBy;
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderRecordDateInfo/UpdateDtTm
+					SET OrderRecordDateInfo_.(XMLNSC.Field)Abs:UpdateDtTm = '???';
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderRecordDateInfo/UpdateUserId
+					SET OrderRecordDateInfo_.(XMLNSC.Field)Abs:UpdateUserId = _inputRootNode.audit.modifiedBy;
+
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/Device
+				DECLARE Device_ REFERENCE TO GroceryOrderHeader_;
+				CREATE LASTCHILD OF GroceryOrderHeader_ AS Device_ TYPE XMLNSC.Folder NAME 'Abs:Device';
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/Device/Code
+					SET Device_.(XMLNSC.Field)Abs:Code = _inputRootNode.sourceInfo.deviceType;
+
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderCreatedDeviceType
+				DECLARE OrderCreatedDeviceType_ REFERENCE TO GroceryOrderHeader_;
+				CREATE LASTCHILD OF GroceryOrderHeader_ AS OrderCreatedDeviceType_ TYPE XMLNSC.Folder NAME 'Abs:OrderCreatedDeviceType';
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderCreatedDeviceType/Code
+					SET OrderCreatedDeviceType_.(XMLNSC.Field)Abs:Code = _inputRootNode.sourceInfo.deviceType;
+
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/AffiliatePartnerType
+				DECLARE AffiliatePartnerType_ REFERENCE TO GroceryOrderHeader_;
+				CREATE LASTCHILD OF GroceryOrderHeader_ AS AffiliatePartnerType_ TYPE XMLNSC.Folder NAME 'Abs:AffiliatePartnerType';
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/AffiliatePartnerType/AffiliatePartnerNm
+					SET AffiliatePartnerType_.(XMLNSC.Field)Abs:AffiliatePartnerNm = _inputRootNode.sourceInfo.affiliate.affiliateName;
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/AffiliatePartnerType/OrderReferenceTxt
+					SET AffiliatePartnerType_.(XMLNSC.Field)Abs:OrderReferenceTxt = _inputRootNode.sourceInfo.affiliate.affiliateOrderRef;
+
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderSourceSystemType
+				DECLARE OrderSourceSystemType_ REFERENCE TO GroceryOrderHeader_;
+				CREATE LASTCHILD OF GroceryOrderHeader_ AS OrderSourceSystemType_ TYPE XMLNSC.Folder NAME 'Abs:OrderSourceSystemType';
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderSourceSystemType/Code
+					SET OrderSourceSystemType_.(XMLNSC.Field)Abs:Code = _inputRootNode.sourceInfo.source;
+
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulFillmentSystemType
+				DECLARE FulFillmentSystemType_ REFERENCE TO GroceryOrderHeader_;
+				CREATE LASTCHILD OF GroceryOrderHeader_ AS FulFillmentSystemType_ TYPE XMLNSC.Folder NAME 'Abs:FulFillmentSystemType';
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/FulFillmentSystemType/Code
+					SET FulFillmentSystemType_.(XMLNSC.Field)Abs:Code = _inputRootNode.fulfillmentSystem;
+
+				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType
+				DECLARE GroceryOrderProfileType_ REFERENCE TO GroceryOrderHeader_;
+				CREATE LASTCHILD OF GroceryOrderHeader_ AS GroceryOrderProfileType_ TYPE XMLNSC.Folder NAME 'Abs:GroceryOrderProfileType';
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType/ProfileType
+					DECLARE ProfileType_ REFERENCE TO GroceryOrderProfileType_;
+					CREATE LASTCHILD OF GroceryOrderProfileType_ AS ProfileType_ TYPE XMLNSC.Folder NAME 'Abs:ProfileType';
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType/ProfileType/Code
+						SET ProfileType_.(XMLNSC.Field)Abs:Code = '???';
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType/ProfileType/Description
+						SET ProfileType_.(XMLNSC.Field)Abs:Description = '???';
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderProfileType/ProfileValueInd
+					SET GroceryOrderProfileType_.(XMLNSC.Field)Abs:ProfileValueInd = '???';
+
+				-- LOOP FROM exceptions[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderHeaderExceptionType
+				DECLARE _arr13 REFERENCE TO _inputRootNode.exceptions.Item;
+				loop_arr13 : WHILE LASTMOVE(_arr13) DO
+
+					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderHeaderExceptionType
+					DECLARE GroceryOrderHeaderExceptionType_ REFERENCE TO GroceryOrderHeader_;
+					CREATE LASTCHILD OF GroceryOrderHeader_ AS GroceryOrderHeaderExceptionType_ TYPE XMLNSC.Folder NAME 'Abs:GroceryOrderHeaderExceptionType';
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderHeaderExceptionType/ExceptionType
+						DECLARE ExceptionType_ REFERENCE TO GroceryOrderHeaderExceptionType_;
+						CREATE LASTCHILD OF GroceryOrderHeaderExceptionType_ AS ExceptionType_ TYPE XMLNSC.Folder NAME 'Abs:ExceptionType';
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderHeaderExceptionType/ExceptionType/Code
+							SET ExceptionType_.(XMLNSC.Field)Abs:Code = _arr13.exceptionType;
+
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderHeaderExceptionType/ExceptionType/Code
+							SET ExceptionType_.(XMLNSC.Field)Abs:Code = _arr13.exceptionType;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderHeaderExceptionType/ExceptionCd
+						SET GroceryOrderHeaderExceptionType_.(XMLNSC.Field)Abs:ExceptionCd = _arr13.exceptionCode;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderHeaderExceptionType/ExceptionDsc
+						SET GroceryOrderHeaderExceptionType_.(XMLNSC.Field)Abs:ExceptionDsc = _arr13.exceptionDesc;
+
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/GroceryOrderHeaderExceptionType/ExceptionCreateTs
+						SET GroceryOrderHeaderExceptionType_.(XMLNSC.Field)Abs:ExceptionCreateTs = _arr13.exceptionTime;
+
+				MOVE _arr13 NEXTSIBLING;
+				END WHILE loop_arr13;
+
+			-- LOOP FROM subOrders[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder
+			DECLARE _arr14 REFERENCE TO _inputRootNode.subOrders.Item;
+			loop_arr14 : WHILE LASTMOVE(_arr14) DO
+
+				-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder
+				DECLARE GrocerySubOrder_ REFERENCE TO GroceryOrderData_;
+				CREATE LASTCHILD OF GroceryOrderData_ AS GrocerySubOrder_ TYPE XMLNSC.Folder NAME 'Abs:GrocerySubOrder';
+
+					-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/SubOrderNbr
+					SET GrocerySubOrder_.(XMLNSC.Field)Abs:SubOrderNbr = _arr14.subOrderNumber;
+
+					-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/SubOrderStatus
+					DECLARE SubOrderStatus_ REFERENCE TO GrocerySubOrder_;
+					CREATE LASTCHILD OF GrocerySubOrder_ AS SubOrderStatus_ TYPE XMLNSC.Folder NAME 'Abs:SubOrderStatus';
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/SubOrderStatus/StatusTypeCd
+						SET SubOrderStatus_.(XMLNSC.Field)Abs:StatusTypeCd = _arr14.subOrderStatus;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/SubOrderStatus/StatusTypeCd
+						SET SubOrderStatus_.(XMLNSC.Field)Abs:StatusTypeCd = _arr14.subOrderStatus;
+
+					-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/StatusReasonType
+					DECLARE StatusReasonType_ REFERENCE TO GrocerySubOrder_;
+					CREATE LASTCHILD OF GrocerySubOrder_ AS StatusReasonType_ TYPE XMLNSC.Folder NAME 'Abs:StatusReasonType';
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/StatusReasonType/Code
+						SET StatusReasonType_.(XMLNSC.Field)Abs:Code = _arr14.subOrderStatusReasonCode;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/StatusReasonType/Code
+						SET StatusReasonType_.(XMLNSC.Field)Abs:Code = _arr14.subOrderStatusReasonCode;
+
+					-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/SubOrderActionStatus
+					DECLARE SubOrderActionStatus_ REFERENCE TO GrocerySubOrder_;
+					CREATE LASTCHILD OF GrocerySubOrder_ AS SubOrderActionStatus_ TYPE XMLNSC.Folder NAME 'Abs:SubOrderActionStatus';
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/SubOrderActionStatus/StatusTypeCd
+						SET SubOrderActionStatus_.(XMLNSC.Field)Abs:StatusTypeCd = _arr14.messageAction;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/SubOrderActionStatus/Description
+						SET SubOrderActionStatus_.(XMLNSC.Field)Abs:Description = _arr14.messageActionReason;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/SubOrderActionStatus/StatusTypeCd
+						SET SubOrderActionStatus_.(XMLNSC.Field)Abs:StatusTypeCd = _arr14.messageAction;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/SubOrderActionStatus/Description
+						SET SubOrderActionStatus_.(XMLNSC.Field)Abs:Description = _arr14.messageActionReason;
+
+					-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/SubOrderServiceLevelType
+					DECLARE SubOrderServiceLevelType_ REFERENCE TO GrocerySubOrder_;
+					CREATE LASTCHILD OF GrocerySubOrder_ AS SubOrderServiceLevelType_ TYPE XMLNSC.Folder NAME 'Abs:SubOrderServiceLevelType';
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/SubOrderServiceLevelType/Code
+						SET SubOrderServiceLevelType_.(XMLNSC.Field)Abs:Code = _arr14.subOrderType.serviceLevel;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/SubOrderServiceLevelType/Code
+						SET SubOrderServiceLevelType_.(XMLNSC.Field)Abs:Code = _arr14.subOrderType.serviceLevel;
+
+					-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CancelByDtTm
+					SET GrocerySubOrder_.(XMLNSC.Field)Abs:CancelByDtTm = _arr14.cancelByDate;
+
+					-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/FullFillmentType
+					DECLARE FullFillmentType_ REFERENCE TO GrocerySubOrder_;
+					CREATE LASTCHILD OF GrocerySubOrder_ AS FullFillmentType_ TYPE XMLNSC.Folder NAME 'Abs:FullFillmentType';
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/FullFillmentType/Code
+						SET FullFillmentType_.(XMLNSC.Field)Abs:Code = _arr14.fulfillmentType;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/FullFillmentType/Code
+						SET FullFillmentType_.(XMLNSC.Field)Abs:Code = _arr14.fulfillmentType;
+
+					-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/PickupInfo
+					DECLARE PickupInfo_ REFERENCE TO GrocerySubOrder_;
+					CREATE LASTCHILD OF GrocerySubOrder_ AS PickupInfo_ TYPE XMLNSC.Folder NAME 'Abs:PickupInfo';
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/PickupInfo/ShortOrderNbr
+						SET PickupInfo_.(XMLNSC.Field)Abs:ShortOrderNbr = _arr14.deliveryInfo.pickupInfo.shortOrderNumber;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/PickupInfo/PickupSlot
+						DECLARE PickupSlot_ REFERENCE TO PickupInfo_;
+						CREATE LASTCHILD OF PickupInfo_ AS PickupSlot_ TYPE XMLNSC.Folder NAME 'Abs:PickupSlot';
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/PickupInfo/PickupSlot/Code
+							SET PickupSlot_.(XMLNSC.Field)Abs:Code = _arr14.deliveryInfo.pickupInfo.locationId;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/PickupInfo/PickupSlotType
+						DECLARE PickupSlotType_ REFERENCE TO PickupInfo_;
+						CREATE LASTCHILD OF PickupInfo_ AS PickupSlotType_ TYPE XMLNSC.Folder NAME 'Abs:PickupSlotType';
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/PickupInfo/PickupSlotType/Code
+							SET PickupSlotType_.(XMLNSC.Field)Abs:Code = _arr14.deliveryInfo.pickupInfo.locationType;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/PickupInfo/DisplayEndDttm
+						SET PickupInfo_.(XMLNSC.Field)Abs:DisplayEndDttm = _arr14.deliveryInfo.slotInfo.lastPickupTime;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/PickupInfo/ShortOrderNbr
+						SET PickupInfo_.(XMLNSC.Field)Abs:ShortOrderNbr = _arr14.deliveryInfo.pickupInfo.shortOrderNumber;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/PickupInfo/PickupSlot
+						DECLARE PickupSlot_ REFERENCE TO PickupInfo_;
+						CREATE LASTCHILD OF PickupInfo_ AS PickupSlot_ TYPE XMLNSC.Folder NAME 'Abs:PickupSlot';
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/PickupInfo/PickupSlot/Code
+							SET PickupSlot_.(XMLNSC.Field)Abs:Code = _arr14.deliveryInfo.pickupInfo.locationId;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/PickupInfo/PickupSlot/Code
+							SET PickupSlot_.(XMLNSC.Field)Abs:Code = _arr14.deliveryInfo.pickupInfo.locationId;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/PickupInfo/PickupSlotType
+						DECLARE PickupSlotType_ REFERENCE TO PickupInfo_;
+						CREATE LASTCHILD OF PickupInfo_ AS PickupSlotType_ TYPE XMLNSC.Folder NAME 'Abs:PickupSlotType';
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/PickupInfo/PickupSlotType/Code
+							SET PickupSlotType_.(XMLNSC.Field)Abs:Code = _arr14.deliveryInfo.pickupInfo.locationType;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/PickupInfo/PickupSlotType/Code
+							SET PickupSlotType_.(XMLNSC.Field)Abs:Code = _arr14.deliveryInfo.pickupInfo.locationType;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/PickupInfo/DisplayEndDttm
+						SET PickupInfo_.(XMLNSC.Field)Abs:DisplayEndDttm = _arr14.deliveryInfo.slotInfo.lastPickupTime;
+
+					-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo
+					DECLARE DeliveryInfo_ REFERENCE TO GrocerySubOrder_;
+					CREATE LASTCHILD OF GrocerySubOrder_ AS DeliveryInfo_ TYPE XMLNSC.Folder NAME 'Abs:DeliveryInfo';
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/CustomerType
+						DECLARE CustomerType_ REFERENCE TO DeliveryInfo_;
+						CREATE LASTCHILD OF DeliveryInfo_ AS CustomerType_ TYPE XMLNSC.Folder NAME 'Abs:CustomerType';
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/CustomerType/Code
+							SET CustomerType_.(XMLNSC.Field)Abs:Code = _arr14.deliveryInfo.deliverySubType;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/DeliverySlotId
+						SET DeliveryInfo_.(XMLNSC.Field)Abs:DeliverySlotId = _arr14.deliveryInfo.slotInfo.slotId;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/DeliverySlotType
+						DECLARE DeliverySlotType_ REFERENCE TO DeliveryInfo_;
+						CREATE LASTCHILD OF DeliveryInfo_ AS DeliverySlotType_ TYPE XMLNSC.Folder NAME 'Abs:DeliverySlotType';
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/DeliverySlotType/Code
+							SET DeliverySlotType_.(XMLNSC.Field)Abs:Code = _arr14.deliveryInfo.slotInfo.slotType;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/DeliveryServiceType
+						DECLARE DeliveryServiceType_ REFERENCE TO DeliveryInfo_;
+						CREATE LASTCHILD OF DeliveryInfo_ AS DeliveryServiceType_ TYPE XMLNSC.Folder NAME 'Abs:DeliveryServiceType';
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/DeliveryServiceType/Code
+							SET DeliveryServiceType_.(XMLNSC.Field)Abs:Code = _arr14.deliveryInfo.deliveryServiceType;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/SlotPlan
+						DECLARE SlotPlan_ REFERENCE TO DeliveryInfo_;
+						CREATE LASTCHILD OF DeliveryInfo_ AS SlotPlan_ TYPE XMLNSC.Folder NAME 'Abs:SlotPlan';
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/SlotPlan/Code
+							SET SlotPlan_.(XMLNSC.Field)Abs:Code = _arr14.deliveryInfo.slotInfo.slotPlan;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/StartDttm
+						SET DeliveryInfo_.(XMLNSC.Field)Abs:StartDttm = _arr14.deliveryInfo.slotInfo.startTime;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/EndDttm
+						SET DeliveryInfo_.(XMLNSC.Field)Abs:EndDttm = _arr14.deliveryInfo.slotInfo.endTime;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/SlotAvailableDttm
+						SET DeliveryInfo_.(XMLNSC.Field)Abs:SlotAvailableDttm = _arr14.deliveryInfo.slotInfo.slotAvailabilityTime;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/SlotTillByDttm
+						SET DeliveryInfo_.(XMLNSC.Field)Abs:SlotTillByDttm = _arr14.deliveryInfo.slotInfo.slotTillByTime;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/SlotExpiryDtTm
+						SET DeliveryInfo_.(XMLNSC.Field)Abs:SlotExpiryDtTm = _arr14.deliveryInfo.slotInfo.endTime;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/StageByDtTm
+						SET DeliveryInfo_.(XMLNSC.Field)Abs:StageByDtTm = _arr14.deliveryInfo.stageByDateTime;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/EditCutoffDtTm
+						SET DeliveryInfo_.(XMLNSC.Field)Abs:EditCutoffDtTm = _arr14.deliveryInfo.slotInfo.editingCutoffDate;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/CustomerInstructionTxt
+						SET DeliveryInfo_.(XMLNSC.Field)Abs:CustomerInstructionTxt = _arr14.deliveryInfo.instructions;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/DeliveryTimeZoneCd
+						SET DeliveryInfo_.(XMLNSC.Field)Abs:DeliveryTimeZoneCd = _arr14.deliveryInfo.slotInfo.timeZone;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/PartnerData
+						DECLARE PartnerData_ REFERENCE TO DeliveryInfo_;
+						CREATE LASTCHILD OF DeliveryInfo_ AS PartnerData_ TYPE XMLNSC.Folder NAME 'Abs:PartnerData';
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/PartnerData/PartnerTypeCd
+							DECLARE PartnerTypeCd_ REFERENCE TO PartnerData_;
+							CREATE LASTCHILD OF PartnerData_ AS PartnerTypeCd_ TYPE XMLNSC.Folder NAME 'Abs:PartnerTypeCd';
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/PartnerData/PartnerTypeCd/Code
+								SET PartnerTypeCd_.(XMLNSC.Field)Abs:Code = '???';
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/PartnerData/PartnerNm
+							SET PartnerData_.(XMLNSC.Field)Abs:PartnerNm = '???';
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/CustomerType
+						DECLARE CustomerType_ REFERENCE TO DeliveryInfo_;
+						CREATE LASTCHILD OF DeliveryInfo_ AS CustomerType_ TYPE XMLNSC.Folder NAME 'Abs:CustomerType';
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/CustomerType/Code
+							SET CustomerType_.(XMLNSC.Field)Abs:Code = _arr14.deliveryInfo.deliverySubType;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/CustomerType/Code
+							SET CustomerType_.(XMLNSC.Field)Abs:Code = _arr14.deliveryInfo.deliverySubType;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/DeliverySlotId
+						SET DeliveryInfo_.(XMLNSC.Field)Abs:DeliverySlotId = _arr14.deliveryInfo.slotInfo.slotId;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/DeliverySlotType
+						DECLARE DeliverySlotType_ REFERENCE TO DeliveryInfo_;
+						CREATE LASTCHILD OF DeliveryInfo_ AS DeliverySlotType_ TYPE XMLNSC.Folder NAME 'Abs:DeliverySlotType';
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/DeliverySlotType/Code
+							SET DeliverySlotType_.(XMLNSC.Field)Abs:Code = _arr14.deliveryInfo.slotInfo.slotType;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/DeliverySlotType/Code
+							SET DeliverySlotType_.(XMLNSC.Field)Abs:Code = _arr14.deliveryInfo.slotInfo.slotType;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/DeliveryServiceType
+						DECLARE DeliveryServiceType_ REFERENCE TO DeliveryInfo_;
+						CREATE LASTCHILD OF DeliveryInfo_ AS DeliveryServiceType_ TYPE XMLNSC.Folder NAME 'Abs:DeliveryServiceType';
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/DeliveryServiceType/Code
+							SET DeliveryServiceType_.(XMLNSC.Field)Abs:Code = _arr14.deliveryInfo.deliveryServiceType;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/DeliveryServiceType/Code
+							SET DeliveryServiceType_.(XMLNSC.Field)Abs:Code = _arr14.deliveryInfo.deliveryServiceType;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/SlotPlan
+						DECLARE SlotPlan_ REFERENCE TO DeliveryInfo_;
+						CREATE LASTCHILD OF DeliveryInfo_ AS SlotPlan_ TYPE XMLNSC.Folder NAME 'Abs:SlotPlan';
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/SlotPlan/Code
+							SET SlotPlan_.(XMLNSC.Field)Abs:Code = _arr14.deliveryInfo.slotInfo.slotPlan;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/SlotPlan/Code
+							SET SlotPlan_.(XMLNSC.Field)Abs:Code = _arr14.deliveryInfo.slotInfo.slotPlan;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/StartDttm
+						SET DeliveryInfo_.(XMLNSC.Field)Abs:StartDttm = _arr14.deliveryInfo.slotInfo.startTime;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/EndDttm
+						SET DeliveryInfo_.(XMLNSC.Field)Abs:EndDttm = _arr14.deliveryInfo.slotInfo.endTime;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/SlotAvailableDttm
+						SET DeliveryInfo_.(XMLNSC.Field)Abs:SlotAvailableDttm = _arr14.deliveryInfo.slotInfo.slotAvailabilityTime;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/SlotTillByDttm
+						SET DeliveryInfo_.(XMLNSC.Field)Abs:SlotTillByDttm = _arr14.deliveryInfo.slotInfo.slotTillByTime;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/SlotExpiryDtTm
+						SET DeliveryInfo_.(XMLNSC.Field)Abs:SlotExpiryDtTm = _arr14.deliveryInfo.slotInfo.endTime;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/StageByDtTm
+						SET DeliveryInfo_.(XMLNSC.Field)Abs:StageByDtTm = _arr14.deliveryInfo.stageByDateTime;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/EditCutoffDtTm
+						SET DeliveryInfo_.(XMLNSC.Field)Abs:EditCutoffDtTm = _arr14.deliveryInfo.slotInfo.editingCutoffDate;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/CustomerInstructionTxt
+						SET DeliveryInfo_.(XMLNSC.Field)Abs:CustomerInstructionTxt = _arr14.deliveryInfo.instructions;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/DeliveryTimeZoneCd
+						SET DeliveryInfo_.(XMLNSC.Field)Abs:DeliveryTimeZoneCd = _arr14.deliveryInfo.slotInfo.timeZone;
+
+					-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ShoppingBagCnt
+					SET GrocerySubOrder_.(XMLNSC.Field)Abs:ShoppingBagCnt = _arr14.tote.totalNumberOfBagsUsed;
+
+					-- LOOP FROM subOrders[*]/orderLines[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail
+					DECLARE _arr15 REFERENCE TO _arr14.orderLines.Item;
+					loop_arr15 : WHILE LASTMOVE(_arr15) DO
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail
+						DECLARE GroceryOrderDetail_ REFERENCE TO GrocerySubOrder_;
+						CREATE LASTCHILD OF GrocerySubOrder_ AS GroceryOrderDetail_ TYPE XMLNSC.Folder NAME 'Abs:GroceryOrderDetail';
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CartLineNbr
+							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:CartLineNbr = _arr15.itemPrice.entryId;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ItemId
+							DECLARE ItemId_ REFERENCE TO GroceryOrderDetail_;
+							CREATE LASTCHILD OF GroceryOrderDetail_ AS ItemId_ TYPE XMLNSC.Folder NAME 'Abs:ItemId';
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ItemId/UPC
+								DECLARE UPC_ REFERENCE TO ItemId_;
+								CREATE LASTCHILD OF ItemId_ AS UPC_ TYPE XMLNSC.Folder NAME 'Abs:UPC';
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ItemId/UPC/UPCNbr
+									SET UPC_.(XMLNSC.Field)Abs:UPCNbr = _arr15.upcId;
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ItemId/UPC/UPCTxt
+									SET UPC_.(XMLNSC.Field)Abs:UPCTxt = _arr15.upcId;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ItemId/SystemSpecificItemId
+								SET ItemId_.(XMLNSC.Field)Abs:SystemSpecificItemId = _arr15.itemId;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ItemId/InternalItemId
+								SET ItemId_.(XMLNSC.Field)Abs:InternalItemId = _arr15.itemPrice.itemCode;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ItemId/BaseProductNbr
+								SET ItemId_.(XMLNSC.Field)Abs:BaseProductNbr = _arr15.itemId;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ItemId/PLUCd
+								SET ItemId_.(XMLNSC.Field)Abs:PLUCd = _arr15.itemPrice.itemPluNumber;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ItemId/ItemDescription
+								SET ItemId_.(XMLNSC.Field)Abs:ItemDescription = _arr15.itemDescription;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ItemId/UPC
+								DECLARE UPC_ REFERENCE TO ItemId_;
+								CREATE LASTCHILD OF ItemId_ AS UPC_ TYPE XMLNSC.Folder NAME 'Abs:UPC';
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ItemId/UPC/UPCNbr
+									SET UPC_.(XMLNSC.Field)Abs:UPCNbr = _arr15.upcId;
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ItemId/UPC/UPCTxt
+									SET UPC_.(XMLNSC.Field)Abs:UPCTxt = _arr15.upcId;
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ItemId/UPC/UPCNbr
+									SET UPC_.(XMLNSC.Field)Abs:UPCNbr = _arr15.upcId;
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ItemId/UPC/UPCTxt
+									SET UPC_.(XMLNSC.Field)Abs:UPCTxt = _arr15.upcId;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ItemId/SystemSpecificItemId
+								SET ItemId_.(XMLNSC.Field)Abs:SystemSpecificItemId = _arr15.itemId;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ItemId/InternalItemId
+								SET ItemId_.(XMLNSC.Field)Abs:InternalItemId = _arr15.itemPrice.itemCode;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ItemId/BaseProductNbr
+								SET ItemId_.(XMLNSC.Field)Abs:BaseProductNbr = _arr15.itemId;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ItemId/PLUCd
+								SET ItemId_.(XMLNSC.Field)Abs:PLUCd = _arr15.itemPrice.itemPluNumber;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ItemId/ItemDescription
+								SET ItemId_.(XMLNSC.Field)Abs:ItemDescription = _arr15.itemDescription;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/BasePriceAmt
+							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:BasePriceAmt = _arr15.itemPrice.basePrice;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/UnitPriceAmt
+							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:UnitPriceAmt = _arr15.unitPrice.amount;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ExtendedUnitPriceAmt
+							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:ExtendedUnitPriceAmt = _arr15.itemPrice.unitPrice;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ItemPriceAmt
+							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:ItemPriceAmt = _arr15.itemPrice.price;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/ExtendedItemPriceAmt
+							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:ExtendedItemPriceAmt = _arr15.itemPrice.extendedPrice;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/NetItemPriceAmt
+							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:NetItemPriceAmt = _arr15.itemPrice.netItemPrice;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/PricePerAmt
+							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:PricePerAmt = _arr15.itemPrice.pricePer;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/BasePricePerAmt
+							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:BasePricePerAmt = _arr15.itemPrice.basePricePer;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/WeightDebitAmt
+							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:WeightDebitAmt = _arr15.itemPrice.weightDebitAmount;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CurrencyCd
+							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:CurrencyCd = _arr15.unitPrice.currency;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/PriceEffectiveStartDtTm
+							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:PriceEffectiveStartDtTm = _arr15.itemPrice.startDate;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/PriceEffectiveEndDtTm
+							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:PriceEffectiveEndDtTm = _arr15.itemPrice.endDate;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/Quantity
+							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:Quantity = _arr15.orderedQuantity;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/UOM
+							DECLARE UOM_ REFERENCE TO GroceryOrderDetail_;
+							CREATE LASTCHILD OF GroceryOrderDetail_ AS UOM_ TYPE XMLNSC.Folder NAME 'Abs:UOM';
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/UOM/UOMCd
+								SET UOM_.(XMLNSC.Field)Abs:UOMCd = _arr15.unitOfMeasure;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/UOM/UOMCd
+								SET UOM_.(XMLNSC.Field)Abs:UOMCd = _arr15.unitOfMeasure;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/SellByWeightType
+							DECLARE SellByWeightType_ REFERENCE TO GroceryOrderDetail_;
+							CREATE LASTCHILD OF GroceryOrderDetail_ AS SellByWeightType_ TYPE XMLNSC.Folder NAME 'Abs:SellByWeightType';
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/SellByWeightType/Code
+								SET SellByWeightType_.(XMLNSC.Field)Abs:Code = _arr15.itemPrice.sellByWeight;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/SellByWeightType/Code
+								SET SellByWeightType_.(XMLNSC.Field)Abs:Code = _arr15.itemPrice.sellByWeight;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/AvgItemWeight
+							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:AvgItemWeight = _arr15.itemPrice.averageWeight;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DiscountAllowedInd
+							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:DiscountAllowedInd = _arr15.itemPrice.discountAllowed;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/RewardAllowedInd
+							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:RewardAllowedInd = _arr15.itemPrice.pointsApplyItem;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/SubstitutionType
+							DECLARE SubstitutionType_ REFERENCE TO GroceryOrderDetail_;
+							CREATE LASTCHILD OF GroceryOrderDetail_ AS SubstitutionType_ TYPE XMLNSC.Folder NAME 'Abs:SubstitutionType';
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/SubstitutionType/Code
+								SET SubstitutionType_.(XMLNSC.Field)Abs:Code = _arr15.substitutionCode;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/SubstitutionType/Description
+								SET SubstitutionType_.(XMLNSC.Field)Abs:Description = _arr15.substitutionValue;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/SubstitutionType/Code
+								SET SubstitutionType_.(XMLNSC.Field)Abs:Code = _arr15.substitutionCode;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/SubstitutionType/Description
+								SET SubstitutionType_.(XMLNSC.Field)Abs:Description = _arr15.substitutionValue;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/RegulatedItemInd
+							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:RegulatedItemInd = _arr15.isRegulatedItem;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/MadeToOrderItemInd
+							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:MadeToOrderItemInd = _arr15.isMtoProduct;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/PreparationTm
+							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:PreparationTm = _arr15.preparationTime;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/LinkPLUNbr
+							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:LinkPLUNbr = _arr15.itemPrice.linkPluNumber;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/Department
+							DECLARE Department_ REFERENCE TO GroceryOrderDetail_;
+							CREATE LASTCHILD OF GroceryOrderDetail_ AS Department_ TYPE XMLNSC.Folder NAME 'Abs:Department';
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/Department/Code
+								SET Department_.(XMLNSC.Field)Abs:Code = _arr15.itemPrice.department;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/Department/Code
+								SET Department_.(XMLNSC.Field)Abs:Code = _arr15.itemPrice.department;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/WICItemInd
+							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:WICItemInd = _arr15.itemPrice.wic;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/AutoReplenishmentOrderType
+							DECLARE AutoReplenishmentOrderType_ REFERENCE TO GroceryOrderDetail_;
+							CREATE LASTCHILD OF GroceryOrderDetail_ AS AutoReplenishmentOrderType_ TYPE XMLNSC.Folder NAME 'Abs:AutoReplenishmentOrderType';
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/AutoReplenishmentOrderType/AROItemInd
+								SET AutoReplenishmentOrderType_.(XMLNSC.Field)Abs:AROItemInd = '???';
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/AutoReplenishmentOrderType/AROLineInd
+								SET AutoReplenishmentOrderType_.(XMLNSC.Field)Abs:AROLineInd = _arr15.isReplenishItem;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/AutoReplenishmentOrderType/ItemPriceAmt
+								SET AutoReplenishmentOrderType_.(XMLNSC.Field)Abs:ItemPriceAmt = '???';
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/AutoReplenishmentOrderType/ARLinkPLUNbr
+								SET AutoReplenishmentOrderType_.(XMLNSC.Field)Abs:ARLinkPLUNbr = '???';
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/AutoReplenishmentOrderType/ARSavingsAmt
+								SET AutoReplenishmentOrderType_.(XMLNSC.Field)Abs:ARSavingsAmt = '???';
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/AutoReplenishmentOrderType/AROLineInd
+								SET AutoReplenishmentOrderType_.(XMLNSC.Field)Abs:AROLineInd = _arr15.isReplenishItem;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/OrderQty
+							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:OrderQty = _arr15.orderedQuantity;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/FulfilledQty
+							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:FulfilledQty = _arr15.fulfilledQuantity;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerSavings
+							DECLARE CustomerSavings_ REFERENCE TO GroceryOrderDetail_;
+							CREATE LASTCHILD OF GroceryOrderDetail_ AS CustomerSavings_ TYPE XMLNSC.Folder NAME 'Abs:CustomerSavings';
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerSavings/TotalCustomerSavingsAmt
+								SET CustomerSavings_.(XMLNSC.Field)Abs:TotalCustomerSavingsAmt = _arr15.itemPrice.clubCardSaving;
+
+								-- LOOP FROM subOrders[*]/orderLines[*]/itemPrice/savings[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerSavings/SavingsCategoryType
+								DECLARE _arr25 REFERENCE TO _arr15.itemPrice.savings.Item;
+								loop_arr25 : WHILE LASTMOVE(_arr25) DO
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerSavings/SavingsCategoryType
+									DECLARE SavingsCategoryType_ REFERENCE TO CustomerSavings_;
+									CREATE LASTCHILD OF CustomerSavings_ AS SavingsCategoryType_ TYPE XMLNSC.Folder NAME 'Abs:SavingsCategoryType';
+
+										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerSavings/SavingsCategoryType/OfferId
+										SET SavingsCategoryType_.(XMLNSC.Field)Abs:OfferId = _arr25.offerId;
+
+										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerSavings/SavingsCategoryType/SavingsCategoryId
+										SET SavingsCategoryType_.(XMLNSC.Field)Abs:SavingsCategoryId = _arr25.categoryId;
+
+										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerSavings/SavingsCategoryType/SavingsCategoryNm
+										SET SavingsCategoryType_.(XMLNSC.Field)Abs:SavingsCategoryNm = _arr25.categoryName;
+
+										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerSavings/SavingsCategoryType/SavingsAmt
+										SET SavingsCategoryType_.(XMLNSC.Field)Abs:SavingsAmt = _arr25.discountAmount;
+
+								MOVE _arr25 NEXTSIBLING;
+								END WHILE loop_arr25;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerSavings/TotalCustomerSavingsAmt
+							SET CustomerSavings_.(XMLNSC.Field)Abs:TotalCustomerSavingsAmt = _arr15.itemPrice.clubCardSaving;
+
+						-- LOOP FROM subOrders[*]/orderLines[*]/substituteItem[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerPreferredSubstituteItem
+						DECLARE _arr16 REFERENCE TO _arr15.substituteItem.Item;
+						loop_arr16 : WHILE LASTMOVE(_arr16) DO
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerPreferredSubstituteItem
+							DECLARE CustomerPreferredSubstituteItem_ REFERENCE TO GroceryOrderDetail_;
+							CREATE LASTCHILD OF GroceryOrderDetail_ AS CustomerPreferredSubstituteItem_ TYPE XMLNSC.Folder NAME 'Abs:CustomerPreferredSubstituteItem';
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerPreferredSubstituteItem/SubstituteItemLineNbr
+								SET CustomerPreferredSubstituteItem_.(XMLNSC.Field)Abs:SubstituteItemLineNbr = _arr16.itemPrice.entryId;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerPreferredSubstituteItem/SubstituteItem
+								DECLARE SubstituteItem_ REFERENCE TO CustomerPreferredSubstituteItem_;
+								CREATE LASTCHILD OF CustomerPreferredSubstituteItem_ AS SubstituteItem_ TYPE XMLNSC.Folder NAME 'Abs:SubstituteItem';
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerPreferredSubstituteItem/SubstituteItem/SystemSpecificItemId
+									SET SubstituteItem_.(XMLNSC.Field)Abs:SystemSpecificItemId = _arr16.itemId;
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerPreferredSubstituteItem/SubstituteItem/BaseProductNbr
+									SET SubstituteItem_.(XMLNSC.Field)Abs:BaseProductNbr = _arr16.itemId;
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerPreferredSubstituteItem/SubstituteItem/PLUCd
+									SET SubstituteItem_.(XMLNSC.Field)Abs:PLUCd = _arr16.itemPrice.itemPluNumber;
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerPreferredSubstituteItem/SubstituteItem/ItemDescription
+									SET SubstituteItem_.(XMLNSC.Field)Abs:ItemDescription = _arr16.itemDescription;
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerPreferredSubstituteItem/SubstituteItem/SystemSpecificItemId
+									SET SubstituteItem_.(XMLNSC.Field)Abs:SystemSpecificItemId = _arr16.itemId;
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerPreferredSubstituteItem/SubstituteItem/BaseProductNbr
+									SET SubstituteItem_.(XMLNSC.Field)Abs:BaseProductNbr = _arr16.itemId;
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerPreferredSubstituteItem/SubstituteItem/PLUCd
+									SET SubstituteItem_.(XMLNSC.Field)Abs:PLUCd = _arr16.itemPrice.itemPluNumber;
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerPreferredSubstituteItem/SubstituteItem/ItemDescription
+									SET SubstituteItem_.(XMLNSC.Field)Abs:ItemDescription = _arr16.itemDescription;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerPreferredSubstituteItem/Department
+								DECLARE Department_ REFERENCE TO CustomerPreferredSubstituteItem_;
+								CREATE LASTCHILD OF CustomerPreferredSubstituteItem_ AS Department_ TYPE XMLNSC.Folder NAME 'Abs:Department';
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerPreferredSubstituteItem/Department/Code
+									SET Department_.(XMLNSC.Field)Abs:Code = _arr16.itemPrice.department;
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerPreferredSubstituteItem/Department/Code
+									SET Department_.(XMLNSC.Field)Abs:Code = _arr16.itemPrice.department;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerPreferredSubstituteItem/SellByWeightType
+								DECLARE SellByWeightType_ REFERENCE TO CustomerPreferredSubstituteItem_;
+								CREATE LASTCHILD OF CustomerPreferredSubstituteItem_ AS SellByWeightType_ TYPE XMLNSC.Folder NAME 'Abs:SellByWeightType';
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerPreferredSubstituteItem/SellByWeightType/Code
+									SET SellByWeightType_.(XMLNSC.Field)Abs:Code = _arr16.itemPrice.sellByWeight;
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerPreferredSubstituteItem/SellByWeightType/Code
+									SET SellByWeightType_.(XMLNSC.Field)Abs:Code = _arr16.itemPrice.sellByWeight;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerPreferredSubstituteItem/AvgItemWeight
+								SET CustomerPreferredSubstituteItem_.(XMLNSC.Field)Abs:AvgItemWeight = _arr16.itemPrice.averageWeight;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerPreferredSubstituteItem/BasePriceAmt
+								SET CustomerPreferredSubstituteItem_.(XMLNSC.Field)Abs:BasePriceAmt = _arr16.itemPrice.basePrice;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerPreferredSubstituteItem/ItemPriceAmt
+								SET CustomerPreferredSubstituteItem_.(XMLNSC.Field)Abs:ItemPriceAmt = _arr16.itemPrice.price;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerPreferredSubstituteItem/PricePerAmt
+								SET CustomerPreferredSubstituteItem_.(XMLNSC.Field)Abs:PricePerAmt = _arr16.itemPrice.pricePer;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerPreferredSubstituteItem/BasePricePerAmt
+								SET CustomerPreferredSubstituteItem_.(XMLNSC.Field)Abs:BasePricePerAmt = _arr16.itemPrice.basePricePer;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerPreferredSubstituteItem/PromotionPriceAmt
+								SET CustomerPreferredSubstituteItem_.(XMLNSC.Field)Abs:PromotionPriceAmt = _arr16.itemPrice.netPromotionAmount;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerPreferredSubstituteItem/RewardAllowedInd
+								SET CustomerPreferredSubstituteItem_.(XMLNSC.Field)Abs:RewardAllowedInd = _arr16.itemPrice.pointsApplyItem;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerPreferredSubstituteItem/DiscountAllowedInd
+								SET CustomerPreferredSubstituteItem_.(XMLNSC.Field)Abs:DiscountAllowedInd = _arr16.itemPrice.discountAllowed;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerPreferredSubstituteItem/WICItemInd
+								SET CustomerPreferredSubstituteItem_.(XMLNSC.Field)Abs:WICItemInd = _arr16.itemPrice.wic;
+
+						MOVE _arr16 NEXTSIBLING;
+						END WHILE loop_arr16;
+
+					-- LOOP FROM subOrders[*]/orderLines[*]/itemPrice/savings[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers
+					DECLARE _arr18 REFERENCE TO _arr15.itemPrice.savings.Item;
+					loop_arr18 : WHILE LASTMOVE(_arr18) DO
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers
+						DECLARE CustomerOffers_ REFERENCE TO GroceryOrderDetail_;
+						CREATE LASTCHILD OF GroceryOrderDetail_ AS CustomerOffers_ TYPE XMLNSC.Folder NAME 'Abs:CustomerOffers';
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/OfferId
+							SET CustomerOffers_.(XMLNSC.Field)Abs:OfferId = _arr18.offerId;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/ReferenceOfferId
+							SET CustomerOffers_.(XMLNSC.Field)Abs:ReferenceOfferId = _arr18.externalOfferId;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/OfferSourceType
+							DECLARE OfferSourceType_ REFERENCE TO CustomerOffers_;
+							CREATE LASTCHILD OF CustomerOffers_ AS OfferSourceType_ TYPE XMLNSC.Folder NAME 'Abs:OfferSourceType';
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/OfferSourceType/Code
+								SET OfferSourceType_.(XMLNSC.Field)Abs:Code = _arr18.source;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/OfferSourceType/Code
+								SET OfferSourceType_.(XMLNSC.Field)Abs:Code = _arr18.source;
+
+							-- LOOP FROM subOrders[*]/orderLines[*]/itemPrice/savings[*]/points[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/CustomerRewards
+							DECLARE _arr19 REFERENCE TO _arr18.points.Item;
+							loop_arr19 : WHILE LASTMOVE(_arr19) DO
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/CustomerRewards
+								DECLARE CustomerRewards_ REFERENCE TO CustomerOffers_;
+								CREATE LASTCHILD OF CustomerOffers_ AS CustomerRewards_ TYPE XMLNSC.Folder NAME 'Abs:CustomerRewards';
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/CustomerRewards/RewardsProgramNm
+									SET CustomerRewards_.(XMLNSC.Field)Abs:RewardsProgramNm = _arr19.programName;
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/CustomerRewards/PointsEarnedQty
+									SET CustomerRewards_.(XMLNSC.Field)Abs:PointsEarnedQty = _arr19.earn;
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers/CustomerRewards/PointsUsedQty
+									SET CustomerRewards_.(XMLNSC.Field)Abs:PointsUsedQty = _arr19.burn;
+
+							MOVE _arr19 NEXTSIBLING;
+							END WHILE loop_arr19;
+
+					MOVE _arr18 NEXTSIBLING;
+					END WHILE loop_arr18;
+
+					-- LOOP FROM subOrders[*]/orderLines[*]/fulfilledUpc[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem
+					DECLARE _arr20 REFERENCE TO _arr15.fulfilledUpc.Item;
+					loop_arr20 : WHILE LASTMOVE(_arr20) DO
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem
+						DECLARE DeliveredItem_ REFERENCE TO GroceryOrderDetail_;
+						CREATE LASTCHILD OF GroceryOrderDetail_ AS DeliveredItem_ TYPE XMLNSC.Folder NAME 'Abs:DeliveredItem';
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/DeliveredItemLineNbr
+							SET DeliveredItem_.(XMLNSC.Field)Abs:DeliveredItemLineNbr = _arr20.itemPrice.entryId;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item
+							DECLARE Item_ REFERENCE TO DeliveredItem_;
+							CREATE LASTCHILD OF DeliveredItem_ AS Item_ TYPE XMLNSC.Folder NAME 'Abs:Item';
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item/UPC
+								DECLARE UPC_ REFERENCE TO Item_;
+								CREATE LASTCHILD OF Item_ AS UPC_ TYPE XMLNSC.Folder NAME 'Abs:UPC';
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item/UPC/UPCNbr
+									SET UPC_.(XMLNSC.Field)Abs:UPCNbr = _arr20.upcId;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item/SystemSpecificItemId
+								SET Item_.(XMLNSC.Field)Abs:SystemSpecificItemId = '???';
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item/InternalItemId
+								SET Item_.(XMLNSC.Field)Abs:InternalItemId = _arr20.itemPrice.itemCode;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item/BaseProductNbr
+								SET Item_.(XMLNSC.Field)Abs:BaseProductNbr = '???';
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item/PLUCd
+								SET Item_.(XMLNSC.Field)Abs:PLUCd = _arr20.itemPrice.itemPluNumber;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item/UPC
+								DECLARE UPC_ REFERENCE TO Item_;
+								CREATE LASTCHILD OF Item_ AS UPC_ TYPE XMLNSC.Folder NAME 'Abs:UPC';
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item/UPC/UPCNbr
+									SET UPC_.(XMLNSC.Field)Abs:UPCNbr = _arr20.upcId;
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item/UPC/UPCNbr
+									SET UPC_.(XMLNSC.Field)Abs:UPCNbr = _arr20.upcId;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item/InternalItemId
+								SET Item_.(XMLNSC.Field)Abs:InternalItemId = _arr20.itemPrice.itemCode;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item/PLUCd
+								SET Item_.(XMLNSC.Field)Abs:PLUCd = _arr20.itemPrice.itemPluNumber;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/SubstitutedItemInd
+							SET DeliveredItem_.(XMLNSC.Field)Abs:SubstitutedItemInd = _arr20.isSubstituted;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/SellByWeightType
+							DECLARE SellByWeightType_ REFERENCE TO DeliveredItem_;
+							CREATE LASTCHILD OF DeliveredItem_ AS SellByWeightType_ TYPE XMLNSC.Folder NAME 'Abs:SellByWeightType';
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/SellByWeightType/Code
+								SET SellByWeightType_.(XMLNSC.Field)Abs:Code = _arr20.itemPrice.sellByWeight;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/SellByWeightType/Code
+								SET SellByWeightType_.(XMLNSC.Field)Abs:Code = _arr20.itemPrice.sellByWeight;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/AvgItemWeight
+							SET DeliveredItem_.(XMLNSC.Field)Abs:AvgItemWeight = _arr20.itemPrice.averageWeight;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/BasePriceAmt
+							SET DeliveredItem_.(XMLNSC.Field)Abs:BasePriceAmt = _arr20.itemPrice.basePrice;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/ItemPriceAmt
+							SET DeliveredItem_.(XMLNSC.Field)Abs:ItemPriceAmt = _arr20.itemPrice.price;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/ExtendedItemPriceAmt
+							SET DeliveredItem_.(XMLNSC.Field)Abs:ExtendedItemPriceAmt = _arr20.itemPrice.extendedPrice;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/NetItemPriceAmt
+							SET DeliveredItem_.(XMLNSC.Field)Abs:NetItemPriceAmt = _arr20.itemPrice.netItemPrice;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/PricePerAmt
+							SET DeliveredItem_.(XMLNSC.Field)Abs:PricePerAmt = _arr20.itemPrice.pricePer;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/BasePricePerAmt
+							SET DeliveredItem_.(XMLNSC.Field)Abs:BasePricePerAmt = _arr20.itemPrice.basePricePer;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/WeightDebitAmt
+							SET DeliveredItem_.(XMLNSC.Field)Abs:WeightDebitAmt = _arr20.itemPrice.weightDebitAmount;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/PriceEffectiveStartDtTm
+							SET DeliveredItem_.(XMLNSC.Field)Abs:PriceEffectiveStartDtTm = _arr20.itemPrice.startDate;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/PriceEffectiveEndDtTm
+							SET DeliveredItem_.(XMLNSC.Field)Abs:PriceEffectiveEndDtTm = _arr20.itemPrice.endDate;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/RegulatedItemInd
+							SET DeliveredItem_.(XMLNSC.Field)Abs:RegulatedItemInd = _arr20.isRegulatedItem;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/LinkPLUNbr
+							SET DeliveredItem_.(XMLNSC.Field)Abs:LinkPLUNbr = _arr20.itemPrice.linkPluNumber;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/PromotionPriceAmt
+							SET DeliveredItem_.(XMLNSC.Field)Abs:PromotionPriceAmt = _arr20.itemPrice.netPromotionAmount;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/RewardAllowedInd
+							SET DeliveredItem_.(XMLNSC.Field)Abs:RewardAllowedInd = _arr20.itemPrice.pointsApplyItem;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/DiscountAllowedInd
+							SET DeliveredItem_.(XMLNSC.Field)Abs:DiscountAllowedInd = _arr20.itemPrice.discountAllowed;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/WICItemInd
+							SET DeliveredItem_.(XMLNSC.Field)Abs:WICItemInd = _arr20.itemPrice.wic;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/SNAPItemInd
+							SET DeliveredItem_.(XMLNSC.Field)Abs:SNAPItemInd = _arr20.itemPrice.snapEligible;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/SmartSubstituteItemInd
+							SET DeliveredItem_.(XMLNSC.Field)Abs:SmartSubstituteItemInd = _arr20.isSmartSubItem;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerSavings
+							DECLARE CustomerSavings_ REFERENCE TO DeliveredItem_;
+							CREATE LASTCHILD OF DeliveredItem_ AS CustomerSavings_ TYPE XMLNSC.Folder NAME 'Abs:CustomerSavings';
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerSavings/TotalCustomerSavingsAmt
+								SET CustomerSavings_.(XMLNSC.Field)Abs:TotalCustomerSavingsAmt = _arr20.itemPrice.clubCardSaving;
+
+								-- LOOP FROM subOrders[*]/orderLines[*]/fulfilledUpc[*]/itemPrice/savings[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerSavings/SavingsCategoryType
+								DECLARE _arr23 REFERENCE TO _arr20.itemPrice.savings.Item;
+								loop_arr23 : WHILE LASTMOVE(_arr23) DO
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerSavings/SavingsCategoryType
+									DECLARE SavingsCategoryType_ REFERENCE TO CustomerSavings_;
+									CREATE LASTCHILD OF CustomerSavings_ AS SavingsCategoryType_ TYPE XMLNSC.Folder NAME 'Abs:SavingsCategoryType';
+
+										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerSavings/SavingsCategoryType/OfferId
+										SET SavingsCategoryType_.(XMLNSC.Field)Abs:OfferId = _arr23.offerId;
+
+										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerSavings/SavingsCategoryType/SavingsCategoryId
+										SET SavingsCategoryType_.(XMLNSC.Field)Abs:SavingsCategoryId = _arr23.categoryId;
+
+										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerSavings/SavingsCategoryType/SavingsCategoryNm
+										SET SavingsCategoryType_.(XMLNSC.Field)Abs:SavingsCategoryNm = _arr23.categoryName;
+
+										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerSavings/SavingsCategoryType/SavingsAmt
+										SET SavingsCategoryType_.(XMLNSC.Field)Abs:SavingsAmt = _arr23.discountAmount;
+
+								MOVE _arr23 NEXTSIBLING;
+								END WHILE loop_arr23;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerSavings/TotalCustomerSavingsAmt
+							SET CustomerSavings_.(XMLNSC.Field)Abs:TotalCustomerSavingsAmt = _arr20.itemPrice.clubCardSaving;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/AutoReplenishmentOrderType
+						DECLARE AutoReplenishmentOrderType_ REFERENCE TO DeliveredItem_;
+						CREATE LASTCHILD OF DeliveredItem_ AS AutoReplenishmentOrderType_ TYPE XMLNSC.Folder NAME 'Abs:AutoReplenishmentOrderType';
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/AutoReplenishmentOrderType/AROItemInd
+							SET AutoReplenishmentOrderType_.(XMLNSC.Field)Abs:AROItemInd = _arr20.itemPrice.isArProduct;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/AutoReplenishmentOrderType/AROLineInd
+							SET AutoReplenishmentOrderType_.(XMLNSC.Field)Abs:AROLineInd = '???';
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/AutoReplenishmentOrderType/ItemPriceAmt
+							SET AutoReplenishmentOrderType_.(XMLNSC.Field)Abs:ItemPriceAmt = _arr20.itemPrice.arPrice;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/AutoReplenishmentOrderType/ARLinkPLUNbr
+							SET AutoReplenishmentOrderType_.(XMLNSC.Field)Abs:ARLinkPLUNbr = _arr20.itemPrice.linkPluNumberForARSavings;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/AutoReplenishmentOrderType/ARSavingsAmt
+							SET AutoReplenishmentOrderType_.(XMLNSC.Field)Abs:ARSavingsAmt = _arr20.itemPrice.arSavings;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/AutoReplenishmentOrderType/AROItemInd
+							SET AutoReplenishmentOrderType_.(XMLNSC.Field)Abs:AROItemInd = _arr20.itemPrice.isArProduct;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/AutoReplenishmentOrderType/ItemPriceAmt
+							SET AutoReplenishmentOrderType_.(XMLNSC.Field)Abs:ItemPriceAmt = _arr20.itemPrice.arPrice;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/AutoReplenishmentOrderType/ARLinkPLUNbr
+							SET AutoReplenishmentOrderType_.(XMLNSC.Field)Abs:ARLinkPLUNbr = _arr20.itemPrice.linkPluNumberForARSavings;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/AutoReplenishmentOrderType/ARSavingsAmt
+							SET AutoReplenishmentOrderType_.(XMLNSC.Field)Abs:ARSavingsAmt = _arr20.itemPrice.arSavings;
+
+						-- LOOP FROM subOrders[*]/orderLines[*]/fulfilledUpc[*]/itemPrice/savings[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerOffers
+						DECLARE _arr21 REFERENCE TO _arr20.itemPrice.savings.Item;
+						loop_arr21 : WHILE LASTMOVE(_arr21) DO
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerOffers
+							DECLARE CustomerOffers_ REFERENCE TO DeliveredItem_;
+							CREATE LASTCHILD OF DeliveredItem_ AS CustomerOffers_ TYPE XMLNSC.Folder NAME 'Abs:CustomerOffers';
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerOffers/OfferId
+								SET CustomerOffers_.(XMLNSC.Field)Abs:OfferId = _arr21.offerId;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerOffers/ReferenceOfferId
+								SET CustomerOffers_.(XMLNSC.Field)Abs:ReferenceOfferId = _arr21.externalOfferId;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerOffers/OfferSourceType
+								DECLARE OfferSourceType_ REFERENCE TO CustomerOffers_;
+								CREATE LASTCHILD OF CustomerOffers_ AS OfferSourceType_ TYPE XMLNSC.Folder NAME 'Abs:OfferSourceType';
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerOffers/OfferSourceType/Code
+									SET OfferSourceType_.(XMLNSC.Field)Abs:Code = _arr21.source;
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerOffers/OfferSourceType/Code
+									SET OfferSourceType_.(XMLNSC.Field)Abs:Code = _arr21.source;
+
+								-- LOOP FROM subOrders[*]/orderLines[*]/fulfilledUpc[*]/itemPrice/savings[*]/points[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerOffers/CustomerRewards
+								DECLARE _arr22 REFERENCE TO _arr21.points.Item;
+								loop_arr22 : WHILE LASTMOVE(_arr22) DO
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerOffers/CustomerRewards
+									DECLARE CustomerRewards_ REFERENCE TO CustomerOffers_;
+									CREATE LASTCHILD OF CustomerOffers_ AS CustomerRewards_ TYPE XMLNSC.Folder NAME 'Abs:CustomerRewards';
+
+										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerOffers/CustomerRewards/RewardsProgramNm
+										SET CustomerRewards_.(XMLNSC.Field)Abs:RewardsProgramNm = _arr22.programName;
+
+										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerOffers/CustomerRewards/PointsEarnedQty
+										SET CustomerRewards_.(XMLNSC.Field)Abs:PointsEarnedQty = _arr22.earn;
+
+										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerOffers/CustomerRewards/PointsUsedQty
+										SET CustomerRewards_.(XMLNSC.Field)Abs:PointsUsedQty = _arr22.burn;
+
+								MOVE _arr22 NEXTSIBLING;
+								END WHILE loop_arr22;
+
+						MOVE _arr21 NEXTSIBLING;
+						END WHILE loop_arr21;
+
+							-- LOOP FROM subOrders[*]/orderLines[*]/fulfilledUpc[*]/itemPrice/savings[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerSavings/SavingsCategoryType
+							DECLARE _arr23 REFERENCE TO _arr20.itemPrice.savings.Item;
+							loop_arr23 : WHILE LASTMOVE(_arr23) DO
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerSavings/SavingsCategoryType
+								DECLARE SavingsCategoryType_ REFERENCE TO CustomerSavings_;
+								CREATE LASTCHILD OF CustomerSavings_ AS SavingsCategoryType_ TYPE XMLNSC.Folder NAME 'Abs:SavingsCategoryType';
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerSavings/SavingsCategoryType/OfferId
+									SET SavingsCategoryType_.(XMLNSC.Field)Abs:OfferId = _arr23.offerId;
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerSavings/SavingsCategoryType/SavingsCategoryId
+									SET SavingsCategoryType_.(XMLNSC.Field)Abs:SavingsCategoryId = _arr23.categoryId;
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerSavings/SavingsCategoryType/SavingsCategoryNm
+									SET SavingsCategoryType_.(XMLNSC.Field)Abs:SavingsCategoryNm = _arr23.categoryName;
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CustomerSavings/SavingsCategoryType/SavingsAmt
+									SET SavingsCategoryType_.(XMLNSC.Field)Abs:SavingsAmt = _arr23.discountAmount;
+
+							MOVE _arr23 NEXTSIBLING;
+							END WHILE loop_arr23;
+
+						-- LOOP FROM subOrders[*]/orderLines[*]/fulfilledUpc[*]/itemPrice/exceptions[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/DeliveredItemExceptionType
+						DECLARE _arr24 REFERENCE TO _arr20.itemPrice.exceptions.Item;
+						loop_arr24 : WHILE LASTMOVE(_arr24) DO
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/DeliveredItemExceptionType
+							DECLARE DeliveredItemExceptionType_ REFERENCE TO DeliveredItem_;
+							CREATE LASTCHILD OF DeliveredItem_ AS DeliveredItemExceptionType_ TYPE XMLNSC.Folder NAME 'Abs:DeliveredItemExceptionType';
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/DeliveredItemExceptionType/ExceptionType
+								DECLARE ExceptionType_ REFERENCE TO DeliveredItemExceptionType_;
+								CREATE LASTCHILD OF DeliveredItemExceptionType_ AS ExceptionType_ TYPE XMLNSC.Folder NAME 'Abs:ExceptionType';
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/DeliveredItemExceptionType/ExceptionType/Code
+									SET ExceptionType_.(XMLNSC.Field)Abs:Code = _arr24.exceptionType;
+
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/DeliveredItemExceptionType/ExceptionType/Code
+									SET ExceptionType_.(XMLNSC.Field)Abs:Code = _arr24.exceptionType;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/DeliveredItemExceptionType/ExceptionCd
+								SET DeliveredItemExceptionType_.(XMLNSC.Field)Abs:ExceptionCd = _arr24.exceptionCode;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/DeliveredItemExceptionType/ExceptionDsc
+								SET DeliveredItemExceptionType_.(XMLNSC.Field)Abs:ExceptionDsc = _arr24.exceptionDesc;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/DeliveredItemExceptionType/ExceptionCreateTs
+								SET DeliveredItemExceptionType_.(XMLNSC.Field)Abs:ExceptionCreateTs = _arr24.exceptionTime;
+
+						MOVE _arr24 NEXTSIBLING;
+						END WHILE loop_arr24;
+
+					MOVE _arr20 NEXTSIBLING;
+					END WHILE loop_arr20;
+
+						-- LOOP FROM subOrders[*]/orderLines[*]/itemPrice/savings[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerSavings/SavingsCategoryType
+						DECLARE _arr25 REFERENCE TO _arr15.itemPrice.savings.Item;
+						loop_arr25 : WHILE LASTMOVE(_arr25) DO
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerSavings/SavingsCategoryType
+							DECLARE SavingsCategoryType_ REFERENCE TO CustomerSavings_;
+							CREATE LASTCHILD OF CustomerSavings_ AS SavingsCategoryType_ TYPE XMLNSC.Folder NAME 'Abs:SavingsCategoryType';
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerSavings/SavingsCategoryType/OfferId
+								SET SavingsCategoryType_.(XMLNSC.Field)Abs:OfferId = _arr25.offerId;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerSavings/SavingsCategoryType/SavingsCategoryId
+								SET SavingsCategoryType_.(XMLNSC.Field)Abs:SavingsCategoryId = _arr25.categoryId;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerSavings/SavingsCategoryType/SavingsCategoryNm
+								SET SavingsCategoryType_.(XMLNSC.Field)Abs:SavingsCategoryNm = _arr25.categoryName;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerSavings/SavingsCategoryType/SavingsAmt
+								SET SavingsCategoryType_.(XMLNSC.Field)Abs:SavingsAmt = _arr25.discountAmount;
+
+						MOVE _arr25 NEXTSIBLING;
+						END WHILE loop_arr25;
+
+					-- LOOP FROM subOrders[*]/orderLines[*]/exceptions[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/OrderLineExceptionType
+					DECLARE _arr26 REFERENCE TO _arr15.exceptions.Item;
+					loop_arr26 : WHILE LASTMOVE(_arr26) DO
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/OrderLineExceptionType
+						DECLARE OrderLineExceptionType_ REFERENCE TO GroceryOrderDetail_;
+						CREATE LASTCHILD OF GroceryOrderDetail_ AS OrderLineExceptionType_ TYPE XMLNSC.Folder NAME 'Abs:OrderLineExceptionType';
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/OrderLineExceptionType/ExceptionType
+							DECLARE ExceptionType_ REFERENCE TO OrderLineExceptionType_;
+							CREATE LASTCHILD OF OrderLineExceptionType_ AS ExceptionType_ TYPE XMLNSC.Folder NAME 'Abs:ExceptionType';
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/OrderLineExceptionType/ExceptionType/Code
+								SET ExceptionType_.(XMLNSC.Field)Abs:Code = _arr26.exceptionType;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/OrderLineExceptionType/ExceptionType/Code
+								SET ExceptionType_.(XMLNSC.Field)Abs:Code = _arr26.exceptionType;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/OrderLineExceptionType/ExceptionCd
+							SET OrderLineExceptionType_.(XMLNSC.Field)Abs:ExceptionCd = _arr26.exceptionCode;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/OrderLineExceptionType/ExceptionDsc
+							SET OrderLineExceptionType_.(XMLNSC.Field)Abs:ExceptionDsc = _arr26.exceptionDesc;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/OrderLineExceptionType/ExceptionCreateTs
+							SET OrderLineExceptionType_.(XMLNSC.Field)Abs:ExceptionCreateTs = _arr26.exceptionTime;
+
+					MOVE _arr26 NEXTSIBLING;
+					END WHILE loop_arr26;
+
+					MOVE _arr15 NEXTSIBLING;
+					END WHILE loop_arr15;
+
+				-- LOOP FROM subOrders[*]/promoCodes[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail
+				DECLARE _arr17 REFERENCE TO _arr14.promoCodes.Item;
+				loop_arr17 : WHILE LASTMOVE(_arr17) DO
+
+					-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail
+					DECLARE GroceryOrderDetail_ REFERENCE TO GrocerySubOrder_;
+					CREATE LASTCHILD OF GrocerySubOrder_ AS GroceryOrderDetail_ TYPE XMLNSC.Folder NAME 'Abs:GroceryOrderDetail';
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/PromotionType
+						DECLARE PromotionType_ REFERENCE TO GroceryOrderDetail_;
+						CREATE LASTCHILD OF GroceryOrderDetail_ AS PromotionType_ TYPE XMLNSC.Folder NAME 'Abs:PromotionType';
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/PromotionType/Code
+							SET PromotionType_.(XMLNSC.Field)Abs:Code = _arr17.code;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/PromotionType/Description
+							SET PromotionType_.(XMLNSC.Field)Abs:Description = _arr17.description;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/PromotionType/Code
+							SET PromotionType_.(XMLNSC.Field)Abs:Code = _arr17.code;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/PromotionType/Description
+							SET PromotionType_.(XMLNSC.Field)Abs:Description = _arr17.description;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/PromotionTriggerCd
+						SET GroceryOrderDetail_.(XMLNSC.Field)Abs:PromotionTriggerCd = _arr17.pluCode;
+
+				MOVE _arr17 NEXTSIBLING;
+				END WHILE loop_arr17;
+
+				-- LOOP FROM subOrders[*]/refundedOrderLines[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem
+				DECLARE _arr27 REFERENCE TO _arr14.refundedOrderLines.Item;
+				loop_arr27 : WHILE LASTMOVE(_arr27) DO
+
+					-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem
+					DECLARE ReturnedItem_ REFERENCE TO GrocerySubOrder_;
+					CREATE LASTCHILD OF GrocerySubOrder_ AS ReturnedItem_ TYPE XMLNSC.Folder NAME 'Abs:ReturnedItem';
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/ReferenceOrderId
+						SET ReturnedItem_.(XMLNSC.Field)Abs:ReferenceOrderId = _arr27.referenceOrderId;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/Item
+						DECLARE Item_ REFERENCE TO ReturnedItem_;
+						CREATE LASTCHILD OF ReturnedItem_ AS Item_ TYPE XMLNSC.Folder NAME 'Abs:Item';
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/Item/UPC
+							DECLARE UPC_ REFERENCE TO Item_;
+							CREATE LASTCHILD OF Item_ AS UPC_ TYPE XMLNSC.Folder NAME 'Abs:UPC';
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/Item/UPC/UPCNbr
+								SET UPC_.(XMLNSC.Field)Abs:UPCNbr = _arr27.upcId;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/Item/UPC/UPCTxt
+								SET UPC_.(XMLNSC.Field)Abs:UPCTxt = _arr27.upcId;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/Item/BaseProductNbr
+							SET Item_.(XMLNSC.Field)Abs:BaseProductNbr = _arr27.itemId;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/Item/ItemDescription
+							SET Item_.(XMLNSC.Field)Abs:ItemDescription = _arr27.itemDescription;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/Item/UPC
+							DECLARE UPC_ REFERENCE TO Item_;
+							CREATE LASTCHILD OF Item_ AS UPC_ TYPE XMLNSC.Folder NAME 'Abs:UPC';
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/Item/UPC/UPCNbr
+								SET UPC_.(XMLNSC.Field)Abs:UPCNbr = _arr27.upcId;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/Item/UPC/UPCTxt
+								SET UPC_.(XMLNSC.Field)Abs:UPCTxt = _arr27.upcId;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/Item/UPC/UPCNbr
+								SET UPC_.(XMLNSC.Field)Abs:UPCNbr = _arr27.upcId;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/Item/UPC/UPCTxt
+								SET UPC_.(XMLNSC.Field)Abs:UPCTxt = _arr27.upcId;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/Item/BaseProductNbr
+							SET Item_.(XMLNSC.Field)Abs:BaseProductNbr = _arr27.itemId;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/Item/ItemDescription
+							SET Item_.(XMLNSC.Field)Abs:ItemDescription = _arr27.itemDescription;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/Quantity
+						SET ReturnedItem_.(XMLNSC.Field)Abs:Quantity = _arr27.refundedQuantity;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/UOM
+						DECLARE UOM_ REFERENCE TO ReturnedItem_;
+						CREATE LASTCHILD OF ReturnedItem_ AS UOM_ TYPE XMLNSC.Folder NAME 'Abs:UOM';
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/UOM/UOMCd
+							SET UOM_.(XMLNSC.Field)Abs:UOMCd = _arr27.unitOfMeasure;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/UOM/UOMCd
+							SET UOM_.(XMLNSC.Field)Abs:UOMCd = _arr27.unitOfMeasure;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/UnitPriceAmt
+						SET ReturnedItem_.(XMLNSC.Field)Abs:UnitPriceAmt = _arr27.unitPrice.amount;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/CurrencyCd
+						SET ReturnedItem_.(XMLNSC.Field)Abs:CurrencyCd = _arr27.unitPrice.currency;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/SNAPItemInd
+						SET ReturnedItem_.(XMLNSC.Field)Abs:SNAPItemInd = _arr27.snapEligible;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/AutoReplenishmentOrderType
+						DECLARE AutoReplenishmentOrderType_ REFERENCE TO ReturnedItem_;
+						CREATE LASTCHILD OF ReturnedItem_ AS AutoReplenishmentOrderType_ TYPE XMLNSC.Folder NAME 'Abs:AutoReplenishmentOrderType';
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/AutoReplenishmentOrderType/AROItemInd
+							SET AutoReplenishmentOrderType_.(XMLNSC.Field)Abs:AROItemInd = _arr27.isArProduct;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/AutoReplenishmentOrderType/AROLineInd
+							SET AutoReplenishmentOrderType_.(XMLNSC.Field)Abs:AROLineInd = _arr27.isReplenishItem;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/AutoReplenishmentOrderType/ItemPriceAmt
+							SET AutoReplenishmentOrderType_.(XMLNSC.Field)Abs:ItemPriceAmt = _arr27.arPrice;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/AutoReplenishmentOrderType/AROItemInd
+							SET AutoReplenishmentOrderType_.(XMLNSC.Field)Abs:AROItemInd = _arr27.isArProduct;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/AutoReplenishmentOrderType/AROLineInd
+							SET AutoReplenishmentOrderType_.(XMLNSC.Field)Abs:AROLineInd = _arr27.isReplenishItem;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ReturnedItem/AutoReplenishmentOrderType/ItemPriceAmt
+							SET AutoReplenishmentOrderType_.(XMLNSC.Field)Abs:ItemPriceAmt = _arr27.arPrice;
+
+				MOVE _arr27 NEXTSIBLING;
+				END WHILE loop_arr27;
+
+				-- LOOP FROM subOrders[*]/charges[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ChargeInfo
+				DECLARE _arr28 REFERENCE TO _arr14.charges.Item;
+				loop_arr28 : WHILE LASTMOVE(_arr28) DO
+
+					-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ChargeInfo
+					DECLARE ChargeInfo_ REFERENCE TO GrocerySubOrder_;
+					CREATE LASTCHILD OF GrocerySubOrder_ AS ChargeInfo_ TYPE XMLNSC.Folder NAME 'Abs:ChargeInfo';
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ChargeInfo/Charge
+						DECLARE Charge_ REFERENCE TO ChargeInfo_;
+						CREATE LASTCHILD OF ChargeInfo_ AS Charge_ TYPE XMLNSC.Folder NAME 'Abs:Charge';
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ChargeInfo/Charge/Code
+							SET Charge_.(XMLNSC.Field)Abs:Code = _arr28.id;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ChargeInfo/Charge/Description
+							SET Charge_.(XMLNSC.Field)Abs:Description = _arr28.name;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ChargeInfo/Charge/Code
+							SET Charge_.(XMLNSC.Field)Abs:Code = _arr28.id;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ChargeInfo/Charge/Description
+							SET Charge_.(XMLNSC.Field)Abs:Description = _arr28.name;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ChargeInfo/ChargeCategory
+						DECLARE ChargeCategory_ REFERENCE TO ChargeInfo_;
+						CREATE LASTCHILD OF ChargeInfo_ AS ChargeCategory_ TYPE XMLNSC.Folder NAME 'Abs:ChargeCategory';
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ChargeInfo/ChargeCategory/Code
+							SET ChargeCategory_.(XMLNSC.Field)Abs:Code = _arr28.category;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ChargeInfo/ChargeCategory/Code
+							SET ChargeCategory_.(XMLNSC.Field)Abs:Code = _arr28.category;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ChargeInfo/ChargeAmt
+						SET ChargeInfo_.(XMLNSC.Field)Abs:ChargeAmt = _arr28.chargeAmount.amount;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/ChargeInfo/CurrencyCd
+						SET ChargeInfo_.(XMLNSC.Field)Abs:CurrencyCd = _arr28.chargeAmount.currency;
+
+				MOVE _arr28 NEXTSIBLING;
+				END WHILE loop_arr28;
+
+				-- LOOP FROM subOrders[*]/customerService/contact[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService
+				DECLARE _arr29 REFERENCE TO _arr14.customerService.contact.Item;
+				loop_arr29 : WHILE LASTMOVE(_arr29) DO
+
+					-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService
+					DECLARE CustomerService_ REFERENCE TO GrocerySubOrder_;
+					CREATE LASTCHILD OF GrocerySubOrder_ AS CustomerService_ TYPE XMLNSC.Folder NAME 'Abs:CustomerService';
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService/PhoneFaxContact
+						DECLARE PhoneFaxContact_ REFERENCE TO CustomerService_;
+						CREATE LASTCHILD OF CustomerService_ AS PhoneFaxContact_ TYPE XMLNSC.Folder NAME 'Abs:PhoneFaxContact';
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService/PhoneFaxContact/@TypeCode
+							SET PhoneFaxContact_.(XMLNSC.Attribute)TypeCode = _arr29.type;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService/PhoneFaxContact/PhoneNbrTxt
+							SET PhoneFaxContact_.(XMLNSC.Field)Abs:PhoneNbrTxt = _arr29.number;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService/PhoneFaxContact/PhonePurposes
+							DECLARE PhonePurposes_ REFERENCE TO PhoneFaxContact_;
+							CREATE LASTCHILD OF PhoneFaxContact_ AS PhonePurposes_ TYPE XMLNSC.Folder NAME 'Abs:PhonePurposes';
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService/PhoneFaxContact/PhonePurposes/PurposeDsc
+								SET PhonePurposes_.(XMLNSC.Field)Abs:PurposeDsc = _arr29.subType;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService/PhoneFaxContact/@TypeCode
+							SET PhoneFaxContact_.(XMLNSC.Attribute)TypeCode = _arr29.type;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService/PhoneFaxContact/PhoneNbrTxt
+							SET PhoneFaxContact_.(XMLNSC.Field)Abs:PhoneNbrTxt = _arr29.number;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService/PhoneFaxContact/PhonePurposes
+							DECLARE PhonePurposes_ REFERENCE TO PhoneFaxContact_;
+							CREATE LASTCHILD OF PhoneFaxContact_ AS PhonePurposes_ TYPE XMLNSC.Folder NAME 'Abs:PhonePurposes';
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService/PhoneFaxContact/PhonePurposes/PurposeDsc
+								SET PhonePurposes_.(XMLNSC.Field)Abs:PurposeDsc = _arr29.subType;
+
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/CustomerService/PhoneFaxContact/PhonePurposes/PurposeDsc
+								SET PhonePurposes_.(XMLNSC.Field)Abs:PurposeDsc = _arr29.subType;
+
+				MOVE _arr29 NEXTSIBLING;
+				END WHILE loop_arr29;
+
+				-- LOOP FROM subOrders[*]/exceptions[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GrocerySubOrderExceptionType
+				DECLARE _arr30 REFERENCE TO _arr14.exceptions.Item;
+				loop_arr30 : WHILE LASTMOVE(_arr30) DO
+
+					-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GrocerySubOrderExceptionType
+					DECLARE GrocerySubOrderExceptionType_ REFERENCE TO GrocerySubOrder_;
+					CREATE LASTCHILD OF GrocerySubOrder_ AS GrocerySubOrderExceptionType_ TYPE XMLNSC.Folder NAME 'Abs:GrocerySubOrderExceptionType';
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GrocerySubOrderExceptionType/ExceptionType
+						DECLARE ExceptionType_ REFERENCE TO GrocerySubOrderExceptionType_;
+						CREATE LASTCHILD OF GrocerySubOrderExceptionType_ AS ExceptionType_ TYPE XMLNSC.Folder NAME 'Abs:ExceptionType';
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GrocerySubOrderExceptionType/ExceptionType/Code
+							SET ExceptionType_.(XMLNSC.Field)Abs:Code = _arr30.exceptionType;
+
+							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GrocerySubOrderExceptionType/ExceptionType/Code
+							SET ExceptionType_.(XMLNSC.Field)Abs:Code = _arr30.exceptionType;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GrocerySubOrderExceptionType/ExceptionCd
+						SET GrocerySubOrderExceptionType_.(XMLNSC.Field)Abs:ExceptionCd = _arr30.exceptionCode;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GrocerySubOrderExceptionType/ExceptionDsc
+						SET GrocerySubOrderExceptionType_.(XMLNSC.Field)Abs:ExceptionDsc = _arr30.exceptionDesc;
+
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GrocerySubOrderExceptionType/ExceptionCreateTs
+						SET GrocerySubOrderExceptionType_.(XMLNSC.Field)Abs:ExceptionCreateTs = _arr30.exceptionTime;
+
+				MOVE _arr30 NEXTSIBLING;
+				END WHILE loop_arr30;
+
+			MOVE _arr14 NEXTSIBLING;
+			END WHILE loop_arr14;
+
+	END;
+END MODULE;

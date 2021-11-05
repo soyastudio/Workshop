@@ -1,5 +1,6 @@
 package com.abs.edis.schema;
 
+import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericDatumReader;
@@ -336,6 +337,8 @@ public class XmlToAvroConverter {
     private static void write(GenericRecord record, Schema schema, OutputStream outputStream) throws IOException {
         GenericDatumWriter<GenericRecord> writer = new GenericDatumWriter<>(schema);
         //Encoder encoder = EncoderFactory.get().binaryEncoder(outputStream, null);
+
+        KafkaAvroSerializer kafkaAvroSerializer = new KafkaAvroSerializer();
 
         Encoder encoder = EncoderFactory.get().jsonEncoder(schema, outputStream);
 
