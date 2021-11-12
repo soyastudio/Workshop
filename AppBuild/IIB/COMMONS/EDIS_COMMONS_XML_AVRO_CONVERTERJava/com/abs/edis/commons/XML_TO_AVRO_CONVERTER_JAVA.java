@@ -41,7 +41,7 @@ public class XML_TO_AVRO_CONVERTER_JAVA extends MbJavaComputeNode {
 					.createElementAsLastChild(
 							MbElement.TYPE_NAME_VALUE,
 							"BLOB",
-							XmlToAvroConverter.convert(inMessage
+							XmlToAvroConverter.toJson(inMessage
 									.getRootElement().getLastChild()
 									.getLastChild().getDOMNode(), schema));
 

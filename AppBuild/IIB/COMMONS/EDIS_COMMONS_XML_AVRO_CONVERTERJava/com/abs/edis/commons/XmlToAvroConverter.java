@@ -11,7 +11,12 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParser;
+
 import javax.xml.parsers.ParserConfigurationException;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -46,6 +51,12 @@ public class XmlToAvroConverter {
         } catch (IOException e) {
             throw new RuntimeException("Failed to zip content", e);
         }
+    }
+    
+    public static byte[] toJson(Node xml, Schema schema) {
+    	return new GsonBuilder().setPrettyPrinting().create()
+    			.toJson(JsonParser.parseString(createRecord(schema, xml).toString()))
+    			.getBytes();
     }
 
     public static byte[] convert(Node xml, Schema schema) throws IOException, ParserConfigurationException, SAXException {
@@ -332,8 +343,8 @@ public class XmlToAvroConverter {
 
     private static void write(GenericRecord record, Schema schema, OutputStream outputStream) throws IOException {
         GenericDatumWriter<GenericRecord> writer = new GenericDatumWriter<>(schema);
-        // Encoder encoder = EncoderFactory.get().binaryEncoder(outputStream, null);       
-        Encoder encoder = EncoderFactory.get().jsonEncoder(schema, outputStream);
+        Encoder encoder = EncoderFactory.get().binaryEncoder(outputStream, null);       
+        //Encoder encoder = EncoderFactory.get().jsonEncoder(schema, outputStream);
 
         writer.write(record, encoder);
         encoder.flush();

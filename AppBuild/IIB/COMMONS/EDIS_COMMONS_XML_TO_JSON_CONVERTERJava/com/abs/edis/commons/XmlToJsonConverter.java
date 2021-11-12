@@ -150,6 +150,14 @@ public class XmlToJsonConverter {
     }
 
     private JsonElement convert(String value, String type) {
+    	if(value == null) {
+    		if("string".equals(type)) {
+    			return new JsonPrimitive("");
+    		}else {
+
+        		return JsonNull.INSTANCE;
+    		}
+    	}
 
         if ("boolean".equals(type)) {
             if ("Y".equalsIgnoreCase(value) || "TRUE".equalsIgnoreCase(value)) {
@@ -185,6 +193,18 @@ public class XmlToJsonConverter {
         } else if ("double".equals(type)) {
             try {
                 return new JsonPrimitive(Double.parseDouble(value));
+            } catch (Exception e) {
+                return new JsonPrimitive(value);
+            }
+
+        } else if ("number".equals(type)) {
+            try {
+            	if(value.contains(".")) {
+                    return new JsonPrimitive(Double.parseDouble(value));
+            		
+            	} else{
+                    return new JsonPrimitive(Integer.parseInt(value));
+            	}
             } catch (Exception e) {
                 return new JsonPrimitive(value);
             }
