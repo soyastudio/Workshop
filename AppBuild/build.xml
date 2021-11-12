@@ -1,18 +1,11 @@
 <?xml version="1.0"?>
-<project name="IIB Build" default="install" basedir="">
+<project name="AppBuild" default="clean" basedir=".">
 
-    <property file="build.properties"/>
-    <property name="dest.dir" location="bars"/>
+    <target name="clean"
+            description="clean up">
 
-    <property name="work.dir" location="../Repository/projects/${iib.project.name}/iib"/>
-    <property name="base.dir" location="${dest.dir}/${iib.project.name}"/>
-    <property name="build.dir" location="build"/>
-
-    <target name="install">
-
-        <mkdir dir="${dest.dir}"/>
-        <mkdir dir="${build.dir}"/>
-
+        <delete includeemptydirs="true">
+            <fileset dir="." includes="**/.dm/" />
+        </delete>
     </target>
-
 </project>
