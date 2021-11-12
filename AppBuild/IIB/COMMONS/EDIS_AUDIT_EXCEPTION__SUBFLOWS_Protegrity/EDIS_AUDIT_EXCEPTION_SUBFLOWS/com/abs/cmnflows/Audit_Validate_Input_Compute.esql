@@ -1,0 +1,197 @@
+/*-----------------------------------------------------------------------------
+SUBFLOW NAME: MsgLogSubFlow.subflow
+DESCRIPTION	: This is a common flow to all the flows for capturing Audit 
+			  messages and store into a common queue. 
+AUTHOR		: TCS
+CREATED DT	: 12/06/2017
+-------------------------------------------------------------------------------
+Program History
+Project	Release	Version	ChangeOwner	Date		Description
+------  ------  ------	----------- ----------  -----------
+EDIS    Drop2	0.1		Spandana	12/06/2017	Initial Draft
+EDIS	Drop3	0.2		Spandana	20/10/2017	Updated code after moving component
+												details and control flags from 
+												database to UDP.
+EDIS	Drop3	0.3		Subashree	05/01/2018	Updated to remove dependency
+												to ExceptionHandling
+EDIS	Drop4	0.4		Jikky		17/05/2019	Changed TransactionID																																					 
+EDIS	Drop4	0.5		Jikky		01/08/2019	No In Audit for Adapter flow
+-----------------------------------------------------------------------------*/
+
+BROKER SCHEMA com.abs.cmnflows
+--Declarations for UDP's start from here
+DECLARE APPLICATION_NAME EXTERNAL CHARACTER '';     
+DECLARE APPLICATION_DESC EXTERNAL CHARACTER	 '';
+DECLARE BO_NAME EXTERNAL CHARACTER '';
+DECLARE COMPONENT_DESC EXTERNAL CHARACTER '';
+DECLARE COMPONENT_TYPE EXTERNAL CHARACTER '';
+DECLARE COMPONENT_INPUT_NAME EXTERNAL CHARACTER '';
+DECLARE COMPONENT_INPUT_TYPE EXTERNAL CHARACTER '';
+DECLARE SOURCE_SYSTEM_NAME EXTERNAL CHARACTER '';
+DECLARE AUDIT_REQD EXTERNAL CHARACTER '';
+DECLARE AUDIT_SRC_UNQ_ID EXTERNAL CHARACTER '';
+DECLARE PATH_SRC_UNQ_ID EXTERNAL CHARACTER '';
+DECLARE AUDIT_TRGT_UNQ_ID EXTERNAL CHARACTER '';
+DECLARE PATH_TRGT_UNQ_ID EXTERNAL CHARACTER '' ;
+DECLARE VALIDATION_REQD_SOURCE EXTERNAL CHARACTER '';
+DECLARE VALIDATION_REQD_TARGET EXTERNAL CHARACTER '';
+DECLARE STORE_SRC_MSG EXTERNAL CHARACTER '';
+DECLARE STORE_TRGT_MSG EXTERNAL CHARACTER '';
+--UDP declarations end here
+
+CREATE COMPUTE MODULE Audit_Validate_Input_Compute
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		
+		--Reference to environment component table details
+		CREATE FIELD Environment.Variables.CMPNT;
+		DECLARE cmpRef REFERENCE TO Environment.Variables.CMPNT;
+		DECLARE tempTS CHARACTER;
+		DECLARE queueName CHARACTER '';
+		DECLARE fileName CHARACTER '';
+		DECLARE KafkaTopicName CHARACTER '';
+		
+		--MessageFlowname
+		DECLARE delimiterPosition INTEGER 
+			POSITION('.' IN MessageFlowLabel REPEAT -1);	
+		SET cmpRef.COMPONENT_NAME = 
+			Substring(MessageFlowLabel FROM 
+				(delimiterPosition + 1) FOR length(MessageFlowLabel));
+		
+		--UDP values are set to environment tree
+		SET cmpRef.APPLICATION_NAME = APPLICATION_NAME;
+		SET cmpRef.APPLICATION_DESC = APPLICATION_DESC;
+		SET cmpRef.BO_NAME = BO_NAME;
+		SET cmpRef.COMPONENT_DESC = COMPONENT_DESC;
+		SET cmpRef.COMPONENT_TYPE = COMPONENT_TYPE;
+		SET cmpRef.COMPONENT_INPUT_NAME = COMPONENT_INPUT_NAME;
+		SET cmpRef.COMPONENT_INPUT_TYPE = COMPONENT_INPUT_TYPE;
+		SET cmpRef.SOURCE_SYSTEM_NAME = SOURCE_SYSTEM_NAME;
+		SET cmpRef.AUDIT_REQD = AUDIT_REQD;
+		SET cmpRef.AUDIT_SRC_UNQ_ID = AUDIT_SRC_UNQ_ID;
+		SET cmpRef.PATH_SRC_UNQ_ID = PATH_SRC_UNQ_ID;
+		SET cmpRef.AUDIT_TRGT_UNQ_ID = AUDIT_TRGT_UNQ_ID;
+		SET cmpRef.PATH_TRGT_UNQ_ID=PATH_TRGT_UNQ_ID;
+		SET cmpRef.VALIDATION_REQD_SOURCE = VALIDATION_REQD_SOURCE;
+		SET cmpRef.VALIDATION_REQD_TARGET = VALIDATION_REQD_TARGET;
+		SET cmpRef.STORE_SRC_MSG = STORE_SRC_MSG;
+		SET cmpRef.STORE_TRGT_MSG = STORE_TRGT_MSG;
+		-- start Removed UDP for replay function in Audit Framework end here 
+--		SET cmpRef.REPLAY_RULE = REPLAY_RULE;
+--		SET cmpRef.MAX_REPLAY_COUNT = MAX_REPLAY_COUNT; 
+		-- end Removed UDP for replay function in Audit Framework end here 
+		/* environment varaible to store msg log information and pass as 
+			parameter to createMsgLog procedure */	  
+		CREATE FIELD Environment.Variables.msgLogInfo;
+		DECLARE msgLogTemp REFERENCE TO Environment.Variables.msgLogInfo;
+		
+		--Condition to check if audit required flag is enabled for the flow
+		IF UPPER(cmpRef.AUDIT_REQD) = 'Y' THEN 
+			CREATE FIELD OutputRoot.XMLNSC;
+			SET msgLogTemp.DIRECTION = 'Input' ;
+			
+			-- Mapping for TransactionId   	
+			IF cmpRef.COMPONENT_TYPE = 'SF' AND 
+					EXISTS(InputRoot.HTTPInputHeader[]) THEN
+				SET msgLogTemp.TransactionId = 
+					TRIM(InputLocalEnvironment.Destination.SOAP.Reply.ReplyIdentifier);
+				--Store in Environment variabl for output Audit
+				SET Environment.Variables.SoapReplyIdentifier =
+					TRIM(InputLocalEnvironment.Destination.SOAP.Reply.ReplyIdentifier);
+			ELSEIF cmpRef.COMPONENT_TYPE = 'HF' AND 
+				   EXISTS (InputRoot.HTTPInputHeader[]) THEN
+				SET msgLogTemp.TransactionId = 
+					TRIM(InputLocalEnvironment.Destination.HTTP.RequestIdentifier);
+				--Store in Environment variabl for output Audit
+				SET Environment.Variables.HttpReqIdentifier = 
+					TRIM(InputLocalEnvironment.Destination.HTTP.RequestIdentifier);
+			ELSE 
+				
+		   	-- v.0.4 : Changed Transaction ID 	
+			-- If input is file				
+			IF (LENGTH(CAST(InputLocalEnvironment.File.Name AS CHARACTER))>0) THEN
+				SET tempTS = CAST(CAST(CURRENT_TIMESTAMP AS TIMESTAMP) AS CHARACTER Format 'yyyyMMddHHmmssSSSSSS');
+				SET fileName = CAST(InputLocalEnvironment.File.Name AS CHARACTER);
+				SET Environment.Variables.Transaction_Id = COALESCE(fileName || '_' || tempTS,'');
+				SET msgLogTemp.TransactionId = Environment.Variables.Transaction_Id;
+				
+			-- If input is CDC Queue
+			ELSEIF EXISTS(InputRoot.XMLNSC.ROWSET.[]) THEN
+				SET Environment.Variables.Transaction_Id = InputRoot.XMLNSC.ROWSET.(XMLNSC.Attribute)TransactionId;
+				SET msgLogTemp.TransactionId = COALESCE(Environment.Variables.Transaction_Id,'');
+				
+			-- If input is Non CDC Queue
+			ELSEIF (LENGTH(CAST(InputRoot.MQMD.SourceQueue AS CHARACTER))>0) THEN
+				SET tempTS = CAST( CAST(CURRENT_TIMESTAMP AS TIMESTAMP) AS CHARACTER Format 'yyyyMMddHHmmssSSSSSS');
+				SET queueName = CAST(InputRoot.MQMD.SourceQueue AS CHARACTER);
+				SET Environment.Variables.Transaction_Id = COALESCE(queueName|| '_' || tempTS,'');
+				SET msgLogTemp.TransactionId = Environment.Variables.Transaction_Id;
+	
+			-- If input is Kafka 
+			ELSEIF (LENGTH(CAST(InputLocalEnvironment.Kafka.Input.topicName AS CHARACTER))>0) THEN
+				SET tempTS = CAST( CAST(CURRENT_TIMESTAMP AS TIMESTAMP) AS CHARACTER Format 'yyyyMMddHHmmssSSSSSS');
+				SET KafkaTopicName = CAST(InputLocalEnvironment.Kafka.Input.topicName AS CHARACTER);
+				SET Environment.Variables.Transaction_Id = COALESCE(KafkaTopicName|| '_' || tempTS,'');
+				SET msgLogTemp.TransactionId = Environment.Variables.Transaction_Id;
+	
+			-- Any other input	
+			ELSE 
+				SET msgLogTemp.TransactionId = 
+				COALESCE(InputRoot.MQMD.MsgId,
+						InputLocalEnvironment.Destination.HTTP.ReplyIdentifier,
+				CAST(SUBSTRING(CAST(CURRENT_TIMESTAMP AS CHARACTER)FROM 4)AS BLOB CCSID 1208));
+			END IF;
+			END IF;
+			
+			--to capture source unique id
+			IF UPPER(cmpRef.AUDIT_SRC_UNQ_ID) = 'Y' THEN
+		 	   SET msgLogTemp.MsgUnqId = 
+					COALESCE(EVAL(cmpRef.PATH_SRC_UNQ_ID),
+								  'Invalid XPath in PATH_SRC_UNQ_ID');
+			END IF;
+			
+			--to capture source message
+			IF UPPER(cmpRef.STORE_SRC_MSG) = 'Y' THEN
+		 	   SET msgLogTemp.storeMsg = 'Y';
+			END IF;
+			
+			/* Function to create Audit message. 
+			This is common for both Input and output audit */ 
+			CALL createMsgLog(InputRoot,OutputRoot,Environment);
+			--Propogate the audit message to EDIS_MSG_LOG queue
+			IF (cmpRef.COMPONENT_TYPE <> 'AF') THEN 
+				PROPAGATE TO TERMINAL 'out1' DELETE NONE ;
+			END IF;
+		END IF;
+		
+		DELETE FIELD Environment.Variables.msgLogInfo; 
+	    CALL CopyEntireMessage();
+	   
+	    /* Route to validate node if validation is 
+	    required else route to output node */
+	    IF UPPER(cmpRef.VALIDATION_REQD_SOURCE) = 'Y' THEN
+			PROPAGATE TO TERMINAL 'out2' DELETE NONE ;
+	    ELSE
+			PROPAGATE TO TERMINAL 'out' DELETE NONE ;
+	    END IF;	
+		
+		RETURN FALSE;
+	END;
+    
+    CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+	
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+	
+END MODULE;
+
+

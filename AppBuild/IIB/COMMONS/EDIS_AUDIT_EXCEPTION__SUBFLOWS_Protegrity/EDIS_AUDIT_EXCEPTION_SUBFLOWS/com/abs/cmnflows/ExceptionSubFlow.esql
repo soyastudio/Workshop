@@ -1,0 +1,409 @@
+/*-----------------------------------------------------------------------------
+SUBFLOW NAME: ExceptionSubFlow.subflow
+DESCRIPTION	: This is a common flow to all the flows for capturing Exceptions 
+				and store the messages into a common queue. 
+AUTHOR		: TCS
+CREATED DT	: 12/06/2017
+-------------------------------------------------------------------------------
+Program History
+Project	Release	Version	ChangeOwner	Date		Description
+-------	-------	-------	-----------	--------	-----------
+				0.1								Initial Framework given by
+												Albertsons
+EDIS    Drop2	0.2		Spandana    12/06/2017	Updated to add few more fields
+												in the exception message
+EDIS	Drop3	0.3		Spandana 	02/08/2017	Remove mapping for CorrelationId
+EDIS	Drop3	0.4		Spandana	20/10/2017	Removed mapping for componentID
+EDIS	Drop3	0.5		Spandana	28/11/2017	Added mappings for ReplayRule 
+												and maxreplayCount	
+EDIS	Drop3	0.6		Spandana	12/12/2017	Updated to captureinput msg for 
+												MRM parser.	
+EDIS	Drop3	0.7		Subashree	05/01/2018	Updated to run independetly from 
+												Audit_Validate_Input
+EDIS	Drop4	1.0		Jikky		17/05/2019	Changed globalInstanceId from MsgID 				
+												to Transaction_Id																																								 
+-----------------------------------------------------------------------------*/
+BROKER SCHEMA com.abs.cmnflows
+CREATE COMPUTE MODULE ExceptionSubFlow_ConstructExceptionMsg
+	
+	--Declarations for UDP's start from here
+		DECLARE HOSTNAME EXTERNAL CHARACTER '';
+		DECLARE STOREMSG EXTERNAL CHARACTER '';
+		DECLARE APPLICATIONNAME EXTERNAL CHARACTER '';
+		DECLARE BONAME EXTERNAL CHARACTER '';
+		DECLARE INPUTTYPE EXTERNAL CHARACTER '';
+		DECLARE INPUTNAME EXTERNAL CHARACTER '';
+		DECLARE REPLAYRULE EXTERNAL CHARACTER '';
+		DECLARE MAXREPLAYCOUNT EXTERNAL CHARACTER '';
+		DECLARE COMPONENTNAME EXTERNAL CHARACTER '';
+
+	--UDP declarations end here
+	CREATE FUNCTION main() RETURNS BOOLEAN 
+	BEGIN
+		/**********************************************************************
+		   This esql code is used for parsing the exceptionlist tree and 
+		   capture the error message and other details
+		   relevant to the cause of the exception. For user defined 
+		   exceptions, error description is retrieved from
+		   the database based on the error code from the input message.
+		   
+			Exception Tree Structure - 
+			------------------------------
+			ExceptionList
+		   	RecoverableException[Always the parent exception can have multiple
+								occurances.But will mostly be one instance]
+		   		Number			[WMB Exception Number]
+		   		Severity		[WMB Exception Severity]
+		   		Label			[Message Flow Node which threw the exception]
+		   		Text			[WMB Exception Text]
+		   		{Child}Exception[Child can be of any time like Recoverable,
+								Parser, Conversion,Database, User,
+								Cast, Message, Sql, Socket, SocketTimeout]
+		   			Number		[Child Exception Number]
+		   			Severity	[Child Exception Severity]
+		   			Text		[Child Exception Text]
+		   			Insert		[Dynamic Values such as messagesetID.Can repeat]
+		   				Text	[Dynamic Value]
+		   			Insert
+		   				Text
+		   			{Child}Exception[The tree structure will repeat toprovide 
+									 complete details about the exception
+									 which occured]
+			--------------------------------
+		   Only tree values which are captured in the code are shown above. 
+		   The tree has a lot of additional fields which need not be captured
+		   in the error message.	   						
+		*********************************************************************/
+		
+		--Start of variable declaration section
+		DECLARE iExtendedElementCount INTEGER;
+		DECLARE iChildLevel INTEGER;
+		DECLARE iInsertCount INTEGER;
+		DECLARE iInsertCard INTEGER;
+		DECLARE iOverlayPosition INTEGER;
+		DECLARE iSearchStringLength INTEGER;
+		DECLARE cUserErrorCode CHAR;
+		DECLARE cLocation CHAR;
+		DECLARE cDiagnostics CHAR;
+		DECLARE cDescription CHAR;
+		DECLARE cErrorNumber CHAR;
+		DECLARE cExceptionType CHAR;
+	    DECLARE cSeverityLevel CHAR;
+	    DECLARE cSearchString CHAR;
+	
+		--Declared for handling parametised error description
+		DECLARE cParameter CHAR;
+		DECLARE cPosn INTEGER;
+		DECLARE cStart_Posn INTEGER;
+		DECLARE cSearchString_String CHAR;
+		DECLARE iCount INTEGER;
+		DECLARE cFlowName CHAR;
+		
+		--End of variable declaration section
+	
+		/*Start constructing the output error XML which will be put into the
+		common error queue */
+		
+		--Spandana : V0.3 Removed mappong for CorrelId 
+		--SET OutputRoot.MQMD.CorrelId = Environment.Variables.MsgId;
+		SET OutputRoot.MQMD.Format = 'MQSTR';
+		
+		/* If ReqlyToQMgr, SourceQueue, or MsgId is NULL in environment
+			variables,get the corresponding values from the MQMD header
+			of the input message */
+		IF (Environment.Variables.ReplyToQMgr IS NULL) THEN
+			SET Environment.Variables.ReplyToQMgr = 
+						TRIM(InputRoot.MQMD.ReplyToQMgr);
+		END IF;
+		
+		/* Spandana: Addded coalesce to set input name for flow
+			with input other than MQ */
+		IF (Environment.Variables.SourceName IS NULL) THEN
+			SET Environment.Variables.SourceName =
+						COALESCE(InputRoot.MQMD.SourceQueue,
+							INPUTNAME);
+		END IF;
+		
+		/*Spandana: Added below coalease function to Set messageID 
+			for sync flows and file input flows as well. */ 
+		IF (Environment.Variables.MsgId IS NULL) THEN
+			SET Environment.Variables.MsgId = COALESCE(InputRoot.MQMD.MsgId,
+				InputLocalEnvironment.Destination.HTTP.ReplyIdentifier,
+				CAST(SUBSTRING(CAST(CURRENT_TIMESTAMP
+						 AS CHARACTER)FROM 4)AS BLOB CCSID 1208));
+		END IF;
+		
+		
+		/* If MessageFlowName is NULL in enviornment variable, get it from the 
+		   Flow Property 'MessageFlowLabel' */
+		
+		IF (Environment.Variables.MessageFlowName IS NULL) THEN
+			SET Environment.Variables.MessageFlowName = MessageFlowLabel;
+		END IF;	
+		CREATE FIELD OutputRoot.XMLNSC.CommonBaseEvent;	
+		DECLARE outCmnBaseEvent REFERENCE TO OutputRoot.XMLNSC.CommonBaseEvent;
+		
+		-- V.1.0: changed from Environment.Variables.MsgId to Environment.Variables.Transaction_Id
+		SET outCmnBaseEvent.(XMLNSC.Attribute)globalInstanceId = 
+				COALESCE(TRIM(Environment.Variables.Transaction_Id),'');
+				
+		SET outCmnBaseEvent.(XMLNSC.Attribute)creationTime = 
+				SUBSTRING(CAST(CURRENT_TIMESTAMP AS CHAR) FROM 12 FOR 23);
+		SET outCmnBaseEvent.(XMLNSC.Attribute)msg = 
+				Environment.Variables.MessageFlowName ||
+			'has encountered an error. See extendedDataElements for more information';
+		CREATE FIELD outCmnBaseEvent.sourceComponentId;
+		DECLARE outSrcCmpt REFERENCE TO outCmnBaseEvent.sourceComponentId;
+		SET outSrcCmpt.(XMLNSC.Attribute)component = BrokerName;
+		--Spandana #comment: V0.4 Added colalese to capture flow name without schema
+		SET outSrcCmpt.(XMLNSC.Attribute)subComponent = 
+				COALESCE(COMPONENTNAME,Environment.Variables.MessageFlowName);
+		SET outSrcCmpt.(XMLNSC.Attribute)componentIdType = 'BrokerName';
+		SET outSrcCmpt.(XMLNSC.Attribute)location = HOSTNAME;
+		SET outSrcCmpt.(XMLNSC.Attribute)locationType = 'HOSTNAME';
+		SET outSrcCmpt.(XMLNSC.Attribute)componentType =
+				'IBM WebSphere Message Broker' || BrokerVersion;
+		SET outSrcCmpt.(XMLNSC.Attribute)application = 'IIB';
+		SET outSrcCmpt.(XMLNSC.Attribute)instanceId = ExecutionGroupLabel;
+		SET outSrcCmpt.(XMLNSC.Attribute)processId = ProcessId;
+		SET outSrcCmpt.(XMLNSC.Attribute)executionEnvironment = Family;
+		--Spandana #comment V0.4 Removed mapping for componentID  
+		/*--Spandana : Added mappings for messageType,Input format and BOname
+		SET outSrcCmpt.(XMLNSC.Attribute)componentID =
+				Environment.Variables.CMPNT.COMPONENT_ID;*/
+		SET outSrcCmpt.(XMLNSC.Attribute)applicationName = APPLICATIONNAME;
+        SET outSrcCmpt.(XMLNSC.Attribute)inputFormat = INPUTTYPE;
+        SET outSrcCmpt.(XMLNSC.Attribute)BOname   = BONAME;
+		--Spandana : V0.5 Added mapping for replayrule and maxreplaycount
+		SET outSrcCmpt.(XMLNSC.Attribute)ReplayRule = REPLAYRULE;
+		SET outSrcCmpt.(XMLNSC.Attribute)MaxReplayCount = MAXREPLAYCOUNT;
+		--Spandana: mappings for outSrcCmpt end here
+		SET outCmnBaseEvent.extendedDataElements[1].
+				(XMLNSC.Attribute)name = 'SourceDetails';
+		SET outCmnBaseEvent.extendedDataElements[1].SourceQueue = 
+				TRIM(Environment.Variables.SourceName);
+		SET outCmnBaseEvent.extendedDataElements[1].SourceQmgr = 
+				TRIM(Environment.Variables.ReplyToQMgr);
+		SET outCmnBaseEvent.extendedDataElements[1].SourceDirectory = 
+				Environment.Variables.SourceDirectory;
+		SET outCmnBaseEvent.extendedDataElements[1].SourceFileName = 
+				Environment.Variables.SourceFileName;
+		
+
+		/*
+		   Fetching the key-fields one-by-one. These are populated
+		   in the Initialization node in the main message flow
+		*/
+		IF (Environment.Variables.XMLKeyFields IS NOT NULL) THEN
+			SET outCmnBaseEvent.extendedDataElements[2].
+					(XMLNSC.Attribute)name = 'KeyFields';
+			SET outCmnBaseEvent.extendedDataElements[2] = 
+					Environment.Variables.XMLKeyFields;		
+			SET iExtendedElementCount = 3;			
+		ELSE
+			SET iExtendedElementCount = 2;
+		END IF;
+		
+		/* Point to the first child in the exceptionlist.
+			This will always be RecoverableException */
+		SET iChildLevel = 1;
+		DECLARE rPath REFERENCE TO InputExceptionList.*[iChildLevel];
+	
+		-- Continue collecting details till all Exception nodes are parsed
+		WHILE LASTMOVE(rPath) DO
+			SET iCount = 1;
+			SET cExceptionType = FIELDNAME(rPath);
+			WHILE (POSITION('Exception' IN cExceptionType) <> 0) DO
+				/*
+				   Capture details of the location where the exception has
+				   occured -Label will indicate the node in the message flow
+				   where the exception occured. This value will the same in
+				   the parent and child exception nodes. So it need to 
+				   be captured only from the parent - ReceoverableException
+				*/
+				IF (iCount = 1) THEN
+					IF (Length(rPath.Label) > 0) THEN
+						SET cLocation = rPath.Label;
+						SET cErrorNumber = CAST(rPath.Number AS CHAR);
+						/*
+						   Label will have the value 
+						   {MessageFlowName}.{NodeName}
+						   We need to capture only the NodeName,
+						   which is after the '.'
+						*/					
+						SET cDiagnostics = SUBSTRING(cLocation FROM 
+							(POSITION('.' IN cLocation) + 1)) ||
+							' Node threw an Exception ';
+					END IF;
+				ELSE
+					/*
+					   Capture the diagnostic information from the error message
+					   Concatenate the Text in each exception node. This will be
+					   populated as ErrorDiagnistics in the error message
+					   which is put into the error queue
+					*/
+					IF (Length(rPath.Text) > 0)THEN
+						IF (cDiagnostics <> '') THEN
+							SET cDiagnostics = cDiagnostics || '. ' || 
+										CAST(rPath.Text AS CHAR) || ' ';
+						ELSE
+							SET cDiagnostics = CAST(rPath.Text AS CHAR) || ' ';
+						END IF;
+					END IF;
+					
+					SET cErrorNumber = cErrorNumber || ', ' || 
+							CAST(rPath.Number AS CHAR);
+					SET cSeverityLevel = rPath.Severity;			
+	
+					SET iInsertCount = 1;
+					SET iInsertCard = CARDINALITY(rPath.Insert[]);
+					
+					/*
+					   Collect details of any dynamic values for the exception.
+					   For example, for a ParserException, the node will 
+					   have for Insert fields, which will have the dynamic 
+					   values MessageSetID, MessageType, MessageFormat and Level
+					   These values are appended within paranthesis to the
+					   already captured Text.
+					   Example - "ImbRecoverableException caught from worker
+					   when attempting to write out the bitstream.
+					   (TDS_TestSet, 1, TDS, TDSFixedWidth)"
+					*/
+					
+					IF (iInsertCard <> 0) THEN					
+						SET cDiagnostics = cDiagnostics || '(';
+
+						WHILE (iInsertCount <= iInsertCard) DO
+
+							IF (iInsertCount = 1) THEN
+								SET cDiagnostics = cDiagnostics 
+									|| rPath.Insert.Text;
+							ELSE
+								SET cDiagnostics = cDiagnostics || ', ' 
+									|| rPath.Insert[iInsertCount].Text;
+							END IF;
+
+							SET iInsertCount = iInsertCount + 1;
+						END WHILE;
+
+						SET cDiagnostics = cDiagnostics || ')';
+					END IF;
+				END IF;
+	
+				SET iCount = iCount + 1;
+				
+				/*
+				   After capturing the Number, Severity, Text and Insert values
+				   in an Exception node,move to the last child, which will
+				   take you to the next exception node
+				*/
+	
+				MOVE rPath LASTCHILD;
+				SET cExceptionType = FIELDNAME(rPath);
+	
+			END WHILE;	
+			
+			/*
+			   For the last exception node, there will not be any child 
+			   exceptions. So the last child name will be Insert when the 
+			   while loop is exited.
+			   In the error message, the exception type is set as the name of
+			   last child exception node
+			*/
+			
+			MOVE rPath PARENT;
+			-- Populate the error XML with the evaluated values
+			SET outCmnBaseEvent.extendedDataElements[iExtendedElementCount].
+					(XMLNSC.Attribute)name = 'ErrorDetails';
+			SET outCmnBaseEvent.extendedDataElements[iExtendedElementCount].
+					ExceptionType = FIELDNAME(rPath);
+			
+			/*
+			   In the output XML, the field ErrorCode will have the error 
+			   number of last exception node in the ExceptionList tree.
+			   The field ErrorCodeExtn will have the concatenated list
+			   of all error numbers in the tree
+			*/
+			/* Spandana: Added below if condition to set the error code as the
+ 			first parameter for user gererated exceptions. */
+ 			/*Wli0000: Added code to trim error code if it is longer than 36 char */
+			IF FIELDNAME(rPath) = 'UserException' THEN
+				DECLARE tempErrorCode CHAR;
+				SET tempErrorCode= CAST(rPath.Insert[1].Text AS CHAR);
+				IF  LENGTH(tempErrorCode) > 36 THEN
+					SET tempErrorCode = RIGHT(tempErrorCode, 36);
+					SET outCmnBaseEvent.extendedDataElements[iExtendedElementCount].ErrorCode = tempErrorCode;
+				ELSE
+					SET outCmnBaseEvent.extendedDataElements[iExtendedElementCount].ErrorCode = tempErrorCode;
+				END IF;
+				-- SET outCmnBaseEvent.extendedDataElements[iExtendedElementCount].ErrorCode = 'POSLogException';	
+			ELSE
+			    SET outCmnBaseEvent.extendedDataElements[iExtendedElementCount].
+			    		ErrorCode = CAST(rPath.Number AS CHAR);
+			END IF;
+			
+			SET outCmnBaseEvent.extendedDataElements[iExtendedElementCount].
+				ErrorCodeExtn =  cErrorNumber;
+			SET outCmnBaseEvent.extendedDataElements[iExtendedElementCount].
+				SeverityLevel = cSeverityLevel;
+			SET outCmnBaseEvent.extendedDataElements[iExtendedElementCount].
+				ErrorSource = cLocation;
+	        SET outCmnBaseEvent.extendedDataElements[iExtendedElementCount].
+	        	ErrorDiagnostics = cDiagnostics;	
+			--Spandana: Added below logic to store Actual message 
+			IF(STOREMSG = 'Y') THEN
+				IF EXISTS(InputRoot.XMLNSC[]) THEN
+				    SET outCmnBaseEvent.extendedDataElements[iExtendedElementCount].
+				    	ActualMsg = InputRoot.XMLNSC ;
+				ELSEIF EXISTS(InputRoot.XMLNS[]) THEN  -- wli0000: 2020/03/09 added handling of XMLNS
+					SET outCmnBaseEvent.extendedDataElements[iExtendedElementCount].
+				    	ActualMsg = InputRoot.XMLNS ;
+				ELSEIF EXISTS(InputRoot.SOAP[]) THEN
+					SET outCmnBaseEvent.extendedDataElements[iExtendedElementCount].
+						ActualMsg = InputRoot.SOAP.Body ;
+				ELSEIF EXISTS(InputRoot.DFDL[]) THEN
+					DECLARE msgDfdl BLOB;
+					SET msgDfdl = BITSTREAM(InputRoot.DFDL);
+					DECLARE msgBitStream CHAR CAST(msgDfdl AS CHAR CCSID 1208);
+					SET outCmnBaseEvent.
+						extendedDataElements[iExtendedElementCount].
+							ActualMsg.(XML.CDataSection) =
+								msgBitStream;
+				ELSEIF EXISTS(InputRoot.JSON.Data[]) THEN
+					DECLARE msgBitStream BLOB;
+					SET msgBitStream = ASBITSTREAM(InputRoot.JSON.Data);
+					DECLARE msgJson CHAR CAST(msgBitStream AS CHAR CCSID 1208);
+					SET outCmnBaseEvent.
+						extendedDataElements[iExtendedElementCount].
+							ActualMsg.(XML.CDataSection) = msgJson;
+				--Spandana #V0.6: added below condition to capture input for MRM
+				ELSEIF EXISTS(InputRoot.MRM[]) THEN
+					DECLARE msgMrm BLOB;
+					SET msgMrm = BITSTREAM(InputRoot.MRM);
+					DECLARE msgBitStream CHAR CAST(msgMrm AS CHAR CCSID 1208);
+					SET outCmnBaseEvent.
+						extendedDataElements[iExtendedElementCount].
+							ActualMsg.(XML.CDataSection) =
+								msgBitStream;							
+				ELSE 
+					-- Variable to hold the message in character format
+					DECLARE msgBlob char
+					CAST(InputRoot.BLOB.BLOB AS 
+						CHARACTER CCSID 1208 ENCODING 546);
+					SET outCmnBaseEvent.
+						extendedDataElements[iExtendedElementCount].
+							ActualMsg.(XML.CDataSection) =
+								msgBlob;
+ 
+				END IF;
+			END IF;
+
+			SET iChildLevel = iChildLevel + 1;
+			SET iExtendedElementCount = iExtendedElementCount + 1;
+			MOVE rPath TO InputExceptionList.*[iChildLevel];
+			
+		END WHILE;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
