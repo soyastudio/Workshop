@@ -11,7 +11,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
 
@@ -68,9 +67,9 @@ public class XmlToAvroConverter {
     public static GenericData.Record createRecord(Schema schema, Node node) {
         GenericData.Record record = new GenericData.Record(schema);
         List<Schema.Field> fields = schema.getFields();
-        fields.forEach(e -> {
-            record.put(e.name(), create(e.name(), e.schema(), node));
-        });
+        for(Schema.Field field: fields) {
+        	record.put(field.name(), create(field.name(), field.schema(), node));
+        }
 
         return record;
     }
@@ -85,9 +84,9 @@ public class XmlToAvroConverter {
     private static GenericData.Record createEmptyRecord(Schema schema) {
         GenericData.Record record = new GenericData.Record(schema);
         List<Schema.Field> fields = schema.getFields();
-        fields.forEach(e -> {
-            record.put(e.name(), getDefaultValue(e.schema()));
-        });
+        for(Schema.Field field: fields) {
+        	record.put(field.name(), getDefaultValue(field.schema()));
+        }
         return record;
     }
 
@@ -204,8 +203,8 @@ public class XmlToAvroConverter {
 
         Collection<Object> result = new ArrayList<>();
         List<Node> children = getChildrenByName(node, name);
-        children.forEach(e -> {
-            Schema elementType = schema.getElementType();
+        for(Node e: children) {
+        	Schema elementType = schema.getElementType();
             if (Schema.Type.RECORD.equals(elementType.getType())) {
                 result.add(createRecord(elementType, e));
 
@@ -213,7 +212,7 @@ public class XmlToAvroConverter {
                 result.add(convert(e.getTextContent(), elementType));
 
             }
-        });
+        }
 
         return result;
     }

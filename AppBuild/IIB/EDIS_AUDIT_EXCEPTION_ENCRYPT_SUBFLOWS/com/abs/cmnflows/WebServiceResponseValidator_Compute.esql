@@ -1,0 +1,102 @@
+BROKER SCHEMA com.abs.cmnflows
+/*-----------------------------------------------------------------------------
+SUBFLOW NAME: WebServiceResponseValidator.subflow
+DESCRIPTION	: This is a common flow to all the flows for capturing error and
+			failure messages and check whether retry is eligible or not & Throw 
+			Exception messages to Input node
+AUTHOR		: Ravuri Hemanth Kumar Chowdary (TCS)
+CREATED DT	: 27/07/2018
+-------------------------------------------------------------------------------
+Program History
+Project	Release	Version	ChangeOwner			Date		Description
+------  ------  ------	----------- 		----------  -----------
+EDIS    Drop2	0.1		Hemanth Chowdary	27/07/2018	Initial Draft
+-----------------------------------------------------------------------------*/
+
+CREATE COMPUTE MODULE WebServiceResponseValidator_Compute
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- Copy input properties to output.
+		CALL CopyMessageHeaders();
+		
+		-- Declaring variables to store incoming values
+		DECLARE errorCode CHARACTER '';
+		DECLARE errorLine CHARACTER '';
+		DECLARE payLoadBlob CHARACTER '';
+		DECLARE payLoadXmlnsc CHARACTER '';
+		DECLARE payLoadJson CHARACTER '';
+		DECLARE payLoadSoap CHARACTER '';
+		
+		/*SET Environment.Variables.retryFlag = 'Y';*/
+		
+		IF EXISTS(InputExceptionList.RecoverableException[]) THEN
+			SET Environment.Exception = InputExceptionList;
+		END IF;	
+		
+		/*Checks whether the HTTP Response Headers is present or not. 
+		If present capture the error codes and payload from the 
+		response message*/
+		
+		IF EXISTS(InputRoot.HTTPResponseHeader[]) THEN
+			SET errorCode = InputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code";
+			SET errorLine = InputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Line";
+				
+		/* convert the incoming message data into character */
+			IF EXISTS( InputRoot.BLOB[] ) THEN
+				DECLARE blobMsg CHAR '';
+				SET blobMsg =  CAST(InputRoot.BLOB.BLOB AS 
+					CHARACTER CCSID InputRoot.Properties.CodedCharSetId 
+					ENCODING InputRoot.Properties.Encoding);
+				SET payLoadBlob = blobMsg;
+			ELSEIF EXISTS( InputRoot.XMLNSC[] ) THEN
+				DECLARE msgBitStream BLOB '';
+				SET msgBitStream = ASBITSTREAM(InputRoot.XMLNSC);
+				DECLARE xmlnscMsg CHARACTER
+					CAST(msgBitStream AS CHAR CCSID 1208);
+				SET payLoadXmlnsc = xmlnscMsg;
+			ELSEIF EXISTS( InputRoot.JSON.Data[] ) THEN
+				DECLARE msgBitStream BLOB '';
+				SET msgBitStream = ASBITSTREAM(InputRoot.JSON.Data);
+				DECLARE jsonMsg CHARACTER
+					CAST(msgBitStream AS CHAR CCSID 1208);
+				SET payLoadJson = jsonMsg;
+			ELSEIF EXISTS ( InputRoot.SOAP[] ) THEN
+				DECLARE msgBitStream BLOB '';
+				SET msgBitStream = ASBITSTREAM(InputRoot.SOAP.Body);
+				DECLARE soapMsg CHARACTER
+					CAST(msgBitStream AS CHAR CCSID 1208);
+				SET payLoadJson = soapMsg;
+			END IF;
+			
+			THROW USER EXCEPTION VALUES 
+				(errorCode,errorLine,payLoadBlob,payLoadXmlnsc,
+				payLoadJson,payLoadSoap);
+		
+		ELSE
+			/*If not present, set retry flag = Y accordingly and throw  
+		exception to Input node */
+			SET Environment.Variables.retryFlag = 'Y';
+		 	THROW USER EXCEPTION VALUES
+				('RT0001','In Correct URL or service Down','Flow Name = '
+				|| Environment.Variables.CMPNT.APPLICATION_NAME);
+		END IF;
+		RETURN FALSE;
+	END;
+/*-----------------------------------------------------------------------------
+PROCEDURE NAME : CopyMessageHeaders
+DESCRIPTION : CopyMessageHeaders
+-----------------------------------------------------------------------------*/
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;
