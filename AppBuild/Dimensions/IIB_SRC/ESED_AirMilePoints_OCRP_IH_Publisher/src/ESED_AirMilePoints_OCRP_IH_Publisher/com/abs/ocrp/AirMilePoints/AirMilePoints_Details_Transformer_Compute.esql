@@ -1,0 +1,211 @@
+BROKER SCHEMA com.abs.ocrp.AirMilePoints
+
+CREATE COMPUTE MODULE AirMilePoints_Details_Transformer_Compute
+
+	-- Declare UDPs
+	DECLARE VERSION_ID EXTERNAL CHARACTER '1.0.0';
+	DECLARE SYSTEM_ENVIRONMENT_CODE EXTERNAL CHARACTER 'PROD';
+
+	-- Declare Namespace
+	DECLARE Abs NAMESPACE 'https://collab.safeway.com/it/architecture/info/default.aspx';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- Declare Input Message Root
+		DECLARE _inputRootNode REFERENCE TO InputRoot.JSON.Data;
+
+		-- Declare Output Message Root
+		CREATE LASTCHILD OF OutputRoot DOMAIN 'XMLNSC';
+
+		DECLARE GetAirMilePoints_ REFERENCE TO OutputRoot.XMLNSC;
+		CREATE LASTCHILD OF OutputRoot.XMLNSC AS GetAirMilePoints_ TYPE XMLNSC.Folder NAME 'GetAirMilePoints';
+		SET OutputRoot.XMLNSC.GetAirMilePoints.(XMLNSC.NamespaceDecl)xmlns:Abs=Abs;
+
+			-- GetAirMilePoints/DocumentData
+			DECLARE DocumentData_ REFERENCE TO GetAirMilePoints_;
+			CREATE LASTCHILD OF GetAirMilePoints_ AS DocumentData_ TYPE XMLNSC.Folder NAME 'DocumentData';
+
+				-- GetAirMilePoints/DocumentData/Document
+				DECLARE Document_ REFERENCE TO DocumentData_;
+				CREATE LASTCHILD OF DocumentData_ AS Document_ TYPE XMLNSC.Folder NAME 'Abs:Document';
+
+					-- GetAirMilePoints/DocumentData/Document/@VersionId
+					SET Document_.(XMLNSC.Attribute)VersionId = VERSION_ID;
+
+					-- GetAirMilePoints/DocumentData/Document/@SystemEnvironmentCd
+					SET Document_.(XMLNSC.Attribute)SystemEnvironmentCd = SYSTEM_ENVIRONMENT_CODE;
+
+					-- GetAirMilePoints/DocumentData/Document/DocumentID
+					SET Document_.(XMLNSC.Field)Abs:DocumentID = 'AirMilePoints';
+
+					-- GetAirMilePoints/DocumentData/Document/AlternateDocumentID
+					SET Document_.(XMLNSC.Field)Abs:AlternateDocumentID = InputLocalEnvironment.Kafka.Input.topicName ||'_'||InputLocalEnvironment.Kafka.Input.partition||'_'||InputLocalEnvironment.Kafka.Input.offset||'_'||CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT 'YYYYMMddHHmmssSSSSSS');
+
+					-- GetAirMilePoints/DocumentData/Document/DocumentNm
+					SET Document_.(XMLNSC.Field)Abs:DocumentNm = 'AirMilePoints';
+
+					-- GetAirMilePoints/DocumentData/Document/CreationDt
+					SET Document_.(XMLNSC.Field)Abs:CreationDt = CURRENT_TIMESTAMP;
+
+					-- GetAirMilePoints/DocumentData/Document/Description
+					SET Document_.(XMLNSC.Field)Abs:Description = 'AirMilePoints';
+
+					-- GetAirMilePoints/DocumentData/Document/SourceApplicationCd
+					SET Document_.(XMLNSC.Field)Abs:SourceApplicationCd = 'OCRP';
+
+					-- GetAirMilePoints/DocumentData/Document/TargetApplicationCd
+					SET Document_.(XMLNSC.Field)Abs:TargetApplicationCd = 'EDIS';
+
+					-- GetAirMilePoints/DocumentData/Document/InternalFileTransferInd
+					SET Document_.(XMLNSC.Field)Abs:InternalFileTransferInd = 'Y';
+
+					-- GetAirMilePoints/DocumentData/Document/InterchangeDate
+					SET Document_.(XMLNSC.Field)Abs:InterchangeDate = CURRENT_DATE;
+
+					-- GetAirMilePoints/DocumentData/Document/InterchangeTime
+					SET Document_.(XMLNSC.Field)Abs:InterchangeTime = CURRENT_TIMESTAMP;
+
+					-- GetAirMilePoints/DocumentData/Document/DataClassification
+					DECLARE DataClassification_ REFERENCE TO Document_;
+					CREATE LASTCHILD OF Document_ AS DataClassification_ TYPE XMLNSC.Folder NAME 'Abs:DataClassification';
+
+						-- GetAirMilePoints/DocumentData/Document/DataClassification/DataClassificationLevel
+						DECLARE DataClassificationLevel_ REFERENCE TO DataClassification_;
+						CREATE LASTCHILD OF DataClassification_ AS DataClassificationLevel_ TYPE XMLNSC.Folder NAME 'Abs:DataClassificationLevel';
+
+							-- GetAirMilePoints/DocumentData/Document/DataClassification/DataClassificationLevel/Code
+							SET DataClassificationLevel_.(XMLNSC.Field)Abs:Code = 'Internal';
+
+						-- GetAirMilePoints/DocumentData/Document/DataClassification/BusinessSensitivityLevel
+						DECLARE BusinessSensitivityLevel_ REFERENCE TO DataClassification_;
+						CREATE LASTCHILD OF DataClassification_ AS BusinessSensitivityLevel_ TYPE XMLNSC.Folder NAME 'Abs:BusinessSensitivityLevel';
+
+							-- GetAirMilePoints/DocumentData/Document/DataClassification/BusinessSensitivityLevel/Code
+							SET BusinessSensitivityLevel_.(XMLNSC.Field)Abs:Code = 'Low';
+
+						-- GetAirMilePoints/DocumentData/Document/DataClassification/PHIdataInd
+						SET DataClassification_.(XMLNSC.Field)Abs:PHIdataInd = 'N';
+
+						-- GetAirMilePoints/DocumentData/Document/DataClassification/PCIdataInd
+						SET DataClassification_.(XMLNSC.Field)Abs:PCIdataInd = 'N';
+
+						-- GetAirMilePoints/DocumentData/Document/DataClassification/PIIdataInd
+						SET DataClassification_.(XMLNSC.Field)Abs:PIIdataInd = 'N';
+
+				-- GetAirMilePoints/DocumentData/DocumentAction
+				DECLARE DocumentAction_ REFERENCE TO DocumentData_;
+				CREATE LASTCHILD OF DocumentData_ AS DocumentAction_ TYPE XMLNSC.Folder NAME 'Abs:DocumentAction';
+
+					-- GetAirMilePoints/DocumentData/DocumentAction/ActionTypeCd
+					SET DocumentAction_.(XMLNSC.Field)Abs:ActionTypeCd = 'UPDATE';
+
+					-- GetAirMilePoints/DocumentData/DocumentAction/RecordTypeCd
+					SET DocumentAction_.(XMLNSC.Field)Abs:RecordTypeCd = 'CHANGE';
+
+			-- GetAirMilePoints/AirMilePointsData
+			DECLARE AirMilePointsData_ REFERENCE TO GetAirMilePoints_;
+			CREATE LASTCHILD OF GetAirMilePoints_ AS AirMilePointsData_ TYPE XMLNSC.Folder NAME 'AirMilePointsData';
+			
+				-- GetAirMilePoints/AirMilePointsData/AirMilePointsSourceType
+				DECLARE AirMilePointsSourceType_ REFERENCE TO AirMilePointsData_;
+				CREATE LASTCHILD OF AirMilePointsData_ AS AirMilePointsSourceType_ TYPE XMLNSC.Folder NAME 'Abs:AirMilePointsSourceType';
+				
+					-- GetAirMilePoints/AirMilePointsData/AirMilePointsSourceType/Code
+					SET AirMilePointsSourceType_.(XMLNSC.Field)Abs:Code = 'DETAIL';
+
+				-- GetAirMilePoints/AirMilePointsData/AirMilePointsDetail
+				DECLARE AirMilePointsDetail_ REFERENCE TO AirMilePointsData_;
+				CREATE LASTCHILD OF AirMilePointsData_ AS AirMilePointsDetail_ TYPE XMLNSC.Folder NAME 'Abs:AirMilePointsDetail';
+
+					-- GetAirMilePoints/AirMilePointsData/AirMilePointsDetail/BatchId
+					SET AirMilePointsDetail_.(XMLNSC.Field)Abs:BatchId = _inputRootNode.extract_batch_id;
+
+					-- GetAirMilePoints/AirMilePointsData/AirMilePointsDetail/HouseholdId
+					SET AirMilePointsDetail_.(XMLNSC.Field)Abs:HouseholdId = _inputRootNode.hhid;
+
+					-- GetAirMilePoints/AirMilePointsData/AirMilePointsDetail/TransactionType
+					DECLARE TransactionType_ REFERENCE TO AirMilePointsDetail_;
+					CREATE LASTCHILD OF AirMilePointsDetail_ AS TransactionType_ TYPE XMLNSC.Folder NAME 'Abs:TransactionType';
+
+						-- GetAirMilePoints/AirMilePointsData/AirMilePointsDetail/TransactionType/TransactionId
+						SET TransactionType_.(XMLNSC.Field)Abs:TransactionId = _inputRootNode.reward_transaction_id;
+
+						-- GetAirMilePoints/AirMilePointsData/AirMilePointsDetail/TransactionType/TransactionDt
+						SET TransactionType_.(XMLNSC.Field)Abs:TransactionDt = _inputRootNode.transaction_date;
+
+						-- GetAirMilePoints/AirMilePointsData/AirMilePointsDetail/TransactionType/TransactionTs
+						SET TransactionType_.(XMLNSC.Field)Abs:TransactionTs = _inputRootNode.transaction_ts;
+						
+						-- GetAirMilePoints/AirMilePointsData/AirMilePointsDetail/TransactionType/TransactionReasonCd
+						DECLARE TransactionReasonCd_ REFERENCE TO TransactionType_;
+						CREATE LASTCHILD OF TransactionType_ AS TransactionReasonCd_ TYPE XMLNSC.Folder NAME 'Abs:TransactionReasonCd';
+						
+							-- GetAirMilePoints/AirMilePointsData/AirMilePointsDetail/TransactionType/TransactionTypeCd/Code
+							SET TransactionReasonCd_.(XMLNSC.Field)Abs:Code = _inputRootNode.reason_code;
+
+						-- GetAirMilePoints/AirMilePointsData/AirMilePointsDetail/TransactionType/AltTransaction
+						DECLARE AltTransaction_ REFERENCE TO TransactionType_;
+						CREATE LASTCHILD OF TransactionType_ AS AltTransaction_ TYPE XMLNSC.Folder NAME 'Abs:AltTransaction';
+
+							-- GetAirMilePoints/AirMilePointsData/AirMilePointsDetail/TransactionType/AltTransaction/AltTransactionId
+							SET AltTransaction_.(XMLNSC.Field)Abs:AltTransactionId = _inputRootNode.reimbursement_transaction_id;
+
+							-- GetAirMilePoints/AirMilePointsData/AirMilePointsDetail/TransactionType/AltTransaction/AltTransactionDtTs
+							SET AltTransaction_.(XMLNSC.Field)Abs:AltTransactionDtTs = _inputRootNode.reimbursement_ts;
+
+					-- GetAirMilePoints/AirMilePointsData/AirMilePointsDetail/AttachmentType
+					IF _inputRootNode.file_name IS NOT NULL THEN
+					
+						DECLARE AttachmentType_ REFERENCE TO AirMilePointsDetail_;
+						CREATE LASTCHILD OF AirMilePointsDetail_ AS AttachmentType_ TYPE XMLNSC.Folder NAME 'Abs:AttachmentType';
+
+							-- GetAirMilePoints/AirMilePointsData/AirMilePointsDetail/AttachmentType/FileNm
+							SET AttachmentType_.(XMLNSC.Field)FileNm = _inputRootNode.file_name;
+								
+					END IF;
+					
+					IF _inputRootNode.handback_file IS NOT NULL THEN
+					
+						DECLARE AttachmentType2_ REFERENCE TO AirMilePointsDetail_;
+						CREATE LASTCHILD OF AirMilePointsDetail_ AS AttachmentType2_ TYPE XMLNSC.Folder NAME 'Abs:AttachmentType';
+						
+							-- GetAirMilePoints/AirMilePointsData/AirMilePointsDetail/AttachmentType/FileNm
+							SET AttachmentType2_.(XMLNSC.Field)FileNm = _inputRootNode.handback_file;
+								
+					END IF;
+
+					-- GetAirMilePoints/AirMilePointsData/AirMilePointsDetail/AirMileProgram
+					DECLARE AirMileProgram_ REFERENCE TO AirMilePointsDetail_;
+					CREATE LASTCHILD OF AirMilePointsDetail_ AS AirMileProgram_ TYPE XMLNSC.Folder NAME 'Abs:AirMileProgram';
+
+						-- GetAirMilePoints/AirMilePointsData/AirMilePointsDetail/AirMileProgram/AirMileProgramId
+						SET AirMileProgram_.(XMLNSC.Field)Abs:AirMileProgramId = _inputRootNode.alaska_airlines_mileage_plan_number;
+
+						-- GetAirMilePoints/AirMilePointsData/AirMilePointsDetail/AirMileProgram/AirMileTier
+						DECLARE AirMileTier_ REFERENCE TO AirMileProgram_;
+						CREATE LASTCHILD OF AirMileProgram_ AS AirMileTier_ TYPE XMLNSC.Folder NAME 'Abs:AirMileTier';
+
+							-- GetAirMilePoints/AirMilePointsData/AirMilePointsDetail/AirMileProgram/AirMileTier/AirMilePointQty
+							SET AirMileTier_.(XMLNSC.Field)Abs:AirMilePointQty = _inputRootNode.transaction_points;
+
+					-- GetAirMilePoints/AirMilePointsData/AirMilePointsDetail/AuditData
+					DECLARE AuditData_ REFERENCE TO AirMilePointsDetail_;
+					CREATE LASTCHILD OF AirMilePointsDetail_ AS AuditData_ TYPE XMLNSC.Folder NAME 'Abs:AuditData';
+
+						-- GetAirMilePoints/AirMilePointsData/AirMilePointsDetail/AuditData/CreateDtTm
+						SET AuditData_.(XMLNSC.Field)Abs:CreateDtTm = _inputRootNode.extract_ts;
+
+						-- GetAirMilePoints/AirMilePointsData/AirMilePointsDetail/AuditData/CreateTs
+						SET AuditData_.(XMLNSC.Field)Abs:CreateTs = _inputRootNode.create_ts;
+
+						-- GetAirMilePoints/AirMilePointsData/AirMilePointsDetail/AuditData/CreateUserId
+						SET AuditData_.(XMLNSC.Field)Abs:CreateUserId = _inputRootNode.create_user;
+
+						-- GetAirMilePoints/AirMilePointsData/AirMilePointsDetail/AuditData/UpdateTs
+						SET AuditData_.(XMLNSC.Field)Abs:UpdateTs = _inputRootNode.modified_ts;
+
+						-- GetAirMilePoints/AirMilePointsData/AirMilePointsDetail/AuditData/UpdateUserId
+						SET AuditData_.(XMLNSC.Field)Abs:UpdateUserId = _inputRootNode.modified_user;
+
+	END;
+END MODULE;

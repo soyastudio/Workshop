@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ComIbmWSInput.msgnode="ComIbmWSInput.msgnode" xmlns:ComIbmWSReply.msgnode="ComIbmWSReply.msgnode" xmlns:com_abs_edis_commons_AVRO_SCHEMA_UNZIP.subflow="com/abs/edis/commons/AVRO_SCHEMA_UNZIP.subflow" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:eflow="http://www.ibm.com/wbi/2005/eflow" xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility" nsURI="com/abs/edis/commons/AVRO_SCHEMA_UNZIP_TEST.msgflow" nsPrefix="com_abs_edis_commons_AVRO_SCHEMA_UNZIP_TEST.msgflow">
+  <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1">
+    <eSuperTypes href="http://www.ibm.com/wbi/2005/eflow#//FCMBlock"/>
+    <translation xmi:type="utility:TranslatableString" key="AVRO_SCHEMA_UNZIP_TEST" bundleName="com/abs/edis/commons/AVRO_SCHEMA_UNZIP_TEST" pluginId="EDIS_IIB_COMMONS_TEST"/>
+    <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/EDIS_IIB_COMMONS_TEST/icons/full/obj16/AVRO_SCHEMA_UNZIP_TEST.gif"/>
+    <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/EDIS_IIB_COMMONS_TEST/icons/full/obj30/AVRO_SCHEMA_UNZIP_TEST.gif"/>
+    <composition>
+      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="109,181" URLSpecifier="/avsc-unzip" messageDomainProperty="BLOB">
+        <translation xmi:type="utility:ConstantString" string="HTTP Input"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSReply.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="792,177">
+        <translation xmi:type="utility:ConstantString" string="HTTP Reply"/>
+      </nodes>
+      <nodes xmi:type="com_abs_edis_commons_AVRO_SCHEMA_UNZIP.subflow:FCMComposite_1" xmi:id="FCMComposite_1_3" location="399,177">
+        <translation xmi:type="utility:ConstantString" string="AVRO_SCHEMA_UNZIP"/>
+      </nodes>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_1" targetNode="FCMComposite_1_3" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_2" targetNode="FCMComposite_1_2" sourceNode="FCMComposite_1_3" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.in"/>
+    </composition>
+    <propertyOrganizer/>
+    <stickyBoard/>
+  </eClassifiers>
+</ecore:EPackage>
