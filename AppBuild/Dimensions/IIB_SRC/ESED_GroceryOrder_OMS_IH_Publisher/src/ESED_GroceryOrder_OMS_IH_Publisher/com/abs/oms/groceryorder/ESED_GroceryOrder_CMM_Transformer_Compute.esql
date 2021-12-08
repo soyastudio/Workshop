@@ -1288,7 +1288,7 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 									SET DeliveredItem_.(XMLNSC.Field)Abs:ItemTaxAmt = _fulfilled_upc.itemPrice.itemTotalTax;
 
 									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/AppliedDiscountAmt
-									SET DeliveredItem_.(XMLNSC.Field)Abs:AppliedDiscountAmt = _orderLine.discountsApplied;
+									SET DeliveredItem_.(XMLNSC.Field)Abs:AppliedDiscountAmt = CAST(_orderLine.discountsApplied AS DECIMAL(14, 2));
 
 									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CurrencyCd
 									SET DeliveredItem_.(XMLNSC.Field)Abs:CurrencyCd = _orderLine.suppliedUnitPrice.currency;
@@ -1303,7 +1303,7 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 									SET DeliveredItem_.(XMLNSC.Field)Abs:LinkPLUNbr = _fulfilled_upc.itemPrice.linkPluNumber;
 
 									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CouponPLUNbr
-									SET DeliveredItem_.(XMLNSC.Field)Abs:CouponPLUNbr = _fulfilled_upc.itemPrice.itemPluNumber;
+									-- SET DeliveredItem_.(XMLNSC.Field)Abs:CouponPLUNbr = _fulfilled_upc.itemPrice.itemPluNumber;
 
 									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/PromotionPriceAmt
 									SET DeliveredItem_.(XMLNSC.Field)Abs:PromotionPriceAmt = CAST(_fulfilled_upc.itemPrice.netPromotionAmount AS DECIMAL(14, 2));

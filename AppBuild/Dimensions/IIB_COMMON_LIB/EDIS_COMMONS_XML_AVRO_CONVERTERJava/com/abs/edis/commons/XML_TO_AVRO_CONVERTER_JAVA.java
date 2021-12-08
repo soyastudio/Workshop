@@ -13,14 +13,27 @@ import com.ibm.broker.plugin.MbUserException;
 
 public class XML_TO_AVRO_CONVERTER_JAVA extends MbJavaComputeNode {
 	private static final String AVRO_SCHEMA = "AVRO_SCHEMA";
-
+	private static final String AVRO_SCHEMA_ID = "AVRO_SCHEMA_ID";
+	private static final String AVRO_ENCODER = "AVRO_ENCODER";
+	
 	private Schema schema;
+	private int id;
+	private String format = XmlToAvroConverter.PLAIN_JSON_FORMAT;
 
 	@Override
 	public void onInitialize() throws MbException {
 		super.onInitialize();
 		String attr = (String) this.getUserDefinedAttribute(AVRO_SCHEMA);
+		
 		this.schema = XmlToAvroConverter.parse(attr.getBytes());
+		
+		if(this.getUserDefinedAttribute(AVRO_SCHEMA_ID) != null){
+			this.id = (Integer)this.getUserDefinedAttribute(AVRO_SCHEMA_ID);
+		}
+		
+		if(this.getUserDefinedAttribute(AVRO_ENCODER) != null) {
+			this.format = (String) getUserDefinedAttribute(AVRO_ENCODER);
+		}
 	}
 
 	public void evaluate(MbMessageAssembly inAssembly) throws MbException {
@@ -41,9 +54,9 @@ public class XML_TO_AVRO_CONVERTER_JAVA extends MbJavaComputeNode {
 					.createElementAsLastChild(
 							MbElement.TYPE_NAME_VALUE,
 							"BLOB",
-							XmlToAvroConverter.toJson(inMessage
+							XmlToAvroConverter.convert(inMessage
 									.getRootElement().getLastChild()
-									.getLastChild().getDOMNode(), schema));
+									.getLastChild().getDOMNode(), schema, id, format));
 
 			// End of user code
 			// ----------------------------------------------------------

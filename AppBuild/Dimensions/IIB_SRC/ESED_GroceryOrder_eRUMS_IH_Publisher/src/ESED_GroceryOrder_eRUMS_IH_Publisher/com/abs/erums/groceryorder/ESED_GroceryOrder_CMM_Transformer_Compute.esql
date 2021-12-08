@@ -541,8 +541,8 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 
 							IF _tender.tenderType = 'REFUND' THEN
 								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Refund
-								DECLARE Refund_ REFERENCE TO Tender_;
-								CREATE LASTCHILD OF Tender_ AS Refund_ TYPE XMLNSC.Folder NAME 'Abs:Refund';
+								DECLARE Refund_ REFERENCE TO GroceryOrderHeader_;
+								CREATE LASTCHILD OF GroceryOrderHeader_ AS Refund_ TYPE XMLNSC.Folder NAME 'Abs:CustomerRefund';
 
 									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/Refund/RefundId
 									SET Refund_.(XMLNSC.Field)Abs:RefundId = _tender.refundId;
@@ -1106,8 +1106,8 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 									-- SET DeliveredItem_.(XMLNSC.Field)Abs:FulfillmentOrderId = _subOrder.fulfillmentOrderNumber;
 
 									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item
-									DECLARE Item_ REFERENCE TO DeliveredItem_;
-									CREATE LASTCHILD OF DeliveredItem_ AS Item_ TYPE XMLNSC.Folder NAME 'Abs:Item';
+									-- DECLARE Item_ REFERENCE TO DeliveredItem_;
+									-- CREATE LASTCHILD OF DeliveredItem_ AS Item_ TYPE XMLNSC.Folder NAME 'Abs:Item';
 
 										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item/UPC
 										-- DECLARE UPC_ REFERENCE TO Item_;
@@ -1120,7 +1120,7 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 											-- SET UPC_.(XMLNSC.Field)Abs:UPCTxt = _fulfilled_upc.upcId;
 
 										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item/SystemSpecificItemId
-										SET Item_.(XMLNSC.Field)Abs:SystemSpecificItemId = _orderLine.itemId;
+										-- SET Item_.(XMLNSC.Field)Abs:SystemSpecificItemId = _orderLine.itemId;
 
 										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item/InternalItemId
 										-- SET Item_.(XMLNSC.Field)Abs:InternalItemId = _fulfilled_upc.itemPrice.itemCode;
@@ -1130,7 +1130,7 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 										-- SET Item_.(XMLNSC.Field)Abs:PLUCd = _fulfilled_upc.itemPrice.itemPluNumber;
 
 										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/Item/BaseProductNbr
-										SET Item_.(XMLNSC.Field)Abs:BaseProductNbr = _orderLine.itemId;
+										-- SET Item_.(XMLNSC.Field)Abs:BaseProductNbr = _orderLine.itemId;
 
 									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/SubstitutedItemInd
 									-- SET DeliveredItem_.(XMLNSC.Field)Abs:SubstitutedItemInd = _fulfilled_upc.isSubstituted;
@@ -1199,16 +1199,16 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 									-- SET DeliveredItem_.(XMLNSC.Field)Abs:PriceEffectiveEndDtTm = _fulfilled_upc.itemPrice.endDate;
 
 									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/ItemTaxAmt
-									-- SET DeliveredItem_.(XMLNSC.Field)Abs:ItemTaxAmt = _fulfilled_upc.itemPrice.itemTotalTax;
+									SET DeliveredItem_.(XMLNSC.Field)Abs:ItemTaxAmt = _orderLine.itemTotalTax;
 
 									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/AppliedDiscountAmt
-									SET DeliveredItem_.(XMLNSC.Field)Abs:AppliedDiscountAmt = _orderLine.discountsApplied;
+									SET DeliveredItem_.(XMLNSC.Field)Abs:AppliedDiscountAmt = CAST(_orderLine.discountsApplied AS DECIMAL(14, 2));
 
 									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/CurrencyCd
 									SET DeliveredItem_.(XMLNSC.Field)Abs:CurrencyCd = _orderLine.suppliedUnitPrice.currency;
 
 									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/RegulatedItemInd
-									SET DeliveredItem_.(XMLNSC.Field)Abs:RegulatedItemInd = _orderLine.isRegulatedItem;
+									-- SET DeliveredItem_.(XMLNSC.Field)Abs:RegulatedItemInd = _orderLine.isRegulatedItem;
 
 									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/SubstitutedItemInd
 									-- SET DeliveredItem_.(XMLNSC.Field)Abs:SubstitutedItemInd = _fulfilled_upc.isSubstituted;

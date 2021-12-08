@@ -1,13 +1,17 @@
-package com.abs.edis.commons;
+package com.abs.edis.schema;
 
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParser;
+import io.confluent.kafka.serializers.AbstractKafkaAvroSerializer;
+import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDe;
+import io.confluent.kafka.serializers.KafkaAvroSerializer;
+import io.confluent.kafka.serializers.NonRecordContainer;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.generic.GenericDatumWriter;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.*;
+import org.apache.avro.specific.SpecificDatumWriter;
+import org.apache.avro.specific.SpecificRecord;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -25,53 +29,17 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-public class XmlToAvroConverter {
-    public static final String AVRO_CONFLUENT_FORMAT = "AVRO_CONFLUENT";
-    public static final String AVRO_BINARY_FORMAT = "AVRO_BINARY";
-    public static final String AVRO_JSON_FORMAT = "AVRO_JSON";
-    public static final String PLAIN_JSON_FORMAT = "PLAIN_JSON";
+public class XmlToAvroConverter2 {
 
     private static final String ALPHABET = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz";
     private static final byte MAGIC_BYTE = 0;
     private static final int ID_SIZE = 4;
-    
-    private XmlToAvroConverter() {
+
+    private XmlToAvroConverter2() {
     }
 
     public static Schema parse(byte[] data) {
         return new Schema.Parser().parse(unzip(data));
-    }
-
-    public static byte[] convert(Node xml, Schema schema, int id, String format) throws IOException, ParserConfigurationException, SAXException {
-
-        GenericData.Record record = createRecord(schema, xml);
-        if (AVRO_CONFLUENT_FORMAT.equalsIgnoreCase(format)) {
-            return toAvroConfluent(record, schema, id);
-
-        } else if (AVRO_BINARY_FORMAT.equalsIgnoreCase(format)) {
-            return toAvroBinary(record, schema);
-
-        } else if (AVRO_JSON_FORMAT.equalsIgnoreCase(format)) {
-            return toAvroJson(record, schema);
-
-        } else {
-            return toJson(record);
-        }
-    }
-
-    public static String read(byte[] data, Schema schema, String format) throws IOException {
-        if (AVRO_CONFLUENT_FORMAT.equalsIgnoreCase(format)) {
-            return fromAvroConfluent(data, schema).toString();
-
-        } else if (AVRO_BINARY_FORMAT.equalsIgnoreCase(format)) {
-            return fromAvroBinary(data, schema).toString();
-
-        } else if (AVRO_JSON_FORMAT.equalsIgnoreCase(format)) {
-            return fromAvroJson(data, schema).toString();
-
-        } else {
-            return fromJson(data);
-        }
     }
 
     public static byte[] zip(final String str) {
@@ -89,110 +57,14 @@ public class XmlToAvroConverter {
         }
     }
 
-    public static String unzip(final byte[] data) {
-        if ((data == null) || (data.length == 0)) {
-            throw new IllegalArgumentException("Cannot unzip null or empty bytes");
-        }
-
-        byte[] compressed = Base64.getDecoder().decode(data);
-
-        if (!isZipped(compressed)) {
-            return new String(compressed);
-        }
-
-        try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(compressed)) {
-            try (GZIPInputStream gzipInputStream = new GZIPInputStream(byteArrayInputStream)) {
-                try (InputStreamReader inputStreamReader = new InputStreamReader(gzipInputStream, StandardCharsets.UTF_8)) {
-                    try (BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
-                        StringBuilder output = new StringBuilder();
-                        String line;
-                        while ((line = bufferedReader.readLine()) != null) {
-                            output.append(line);
-                        }
-                        return output.toString();
-                    }
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to unzip content", e);
-        }
+    public static byte[] convert(Node xml, Schema schema) throws IOException, ParserConfigurationException, SAXException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        write(createRecord(schema, xml), schema, outputStream);
+        return outputStream.toByteArray();
     }
 
-    private static byte[] toJson(GenericData.Record record) {
-        return new GsonBuilder().setPrettyPrinting().create()
-                .toJson(JsonParser.parseString(record.toString()))
-                .getBytes();
-    }
 
-    private static String fromJson(byte[] data) {
-        return new String(data);
-    }
 
-    private static byte[] toAvroConfluent(GenericData.Record record, Schema schema, int id) throws IOException, ParserConfigurationException, SAXException {
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        out.write(MAGIC_BYTE);
-        out.write(ByteBuffer.allocate(ID_SIZE).putInt(id).array());
-
-        BinaryEncoder encoder = EncoderFactory.get().directBinaryEncoder(out, null);
-        DatumWriter writer = new GenericDatumWriter(schema);
-        writer.write(record, encoder);
-        encoder.flush();
-        out.close();
-
-        return out.toByteArray();
-    }
-
-    private static GenericRecord fromAvroConfluent(byte[] data, Schema schema) throws IOException {
-        DatumReader<GenericRecord> datumReader = new GenericDatumReader<GenericRecord>();
-        datumReader.setSchema(schema);
-
-        ByteBuffer buffer = ByteBuffer.wrap(data);
-        int length = buffer.limit() - 1 - ID_SIZE;
-        byte[] bytes = new byte[length];
-        for(int i = 0; i < length; i ++) {
-        	bytes[i] = data[i + ID_SIZE];
-        }
-        
-        //buffer.get(bytes, 4, length);
-
-        Decoder decoder = DecoderFactory.get().directBinaryDecoder(new ByteArrayInputStream(bytes), null);
-        return datumReader.read(null, decoder);
-    }
-
-    private static byte[] toAvroBinary(GenericData.Record record, Schema schema) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        GenericDatumWriter<GenericRecord> writer = new GenericDatumWriter<>(schema);
-        Encoder encoder = EncoderFactory.get().binaryEncoder(out, null);
-        writer.write(record, encoder);
-        encoder.flush();
-        out.close();
-        return out.toByteArray();
-    }
-
-    private static GenericRecord fromAvroBinary(byte[] data, Schema schema) throws IOException {
-        DatumReader<GenericRecord> datumReader = new GenericDatumReader<GenericRecord>();
-        datumReader.setSchema(schema);
-        Decoder decoder = DecoderFactory.get().binaryDecoder(data, null);
-        return datumReader.read(null, decoder);
-    }
-
-    private static byte[] toAvroJson(GenericData.Record record, Schema schema) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        GenericDatumWriter<GenericRecord> writer = new GenericDatumWriter<>(schema);
-        Encoder encoder = EncoderFactory.get().jsonEncoder(schema, out);
-        writer.write(record, encoder);
-        encoder.flush();
-        out.close();
-        return out.toByteArray();
-    }
-
-    private static GenericRecord fromAvroJson(byte[] data, Schema schema) throws IOException {
-        DatumReader<GenericRecord> datumReader = new GenericDatumReader<GenericRecord>();
-        datumReader.setSchema(schema);
-        Decoder decoder = DecoderFactory.get().jsonDecoder(schema, new ByteArrayInputStream(data));
-        return datumReader.read(null, decoder);
-    }
 
     public static GenericData.Record createRecord(Schema schema, Node node) {
         GenericData.Record record = new GenericData.Record(schema);
@@ -318,10 +190,12 @@ public class XmlToAvroConverter {
     private static Object generateUnion(String name, Schema type, Node node) {
         List<Node> children = getChildrenByName(node, name);
         if (children.size() > 0) {
-            List<Schema> schemas = type.getTypes();
-            for (Schema sc : schemas) {
-                if (!Schema.Type.NULL.equals(sc.getType())) {
-                    return create(name, sc, node);
+            for (Node n : children) {
+                List<Schema> schemas = type.getTypes();
+                for (Schema sc : schemas) {
+                    if (!Schema.Type.NULL.equals(sc.getType())) {
+                        return create(name, sc, node);
+                    }
                 }
             }
         }
@@ -470,14 +344,46 @@ public class XmlToAvroConverter {
         return builder.toString();
     }
 
-    private static void write(GenericRecord record, Schema schema, OutputStream out) throws IOException {
+    private static void write(GenericRecord record, Schema schema, OutputStream outputStream) throws IOException {
         GenericDatumWriter<GenericRecord> writer = new GenericDatumWriter<>(schema);
-        Encoder encoder = EncoderFactory.get().binaryEncoder(out, null);
-        //Encoder encoder = EncoderFactory.get().jsonEncoder(schema, out);
+        //Encoder encoder = EncoderFactory.get().binaryEncoder(outputStream, null);
+
+        KafkaAvroSerializer kafkaAvroSerializer = new KafkaAvroSerializer();
+
+        Encoder encoder = EncoderFactory.get().jsonEncoder(schema, outputStream);
 
         writer.write(record, encoder);
         encoder.flush();
-        out.close();
+        outputStream.close();
+    }
+
+    private static String unzip(final byte[] data) {
+        if ((data == null) || (data.length == 0)) {
+            throw new IllegalArgumentException("Cannot unzip null or empty bytes");
+        }
+
+        byte[] compressed = Base64.getDecoder().decode(data);
+
+        if (!isZipped(compressed)) {
+            return new String(compressed);
+        }
+
+        try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(compressed)) {
+            try (GZIPInputStream gzipInputStream = new GZIPInputStream(byteArrayInputStream)) {
+                try (InputStreamReader inputStreamReader = new InputStreamReader(gzipInputStream, StandardCharsets.UTF_8)) {
+                    try (BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
+                        StringBuilder output = new StringBuilder();
+                        String line;
+                        while ((line = bufferedReader.readLine()) != null) {
+                            output.append(line);
+                        }
+                        return output.toString();
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to unzip content", e);
+        }
     }
 
     private static boolean isZipped(final byte[] compressed) {
@@ -511,6 +417,59 @@ public class XmlToAvroConverter {
 
             builder.append("</").append(name).append(">");
         }
+    }
+
+    // =============================
+    protected byte[] serializeImpl(int id, Object object, Schema schema) throws IOException {
+        AbstractKafkaAvroSerializer serializer;
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        out.write(MAGIC_BYTE);
+        out.write(ByteBuffer.allocate(ID_SIZE).putInt(id).array());
+        if (object instanceof byte[]) {
+            out.write((byte[]) object);
+        } else {
+            BinaryEncoder encoder = EncoderFactory.get().directBinaryEncoder(out, (BinaryEncoder) null);
+            Object value = object instanceof NonRecordContainer ? ((NonRecordContainer) object).getValue() : object;
+            Object writer;
+            if (value instanceof SpecificRecord) {
+                writer = new SpecificDatumWriter(schema);
+
+            } else {
+                writer = new GenericDatumWriter(schema);
+            }
+
+            ((DatumWriter) writer).write(value, encoder);
+            encoder.flush();
+        }
+
+        byte[] bytes = out.toByteArray();
+        out.close();
+
+        return bytes;
+
+    }
+
+    protected DatumWriter<?> getDatumWriter(Object value, Schema schema) {
+        if (value instanceof SpecificRecord) {
+            return new SpecificDatumWriter<>(schema);
+
+        } else {
+            GenericData genericData = new GenericData();
+            return new GenericDatumWriter<>(schema, genericData);
+        }
+    }
+
+    private void writeDatum(ByteArrayOutputStream out, Object value, Schema schema)
+            throws IOException {
+
+        AbstractKafkaSchemaSerDe schemaSerDe;
+
+        BinaryEncoder encoder = EncoderFactory.get().directBinaryEncoder(out, null);
+
+        DatumWriter<Object> writer = (DatumWriter<Object>) getDatumWriter(value, schema);
+        writer.write(value, encoder);
+        encoder.flush();
     }
 
 }
