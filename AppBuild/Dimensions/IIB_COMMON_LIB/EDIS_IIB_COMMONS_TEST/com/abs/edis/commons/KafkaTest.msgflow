@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ComIbmCompute.msgnode="ComIbmCompute.msgnode" xmlns:com_ibm_connector_kafka_ComIbmEventInput.msgnode="com/ibm/connector/kafka/ComIbmEventInput.msgnode" xmlns:com_ibm_connector_kafka_ComIbmOutput.msgnode="com/ibm/connector/kafka/ComIbmOutput.msgnode" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:eflow="http://www.ibm.com/wbi/2005/eflow" xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility" nsURI="com/abs/edis/commons/KafkaTest.msgflow" nsPrefix="com_abs_edis_commons_KafkaTest.msgflow">
+  <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1">
+    <eSuperTypes href="http://www.ibm.com/wbi/2005/eflow#//FCMBlock"/>
+    <translation xmi:type="utility:TranslatableString" key="KafkaTest" bundleName="com/abs/edis/commons/KafkaTest" pluginId="EDIS_IIB_COMMONS_TEST"/>
+    <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/EDIS_IIB_COMMONS_TEST/icons/full/obj16/KafkaTest.gif"/>
+    <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/EDIS_IIB_COMMONS_TEST/icons/full/obj30/KafkaTest.gif"/>
+    <composition>
+      <nodes xmi:type="com_ibm_connector_kafka_ComIbmEventInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="256,170" connectorName="Kafka" topicName="INBOUND" bootstrapServers="localhost:9092" groupId="test" initialOffset="latest" enableAutoCommit="true" useClientIdSuffix="true" connectionTimeout="15" sessionTimeout="10" receiveBatchSize="1" securityProtocol="PLAINTEXT" sslProtocol="TLSv1.2" messageDomainProperty="JSON" validateTiming="deferred" parserXmlnscBuildTreeUsingXMLSchema="false"
+          parserXmlnscUseForXmlnsDomain="false" parserXmlnscMixedContentRetainMode="none" parserXmlnscCommentsRetainMode="none" parserXmlnscProcessingInstructionsRetainMode="none" validateMaster="none" validateFailureAction="exception" componentLevel="flow" additionalInstances="0">
+        <translation xmi:type="utility:ConstantString" string="KafkaConsumer"/>
+      </nodes>
+      <nodes xmi:type="com_ibm_connector_kafka_ComIbmOutput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="887,171" connectorName="Kafka" topicName="OUTBOUND" bootstrapServers="localhost:9092" useClientIdSuffix="true" acks="0" timeout="60" securityProtocol="PLAINTEXT" sslProtocol="TLSv1.2" validateMaster="inherit" validateFailureAction="exception">
+        <translation xmi:type="utility:ConstantString" string="KafkaProducer"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_3" location="579,170" computeExpression="esql://routine/com.abs.edis.commons#KafkaTest_Compute.Main">
+        <translation xmi:type="utility:ConstantString" string="Compute"/>
+      </nodes>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_1" targetNode="FCMComposite_1_3" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_2" targetNode="FCMComposite_1_2" sourceNode="FCMComposite_1_3" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+    </composition>
+    <propertyOrganizer/>
+    <stickyBoard/>
+  </eClassifiers>
+</ecore:EPackage>
