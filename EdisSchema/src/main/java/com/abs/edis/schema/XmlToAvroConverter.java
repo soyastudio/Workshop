@@ -8,6 +8,7 @@ import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.generic.GenericDatumWriter;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.*;
+import org.apache.kafka.common.errors.SerializationException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -148,9 +149,14 @@ public class XmlToAvroConverter {
         datumReader.setSchema(schema);
 
         ByteBuffer buffer = ByteBuffer.wrap(data);
+        if (buffer.get() != MAGIC_BYTE) {
+            throw new SerializationException("Unknown magic byte!");
+        }
+
+        int schemaId = buffer.getInt();
         int length = buffer.limit() - 1 - ID_SIZE;
         byte[] bytes = new byte[length];
-        buffer.get(bytes, 5, length);
+        buffer.get(bytes, 0, length);
 
         Decoder decoder = DecoderFactory.get().directBinaryDecoder(new ByteArrayInputStream(bytes), null);
         return datumReader.read(null, decoder);

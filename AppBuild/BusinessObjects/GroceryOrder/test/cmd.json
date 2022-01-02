@@ -1,6 +1,8 @@
 {
   "default": "-a consume -c ESED_C01_AirMilePoints -s GetAirMilePoints.avsc -r binary",
 
+  "test": "-a pubAndSub -d INBOUND -m OMS_SampleJSON_V1.14.2.json -c OUTBOUND",
+
   "avro": "-a read -c ESED_C01_AirMilePoints -f test/AirMilePoints.avro -s GetAirMilePoints.avsc",
   "help": "-a help",
   "inbound": "-a consume -c OCRP_C02_EDIS_ALASKA_DETAILS_OUTBOUND -e qa",
@@ -11,6 +13,8 @@
   "produce_summary": "-a produce -d OCRP_C02_EDIS_ALASKA_SUMMARY_OUTBOUND -m summary.json",
 
   "OMS": "-a pubAndSub -d OSCO_ESED_C02_ORDER_QA -m OMS_SampleJSON_V1.14.2.json -c ESED_C01_GroceryOrder_JSON -e QA",
+  "erums": "-a pubAndSub -d OSCO_ESED_C02_ORDER_QA -m erums.json -c ESED_C01_GroceryOrder_JSON -e QA",
+
   "echo-completed": "-a pubAndSub -d OSMS-EMOM_C02_ORDER -m ECHO_Source_JSON_completed.json -c ESED_C01_GroceryOrder_JSON -e QA",
   "refund": "-a pubAndSub -d OSMS-EMOM_C02_ORDER -m Refund.json -c ESED_C01_GroceryOrder_JSON -e QA",
   "refundCancellation": "-a pubAndSub -d OSMS-EMOM_C02_ORDER -m RefundCancellation.json -c ESED_C01_GroceryOrder_JSON -e QA",

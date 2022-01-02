@@ -1,9 +1,6 @@
 package com.abs.edis.schema;
 
-import io.confluent.kafka.serializers.AbstractKafkaAvroSerializer;
-import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDe;
-import io.confluent.kafka.serializers.KafkaAvroSerializer;
-import io.confluent.kafka.serializers.NonRecordContainer;
+import io.confluent.kafka.serializers.*;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericDatumReader;
@@ -422,6 +419,10 @@ public class XmlToAvroConverter2 {
     // =============================
     protected byte[] serializeImpl(int id, Object object, Schema schema) throws IOException {
         AbstractKafkaAvroSerializer serializer;
+        AbstractKafkaAvroDeserializer deserializer;
+
+        KafkaAvroDeserializer kafkaAvroDeserializer;
+
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         out.write(MAGIC_BYTE);

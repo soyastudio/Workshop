@@ -1,5 +1,46 @@
 BROKER SCHEMA com.abs.oms.groceryorder
 
+/* -----------------------------------------------------------------------------------------------------------------
+APPLICATION ID : ESED
+INTERFACE NAME : ESED_GroceryOrder_OMS_IH_Publisher
+FLOW NAME : ESED_GroceryOrder_OMS_IH_Publisher.msgflow
+DESCRIPTION : PRODUCER :GroceryOrder to EDM
+AUTHOR : Albertson
+CREATED DT : Jul/15/2020
+---------------------------------------------------------------------------------------------------------------------
+Program History
+Project Drop Version Change          Owner                   Description
+------- ------- ------- ------------ ---- ----------------------------------------------------------------------------
+1.0                     07/15/2020   qwen002                New BoD development for GroceryOrder OMS 
+1.1                     07/16/2021   qwen002                Update mapping Document with json feed from Erum. Also addded new Target Field 'PromotionTriggerCd
+1.2 				    08/3/2020 	 qwen002				Update mapping Document with json feed from Echo. Added Target Fields under ReturnedItem to accommodate source fields
+1.3                    	08/28/2020   qwen002                Added CustomerSubscription GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerSubscription. Updated Mapping for GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/RetailCustomer/CustomerPreference/PreferenceType
+1.4 					09/11/2020   qwen002				Added Changes for WYSIWYG
+1.5.1					10/06/2020	 qwen002				Added new Mapping for Source OMS 'Mapping OMS to Canonical' 
+1.5.2					10/26/2020   qwen002				Updated Mapping for StartDate and CustomerReward 'Mapping OMS to Canonical'
+1.5.3					10/29/2020	 qwen002				Updated CodeBook for AuthDt
+1.6.1					11/13/2020	 qwen002				Updated mapping with new Fields and removed AuthDT as PCI
+1.6.2					11/23/2020	 qwen002				Updated mapping for Jira issues by EDM
+1.6.3					12/2/2020	 qwen002				Updated mapping for Jira issues by EDM
+1.7.1	                12/15/20	 qwen002				Updated mapping for exceptions fileds
+1.7.2	                02/02/21	 qwen002				Updated mapping for modifiedDate
+1.7.3					02/24/21	 qwen002				Updated mapping for SavingsCategoryType at item level and Fulfilled level
+1.8.1					03/03/21	qwen002					Updated mapping for earn/burn at txnlevel and for jira 5137(refundid, referenceOrderId, itemId)
+1.9.1					03/21/21	qwen002					Updated mapping sheet with sellByWeight at  item level and Fulfilled level
+1.10.1					03/26/21	qwen002					Updated mapping sheet for AR Fields
+1.11.1					04/13/21	qwen002					Updated mapping with cancelledDate”/"cancelledBy", “refundReason"/"refundedBy" and BaseProductNbr at return level
+1.12.1					05/17/21	qwen002					Updated Mpaping for OfferId, Price fields under Savings[*]
+1.12.2					05/20/21	qwen002					Updated Mpaping for Substituteitem, stateOfOrigin, AR, Chnaged length for UserID
+1.12.3					07/01/21	qwen002					Updated Mpaping for rename "linkplunumberforARSavings" to linkPluNumberForARSavings
+1.13.1					07/28/21	qwen002					Updated Mpaping for MTO, SNAP 2.0, PromisePlateform,MFC
+1.13.2					08/22/21	qwen002					Updates datatype for weightDebitAmount , Updated mapping path for SNAP Attributes
+1.14.1					10/24/21	qwen002					Updated mapping for CustomerRefund , RefundCancelltion , taxAndFees, CustomerUUID
+1.14.2					11/05/21	qwen002					Added mapping for isReplenishItem at Fulfilled UPC 
+1.14.3					12/01/21	qwen002					Added mapping for UPCtxt under Delivered Item 2> Updated source path for StatusTypeCd, AuthCd, AuthDt for CustomerRefund
+1.14.3					12/10/21	qwen002					Added and Updated Mapping - RefundCancelledAmt under CustomerRefundCancellation and TotalRefundAmt under CustomerRefund 
+
+--------------------------------------------------------------------------------------------------------------------*/
+
 CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 
 	-- Declare UDPs
@@ -523,172 +564,150 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 					MOVE _paymentDetails NEXTSIBLING;
 					END WHILE paymentDetails;
 
-					-- LOOP FROM tender[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender:
+					-- Since v1.14.1
+					-- LOOP FROM tender[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund or GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation:
 					DECLARE _tender REFERENCE TO _inputRootNode.tender.Item;
 					tender : WHILE LASTMOVE(_tender) DO
-
-						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender
-						DECLARE Tender_ REFERENCE TO CustomerPayment_;
-						CREATE LASTCHILD OF CustomerPayment_ AS Tender_ TYPE XMLNSC.Folder NAME 'Abs:Tender';
-
-							-- Since v1.12.2
-							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/TenderOriginCd
-							DECLARE TenderOriginCd_ REFERENCE TO Tender_;
-							CREATE LASTCHILD OF Tender_ AS TenderOriginCd_ TYPE XMLNSC.Folder NAME 'Abs:TenderOriginCd';
-
-								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerPayment/Tender/TenderOriginCd/Code
-								SET TenderOriginCd_.(XMLNSC.Field)Abs:Code = _tender.stateOfOrigin;
-
-							IF _tender.tenderType = 'REFUND' THEN
-								
-								-- Since 1.14.1																
-								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund
-								DECLARE CustomerRefund_ REFERENCE TO GroceryOrderHeader_;
-								CREATE LASTCHILD OF GroceryOrderHeader_ AS CustomerRefund_ TYPE XMLNSC.Folder NAME 'Abs:CustomerRefund';
-
-									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/SequenceNbr
-									SET CustomerRefund_.(XMLNSC.Field)Abs:SequenceNbr =  _tender.sequenceId;
-
-									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/RefundId
-									SET CustomerRefund_.(XMLNSC.Field)Abs:RefundId =  _tender.refundId;
-
-									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/TenderId
-									SET CustomerRefund_.(XMLNSC.Field)Abs:TenderId =  _tender.tokenNumber;
-
-									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/TenderTypeCd
-									SET CustomerRefund_.(XMLNSC.Field)Abs:TenderTypeCd =  _tender.tenderType;
-
-									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/TenderSubTypeCd
-									SET CustomerRefund_.(XMLNSC.Field)Abs:TenderSubTypeCd =  _tender.tenderSubType;
-
-									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/Token
-									DECLARE Token_ REFERENCE TO CustomerRefund_;
-									CREATE LASTCHILD OF CustomerRefund_ AS Token_ TYPE XMLNSC.Folder NAME 'Abs:Token';
-
-										-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/Token/TokenId
-										SET Token_.(XMLNSC.Field)Abs:TokenId =  _tender.tokenNumber;
-
-									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/TenderStatus
-									DECLARE TenderStatus_ REFERENCE TO CustomerRefund_;
-									CREATE LASTCHILD OF CustomerRefund_ AS TenderStatus_ TYPE XMLNSC.Folder NAME 'Abs:TenderStatus';
-
-										-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/TenderStatus/StatusCd
-										SET TenderStatus_.(XMLNSC.Field)Abs:StatusCd =  _tender.tenderStatus.paymentStatus.status;
-
-									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/CurrencyCd
-									SET CustomerRefund_.(XMLNSC.Field)Abs:CurrencyCd =  _tender.chargeAmount.currency;
-
-									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/BalanceAmt
-									SET CustomerRefund_.(XMLNSC.Field)Abs:BalanceAmt =  CAST(_tender.chargeAmount.amount AS DECIMAL(10, 2));
-
-									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/AuthCd
-									SET CustomerRefund_.(XMLNSC.Field)Abs:AuthCd =  _tender.tenderStatus.paymentStatus.authorizationCode;
-
-									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/AuthDt
-									SET CustomerRefund_.(XMLNSC.Field)Abs:AuthDt =  _tender.tenderStatus.paymentStatus.authorizationDate;
-
-									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/TenderOriginCd
-									SET CustomerRefund_.(XMLNSC.Folder)Abs:TenderOriginCd =  _tender.stateOfOrigin;
-
-									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/CreditOnAccntId
-									SET CustomerRefund_.(XMLNSC.Field)Abs:CreditOnAccntId =  _tender.coaId;
-
-									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/RefundByType
-									DECLARE RefundByType_ REFERENCE TO CustomerRefund_;
-									CREATE LASTCHILD OF CustomerRefund_ AS RefundByType_ TYPE XMLNSC.Folder NAME 'Abs:RefundByType';
-
-										-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/RefundByType/UserId
-										SET RefundByType_.(XMLNSC.Field)Abs:UserId =  _tender.refundedBy;
-
-										-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/RefundByType/RefundByReasonType
-										DECLARE RefundByReasonType_ REFERENCE TO RefundByType_;
-										CREATE LASTCHILD OF RefundByType_ AS RefundByReasonType_ TYPE XMLNSC.Folder NAME 'Abs:RefundByReasonType';
-
-											-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/RefundByType/RefundByReasonType/Code
-											SET RefundByReasonType_.(XMLNSC.Field)Abs:Code =  _tender.refundReason;
-
-											-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/RefundByType/RefundByReasonType/Code
-											SET RefundByReasonType_.(XMLNSC.Field)Abs:Code =  _tender.refundReason;
-
-										-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/RefundByType/UserId
-										SET RefundByType_.(XMLNSC.Field)Abs:UserId =  _tender.refundedBy;
-
-										-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/CancellationEligibleInd
-										SET CustomerRefund_.(XMLNSC.Field)Abs:CancellationEligibleInd =  _tender.refundEligibleForCancellation;
 						
-							END IF;
-
-							IF _tender.tenderType = 'CANCELLATION' THEN
+						IF _tender.tenderType = 'REFUND' THEN
+							
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund
+							DECLARE CustomerRefund_ REFERENCE TO GroceryOrderHeader_;
+							CREATE LASTCHILD OF GroceryOrderHeader_ AS CustomerRefund_ TYPE XMLNSC.Folder NAME 'Abs:CustomerRefund';
+							
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/SequenceNbr
+								SET CustomerRefund_.(XMLNSC.Field)Abs:SequenceNbr = _tender.sequenceId;
 								
-								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation
-								DECLARE CustomerRefundCancellation_ REFERENCE TO GroceryOrderHeader_;
-								CREATE LASTCHILD OF GroceryOrderHeader_ AS CustomerRefundCancellation_ TYPE XMLNSC.Folder NAME 'Abs:CustomerRefundCancellation';
-
-									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/SequenceNbr
-									SET CustomerRefundCancellation_.(XMLNSC.Field)Abs:SequenceNbr = _tender.sequenceId;
-
-									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/RefundId
-									SET CustomerRefundCancellation_.(XMLNSC.Field)Abs:RefundId = _tender.refundId;
-
-									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/TenderTypeCd
-									SET CustomerRefundCancellation_.(XMLNSC.Field)Abs:TenderTypeCd = _tender.tenderType;
-
-									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/TenderSubTypeCd
-									SET CustomerRefundCancellation_.(XMLNSC.Field)Abs:TenderSubTypeCd = _tender.tenderSubType;
-
-									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/CurrencyCd
-									SET CustomerRefundCancellation_.(XMLNSC.Field)Abs:CurrencyCd = _tender.chargeAmount.currency;
-
-									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/RequiredAuthAmt
-									SET CustomerRefundCancellation_.(XMLNSC.Field)Abs:RequiredAuthAmt = CAST(_tender.chargeAmount.amount AS DECIMAL(10, 2));
-
-									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/CancelByType
-									DECLARE CancelByType_ REFERENCE TO CustomerRefundCancellation_;
-									CREATE LASTCHILD OF CustomerRefundCancellation_ AS CancelByType_ TYPE XMLNSC.Folder NAME 'Abs:CancelByType';
-
-										-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/CancelByType/UserId
-										SET CancelByType_.(XMLNSC.Field)Abs:UserId = _tender.cancelledBy;
-
-										-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/CancelByType/CancelByDtTm
-										SET CancelByType_.(XMLNSC.Field)Abs:CancelByDtTm = _tender.cancelledDate;
-
-										-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/CancelByType/UserId
-										SET CancelByType_.(XMLNSC.Field)Abs:UserId = _tender.cancelledBy;
-
-										-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/CancelByType/CancelByDtTm
-										SET CancelByType_.(XMLNSC.Field)Abs:CancelByDtTm = _tender.cancelledDate;
-
-									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/RefundByType
-									DECLARE RefundByType_ REFERENCE TO CustomerRefundCancellation_;
-									CREATE LASTCHILD OF CustomerRefundCancellation_ AS RefundByType_ TYPE XMLNSC.Folder NAME 'Abs:RefundByType';
-
-										-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/RefundByType/UserId
-										SET RefundByType_.(XMLNSC.Field)Abs:UserId = _tender.refundedBy;
-
-										-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/RefundByType/RefundByReasonType
-										DECLARE RefundByReasonType_ REFERENCE TO RefundByType_;
-										CREATE LASTCHILD OF RefundByType_ AS RefundByReasonType_ TYPE XMLNSC.Folder NAME 'Abs:RefundByReasonType';
-
-											-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/RefundByType/RefundByReasonType/Code
-											SET RefundByReasonType_.(XMLNSC.Field)Abs:Code = _tender.refundReason;
-
-										-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/RefundByType/UserId
-										SET RefundByType_.(XMLNSC.Field)Abs:UserId = _tender.refundedBy;
-
-										-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/RefundByType/RefundByReasonType
-										-- DECLARE RefundByReasonType_ REFERENCE TO RefundByType_;
-										-- CREATE LASTCHILD OF RefundByType_ AS RefundByReasonType_ TYPE XMLNSC.Folder NAME 'Abs:RefundByReasonType';
-
-											-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/RefundByType/RefundByReasonType/Code
-											SET RefundByReasonType_.(XMLNSC.Field)Abs:Code = _tender.refundReason;
-
-											-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/RefundByType/RefundByReasonType/Code
-											SET RefundByReasonType_.(XMLNSC.Field)Abs:Code = _tender.refundReason;
-
-									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/TenderOriginCd
-									SET CustomerRefundCancellation_.(XMLNSC.Folder)Abs:TenderOriginCd = _tender.stateOfOrigin;
-
-							END IF;
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/RefundId
+								SET CustomerRefund_.(XMLNSC.Field)Abs:RefundId = _tender.refundId;
+								
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/TenderId
+								SET CustomerRefund_.(XMLNSC.Field)Abs:TenderId = _tender.tokenNumber;
+								
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/TenderTypeCd
+								SET CustomerRefund_.(XMLNSC.Field)Abs:TenderTypeCd = _tender.tenderType;
+								
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/TenderSubTypeCd
+								SET CustomerRefund_.(XMLNSC.Field)Abs:TenderSubTypeCd = _tender.tenderSubType;
+								
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/Token
+								DECLARE Token_ REFERENCE TO CustomerRefund_;
+								CREATE LASTCHILD OF CustomerRefund_ AS Token_ TYPE XMLNSC.Folder NAME 'Abs:Token';
+								
+									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/Token/TokenId
+									SET Token_.(XMLNSC.Field)Abs:TokenId = _tender.tokenNumber;
+							
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/TenderStatus
+								DECLARE TenderStatus_ REFERENCE TO CustomerRefund_;
+								CREATE LASTCHILD OF CustomerRefund_ AS TenderStatus_ TYPE XMLNSC.Folder NAME 'Abs:TenderStatus';
+								
+									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/TenderStatus/StatusCd
+									-- SET TenderStatus_.(XMLNSC.Field)Abs:StatusCd = _tender.tenderStatus.paymentStatus.status;
+									SET TenderStatus_.(XMLNSC.Field)Abs:StatusCd = _tender.tenderStatus.status;
+								
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/CurrencyCd
+								SET CustomerRefund_.(XMLNSC.Field)Abs:CurrencyCd = _tender.chargeAmount.currency;
+								
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/TotalRefundAmt 
+								SET CustomerRefund_.(XMLNSC.Field)Abs:TotalRefundAmt = CAST(_tender.chargeAmount.amount AS DECIMAL(10, 2));
+								
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/AuthCd
+								-- SET CustomerRefund_.(XMLNSC.Field)Abs:AuthCd = _tender.tenderStatus.paymentStatus.authorizationCode;
+								SET CustomerRefund_.(XMLNSC.Field)Abs:AuthCd = _tender.tenderStatus.authorizationCode;
+								
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/AuthDt
+								-- SET CustomerRefund_.(XMLNSC.Field)Abs:AuthCd = _tender.tenderStatus.paymentStatus.authorizationDate;
+								SET CustomerRefund_.(XMLNSC.Field)Abs:AuthDt = _tender.tenderStatus.authorizationDate;
+								
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/TenderOriginCd
+								DECLARE TenderOriginCd_ REFERENCE TO CustomerRefund_;
+								CREATE LASTCHILD OF CustomerRefund_ AS TenderOriginCd_ TYPE XMLNSC.Folder NAME 'Abs:TenderOriginCd';
+								
+									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/TenderOriginCd/Code
+									SET TenderOriginCd_.(XMLNSC.Field)Abs:Code = _tender.stateOfOrigin;
+								
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/CreditOnAccntId
+								SET CustomerRefund_.(XMLNSC.Field)Abs:CreditOnAccntId = _tender.coaId;
+								
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/RefundByType
+								DECLARE RefundByType_ REFERENCE TO CustomerRefund_;
+								CREATE LASTCHILD OF CustomerRefund_ AS RefundByType_ TYPE XMLNSC.Folder NAME 'Abs:RefundByType';
+								
+									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/RefundByType/UserId
+									SET RefundByType_.(XMLNSC.Field)Abs:UserId = _tender.refundedBy;
+								
+									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/RefundByType/RefundByReasonType
+									DECLARE RefundByReasonType_ REFERENCE TO RefundByType_;
+									CREATE LASTCHILD OF RefundByType_ AS RefundByReasonType_ TYPE XMLNSC.Folder NAME 'Abs:RefundByReasonType';
+								
+										-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/RefundByType/RefundByReasonType/Code
+										SET RefundByReasonType_.(XMLNSC.Field)Abs:Code = _tender.refundReason;
+									
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/CancellationEligibleInd
+								-- SET CustomerRefund_.(XMLNSC.Field)Abs:CancellationEligibleInd = _tender.refundEligibleForCancellation;			
+								
+							
+						END IF;
+						
+						IF _tender.tenderType = 'CANCELLATION' THEN
+							
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation
+							DECLARE CustomerRefundCancellation_ REFERENCE TO GroceryOrderHeader_;
+							CREATE LASTCHILD OF GroceryOrderHeader_ AS CustomerRefundCancellation_ TYPE XMLNSC.Folder NAME 'Abs:CustomerRefundCancellation';
+									
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/SequenceNbr
+								SET CustomerRefundCancellation_.(XMLNSC.Field)Abs:SequenceNbr = _tender.sequenceId;
+									
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/RefundId
+								SET CustomerRefundCancellation_.(XMLNSC.Field)Abs:RefundId = _tender.refundId;
+									
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/TenderTypeCd
+								SET CustomerRefundCancellation_.(XMLNSC.Field)Abs:TenderTypeCd = _tender.tenderType;
+									
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/TenderSubTypeCd
+								SET CustomerRefundCancellation_.(XMLNSC.Field)Abs:TenderSubTypeCd = _tender.tenderSubType;
+									
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/CurrencyCd
+								SET CustomerRefundCancellation_.(XMLNSC.Field)Abs:CurrencyCd = _tender.chargeAmount.currency;
+									
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/RefundCancelledAmt
+								SET CustomerRefundCancellation_.(XMLNSC.Field)Abs:RefundCancelledAmt = CAST(_tender.chargeAmount.amount AS DECIMAL(10, 2));
+									
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/RequiredAuthAmt
+								-- SET CustomerRefundCancellation_.(XMLNSC.Field)Abs:RequiredAuthAmt = CAST(_tender.chargeAmount.amount AS DECIMAL(10, 2));
+								
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/CancelByType
+								DECLARE CancelByType_ REFERENCE TO CustomerRefundCancellation_;
+								CREATE LASTCHILD OF CustomerRefundCancellation_ AS CancelByType_ TYPE XMLNSC.Folder NAME 'Abs:CancelByType';
+								
+									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/CancelByType/UserId
+									SET CancelByType_.(XMLNSC.Field)Abs:UserId = _tender.cancelledBy;
+								
+									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/CancelByType/CancelByDtTm
+									SET CancelByType_.(XMLNSC.Field)Abs:CancelByDtTm = _tender.cancelledDate;
+								
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/RefundByType
+								DECLARE RefundByType_ REFERENCE TO CustomerRefundCancellation_;
+								CREATE LASTCHILD OF CustomerRefundCancellation_ AS RefundByType_ TYPE XMLNSC.Folder NAME 'Abs:RefundByType';
+								
+									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/RefundByType/UserId
+									SET RefundByType_.(XMLNSC.Field)Abs:UserId = _tender.refundedBy;
+									
+									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/RefundByType/RefundByReasonType
+									DECLARE RefundByReasonType_ REFERENCE TO RefundByType_;
+									CREATE LASTCHILD OF RefundByType_ AS RefundByReasonType_ TYPE XMLNSC.Folder NAME 'Abs:RefundByReasonType';
+									
+										-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/RefundByType/RefundByReasonType/Code
+										SET RefundByReasonType_.(XMLNSC.Field)Abs:Code = _tender.refundReason;
+										
+								-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefundCancellation/TenderOriginCd:
+								DECLARE TenderOriginCd2_ REFERENCE TO CustomerRefundCancellation_;
+								CREATE LASTCHILD OF CustomerRefundCancellation_ AS TenderOriginCd2_ TYPE XMLNSC.Folder NAME 'Abs:TenderOriginCd';
+								
+									-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/CustomerRefund/TenderOriginCd/Code
+									SET TenderOriginCd2_.(XMLNSC.Field)Abs:Code = _tender.stateOfOrigin;
+															
+						END IF;
 
 					MOVE _tender NEXTSIBLING;
 					END WHILE tender;
@@ -1093,7 +1112,7 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:LinkPLUNbr = _orderLine.itemPrice.linkPluNumber;
 
 							-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CouponPLUNbr
-							SET GroceryOrderDetail_.(XMLNSC.Field)Abs:CouponPLUNbr = _orderLine.itemPrice.itemPluNumber;
+							-- SET GroceryOrderDetail_.(XMLNSC.Field)Abs:CouponPLUNbr = _orderLine.itemPrice.itemPluNumber;
 
 							-- LOOP FROM subOrders[*]/orderLines[*]/itemPrice/savings[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/CustomerOffers:
 							DECLARE _customer_savings REFERENCE TO _orderLine.itemPrice.savings.Item;
@@ -1174,8 +1193,8 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/AutoReplenishmentOrderType/ARLinkPLUNbr
 								SET AutoReplenishmentOrderType_.(XMLNSC.Field)Abs:ARLinkPLUNbr = _orderLine.itemPrice.linkPluNumberForARSavings;
 
-								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/AutoReplenishmentOrderType/ArSavingsAmt
-								SET AutoReplenishmentOrderType_.(XMLNSC.Field)Abs:ArSavingsAmt = CAST(_orderLine.itemPrice.arSavings AS DECIMAL(14, 4));
+								-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/AutoReplenishmentOrderType/ARSavingsAmt
+								SET AutoReplenishmentOrderType_.(XMLNSC.Field)Abs:ARSavingsAmt = CAST(_orderLine.itemPrice.arSavings AS DECIMAL(14, 4));
 
 							-- LOOP FROM subOrders[*]/orderLines[*]/fulfilledUpc[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem:
 							DECLARE _fulfilled_upc REFERENCE TO _orderLine.fulfilledUpc.Item;
@@ -1451,8 +1470,8 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/AutoReplenishmentOrderType/ARLinkPLUNbr
 										SET AutoReplenishmentOrderType_.(XMLNSC.Field)Abs:ARLinkPLUNbr = _fulfilled_upc.itemPrice.linkPluNumberForARSavings;
 
-										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/AutoReplenishmentOrderType/ArSavingsAmt
-										SET AutoReplenishmentOrderType_.(XMLNSC.Field)Abs:ArSavingsAmt = CAST(_fulfilled_upc.itemPrice.arSavings AS DECIMAL(14, 4));
+										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/DeliveredItem/AutoReplenishmentOrderType/ARSavingsAmt
+										SET AutoReplenishmentOrderType_.(XMLNSC.Field)Abs:ARSavingsAmt = CAST(_fulfilled_upc.itemPrice.arSavings AS DECIMAL(14, 4));
 
 							MOVE _fulfilled_upc NEXTSIBLING;
 							END WHILE fulfilled_upc_loop;
@@ -1620,12 +1639,12 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 					MOVE _promoCode NEXTSIBLING;
 					END WHILE promoCode;
 
-					-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/FullFillmentType
-					DECLARE FullFillmentType_ REFERENCE TO GrocerySubOrder_;
-					CREATE LASTCHILD OF GrocerySubOrder_ AS FullFillmentType_ TYPE XMLNSC.Folder NAME 'Abs:FullFillmentType';
+					-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/FulFillmentType
+					DECLARE FulFillmentType_ REFERENCE TO GrocerySubOrder_;
+					CREATE LASTCHILD OF GrocerySubOrder_ AS FulFillmentType_ TYPE XMLNSC.Folder NAME 'Abs:FulFillmentType';
 
-						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/FullFillmentType/Code
-						SET FullFillmentType_.(XMLNSC.Field)Abs:Code = _subOrder.fulfillmentType;
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/FulFillmentType/Code
+						SET FulFillmentType_.(XMLNSC.Field)Abs:Code = _subOrder.fulfillmentType;
 
 					-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/PickupInfo
 					DECLARE PickupInfo_ REFERENCE TO GrocerySubOrder_;

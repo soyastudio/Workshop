@@ -144,17 +144,18 @@ public class XmlToAvroConverter {
     }
 
     private static GenericRecord fromAvroConfluent(byte[] data, Schema schema) throws IOException {
-        DatumReader<GenericRecord> datumReader = new GenericDatumReader<GenericRecord>();
+    	DatumReader<GenericRecord> datumReader = new GenericDatumReader<GenericRecord>();
         datumReader.setSchema(schema);
 
         ByteBuffer buffer = ByteBuffer.wrap(data);
+        if (buffer.get() != MAGIC_BYTE) {
+            throw new RuntimeException("Unknown magic byte!");
+        }
+
+        int schemaId = buffer.getInt();
         int length = buffer.limit() - 1 - ID_SIZE;
         byte[] bytes = new byte[length];
-        for(int i = 0; i < length; i ++) {
-        	bytes[i] = data[i + ID_SIZE];
-        }
-        
-        //buffer.get(bytes, 4, length);
+        buffer.get(bytes, 0, length);
 
         Decoder decoder = DecoderFactory.get().directBinaryDecoder(new ByteArrayInputStream(bytes), null);
         return datumReader.read(null, decoder);
