@@ -9,6 +9,8 @@
 	<!--V2.0 - 6/29/2021 - Alex Nunes - Additional elements added for new source NIMS-SSIMS -->
 	<!--V2.0 - 7/7/2021 - Alex Nunes - Added WeightLossPct element. -->
 	<!--V2.1 Sridhar Katkuri - 9/17/2021 - Revert changes to NutritionProduct on NutritionFormulaIngredients-->
+	<!--V2.2 Sridhar Katkuri - 12/8/2021 - Changed CIC to have complex type-->
+	<!--V2.3 - Sridhar - 12/22/2021 - Changes made as per Rajan requirement-->
 	<xs:complexType name="NutritionIngredientType">
 		<xs:annotation>
 			<xs:documentation>Complex Type for Nutrition Ingredient</xs:documentation>
@@ -134,7 +136,19 @@ quantities of the ingredients in the product formula.</xs:documentation>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
-						<xs:element ref="CorporateItemCd" minOccurs="0" maxOccurs="unbounded"/>
+						<xs:element name="IngredientCICType" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="CIC" minOccurs="0" maxOccurs="unbounded">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element ref="CorporateItemCd" minOccurs="0"/>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
 						<xs:element name="WeightLossPct" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>The expected weight loss % for an ingredient when prepared for use in a store created item.  For example, when a watermelon is prepared for use in a fresh fruit salad the skin will be removed so loss could be 20%.  .</xs:documentation>
@@ -797,6 +811,27 @@ Most items use the default Calculation Type, which is All calc.</xs:documentatio
 										<xs:annotation>
 											<xs:documentation>Calculation Level label text.</xs:documentation>
 										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="FSItemMatrix_3" minOccurs="0" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="LineNbr" type="xs:short" default="0"/>
+									<xs:element name="SecondIngredient">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ExemptionFlag" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="3"/>
+											</xs:restriction>
+										</xs:simpleType>
 									</xs:element>
 								</xs:sequence>
 							</xs:complexType>

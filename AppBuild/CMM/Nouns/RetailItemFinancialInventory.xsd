@@ -6,7 +6,7 @@
    Description: Contains commonly used Safeway Inventory schema.
    Name: /SFWY/Nouns/Inventory.xsd
 -->
-<!-- edited with XMLSpy v2020 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by Devesh (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<!--!=============================================================================================-->
@@ -20,6 +20,7 @@
 	<!--8/12/2020 - Alex Nunes - BOD Renamed or Splitted from Retail Store Inventory.-->
 	<!--11/04/2020 - Rosabel Macario - Added tag to resolve dateTimeStamp issue-->
 	<!--V1.2 - 11/17/2020 - Alex Nunes - Renamed Section to Department. SectionCd to DepartmentId and SectionNm to DepartmentNm.-->
+	<!--V1.3 - 01/07/2022 - Devesh Kandpal -ES-6045 -  Renamed ItemRetailCostAmt -> ItemRetailPriceAmt,  ExtendedItemRetailCostAmt-> ExtendedItemRetailPriceAmt , Added New element DivisionNm and InventoryCountAreaNm -->
 	<xs:element name="RetailItemFanicialInventory" type="RetailItemFinancialInventoryType">
 		<xs:annotation>
 			<xs:documentation>Standard Albertsons companies schema for Retail Item Financial Inventory. Fresh or perishable items Financial inventory data required for accounting purposes. </xs:documentation>
@@ -32,6 +33,7 @@
 		<xs:sequence>
 			<xs:element ref="CorporationId"/>
 			<xs:element ref="DivisionId"/>
+			<xs:element name="DivisionNm" type="xs:string"/>
 			<xs:element ref="RetailStoreId"/>
 			<xs:element ref="TxnDt" minOccurs="0">
 				<xs:annotation>
@@ -66,6 +68,11 @@
 									<xs:totalDigits value="14"/>
 								</xs:restriction>
 							</xs:simpleType>
+						</xs:element>
+						<xs:element name="InventoryCountAreaNm" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Facility Location within Section where the item is placed/located</xs:documentation>
+							</xs:annotation>
 						</xs:element>
 						<xs:element ref="CorporateItemCd" minOccurs="0"/>
 						<xs:element name="ItemId" minOccurs="0">
@@ -162,9 +169,9 @@
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
-						<xs:element name="ItemRetailCostAmt" minOccurs="0">
+						<xs:element name="ItemRetailPriceAmt" minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>Retail item cost amount.</xs:documentation>
+								<xs:documentation>Retail item Price amount.</xs:documentation>
 							</xs:annotation>
 							<xs:simpleType>
 								<xs:restriction base="xs:decimal">
@@ -187,13 +194,9 @@ Partial cases are derived values from the (Store Case Cost / Case Pack Size) * c
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
-						<xs:element name="ExtendedItemRetailCostAmt" minOccurs="0">
+						<xs:element name="ExtendedItemRetailPriceAmt" minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>The extented retail cost amount of an item. Backroom Costs can be in full cases or partial cases. 
-Full cases will use the Store Case Cost supplied to VisionPRO from your system
-Partial cases are derived values from the (Store Case Cost / Case Pack Size) * counted sellable units. 
-On the sellable count log the extended calculations are simple. (Retail) * (quantity or weight)
-</xs:documentation>
+								<xs:documentation>The extented retail Price amount of an item.</xs:documentation>
 							</xs:annotation>
 							<xs:simpleType>
 								<xs:restriction base="xs:decimal">

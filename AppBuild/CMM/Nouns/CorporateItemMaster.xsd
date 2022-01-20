@@ -8,6 +8,8 @@
 -->
 <!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by Devesh (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.2 Devesh Kandpal 01/05/22 - Updated Annotaton for GTIN and removed other elements from within ItemId-->
+	<!--V1.1 Devesh Kandpal 12/1/21 - Added New complex type Brand-->
 	<!--V1.0 Devesh Kandpal 9/27/21 -  ES-4263 - Draft Version-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:element name="CorporateItemMaster" type="CorporateItemMasterType">
@@ -22,7 +24,8 @@
 		<xs:sequence>
 			<xs:element ref="CorporationId"/>
 			<xs:element ref="CorporateItemCd"/>
-			<xs:element name="ItemId" type="ItemId" minOccurs="0"/>
+			<xs:element name="ItemId" type="ItemId" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ProductHierarchy" type="ProductHierarchy" minOccurs="0"/>
 			<xs:element name="SMIC" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Contains Safeway Merchandising Item Classification(SMIC) data.</xs:documentation>
@@ -292,6 +295,36 @@ N New item</xs:documentation>
 							<xs:annotation>
 								<xs:documentation>Width of one case</xs:documentation>
 							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Brand" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains item brand information.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="BrandCd" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This Cd is used to indicate the brand Nm of an item.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="5"/>
+									<xs:fractionDigits value="0"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="BrandNm" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Brand Name</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
 						</xs:element>
 					</xs:sequence>
 				</xs:complexType>
@@ -567,12 +600,17 @@ N New item</xs:documentation>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
+			<xs:element name="BuyerComment" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Iinformation the buyer wants to record about the Vendor</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="MadeToOrderItemInd" type="xs:string" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Indicates of the item can be made with in the store facilty by an Order. Ex : Sandwiches in Deli and Cakes in Bakery.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="ItemTransmissionInd" minOccurs="0">
+			<xs:element name="ItemTransmissionInd" type="xs:string" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Indicator to force item transmission  to Itrade</xs:documentation>
 				</xs:annotation>
@@ -630,9 +668,16 @@ N New item</xs:documentation>
 			<xs:documentation>Contains various types of Ids for an item like UPC, GTIN ..etc</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="GTINID" type="xs:string" minOccurs="0"/>
-			<xs:element name="VendorProductID" type="xs:string" minOccurs="0"/>
-			<xs:element name="ManufProductId" type="xs:string" minOccurs="0"/>
+			<xs:element name="GTINID" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is representative GTIN-14 that is sometimes on the case pack. This value can vary by Vendor</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VendorProductID" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>“representative” Vendor UPC . This is UPC on some of our external (vendor facing) applications which is different than internal UPC's</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="CorpItemReferenceType">
@@ -1357,7 +1402,7 @@ Delivery Item in a ROG and Price Area.                        </xs:documentation
 					<xs:sequence>
 						<xs:element name="ProductClassCd" type="xs:integer" minOccurs="0"/>
 						<xs:element name="ProductClassNm" type="xs:string" minOccurs="0"/>
-						<xs:element name="RetailSectionCd" minOccurs="0"/>
+						<xs:element name="RetailSectionCd" type="xs:string" minOccurs="0"/>
 						<xs:element name="RetailSectionNm" type="xs:string" minOccurs="0"/>
 					</xs:sequence>
 				</xs:complexType>

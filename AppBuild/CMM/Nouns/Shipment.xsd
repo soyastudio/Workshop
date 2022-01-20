@@ -8,6 +8,8 @@
 -->
 <!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by Devesh (Albertsons) -->
 <xs:schema xmlns:oa="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V2.0 Monica Gaddam 12/2/2021 Update the data type for customerid from integer to String-->
+	<!--V1.9 Monica Gaddam 11/16/2021 Added WholesaleOrderNbr to Shipment Order complex type-->
 	<!--V1.8 Devesh Kandpal 09/23/2021 ES-4089 - Added 'PhysicalWarehouseId’ which represent actual warehouse building and 'InvoiceDtTm' at header-->
 	<!--V1.7 Monica Gaddam 8/17/2021 Added Default Route Cd String 50-->
 	<!--V1.6 Alex Nunes 8/5/2021 Added Distribution Center Nm String 50-->
@@ -392,15 +394,10 @@ TRANSACTION SETS USED</xs:documentation>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="CustomerId" minOccurs="0">
+			<xs:element name="CustomerId" type="xs:string" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Generic element that  identifies the customer for the shipment. This can be a wholesale customer or a store id. </xs:documentation>
 				</xs:annotation>
-				<xs:simpleType>
-					<xs:restriction base="xs:integer">
-						<xs:maxInclusive value="99999999"/>
-					</xs:restriction>
-				</xs:simpleType>
 			</xs:element>
 			<xs:element name="SubCustomerId" minOccurs="0">
 				<xs:annotation>
@@ -1248,6 +1245,11 @@ Eg. NP - New/Polled, NB - Not Bomberd, BM - Bombed</xs:documentation>
 			<xs:element name="InvoiceDtTm" type="xs:dateTime" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Date the transaction was extracted out of WMS</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WholesaleOrderNbr" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>it is a UWARE generated order# for a wholesale customer order to M3</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 		</xs:sequence>

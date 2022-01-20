@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2021 (x64) (http://www.altova.com) by Zafar Ullah (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.0  Zafar Ullah 12/28/2021 Initial version -->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="PendingBIBS">
+		<xs:annotation>
+			<xs:documentation>root element.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="PendingBIBSType"/>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="PendingBIBSType">
+		<xs:annotation>
+			<xs:documentation>This contains information for a BIB record on the POSFMT file.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporationId"/>
+			<xs:element ref="DivisionId"/>
+			<xs:element ref="ROGCd"/>
+			<xs:element name="UPC" type="UPC">
+				<xs:annotation>
+					<xs:documentation>Shows which of the Consumer, Multipack, or Case UPCs is used to make up the right 5 digitis of the UPC. One of these must be chosen.Called UNIT_TYPE in legacy systems.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UPCComponents" type="UPCComponentsType"/>
+			<xs:element name="BIBStatus" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="BIBType" type="CodeWithDescription"/>
+			<xs:element name="BIBCouponAmt" type="xs:decimal" nillable="false" minOccurs="0"/>
+			<xs:element name="BIBMinPurchaseQty" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="BIBCommonCdUsedInd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if Common Cd was used to create Bib.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CouponPageNbr" type="xs:decimal" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Page in Coupon book where this coupon can be found</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="EffectiveTimePeriod"/>
+			<xs:element name="PerformanceDetailId" type="xs:string" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Generated key for a promotion's Performance Detail information. Globally Unique</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PerformanceDetailSourceId" type="xs:string" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The value of this column is originated from DemandTec s Promotion Price Optimization (PPO) application and is maintained throughout the promotion s lifecycle to uniquely identify the promotion</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BIBPriceAreaCd" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Price areas are groups of stores within a ROG that have the same Pricing structure. This is the individual price area within the Price Area group. Price areas are found on the Price Area Facility Table (SSPAFACL_TABLE).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SignCountType" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="SequenceNbr" type="xs:integer" minOccurs="0"/>
+						<xs:element name="SignCnt" type="xs:integer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Three sign count defaults for this item (SGN_COUNT1,2,3). These will be used by PSD010 to create default signs if none were on SSPENPRC or SSPENADP. 
+SGN_COUNT1 is the count of "TALKER" signs for this item.
+SGN_COUNT2 is the count of the "Moulding" signs for this item.
+SGN_COUNT3 is the count of "Display" signs for this item.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="TagNbr" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Index to PSBIBCTL to get verbiage</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

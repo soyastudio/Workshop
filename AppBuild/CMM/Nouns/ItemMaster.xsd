@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 rel. 2 (http://www.altova.com) by Devesh Kandpal (Albertsons) -->
+<!-- edited with XMLSpy v2021 (x64) (http://www.altova.com) by Zafar Ullah (Albertsons) -->
 <!-- edited with XMLSpy v2021 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
 <!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by Sridhar Katkuri (Safeway) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.23 - Devesh Kandpal 12/01/21 ES-5659 - Added new field 'ItemValidDt' , AuditData to SupplyChainItemType for WDS.DATE_NEW-->
+	<!--V1.22 - Patrick Oliver 11/30/21: In MerchHierarchyType removed ParentStockingSection and added SuperStockingSectionId and SuperStockingSectionNm-->
+	<!--V1.21 Zafar Ullah -11/04/2021-Zafar Ullah-ES-5274-Adding SupplyOnHandDaysCnt and DeseasonalizedDemandQty to ItemForecastType-->
 	<!--V1.20- 09/17/2021 - Devesh Kandpal - ES-3898 - Added new tag CreateDt at CorpItemReference level-->
 	<!--V1.19 - 9/13/2021 - Sridhar Katkuri - JIRA : ES-2661 - Moved AlcoholVolumePct and SalesUnitNbr from SupplyChainItemData to CorpItemReference . Also Changed Annotation for SalesUnitNbr and OriginalSupplierItemDsc. 
 Also moved OriginalSupplierItemDsc under Itemdsc and deleted from the main level.-->
@@ -26,6 +29,10 @@ Also moved OriginalSupplierItemDsc under Itemdsc and deleted from the main level
 	<!--V 1.3  Sai Nuthakki 02/11/2019  Added Catalog Item Type-->
 	<!--V1.4 Patrick Oliver - Added RetailDepartmentId & MerchDepartmentId to CMM-->
 	<!--V1.5 Sridhar Katkuri - Added new field OriginalSupplierItemDsc-->
+	<!--V1.4 Patrick Oliver - Added RetailDepartmentId & MerchDepartmentId to CMM-->
+	<!--V 1.3  Sai Nuthakki 02/11/2019  Added Catalog Item Type-->
+	<!--V 1.2 Alex Nunes 12/4/2018 Add ItemRecode Type as the new BOD is be based on.-->
+	<!--V 1.1  Alex Nunes  11/27/2018 Change on SupplyChainItem Type. Adding Pull Date flag attribute which tells the DC if the item has a code date. Goes with Code Date Variance (Shelf Life Days). //element(*,SupplyChainItemType)/PullDateInd-->
 	<!--Sai Nuthakki 06/26/2019 - added ItemUsageType and DisplayInd to CIC in RetailItem-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:complexType name="CommonItemGroupType">
@@ -2610,6 +2617,7 @@ a normal item.
 					<xs:documentation>Indicates of the item can be made with in the store facilty by an Order. Ex : Sandwiches in Deli and Cakes in Bakery.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="ROGRetailItemType">
@@ -4301,13 +4309,13 @@ Delivery Item in a ROG and Price Area.                        </xs:documentation
 																								<xs:element ref="StockingSectionId" minOccurs="0"/>
 																								<xs:element ref="StockingSectionNm" minOccurs="0"/>
 																								<xs:element name="PrimaryStockingSectionInd" type="xs:boolean" minOccurs="0"/>
-																								<xs:element name="ParentStockingSection" minOccurs="0" maxOccurs="unbounded">
-																									<xs:complexType>
-																										<xs:sequence>
-																											<xs:element ref="StockingSectionId" minOccurs="0"/>
-																											<xs:element ref="StockingSectionNm" minOccurs="0"/>
-																										</xs:sequence>
-																									</xs:complexType>
+																								<xs:element name="SuperStockingSectionId" type="xs:integer" minOccurs="0"/>
+																								<xs:element name="SuperStockingSectionNm" minOccurs="0">
+																									<xs:simpleType>
+																										<xs:restriction base="xs:string">
+																											<xs:maxLength value="250"/>
+																										</xs:restriction>
+																									</xs:simpleType>
 																								</xs:element>
 																							</xs:sequence>
 																						</xs:complexType>
@@ -4746,6 +4754,28 @@ but in most cases, people don't want to know the actual service level % of the i
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="OrgMasterNameType" type="OrgMasterNameType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="SupplyOnHandDaysCnt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Time Supply on Hand Days</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="5"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DeseasonalizedDemandQty" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>An items average rate of sale for a period, where the items update cycle defines the length. If UCYCLE=9, for example, the DD is the average rate of sale for a week.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="10"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="ItemPendingCostType">
@@ -6345,6 +6375,12 @@ For example, Coke sold in the individual can or in a 6-pack are two distinct "pu
 			<xs:element name="CreateDt" type="xs:date" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Item create date at DC/Whse level.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ItemValidDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Warehouse Items - It basically is when the item goes to "V" status (really any status other then N - NEW). It is/was important for the business to understand when the warehouse item started to have inventory. An "N" status warehouse item gets set to "V" from a feed from the warehouse system on the first receiving into the warehouse. So NEW DATE in most cases would represent the first date the warehouse item was received. It can also be considered the date the NEW ITEM was available to be order by the store.     
+DSD Items  - For DSD and Store Created type items these never start at "N" status and start as V so the DATE_NEW and CREATE_DT should be the same for all these items.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 		</xs:sequence>

@@ -6,8 +6,9 @@
    Dsc: contains commonly used Albertson's Purchase order schema.
    Name: /ABS_CMM_Platform/Nouns/PurchaseOrder.xsd
 -->
-<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by Rosabel Macario (Albertsons) -->
+<!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by Devesh (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.15 Devesh Kandpal 11/17/2021 - JIRA ES-4267 - Added new element BalancingItemInd, CaseUnitDimensions, RequisitionItemId-->
 	<!--V1.14 Rosabel Macarion 10/12/2021 - Updated maxlen of ItemDsc and ManufaturerItemID from 200 to 240 and 50 to 700 respectively. -->
 	<!--V1.13 Devesh Kandpal 06/29/2021 - Updated Columns for WMPOHEDR/WMPODETL as part of Project ID: 25723 for setting Virtual Warehouse-->
 	<!--V1.12  Added SiteCds for ORCA POs-->
@@ -890,7 +891,7 @@ inspected by customs.It is dollar amount (fee) entered onto the purchase order</
 										<xs:documentation>It relates to freight involved in PO and who is responsible for payment</xs:documentation>
 									</xs:annotation>
 								</xs:element>
-								<xs:element name="FreightOnBoardInd" minOccurs="0">
+								<xs:element name="FreightOnBoardInd" type="xs:string" minOccurs="0">
 									<xs:annotation>
 										<xs:documentation>D = Delivery(Vendor Paid) ; F = FOB (Albertson Paid)</xs:documentation>
 									</xs:annotation>
@@ -1397,6 +1398,46 @@ Cost, revenue, accrual,  pass thru</xs:documentation>
 						<xs:fractionDigits value="3"/>
 					</xs:restriction>
 				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BalancingItemInd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates whether the items is used to balance the truck based on volume and load. Valid value are Y = Low Priority, N = High Priority and Space</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CaseUnitDimension" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains case unit dimensions</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="CaseHeight" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Height of the actual case</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CaseDepth" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Depth of the actual case</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CaseWidth" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Width of the actual case</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CaseUOMCd" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Unit of Measure of the case dimensions</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="RequisitionItemId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identifier for matching the item in the source system (Ex Requsition Nbr in DA)   
+                          </xs:documentation>
+				</xs:annotation>
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>

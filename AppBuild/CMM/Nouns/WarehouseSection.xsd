@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2021 (x64) (http://www.altova.com) by Zafar Ullah (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.0  Zafar Ullah 1/5/2022 Initial version -->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="WarehouseSection" type="WarehouseSectionType">
+		<xs:annotation>
+			<xs:documentation>root element.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="WarehouseSectionType">
+		<xs:annotation>
+			<xs:documentation>An asset type is a grouping of one or more asset items that are grouped together, or "combined," for depreciation purposes. It also contains many of the selection and sorting fields that are used for reporting.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="SectionCd">
+				<xs:annotation>
+					<xs:documentation>Section Code is a standard 3 character code that uniquely identifies a section. Facility departments may be divided into one or more sections. Each section is a more specific classification for the department. For example, the Accounting Department may have an Account payable section, and a Payroll section. The Grocery department may have a Bulk Foods section, and a Cheese section. 
+There are different types of sections such as: backstage, processing, retail and warehouse.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SectionNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is a standard name for a section.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="DistributionCenterId"/>
+			<xs:element name="ItemUsageInd" type="CodeWithDescription">
+				<xs:annotation>
+					<xs:documentation>Classifies item usage
+R - resale
+E - expensed (were previously denoted by 68 or 69 in 2nd and 3rd digits of item code)
+M - materials (includes ingredients, primal cuts of meat and large packs of pharmacy items. These items have no retail and are billed at cost.
+Q - coupons
+Note that no POS information will be sent to the stores for any 'E' or 'M' items since they are not sold at the store.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CategoryNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Category Name</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AuditData" type="RecordAuditData" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Category Name</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

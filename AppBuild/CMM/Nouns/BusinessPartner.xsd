@@ -9,6 +9,11 @@
 	<!--V1.3 Parick Oliver 05/18/21: Moved PartnerNm and PartnerTypeCd to ProfileType; Added PartnerProfileEffectiveTimePeriod and ServiceAreaCoordinateType; Changed AccountPayableVendorNbr to VendorNbr-->
 	<!--V1.4 Patrick Oliver 07/19/21: Added ServiceAreaLocationOverrides, ServiceAreaAddress-->
 	<!--V1.5 Patrick Oliver 08/20/21: Added DefaultPartnerInd, DefaultPartnerNm, MaximumColdTm,  ExpresOrderInd, SlotTime-->
+	<!--V1.6 Patrick Oliver 11/01/21: 
+• Moved ContractThresholdType attributes to Overrides
+• Moved ServiceAreaLocationOverrides to Overrides
+• Added AreaTypeCd, AreaTypeValueTxt, ServiceAreaCoordinateType to ServiceAreaLocationOverrides-->
+	<!--V1.7 Patrick Oliver 11/17/21 Updated MaximumColdTm to MaximumColdTimeNbr-->
 	<xs:element name="BusinessPartner">
 		<xs:annotation>
 			<xs:documentation>Root element. </xs:documentation>
@@ -222,19 +227,6 @@ For source without PartnerId use PartnerNm for EDW (LU_DELIVERY_PARTNER).</xs:do
 								</xs:sequence>
 							</xs:complexType>
 						</xs:element>
-						<xs:element name="ServiceAreaLocationOverrides" minOccurs="0" maxOccurs="unbounded">
-							<xs:annotation>
-								<xs:documentation>Various service location overrides for the partner.
-Ex: Driver Refusal </xs:documentation>
-							</xs:annotation>
-							<xs:complexType>
-								<xs:sequence>
-									<xs:element name="OverrideType" type="CodeWithDescription" minOccurs="0"/>
-									<xs:element name="OverrideInd" type="xs:boolean" minOccurs="0"/>
-									<xs:element name="OverrideReasonType" type="CodeWithDescription" minOccurs="0"/>
-								</xs:sequence>
-							</xs:complexType>
-						</xs:element>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
@@ -293,84 +285,6 @@ Ex: Driver Refusal </xs:documentation>
 							</xs:annotation>
 						</xs:element>
 						<xs:element name="ContractByType" type="ContractByType" minOccurs="0"/>
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="ContractThresholdType" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>3rd party contract order limits</xs:documentation>
-				</xs:annotation>
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element name="OrderLimitCnt" type="xs:integer" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>purpose is to define threshold at which point we stop allocating orders to a given vendor for a given day for given store</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="MaximumItemCnt" type="xs:integer" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>purpose is to define, by an order's item count, a threshold to qualify orders to be eligible for assigning to a 3PL (i.e. we will only assign an order to Shipt if the item count is between 1-70)</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="MinimumItemCnt" type="xs:integer" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>purpose is to define, by an order's item count, a threshold to qualify orders to be eligible for assigning to a 3PL (i.e. we will only assign an order to Shipt if the item count is between 1-70)</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="MinimumToteCnt" type="xs:integer" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>purpose is to define, by an order's tote count, a threshold to qualify orders to be eligible for assigning to a 3PL (i.e. we will only assign an order to Shipt if the tote count is between 10-20)
-
-</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="MaximumToteCnt" type="xs:integer" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>purpose is to define, by an order's tote count, a threshold to qualify orders to be eligible for assigning to a 3PL (i.e. we will only assign an order to Shipt if the tote count is between 10-20)
-
-</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="OrderAllocationPct" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>purpose is to define percentage of orders to be delivered by a partner for a given store for a given day(this value will override the order count)
-
-</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:decimal">
-									<xs:totalDigits value="6"/>
-									<xs:fractionDigits value="3"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="MaximumColdTm" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>indicates the max time the item needs to be processed by the vendor before it goes into freezer for maintaining its life. </xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string"/>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="ExpresOrderInd" type="xs:boolean" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Indicator if 3PL must confine to express order delivery. </xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="MileageNbr" type="xs:integer" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Partner's mileage number</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="SlotTime" minOccurs="0">
-							<xs:complexType>
-								<xs:sequence>
-									<xs:element name="OneHrSlotInd" type="xs:boolean" minOccurs="0"/>
-									<xs:element name="TwoHrSlotInd" type="xs:boolean" minOccurs="0"/>
-									<xs:element name="FourHrSlotInd" type="xs:boolean" minOccurs="0"/>
-								</xs:sequence>
-							</xs:complexType>
-						</xs:element>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
@@ -437,6 +351,117 @@ Ex: Store can be designated to manually override an automated 3PL delivery sched
 						<xs:element name="OverrideType" type="CodeWithDescription" minOccurs="0"/>
 						<xs:element name="OverrideInd" type="xs:boolean" minOccurs="0"/>
 						<xs:element name="OverrideReasonType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="ContractThresholdType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>3rd party contract order limits</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="OrderLimitCnt" type="xs:integer" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Purpose is to define threshold at which point we stop allocating orders to a given vendor for a given day for given store</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="MaximumItemCnt" type="xs:integer" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Purpose is to define, by an order's item count, a threshold to qualify orders to be eligible for assigning to a 3PL (i.e. we will only assign an order to Shipt if the item count is between 1-70)</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="MinimumItemCnt" type="xs:integer" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Purpose is to define, by an order's item count, a threshold to qualify orders to be eligible for assigning to a 3PL (i.e. we will only assign an order to Shipt if the item count is between 1-70)</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="MinimumToteCnt" type="xs:integer" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Purpose is to define, by an order's tote count, a threshold to qualify orders to be eligible for assigning to a 3PL (i.e. we will only assign an order to Shipt if the tote count is between 10-20)
+
+</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="MaximumToteCnt" type="xs:integer" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Purpose is to define, by an order's tote count, a threshold to qualify orders to be eligible for assigning to a 3PL (i.e. we will only assign an order to Shipt if the tote count is between 10-20)
+
+</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="OrderAllocationPct" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Purpose is to define percentage of orders to be delivered by a partner for a given store for a given day(this value will override the order count)
+
+</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:decimal">
+												<xs:totalDigits value="6"/>
+												<xs:fractionDigits value="3"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="MaximumColdTimeNbr" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicates the max time the item needs to be processed by the vendor before it goes into freezer for maintaining its life. </xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string"/>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ExpresOrderInd" type="xs:boolean" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Indicator if 3PL must confine to express order delivery. </xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="MileageNbr" type="xs:integer" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Partner's mileage number</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="SlotTime" minOccurs="0">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="OneHrSlotInd" type="xs:boolean" minOccurs="0"/>
+												<xs:element name="TwoHrSlotInd" type="xs:boolean" minOccurs="0"/>
+												<xs:element name="FourHrSlotInd" type="xs:boolean" minOccurs="0"/>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="ServiceAreaLocationOverrides" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Various service location overrides for the partner.
+Ex: Driver Refusal </xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="AreaTypeCd" type="xs:string" minOccurs="0"/>
+									<xs:element name="AreaTypeValueTxt" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Delivery areas covered like zip codes covered from the store.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="100"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="ServiceAreaCoordinateType" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Shows the service area coordinates for a business partner. </xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="LatitudeDegree" type="xs:decimal" minOccurs="0"/>
+												<xs:element name="LongitudeDegree" type="xs:decimal" minOccurs="0"/>
+												<xs:element name="Altitude" type="xs:decimal" minOccurs="0"/>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>

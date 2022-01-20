@@ -91,3 +91,12 @@ mqsireadbar -b ESED_GroceryOrder_eRUMS_IH_Publisher.bar -r
 mqsiapplybaroverride -k ESED_GroceryOrder_OMS_IH_Publisher -b ESED_GroceryOrder_OMS_IH_Publisher.bar -p ESED_GroceryOrder_OMS_IH_Publisher.BASE.override.properties
 
 mqsireadbar -b ESED_GroceryOrder_OMS_IH_Publisher.bar -r
+
+
+
+
+
+mqsiapplybaroverride -k ESED_AirMilePoints_OCRP_IH_Publisher -b ESED_AirMilePoints_OCRP_IH_Publisher.bar -p ESED_AirMilePoints_OCRP_IH_Publisher.BASE.override.properties
+
+mqsireadbar -b ESED_AirMilePoints_OCRP_IH_Publisher.bar -r
+

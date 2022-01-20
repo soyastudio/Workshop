@@ -6,8 +6,8 @@
    Description: Albertsons TransportationStatus Business Object
    Name: /SFWY/Nouns/SwyShipment.xsd
 -->
-<!-- edited with XMLSpy v2020 rel. 2 (http://www.altova.com) by Devesh Kandpal (Albertsons) -->
-<xs:schema xmlns:oa="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+<!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by Devesh (Albertsons) -->
+<xs:schema xmlns:oa="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<!--!=============================================================================================-->
 	<!--!-->
 	<!--!-->
@@ -26,6 +26,8 @@
 	<!--V1.7 3/22/2021 - Alex Nunes - Increased length of Dispatch comment field to 300. -->
 	<!--V1.8 4/12/2021 - Alex Nunes - Additional field to categorize the order. -->
 	<!--V1.9 08/05/2021 - Devesh Kandpal - Added few fields for warehouse/plant shipment to Store/Wholesale/Transfers on specific route/stop-->
+	<!--V1.10 10/26/2021 - Devesh Kandpal - ES-5256 Added new field OrderStatus, PhysicalWarehouseId; CreateTs is made Optional for WMS-WhseTruckInfo-->
+	<!--V1.11 11/19/2021 - Devesh Kandpal - ES-5256 Made RouteStopId optional as route/stop may or may not exist-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:element name="TransportationStatus" type="TransportationStatusType">
 		<xs:annotation>
@@ -115,10 +117,15 @@
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
+						<xs:element name="PhysicalWarehouseId" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Physical warehouse in a distribution Center</xs:documentation>
+							</xs:annotation>
+						</xs:element>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="CreateTs" type="DateTimeType">
+			<xs:element name="CreateTs" type="DateTimeType" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Time stamp of when the trip was created or when the trip was dispatched. Time zone will need to be added (enriched) derived from the SiteId (not the stop location).</xs:documentation>
 				</xs:annotation>
@@ -242,6 +249,20 @@
 					<xs:documentation>Department Code is a standard 3 character code . A department is a distinct part of a facility's operation, or an administrative unit of a facility. For ex PER - Perishable, </xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="OrderStatus" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> This is the current status of the order, indicating at which  
+ stage the order is in the order process.                      
+</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="StatusTypeCd" type="xs:string" minOccurs="0"/>
+						<xs:element name="Description" type="xs:string" minOccurs="0"/>
+						<xs:element name="EffectiveDtTm" type="xs:dateTime" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="ShipmentStopsType">
@@ -249,7 +270,7 @@
 			<xs:documentation>Trip detail information on trip transportation stops.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="RouteStopId">
+			<xs:element name="RouteStopId" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Order of stop based on the route's store stops.</xs:documentation>
 				</xs:annotation>

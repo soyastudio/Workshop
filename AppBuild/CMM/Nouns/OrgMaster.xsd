@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Sai Nuthakki (Albertsons) -->
+<!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by Arundhatee Sarangi (Albertsons) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://collab.safeway.com/it/architecture/AbsOmMaster" xmlns:ns2="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.3 Arundhatee Sarangi 01/03/2022 - Removed global element AlternateId and created as a local element under OMCorporationType and OMDivisionType-->
+	<!--V1.2 Arundhatee Sarangi 11/09/2021 - ES-1544 Added DUNSNbr and changed Cardinality of DivisionAddress-->
 	<!--V1.1 Rosabel Macario 11/04/2020 - Added tag to resolve dateTimeStamp issue-->
 	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:complexType name="ResponsibleParty">
@@ -75,7 +77,12 @@ ex: name of the president of a division.</xs:documentation>
 								</xs:element>
 								<xs:element name="CorporationLegalNm" type="xs:string" minOccurs="0"/>
 								<xs:element ref="AlternateIdType" minOccurs="0"/>
-								<xs:element ref="AlternateId" minOccurs="0"/>
+								<xs:element name="AlternateId" type="xs:string" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Is an Alternate Identifier of the given instance of an entity within the scope of the integration.
+For example, Network ID, Corporate email, National Identifier etc.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
 								<xs:element name="ParentCorporationId" minOccurs="0">
 									<xs:simpleType>
 										<xs:restriction base="xs:string">
@@ -286,7 +293,12 @@ ex: name of the president of a division.</xs:documentation>
 								<xs:element ref="OfficeFacilityId" minOccurs="0"/>
 								<xs:element name="DivisionLegalNm" type="xs:string" minOccurs="0"/>
 								<xs:element ref="AlternateIdType" minOccurs="0"/>
-								<xs:element ref="AlternateId" minOccurs="0"/>
+								<xs:element name="AlternateId" type="xs:string" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Is an Alternate Identifier of the given instance of an entity within the scope of the integration.
+For example, Network ID, Corporate email, National Identifier etc.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
 								<xs:element name="ConsolidationDivisionId" minOccurs="0">
 									<xs:annotation>
 										<xs:documentation>Both Accounts Payable (AP) and General Ledger (GL) tables
@@ -316,6 +328,7 @@ consolidate to division 17 in the United States.         </xs:documentation>
 									</xs:annotation>
 								</xs:element>
 								<xs:element name="OMResponsibleParty" type="ResponsibleParty" minOccurs="0" maxOccurs="unbounded"/>
+								<xs:element name="DUNSNbr" type="xs:string" minOccurs="0"/>
 								<xs:element name="AccountingType" type="AccountingComponentType" minOccurs="0">
 									<xs:annotation>
 										<xs:documentation>Accounting structure assigned to the the OM componenet in financial system. ex COA structure</xs:documentation>
@@ -410,13 +423,6 @@ generally defaulted to 9999-12-31 for all active OM components.</xs:documentatio
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
-	<xs:element name="AlternateId">
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:maxLength value="50"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
 	<xs:complexType name="AccountingComponentType">
 		<xs:annotation>
 			<xs:documentation>Accounting components assigned the the OM componenet in financial system. ex COA structure</xs:documentation>

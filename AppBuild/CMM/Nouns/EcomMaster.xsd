@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2021 rel. 2 sp1 (x64) (http://www.altova.com) by poliv02 (Albertsons) -->
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Nitika Dhingra (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<!--V1.0  02142020  Sai Nuthakki   Initial Version-->
 	<!--V1.1  06092020  Sai Nuthakki   Added ShoppingCartType-->
@@ -15,13 +15,16 @@
 	<!--V2.1 09/10/21 Patrick Oliver: BusinessEventType:
 • Removed typeCode from EventTotalStorageUnitQty
 • Changed ActivityStorageUnitType to EventStorageUnitType (same in GOF)
-• Added MFCInd
-• Added EventStorageUnitOverrides
+• Added MFCInd• Added EventStorageUnitOverrides
 • Added BatchHandoffInd, ByPassBagHotCnt
 • Change EventOverrideType to EventOverrideSubCd
 • Added EventStorageUnitQtyByUnitType (for storage unit counts) (also moved unbounded to element from sequence Updated EventStorageUnitData to move unbounded to element from sequence
 V2.1 10/05/21 Patrick Oliver: CustomerDeliverySlotType:
-• Added StartTs  (WGD -white glove delivery), Added BookingInd (WGD), Added BookingServiceLevelType (WGD) -->
+• Added StartTs  (WGD -white glove delivery), Added BookingInd (WGD), Added BookingServiceLevelType (WGD) 
+V2.2 11/15/21 Nitika Dhingra: BusinessEventType:
+• Added SourceType
+V2.2 11/30/21 Nitika Dhingra: BusinessEventType:
+• Renamed SourceType to MessageSourcetype-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:complexType name="ShoppingCartType">
 		<xs:annotation>
@@ -115,6 +118,11 @@ Ex: Grocery order Delivery, Order status.</xs:documentation>
 					<xs:documentation>sub events with in main event.
 ex: Grocery Delivery is the main event.
 Driver started, on the way, reached, delivered are the sub events.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MessageSourceType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates the Source ex ACUPICK , OSLM </xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="EventBusinessAreaType" type="DeliveryAreaType">

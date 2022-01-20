@@ -16,7 +16,12 @@
 	</xs:element>
 	<xs:complexType name="ProcurementOrganizationType">
 		<xs:sequence>
-			<xs:element name="ProcurementGroup">
+			<xs:element name="ProcurementOrganizationMessageType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Message Defines the level of grain as a Procurement organization or Manager detail Values 1. Procurement Organization. 2.Procurement Buyer</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ProcurementGroup" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Groups available in Procurement Organization</xs:documentation>
 				</xs:annotation>
@@ -35,7 +40,7 @@
 										<xs:documentation>Senior Vice President Name</xs:documentation>
 									</xs:annotation>
 								</xs:element>
-								<xs:element name="VicePresidentCd" type="xs:string">
+								<xs:element name="VicePresidentCd" type="xs:string" minOccurs="0">
 									<xs:annotation>
 										<xs:documentation>Vice President Code</xs:documentation>
 									</xs:annotation>
@@ -45,8 +50,8 @@
 										<xs:documentation>Vice President Name</xs:documentation>
 									</xs:annotation>
 								</xs:element>
-								<xs:element name="BusinessGroup" type="CodeWithDescription"/>
-								<xs:element name="AreaOfResponsibility" type="CodeWithDescription"/>
+								<xs:element name="BusinessGroup" type="CodeWithDescription" minOccurs="0"/>
+								<xs:element name="AreaOfResponsibility" type="CodeWithDescription" minOccurs="0"/>
 							</xs:sequence>
 						</xs:extension>
 					</xs:complexContent>
@@ -71,7 +76,7 @@
 			<xs:element name="BuyerDetails" minOccurs="0" maxOccurs="unbounded">
 				<xs:complexType>
 					<xs:sequence minOccurs="0">
-						<xs:element ref="CorporationId"/>
+						<xs:element ref="CorporationId" minOccurs="0"/>
 						<xs:element name="BuyerNbr">
 							<xs:annotation>
 								<xs:documentation>This identifies the buyer of this item or
@@ -284,7 +289,7 @@ job title of the user.</xs:documentation>
 	</xs:complexType>
 	<xs:complexType name="TeamManagerDtlType">
 		<xs:sequence minOccurs="0">
-			<xs:element name="ManagerCd">
+			<xs:element name="ManagerCd" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>DC Manager cross reference</xs:documentation>
 				</xs:annotation>
@@ -316,6 +321,11 @@ information for a buyer number.
 </xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="DirectorCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Director to whom the manager reports to</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="ContactType">
@@ -326,7 +336,7 @@ information for a buyer number.
 	</xs:complexType>
 	<xs:complexType name="RegionalDirectorType">
 		<xs:sequence minOccurs="0">
-			<xs:element name="RegionalDirectorCd">
+			<xs:element name="RegionalDirectorCd" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Regional Director Code</xs:documentation>
 				</xs:annotation>
@@ -350,7 +360,7 @@ may be used.
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="DistributionCenterGMCd">
+			<xs:element name="DistributionCenterGMCd" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Distribution Center General Manager
 Code</xs:documentation>
@@ -404,15 +414,15 @@ being purchased via codes. </xs:documentation>
 				</xs:simpleType>
 			</xs:element>
 			<xs:element ref="Address" minOccurs="0"/>
-			<xs:element name="DCManagerType" maxOccurs="unbounded">
+			<xs:element name="DCManagerType" minOccurs="0" maxOccurs="unbounded">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="ManagerType" type="CodeWithDescription"/>
-						<xs:element name="ManagerNm" type="xs:string"/>
-						<xs:element name="ManagerCd" type="xs:string"/>
-						<xs:element ref="CorporationId"/>
-						<xs:element ref="DivisionId"/>
-						<xs:element ref="DistributionCenterId"/>
+						<xs:element name="ManagerType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="ManagerNm" type="xs:string" minOccurs="0"/>
+						<xs:element name="ManagerCd" type="xs:string" minOccurs="0"/>
+						<xs:element ref="CorporationId" minOccurs="0"/>
+						<xs:element ref="DivisionId" minOccurs="0"/>
+						<xs:element ref="DistributionCenterId" minOccurs="0"/>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>

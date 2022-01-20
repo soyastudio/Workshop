@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by Devesh (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--!=============================================================================================-->
+	<!--!-->
+	<!--!      Noun: ScanBasedVendorMaster-->
+	<!--! Business object which provides  Scan Based Trading (SBT) Vendor Information. 
+Unlike other procurement vendors, Scan based vendor bring their products to sell in store and invoice is generated based on actaul scan/sales at the store. -->
+	<!--!-->
+	<!--!=============================================================================================-->
+	<!--15-Dec-2021 - v1.0 - Devesh Kandpal - Initial version - ES-5799-->
+	<!--04-Jan-2022 - v1.1 - Devesh Kandpal - Renamed few elements per review comments-->
+	<xs:element name="ScanBasedVendorMaster" type="ScanBasedVendorMasterType">
+		<xs:annotation>
+			<xs:documentation>Business object which provides  Scan Based Trading (SBT) Vendor Information. 
+Unlike other procurement vendors, Scan based vendor bring their products to sell in store and invoice is generated based on actaul scan/sales at the store. </xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="ScanBasedVendorMasterType">
+		<xs:annotation>
+			<xs:documentation>Business object which provides  Scan Based Trading (SBT) Vendor Information. 
+Unlike other procurement vendors, Scan based vendor bring their products to sell in store and invoice is generated based on actaul scan/sales at the store. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporationId"/>
+			<xs:element ref="DivisionId"/>
+			<xs:element name="VendorId">
+				<xs:annotation>
+					<xs:documentation>A vendor is a Company we purchase from. VEND-NUM is generally used with Vendor Sub-Account Nbr (VEND-SUB-ACNT) or WIMS Sub-Vendor Nbr (WIMS-SUB-VEND)</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorSubAccntId">
+				<xs:annotation>
+					<xs:documentation>Vendor Sub-Account Number. Identifies a particular outlet of a company we purchase from. EG. The Vancouver outlet of Nabob. This is used by the Accounts Payable System</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ScanBasedVendorTypeCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Scan Based Vendor Code 
+'D' = DSD and
+'W' =  Warehouse Consignment</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ConsignmentCommissionPct" type="xs:decimal" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Commission percentage of Retail price. This is populated when PaymentInd is R (percentage of Retail Price) </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SalesCollectionType" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="SalesCollectionStartDt" type="xs:date" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Date to start collecting sales data.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SalesCollectionEndDt" type="xs:date" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Date to end collecting sales data.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="DataCollectionType" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ProductActivityStartDt" type="xs:date" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Date to start sending data to the SBT(Scan Based Trading) vendor.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ProductActivityEndDt" type="xs:date" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Date to stop sending data to the SBT(Scan Based Trading) vendor.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element ref="EffectiveTimePeriod" minOccurs="0"/>
+			<xs:element name="VendorPayment" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="PaymentStartDt" type="xs:date" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Date to start paying the SBT(Scan Based Trading) vendor</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PaymentEndDt" type="xs:date" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Date to stop the pay to the SBT(Scan Based Trading) vendor</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ScanBasedPaymentTypeCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates whether Invoice calculation should be based on ItemVendorCost or Percentage of Retail Price
+R (percentage of RetailPrice) , C or Space (ItemVendorCost)</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PayByCd" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Pay By Code
+'S' = Scan or
+'C' = Warehouse Consignment</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PaymentScheduleCd" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Payment Schedule Code
+'D' = Daily and
+'W' = Weekly</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="UnsentPaymentInd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicator to process any unpaid sales. Valid values are Y or Spaces</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UnsentSalesStartDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>is the Start Date of unpaid or unsent sales to be processed.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UnsentSalesEndDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>is the End Date of unpaid or unsent sales to be processed.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UnsentProductActivityInd" type="xs:string" minOccurs="0"/>
+			<xs:element name="SendItemCatalogueInd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicator to identifies whether to send the item information to vendor via EDI 832</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Facility" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Though SBT Vendors are identified at divsion level , Certain facilities can be excluded or included in the Division</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="FacilityId" minOccurs="0"/>
+						<xs:element name="FacilityType" minOccurs="0"/>
+						<xs:element name="PaymentInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicator to Include or Exclude this Store from paying  the SBT(Scan Based Trading) vendor. Values are 'I' or 'E' </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PaymentStartDt" type="xs:date" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Date to start paying the SBT(Scan Based Trading) vendor</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PaymentEndDt" type="xs:date" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Date to stop the pay to the SBT(Scan Based Trading) vendor</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ProductActivityInd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicator to Include or Exclude this Store from sending sales activity for the SBT(Scan Based Trading) vendor. Values are 'I' or 'E'</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="UnsentSalesStartDt" type="xs:date" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>is the Start Date of unpaid or unsent sales to be processed.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="UnsentSalesEndDt" type="xs:date" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>is the End Date of unpaid or unsent sales to be processed.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="DataCollectionType" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="ProductActivityStartDt" type="xs:date" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Date to start sending data to the SBT(Scan Based Trading) vendor.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="ProductActivityEndDt" type="xs:date" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Date to stop sending data to the SBT(Scan Based Trading) vendor.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="UnsentPaymentInd" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicator to process any unpaid sales. Valid values are Y or Spaces</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="UnsentProductActivityInd" type="xs:string" minOccurs="0"/>
+						<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AuditData" type="RecordAuditData" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Audit data elements.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

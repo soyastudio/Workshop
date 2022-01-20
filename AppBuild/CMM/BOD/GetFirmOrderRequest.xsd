@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2022 (x64) (http://www.altova.com) by Adey (Albertsons) -->
+<xs:schema xmlns="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://www.openapplications.org/oagis/9" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/FirmOrderRequest.xsd"/>
+	<!--!=============================================================================================-->
+	<!--!-->
+	<!--!-->
+	<!--!      GetFirmOrderRequest-->
+	<!--!                                       Business object that publishes Firm orders request. This request will be converted to actual firm orders for order processing.-->
+	<!--!-->
+	<!--!=============================================================================================-->
+	<!--12/03/2021 - v1.0 - Adey Okeowo - Initial version. ES- 5482-->
+	<xs:element name="GetFirmOrderRequest" type="GetFirmOrderRequestType">
+		<xs:annotation>
+			<xs:documentation> Business object that publishes Firm orders request. This request will be converted to actual firm orders for order processing.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetFirmOrderRequestType">
+		<xs:annotation>
+			<xs:documentation> Business object that publishes Firm orders request. This request will be converted to actual firm orders for order processing.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="FirmOrderRequestData" type="Abs:FirmOrderRequestType" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

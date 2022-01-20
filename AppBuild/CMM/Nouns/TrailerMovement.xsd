@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 rel. 2 (http://www.altova.com) by Devesh Kandpal (Albertsons) -->
+<!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by Devesh (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<!--!=============================================================================================-->
@@ -8,10 +8,12 @@
 	<!--!                                     Business object that provides various trailer operational movement in a warehouse facility. -->
 	<!--!-->
 	<!--!=============================================================================================-->
+	<!--11/15/2021 - v1.2 - Devesh Kandpal - JIRA ES-5497 - Moved EventStatus at root level ; Added EquipmentSubType; Removed GateIn/GateOut-->
+	<!--10/25/2021 - v1.1 - Devesh Kandpal - JIRA ES-4259 - Added few attributes for new source PINC-->
 	<!--07/13/2021 - v1.0 - Devesh Kandpal - Initial version.-->
 	<xs:element name="TrailerMovement" type="TrailerMovementType">
 		<xs:annotation>
-			<xs:documentation>Root element.</xs:documentation>
+			<xs:documentation>represeents various trailer operational movement in a warehouse facility. For Ex Request , Release , Re-assign Trailer etc</xs:documentation>
 		</xs:annotation>
 	</xs:element>
 	<xs:complexType name="TrailerMovementType">
@@ -51,15 +53,43 @@ facilities. There are two categories for facilities:
 			<xs:element name="FacilityType" type="CodeWithDescription" minOccurs="0"/>
 			<xs:element name="MovementType">
 				<xs:annotation>
-					<xs:documentation>Ex Request Trailer , Release Trailer, Load Trailer</xs:documentation>
+					<xs:documentation>Ex Request Trailer , Release Trailer, Load Trailer, Inbound/Outbound</xs:documentation>
 				</xs:annotation>
 				<xs:complexType>
 					<xs:complexContent>
 						<xs:extension base="CodeWithDescription">
 							<xs:sequence minOccurs="0">
-								<xs:element name="MovementTs" type="DateTimeBaseType" minOccurs="0">
+								<xs:element name="MovementStartTs" type="xs:dateTime" minOccurs="0">
 									<xs:annotation>
-										<xs:documentation>Timestamp of the trailer operation. Ex Request Timestamp , Release Timestamp</xs:documentation>
+										<xs:documentation>End Timestamp of the trailer operation. Ex Request Timestamp , Release Timestamp</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="MovementEndTs" type="xs:dateTime" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>End Timestamp of the trailer operation. Ex Request Timestamp , Release Timestamp</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="EventType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This can be trip dispatch, completion, cancellation. Check-In, Check-Out,Gate-In,Gate-Out event</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="CodeWithDescription">
+							<xs:sequence>
+								<xs:element name="EventStartTs" type="xs:dateTime" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Start Timestamp of the event</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="EventEndTs" type="xs:dateTime" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Start Timestamp of the event</xs:documentation>
 									</xs:annotation>
 								</xs:element>
 							</xs:sequence>
@@ -72,8 +102,166 @@ facilities. There are two categories for facilities:
 					<xs:documentation>Inventory reduction reference or Bill of Materials reference for a route in WMS system</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="DockDetailType" type="DockDetailTypeType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Appointment" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Appointment date time reserved with a afacility like a warehouse to receive goods from vendors / suppliers. Appointment will be made by either supplier or the transportation company that brings in the goods.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="AppointmentReferenceNbr" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Appointment Number</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="AppointmentType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="AppointmentStatus" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="FreightTerm" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="CommentTxt" minOccurs="0" maxOccurs="5">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="500"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="DockDetailType" type="DockDetailTypeType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Trailer details when parked in the dock for unload/upload process</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="TrailerStatus" type="CodeWithDescription" minOccurs="0" maxOccurs="5"/>
+			<xs:element name="TrailerMovement" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Truck/Trailer info while entering and during exit from the yard.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="AssetVisitId" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Unique ID for a single asset’s visit to the yard. The field represents a single visit to a yard by a single asset. For
+example, if asset A enters a yard, it might be assigned visit 100 on checkin. No
+other asset visit would use the same id. All of the events which happen to that
+asset before it leaves the yard would contain asset_visit_id = 100. At some
+point it will check out, and check back in. When it checks in again, it would
+have a new asset_visit_id</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="AgentInfo" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Details of Agent logging asset details in the yard management system</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="AgentType" type="CodeWithDescription" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Type of Agent based on Check-in/Check-Out</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="AgentId" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Login ID detail of Agent performing truck/trailer check-in </xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="AgentNm" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Agent details performing truck/trailer check-in </xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element ref="Address" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="ParkingPurposeCd" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates how asses is parked in  Parking lanes e.g.
+‘Lot’, Holding’</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ParkingLotNbr" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Parking Spot for the truck/trailer</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="LastMovementTs" type="xs:dateTime" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Timestamp when last move of truck/trailer was recorded</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="LoadStatus" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates load status of the trailer. Valid value are Empty, Loaded, Loading, Unloading</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="HandlingMethodType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="DimensionCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>provides various possible sizes for the assets types. For Ex Trailer53, Container20</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Height" type="xs:string" minOccurs="0"/>
+									<xs:element name="Width" type="xs:string" minOccurs="0"/>
+									<xs:element name="Depth" type="xs:string" minOccurs="0"/>
+									<xs:element name="SizeUOMCd" type="xs:string" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="SiteType" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Site Code and name where event was triggered. For ex Melrose Park (ABSMELYRD)</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="RFID" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation> Allows an instance of an item to carry any radio frequency Id (RFID) that maybe used by a supply chain.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ShipmentDetails" minOccurs="0" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="StoreOrderNbr" type="xs:integer" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>An Id created by the authoring system that uniquely represents a store order document.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="BillOfLadingNbr" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Bill of lading number only external customer delivery</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="PurchaseOrderNbr" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Identifying number for Purchase Order assigned by the orderer/purchaser</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="ShipmentStatus" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>state of the Shipment  (New, Assigned)</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:complexContent>
+												<xs:extension base="CodeWithDescription">
+													<xs:sequence minOccurs="0">
+														<xs:element name="StatusTs" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>Timestamp of when the status was created.</xs:documentation>
+															</xs:annotation>
+														</xs:element>
+													</xs:sequence>
+												</xs:extension>
+											</xs:complexContent>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="ShipmentNotesTxt" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="AuditData" type="AuditDataType" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
 			<xs:element name="CommodityType" type="CodeWithDescription" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Various load type in the Warehouse. Ex Frozen Groceries, Frozen Meat , Perishable</xs:documentation>
@@ -132,20 +320,23 @@ facilities. There are two categories for facilities:
 					<xs:documentation>Location Name where trailer arrives</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="Carrier" type="CarrierEquipment" minOccurs="0">
+			<xs:element name="Carrier" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Idenitfies the party that serves as the carrier of the goods or services for the shipment.</xs:documentation>
 				</xs:annotation>
-			</xs:element>
-			<xs:element name="TrailerAssetId" type="xs:string" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Id of the trailer attached to a truck</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="TrailerType" type="CodeWithDescription" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Type of Trailer Ex Request , Release Trailer</xs:documentation>
-				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="CarrierEquipment">
+							<xs:sequence>
+								<xs:element name="EquipmentSubType" type="CodeWithDescription" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>"Dry", "Refrigerated" Trailer,</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
 			</xs:element>
 			<xs:element name="LeaveAtDockInd" type="xs:boolean" minOccurs="0"/>
 			<xs:element name="InstructionsTxt" minOccurs="0">
@@ -154,6 +345,18 @@ facilities. There are two categories for facilities:
 						<xs:maxLength value="2000"/>
 					</xs:restriction>
 				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ShipmentStatusType">
+		<xs:annotation>
+			<xs:documentation>Trip detail information on trip transportation stops.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0">
+			<xs:element name="StatusTs" type="DateTimeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Timestamp of when the status was created.</xs:documentation>
+				</xs:annotation>
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>

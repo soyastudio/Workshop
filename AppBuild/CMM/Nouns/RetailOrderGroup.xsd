@@ -1,0 +1,568 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by SKATK01 (Albertsons) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://collab.safeway.com/it/architecture/AbsOmMaster" xmlns:ns2="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.0 - Sridhar Katkuri - JIRA - ES-5582-->
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:include schemaLocation="../Nouns/OrgMaster.xsd"/>
+	<xs:include schemaLocation="../Nouns/RetailOrderGroup.xsd"/>
+	<xs:element name="RetailOrderGroup" type="GetRetailOrderGroup">
+		<xs:annotation>
+			<xs:documentation> Business object that provides RetailOrderGroup for the Retail Store</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetRetailOrderGroup">
+		<xs:annotation>
+			<xs:documentation> Business object that provides RetailOrderGroup for the Retail Store</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="ns2:ROGCd"/>
+			<xs:element ref="ns2:CorporateItemCd"/>
+			<xs:element ref="ns2:DivisionId"/>
+			<xs:element name="DefaultProvince" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the Default Province in this ROG. Used by some programs to show Provincial information for a ROG.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Name" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Type of name varies by table. Table reports show specific definition.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="30"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ROGReportName" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is a shorter version of ROG Name.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TypeCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A type code with various meanings in different tables.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AdvanceWeeks" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Number of weeks out the WMW765 Report will print for.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CountryCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This code is an abbreviation that identifies a country. The CAN or USA designations are associated with FLUID measures 
+where theres different calculations for Imperial (measures) and US Fluid measures.  
+The blanks or spaces mean the value (UP_TBL_NUM) can be used in Canada or USA.....eg, FT, IN, LB etc.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MericImpDataInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicator to determine whether calculations are to be done using Metric or Imperial measures.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="NewItemBIBLookAheadDays" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The number of days ahead of the receiving date that a NEW ITEM BIB needs to be created, 
+to allow adequate delivery time to the stores - NOT NULL WITH DEFAULT</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="3"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="NewItemBIBDurationDays" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The number of days a NEW ITEM BIB will remain in a store - NOT NULL WITH DEFAUL</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="3"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ROGUsingSMIC" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This switch will indicate if the ROG uses SMIC codes.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ConvCont" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CpnDeleteDays" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the number of days past the process date which the electronic/paper coupon in SSCOUPON is retained during date 
+off processing to determine if the coupon has expired and is ready for deletion.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MaxFACDel" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the maximum number of electronic/paper coupon item delete transactions that can be written to file SELSTR for a FAC at a ROG level</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StandardPLUSW" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Determines if PLUs have been standardized</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CommonCdCopySW" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This switch is used to determine if Common Code should be copied from the corporate set of left as zero. 
+Generally the US ROGs will have the Common Code set to zero and Canada copies the corporate value when SSITMURX row is created.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="QueueBatchSW" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>NDM Command Scheduling Program to indicate if a ROG can have multiple days of file mainenance coexist at the store level.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="QueueSundayNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>These values will help to dynamically change the file names of the File Maintenance batches that are sent to the store controllers.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="QueueMondayNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>These values will help to dynamically change the file names of  the File Maintenance batches that are sent to the store controllers.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="QueueTuesdayNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>These values will help to dynamically change the file names of  the File Maintenance batches that are sent to the store controllers.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="QueueWednesdayNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>These values will help to dynamically change the file names of the File Maintenance batches that are sent to the store controllers.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="QueueThursdayNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>These values will help to dynamically change the file names of the File Maintenance batches that are sent to the store controllers.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="QueueFridayNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>These values will help to dynamically change the file names of the File Maintenance batches that are sent to the store controllers.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="QueueSaturdayNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>These values will help to dynamically change the file names of the File Maintenance batches that are sent to the store controllers.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MaxTillTape" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This identifies the maximum number of characters  that can be put on the till tape for the stores in the rog.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:int"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CpnFeatureInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field contains a code to identify whether or not to use the new coupon features   available on the 4690 scanner.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CpnRecurSW" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This switch is used to indicate if additional Cents  Off Each Coupons, that a customer is entitled to,  will be automatically added to an order after the  first coupon has been manually entered.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CpnRecurCentsSW" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This switch is used to indicate if additional Cents Off Weight Coupons, that a customer is entitled to, will be automatically added to an order after the first coupon has been manually entered.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CpnRecurPercentSW" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This switch is used to indicate if additional Percent  Off Each Coupons, that a customer is entitled to, will be automatically added to an order after the first coupon has been manually entered.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CpnRecurPercentWeightSW" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This switch is used to indicate if additional Percent Off Each Coupons, that a customer is entitled to,   will be automatically added to an order after the  first coupon has been manually entered.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CpnRecurNetValueSW" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This switch is used to indicate if additional Percent Off Weight Coupons, that a customer is entitled to,  will be automatically added to an order after the first coupon has been manually entered.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CpnRecurNetValueWeightSW" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This switch is used to indicate if additional Net  Value Each Coupons, that a customer is entitled to, will be automatically added to an order after the  first coupon has been manually entered.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SendDescLabelSW" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if Rog requires a price label to be created whenever the item description changes.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="UsePOSSignDefaultsSW" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This switch is used to indicate if sign defaults for coupons will be obtained from the point of sale sign defaults.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DefaultCpnsignCnt1" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If the USE_POS_SGN_DFT_SW is set to N, the value in this field will be the default number of talkers for in-store coupon items.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="1"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DefaultCpnsignCnt2" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If the USE_POS_SGN_DFT_SW is set to N, the value in this  field will be the default number of mouldings for in-store coupon items.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="1"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DefaultCpnsignCnt3" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If the USE_POS_SGN_DFT_SW is set to N, the value in this  field will be the default number of display signs for  in-store coupon items.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="1"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DefaultCpnbooksigncount1" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If the USE_POS_SGN_DFT_SW is set to N, the value in this field will be the default number of talkers for coupon book Items.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="1"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DefaultCpnbooksigncount2" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If the USE_POS_SGN_DFT_SW is set to N, the value in this field will be the default number of mouldings for coupon book items.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="1"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DefaultCpnbooksigncount3" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If the USE_POS_SGN_DFT_SW is set to N, the value in this field will be the default number of display signs for coupon book items.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="1"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DefaultElectronicCpnsignCnt1" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If the USE_POS_SGN_DFT_SW is set to N, the value in this field will be the default number of talkers for electronic  coupon items.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="1"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DefaultElectronicCpnsignCnt2" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If the USE_POS_SGN_DFT_SW is set to N, the value in this  field will be the default number of mouldings for electronic coupon items.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="1"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DefaultElectronicCpnsignCnt3" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If the USE_POS_SGN_DFT_SW is set to N, the value in this field will be the default number of display signs for electronic coupon items.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="1"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ApplyHrsEarly" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the number of hours that BDD120 will subtract from midnight to get the time a store will apply data changes.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="2"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CpnROGGrpCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Description moved to PRIMARY status.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:int"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ElecCpnSSITMPOSCntSW" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates whether the sign counts on the SSITMPOS table  will be used when creating electronic coupons. Only used by divisions which have electronic coupons. Initially this was the Eastern Division only.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ElecPromSW" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Determines if the rog is participating in electronic promotions.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EstShipAllocSeq" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field is used to determine which ROG to put the  Estimated Ship quantity from PACS into when creating SSPENADI rows.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:int"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="POSRptInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is used to determine which reports will be produced by program PSD019. This is a ROG level switch.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DisplayScalePLUSwitch" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates if scale plu information should be displayed on merchandising screens</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="UseWHItemIdInd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>An indicator (yes or no) that the Warehouse Item Identifier,  SSITMROG.WH_ITEM_ID, is to display on tags and bibs.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PrvLblThresAmt" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The minimum allowable retail price difference between a Private Label item and its  associated National Brand item.  The value will be ROG specific.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="4"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TargetMrkSW" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This column indicates if the entity as described in the database is participating in the target marketing promotion wherein promotions are specific to a population segment. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ElecMrkRcptPfxcd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The prefix specified in the customer receipt tape for electronic discounts (printed before the actual item).  Eg:  CLUB Tide - where CLUB is the prefix   or  FV Kelloggs  - where FV is the prefix.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="UnevenSpltCpnSW" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A switch to signify whether a ROG will be allowed to create coupons with uneven split pricing.  For example if a coupon is created as 3/$1.00 the singular price would be .33, .33 and  .34.  Some ROGs have store  level equipment that cannot process this type of a coupon.  These ROGs  need to be restricted to only allow even split pricing on coupons such as 2/ $1.00 which gives a singular price of .50 and  .50.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CpnMgmtSysTgtSW" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Coupon Management System Use Target Switch. Indicates if the CMS system will use the SSTGTCPN file for processing of specific coupons in assignment of link numbers and in date processing. Values: Y, N, " ".</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TagForecastCnt" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> Forcasted Amount</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AuditData" type="ns2:RecordAuditData" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

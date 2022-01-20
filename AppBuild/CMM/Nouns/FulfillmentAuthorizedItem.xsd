@@ -8,6 +8,8 @@
 -->
 <!-- edited with XMLSpy v2021 rel. 2 sp1 (x64) (http://www.altova.com) by poliv02 (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.3 Patrick Oliver 11/08/21: Udpated EffectiveStartDt, EffectiveEndDt to EffectiveStartTs, EffectiveEndTs-->
+	<!--V1.2 Patrick Oliver 10/27/21: Updated child tag FulfillmentAuthorizationItem to AuthorizedItemData-->
 	<!--V1.1 Patrick Oliver 09/22/21 - Initial version-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:element name="FulfillmentAuthorizedItem" type="FulfillmentAuthorizedItemType">
@@ -32,7 +34,7 @@
 					<xs:documentation>Fulfillment and retail facility for the authorized items. </xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="FulfillmentAuthorizedItemData" minOccurs="0">
+			<xs:element name="AuthorizedItemData" minOccurs="0">
 				<xs:complexType>
 					<xs:sequence>
 						<xs:element name="AuthorizedItem" type="AuthorizedItemType" minOccurs="0"/>
@@ -41,14 +43,14 @@
 								<xs:documentation>Indicates if item should be procurred for the Fulfillment facility.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="EffectiveStartDt" type="xs:dateTimeStamp" minOccurs="0">
+						<xs:element name="EffectiveStartTs" type="xs:dateTimeStamp" minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>Authorized Start date for MFC item.</xs:documentation>
+								<xs:documentation>Authorized Start date/time for MFC item.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="EffectiveEndDt" type="xs:dateTimeStamp" minOccurs="0">
+						<xs:element name="EffectiveEndTs" type="xs:dateTimeStamp" minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>Authorized end date for MFC item. </xs:documentation>
+								<xs:documentation>Authorized end date/time for MFC item. </xs:documentation>
 							</xs:annotation>
 						</xs:element>
 						<xs:element name="AuthorizedBy" type="AuthorizedByType" minOccurs="0">

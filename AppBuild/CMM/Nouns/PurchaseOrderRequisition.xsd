@@ -9,6 +9,7 @@
 <!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by Devesh (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<!--V1.0 Devesh Kandpal 10/07/21 -  ES-4265 - Draft Version-->
+	<!--V1.1 Devesh Kandpal 12/16/21 - ES-4265 - Added RequsitionStatusType, TotalLineNbr, ShipToDUNSNbr, BuyerAddress, PurchaseOrderRevision-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:element name="PurchaseOrderRequisition" type="PurchaseOrderRequisitionType">
 		<xs:annotation>
@@ -41,6 +42,7 @@
 								<xs:documentation>Identifier for Purchase Order  requstion assigned by the buyer (DA)</xs:documentation>
 							</xs:annotation>
 						</xs:element>
+						<xs:element name="RequsitionStatusType" type="CodeWithDescription" minOccurs="0"/>
 						<xs:element name="PurchaseOrderRequisitionType" type="CodeWithDescription" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>type of Purchase Order Ex BD = Bidding</xs:documentation>
@@ -51,7 +53,7 @@
 								<xs:documentation>Purchase Order  requistion creation date</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="Vendor" maxOccurs="unbounded">
+						<xs:element name="Vendor" minOccurs="0" maxOccurs="unbounded">
 							<xs:annotation>
 								<xs:documentation>Contains vendor information related to the PO. External Vendors may receive purchase orders from manufacturing plants or warehouses or stores for item procurement</xs:documentation>
 							</xs:annotation>
@@ -103,6 +105,7 @@
 											<xs:restriction base="xs:string"/>
 										</xs:simpleType>
 									</xs:element>
+									<xs:element ref="Address" minOccurs="0"/>
 								</xs:sequence>
 							</xs:complexType>
 						</xs:element>
@@ -157,6 +160,7 @@
 											<xs:documentation>Indicates the name of facility receiving the goods/shipment</xs:documentation>
 										</xs:annotation>
 									</xs:element>
+									<xs:element name="ShipToDUNSNbr" type="xs:string" minOccurs="0"/>
 									<xs:element ref="Address" minOccurs="0"/>
 								</xs:sequence>
 							</xs:complexType>
@@ -186,6 +190,35 @@
 							<xs:annotation>
 								<xs:documentation>General instructions on shipment.</xs:documentation>
 							</xs:annotation>
+						</xs:element>
+						<xs:element name="TotalLineNbr" type="xs:int" minOccurs="0"/>
+						<xs:element name="PurchaseOrderRevision" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="RevisionNbr" type="xs:integer" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The purchase order revision number. Assigned sequentially by the system when the purchase order is revised.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="RevisionMethodCd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Specifies the method that will be used to issue the purchase order to the vendor.
+P = Paper, F = Fax, E = EDI
+I = Internet Mail, D = Do Not Print</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="50"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="RevisionDtTm" type="xs:dateTime" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The date the purchase order revision was issued to the vendor.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
 						</xs:element>
 					</xs:sequence>
 				</xs:complexType>
@@ -241,7 +274,7 @@
 						</xs:element>
 						<xs:element name="BalancingItemInd" type="xs:string" minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>Indicates priority of item based on volume and load. Valid value are Y = Low Priority, N = High Priority and Space</xs:documentation>
+								<xs:documentation>Indicates whether the items is used to balance the truck based on volume and load. Valid value are Y = Low Priority, N = High Priority and Space</xs:documentation>
 							</xs:annotation>
 						</xs:element>
 						<xs:element name="ItemNotesTxt" type="xs:string" minOccurs="0"/>

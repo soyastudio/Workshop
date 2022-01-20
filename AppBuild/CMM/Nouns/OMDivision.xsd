@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by Arundhatee Sarangi (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:include schemaLocation="OrgMaster.xsd"/>
+	<!--!=============================================================================================-->
+	<!--!-->
+	<!--!      Noun: OMDivision-->
+	<!--!-->
+	<!--!=============================================================================================-->
+	<!--30-Dec-2021 - v1.0 - Arundhatee Sarangi - Initial version.-->
+	<xs:element name="OMDivision" type="OMDivisionType">
+		<xs:annotation>
+			<xs:documentation>Business object that provides Albertsons Division organization Information. The source of the information can be from either Merchandising (SSIMS) perspective or from financial accounting.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="OMDivisionDataType">
+		<xs:annotation>
+			<xs:documentation>Business object that provides Albertsons Division organization Information. The source of the information can be from either Merchandising (SSIMS) perspective or from financial accounting.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporationId"/>
+			<xs:element name="Division" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="Abs:DivisionType">
+							<xs:sequence>
+								<xs:element name="OfficeCorporationId" minOccurs="0">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="10"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="OfficeDivsionId" minOccurs="0">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="10"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="OfficeFacilityId" minOccurs="0">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="10"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="DivisionLegalNm" type="xs:string" minOccurs="0"/>
+								<xs:element ref="AlternateIdType" minOccurs="0"/>
+								<xs:element name="AlternateId" minOccurs="0">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="50"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="ConsolidationDivisionId" minOccurs="0">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="10"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="ParentDivisionId" minOccurs="0">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="10"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="EffectivePeriod" type="EffectivePeriodType"/>
+								<xs:element name="ActivePeriod" type="ActivePeriodType"/>
+								<xs:element name="OMResponsibleParty" type="ResponsibleParty" minOccurs="0" maxOccurs="unbounded"/>
+								<xs:element name="DUNSNbr" type="xs:string" minOccurs="0"/>
+								<xs:element name="AccountingType" type="AccountingComponentType" minOccurs="0"/>
+								<xs:element name="DivisionStatus" type="StatusType" minOccurs="0"/>
+								<xs:element name="RecordAuditData" type="RecordAuditData" minOccurs="0"/>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

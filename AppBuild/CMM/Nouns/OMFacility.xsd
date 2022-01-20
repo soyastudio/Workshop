@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by SKATK01 (Albertsons) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://collab.safeway.com/it/architecture/AbsOmMaster" xmlns:ns2="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.0 - Sridhar Katkuri - New BOD for OM Facility - JIRA - ES-5664-->
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:include schemaLocation="../Nouns/OMFacility.xsd"/>
+	<xs:complexType name="ResponsibleParty">
+		<xs:annotation>
+			<xs:documentation>Party responsible for managing the OM component like div or corp. Ex President, VP</xs:documentation>
+		</xs:annotation>
+	</xs:complexType>
+	<xs:complexType name="OMCorporationType">
+		<xs:sequence/>
+	</xs:complexType>
+	<xs:complexType name="OrgMaster"/>
+	<xs:complexType name="OMFacilityType"/>
+	<xs:complexType name="Facility">
+		<xs:annotation>
+			<xs:documentation>Contains data related to Albertsons Organization Master like corp, Div, OA, Districts..etc</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Facility" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="Facility"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Company" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Company information for accounting.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="CompanyId" type="xs:long" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Company Identification for accounting purposes.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CompanyNm" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Name of the company for accounting purposes.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="AccountingDivision" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Accounting Division.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="DivisionAccountUnitCd" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Division ID in the accounting system.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:length value="20"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="DivisionAccountUnitDsc" type="xs:string" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Description of the account unit code.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="AccountingFacility" type="Facility" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Accounting Facility.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OMFacility">
+		<xs:annotation>
+			<xs:documentation>Facilities with in a division/district. Like retail stores, warehouses, admin offices..etc</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="ns2:CorporationId"/>
+			<xs:element ref="ns2:DivisionId"/>
+			<xs:element name="FacilityID" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>OM Facility Code. A four character code that is used with corporation and division to uniquely identify a facility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VersionEffectivePeriod" type="EffectivePeriodType">
+				<xs:annotation>
+					<xs:documentation>Dates refer to the dates where this instance of the record (i.e.this version) is the current record. 
+Most of the OM tables containhistory, current and future records all in the same table.  
+When a significant piece of data is changed a new record is created rather then
+updating an existing record.  You can determine what data was active on 
+a given date by doing DATE BETWEEN DATE_VSN_FIRST_EFF AND 
+DATE_VSN_LAST_EFF</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Building" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This code uniquely identifies a building.  Building codes 
+will begin with 'B', and are followed by 4 numbers.
+Building codes are defined and assigned to facilities by the 
+Corporate Real Estate Department.  This field was created 
+for future considerations.  It is not currently used.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DistrictCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>District code is used with a corporation and division code to of warehouse facilities may also be referred to as a distribution center.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FacilityOldDiv" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Facility's Old Division Code. Field is used to identify the division a facility 
+belonged to prior to a division reorganization.  
+field was created for future considerations. 
+It is not currently being used.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FacilityNewDiv" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Facility's New Division Code. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EffectivePeriod" type="ActivePeriodType">
+				<xs:annotation>
+					<xs:documentation>Dates refer to the dates where this instance of the record (i.e. this version) is the current record.  
+Most of the OM tables containhistory, current and future records all in the same table.  
+When a significant piece of data is changed a new record is created rather then 
+updating an existing record.  You can determine what data was active on
+a given date by doing DATE BETWEEN DATE_VSN_FIRST_EFF AND DATE_VSN_LAST_EFF.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityType" type="ns2:CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Facility Type Code</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilitySubType" type="ns2:CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Defines the facility type as Retail store, warehouse, manufacturing plant, admin office..etc</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the facility. ex Tracy DC or Safeway store in Bollinger Canyon San Ramon</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="25"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Address" type="ns2:AddressType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Facility Address with Street Name, City, Country </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilitySize" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Facility Size- This is the size of a facility within a building,in total square feet.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityMgr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Facility Manager Name - This is the name of a person who manages and is responsible for a facility</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PayrollUnit" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Payroll Unit Code-This field contains a code which uniquely identifies a payroll unit.A  payroll unit is a group of facilities having 
+the same payroll processing responsibility area. Payroll  units  may  have  facilities from more than  one  division or corporation.  
+A division may have more than one payroll unit.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SeaSectionCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>S.E.A. Section Code - This field contains a code to uniquely identify a  Safeway Employees Association Section, within a Safeway division. 
+Each Safeway office employs an S.E.A. secretary. The  secretary  is  responsible  for facilities
+within  the division area, including facilities from other divisions and corporations. 
+The  group  of  facilities is made more managable by dividing them into S.E.A. sections,usually based on smaller geographic areas.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SEASubContent" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>S.E.A. Sub-section - This field contains a code to uniquely identify a  Safeway  Employees  Association Sub-section, 
+within S.E.A. Section and Safeway division. An  S.E.A.  Sub-section  is  a  smaller  set of 
+facilities within an S.E.A. Section, based on a smaller  geographic  area.   This code uniquely</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TimeClockFormat" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Time Clock Format-This field indicates the format of time information which is submitted to the payroll head office by the facility.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TimeAttendanceInd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Time and Attendance System Indicator- This yes/no switch indicates if the facility uses an automated time and attendance system.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AuthHeadcnt" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Authorized Headcount</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UpgradeClassCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Upgrade Class Code - This code identifies the physical status of a facility.  The code is used to estimate what is  required to upgrade the facility to modern  standards. A = ABANDONED                                                                   
+                                                  E = ENLARGED                                                                    
+                                                  M = MODERN                                                                      
+                                                  R = REMODELLED </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LastFileMainDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Last File Maintenance Date -This is the most current date the table record was created or changed</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LastfileMainUsr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Last File Maintenance User Identifier</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="8"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LastRemodelFileMainDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Last Remodel File Maintenance Date</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LastRemodelFileMainUserId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Last Remodel File Maintenance User Id</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="8"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LastInteriorDecorUpdType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Last Interior Decor Update Type</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LastInteriorDecorUpdDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Last Interior Decor Update Date</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LastInteriorDecorUpdCost" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Last Interior Decor Update Cost</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityMgrUserId" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Facility Manager User Id</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="8"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FacilityMgrEmpId" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Facility Manager Employee Id</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MarketingArea" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Marketing Area</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MasterMerchantNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Mastercard Merchant Number</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="8"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VisaMerchantNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>VISA Merchant Number</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="8"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TierCompanyCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Tier Company Code</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CountyCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>County Code</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AttentionData" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Attention To Data</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="30"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AuditData" type="ns2:RecordAuditData" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OMDistrictType"/>
+	<xs:complexType name="OMDivisionType">
+		<xs:sequence>
+			<xs:element name="Division" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="OfficeDivsionId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="EffectivePeriod" type="EffectivePeriodType">
+							<xs:annotation>
+								<xs:documentation>Time period in effective for a version of the record.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ActivePeriod" type="ActivePeriodType">
+							<xs:annotation>
+								<xs:documentation>Time period during which the OM component is active.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="OMResponsibleParty" minOccurs="0" maxOccurs="unbounded"/>
+						<xs:element name="AccountingType" type="AccountingComponentType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Accounting structure assigned to the the OM componenet in financial system. ex COA structure</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="DivisionStatus" minOccurs="0"/>
+						<xs:element name="RecordAuditData" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OMOeparatingAreaType"/>
+	<xs:complexType name="EffectivePeriodType">
+		<xs:annotation>
+			<xs:documentation>Time period in effective for a version of the record.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StartDt" type="xs:date" minOccurs="0"/>
+			<xs:element name="EndDt" type="xs:date" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ActivePeriodType">
+		<xs:annotation>
+			<xs:documentation>Time period during which the OM component is active.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="FirstActiveDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date when a OM component like Corp, Div or facility is first active.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LastActiveDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date when a OM component like Corp, Div or facility is last active.
+generally defaulted to 9999-12-31 for all active OM components.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="AlternateId">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="50"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:complexType name="AccountingComponentType">
+		<xs:annotation>
+			<xs:documentation>Accounting components assigned the the OM componenet in financial system. ex COA structure</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="ComponentType" minOccurs="0"/>
+			<xs:element name="ComponentValueTxt" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="OfficeFacilityId">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:complexType name="AddressType"/>
+	<xs:complexType name="FacilityType"/>
+</xs:schema>

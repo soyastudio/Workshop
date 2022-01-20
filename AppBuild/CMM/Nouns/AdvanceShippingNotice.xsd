@@ -6,8 +6,9 @@
    Description: Albertsons Shipment Business Object
    Name: /SFWY/Nouns/SwyShipment.xsd
 -->
-<!-- edited with XMLSpy v2021 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by Devesh (Albertsons) -->
 <xs:schema xmlns:oa="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.10 Devesh Kandpal 11/19/2021 - JIRA - ES-5495 Added new element ProcessType to cater various ASN process-->
 	<!--V1.9 Sridhar Katkuri 8/26/2021 - ItemAvailabilityDtTm removed as per JIRA - ES - 1652.-->
 	<!--V1.8 Alex Nunes 6/14/2021 - ItemAvailabilityDtTm was added back due to the project timelines. JIRA: EBC-14699 -->
 	<!--V1.7 Alex Nunes 6/7/2021 - ProcessDt is in fact BombingProcessDt. ProcessDt is redundant, hence removed. JIRA: EBC-14699 -->
@@ -1150,6 +1151,17 @@ Databatch 0101 = GROCERY ORDER
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="ManufacturingFacility" type="ManufacturingFacilityType" minOccurs="0"/>
+			<xs:element name="ProcessType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Indicates various operations during ASN process such as Ordering, Receiving, moving to reserve slot, pick slot(let down), staging, shipping</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ProcessTypeCd" type="xs:string" minOccurs="0"/>
+						<xs:element name="ProcessDt" type="xs:date" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="ItemSubstitutionType">

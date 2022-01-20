@@ -5,6 +5,7 @@
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<!--V1.1 - Alex Nunes - 11/18/2020 Increase the max length of AccountingReceivableCd to 12 string.-->
 	<!--V1.2 - Alex Nunes - 1/15/2021 Change a number of elements from string lenght to string MaxLenght as they were failing development validation. -->
+	<!--V1.3 - Devesh Kandpal - 12/08/2021 - ES-5719 -  Added RollUpStoreDivisionId  -->
 	<xs:element name="WholesaleCustomer">
 		<xs:annotation>
 			<xs:documentation>Root element. Wholesale customer: Person or firm that buys large quantity of goods from various producers or vendors, warehouses them, and resells to retailers.&#10;</xs:documentation>
@@ -362,6 +363,13 @@
 					<xs:sequence>
 						<xs:element ref="CorporationId" minOccurs="0"/>
 						<xs:element ref="DivisionId" minOccurs="0"/>
+						<xs:element name="RollUpStoreDivisionId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
 						<xs:element ref="RetailStoreId" minOccurs="0"/>
 						<xs:element ref="WarehouseId" minOccurs="0"/>
 						<xs:element ref="DistributionCenterId" minOccurs="0"/>
