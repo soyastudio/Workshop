@@ -87,7 +87,8 @@ public class XmlToAvroConverter {
             try (GZIPOutputStream gzipOutputStream = new GZIPOutputStream(byteArrayOutputStream)) {
                 gzipOutputStream.write(str.getBytes(StandardCharsets.UTF_8));
             }
-            return byteArrayOutputStream.toByteArray();
+            byte[] bytes = byteArrayOutputStream.toByteArray();
+            return Base64.getEncoder().encode(bytes);
         } catch (IOException e) {
             throw new RuntimeException("Failed to zip content", e);
         }

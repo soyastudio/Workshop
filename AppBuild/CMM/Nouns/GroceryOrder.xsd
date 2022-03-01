@@ -533,6 +533,12 @@ Ex: order created, order rescheduled..etc</xs:documentation>
 				<xs:annotation>
 					<xs:documentation>Total taxes and fees amount.</xs:documentation>
 				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="10"/>
+						<xs:fractionDigits value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
 			</xs:element>
 			<xs:element name="MiscChargesType" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
@@ -2663,7 +2669,7 @@ ex: not enough stock, or offer not valid</xs:documentation>
 					</xs:complexContent>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="InternalParnterInd" type="xs:boolean" minOccurs="0">
+			<xs:element name="InternalPartnerInd" type="xs:boolean" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Flag to indicate if partner is internal to Albertsons. (ex: ABS-GROCERY)</xs:documentation>
 				</xs:annotation>

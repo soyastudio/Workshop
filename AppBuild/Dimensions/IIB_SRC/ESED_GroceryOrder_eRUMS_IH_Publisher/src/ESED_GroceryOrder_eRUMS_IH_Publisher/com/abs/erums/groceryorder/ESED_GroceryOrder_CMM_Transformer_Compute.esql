@@ -43,7 +43,7 @@ Project Drop Version Change          Owner                   Description
 CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 
 	-- Declare UDPs
-	DECLARE VERSION_ID EXTERNAL CHARACTER '1.14.3';
+	DECLARE VERSION_ID EXTERNAL CHARACTER '2.0.3';
 	DECLARE SYSTEM_ENVIRONMENT_CODE EXTERNAL CHARACTER 'PROD';
 	DECLARE LOG_OUPUT_MSG EXTERNAL CHARACTER 'Y';
 
@@ -759,7 +759,28 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 
 					-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderRecordDateInfo/UpdateUserId
 					SET OrderRecordDateInfo_.(XMLNSC.Field)Abs:UpdateUserId = _inputRootNode.audit.modifiedBy;
-
+					
+					-- Since v2.0.1
+					-- LOOP FROM audit/data[*] TO GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderRecordDateInfo/OrderCancellationData:
+					DECLARE _auditData REFERENCE TO _inputRootNode.audit.data.Item;
+					audit_data : WHILE LASTMOVE(_auditData) DO
+						
+						-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderRecordDateInfo/OrderCancellationData
+						DECLARE OrderCancellationData_ REFERENCE TO OrderRecordDateInfo_;
+						CREATE LASTCHILD OF OrderRecordDateInfo_ AS OrderCancellationData_ TYPE XMLNSC.Folder NAME 'Abs:OrderCancellationData';
+						
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderRecordDateInfo/OrderCancellationData/CancelAttributeNm
+							SET OrderCancellationData_.(XMLNSC.Field)Abs:CancelAttributeNm = _auditData.key;
+														
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderRecordDateInfo/OrderCancellationData/CancelAttributeVal
+							SET OrderCancellationData_.(XMLNSC.Field)Abs:CancelAttributeVal = _auditData.value;
+							
+							-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/OrderRecordDateInfo/OrderCancellationData/RecordDtTm
+							SET OrderCancellationData_.(XMLNSC.Field)Abs:RecordDtTm = _auditData.auditDate;					
+						
+					MOVE _auditData NEXTSIBLING;
+					END WHILE audit_data;	
+					
 				-- GetGroceryOrder/GroceryOrderData/GroceryOrderHeader/Device
 				DECLARE Device_ REFERENCE TO GroceryOrderHeader_;
 				CREATE LASTCHILD OF GroceryOrderHeader_ AS Device_ TYPE XMLNSC.Folder NAME 'Abs:Device';
@@ -1511,6 +1532,34 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 
 								MOVE _orderline_savings NEXTSIBLING;
 								END WHILE orderline_savings_loop;
+								
+								
+								-- Since v2.0.3
+								DECLARE _item_price_exception REFERENCE TO _orderLine.itemPrice.exceptions.Item;
+								item_price_exceptions_loop : WHILE LASTMOVE(_item_price_exception) DO
+									
+									-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/OrderLineExceptionType
+									DECLARE OrderLineExceptionType_ REFERENCE TO GroceryOrderDetail_;
+									CREATE LASTCHILD OF GroceryOrderDetail_ AS OrderLineExceptionType_ TYPE XMLNSC.Folder NAME 'Abs:OrderLineExceptionType';
+
+										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/OrderLineExceptionType/ExceptionType
+										DECLARE ExceptionType_ REFERENCE TO OrderLineExceptionType_;
+										CREATE LASTCHILD OF OrderLineExceptionType_ AS ExceptionType_ TYPE XMLNSC.Folder NAME 'Abs:ExceptionType';
+
+											-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/OrderLineExceptionType/ExceptionType/Code
+											SET ExceptionType_.(XMLNSC.Field)Abs:Code =_item_price_exception.exceptionType;
+
+										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/OrderLineExceptionType/ExceptionCd
+										SET OrderLineExceptionType_.(XMLNSC.Field)Abs:ExceptionCd = _item_price_exception.exceptionCode;
+
+										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/OrderLineExceptionType/ExceptionDsc
+										SET OrderLineExceptionType_.(XMLNSC.Field)Abs:ExceptionDsc = _item_price_exception.exceptionDesc;
+
+										-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/OrderLineExceptionType/ExceptionCreateTs
+										SET OrderLineExceptionType_.(XMLNSC.Field)Abs:ExceptionCreateTs = _item_price_exception.exceptionTime;
+										
+								MOVE _item_price_exception NEXTSIBLING;
+								END WHILE item_price_exceptions_loop;
 
 						-- Since V 1.7.1
 						-- LOOP FROM subOrders[*]/orderLines[*]/exceptions[*] TO GetGroceryOrder/GroceryOrderData/GrocerySubOrder/GroceryOrderDetail/OrderLineExceptionType:
@@ -1714,6 +1763,11 @@ CREATE COMPUTE MODULE ESED_GroceryOrder_CMM_Transformer_Compute
 
 						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/EndDttm
 						SET DeliveryInfo_.(XMLNSC.Field)Abs:EndDttm = _subOrder.deliveryInfo.slotInfo.endTime;
+						
+						-- Since v2.0.1
+						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/TotalDeliveryChargeAmt
+						SET DeliveryInfo_.(XMLNSC.Field)Abs:TotalDeliveryChargeAmt = CAST(_subOrder.deliveryInfo.slotInfo.deliveryFee AS DECIMAL(10, 2));
+						
 
 						-- Since v1.13.1
 						-- GetGroceryOrder/GroceryOrderData/GrocerySubOrder/DeliveryInfo/SlotAvailableDttm

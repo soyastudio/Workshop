@@ -1,0 +1,1168 @@
+{
+  "type": "object",
+  "properties": {
+    "payload": {
+      "type": "object",
+      "properties": {
+        "qualificationDay": {
+          "type": "object",
+          "properties": {
+            "sunday": {
+              "type": "boolean"
+            },
+            "saturday": {
+              "type": "boolean"
+            },
+            "tuesday": {
+              "type": "boolean"
+            },
+            "wednesday": {
+              "type": "boolean"
+            },
+            "thursday": {
+              "type": "boolean"
+            },
+            "friday": {
+              "type": "boolean"
+            },
+            "monday": {
+              "type": "boolean"
+            }
+          }
+        },
+        "offerRequestOffers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "offers": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "productGroupVersion": {
+                      "type": "integer"
+                    },
+                    "discountVersion": {
+                      "type": "integer"
+                    },
+                    "storeGroupVersion": {
+                      "type": "integer"
+                    },
+                    "genericDiscountId": {
+                      "type": "integer"
+                    },
+                    "instantWinVersion": {
+                      "type": "integer"
+                    },
+                    "offerId": {
+                      "type": "integer"
+                    },
+                    "offerStatusDesc": {
+                      "type": "string"
+                    },
+                    "externalOfferId": {
+                      "type": "string"
+                    },
+                    "distinctIdentifier": {
+                      "type": "string",
+                      "enum": [
+                        "DEFAULT",
+                        "GROUP_MEMBERSHIP_INCLUDE",
+                        "GROUP_MEMBERSHIP_EXCLUDE",
+                        "EARN",
+                        "BURN"
+                      ]
+                    },
+                    "isPodApplicable": {
+                      "type": "boolean"
+                    },
+                    "offerStatus": {
+                      "type": "string",
+                      "enum": [
+                        "A",
+                        "D",
+                        "E",
+                        "L",
+                        "O",
+                        "I",
+                        "DE",
+                        "P",
+                        "PU",
+                        "PG",
+                        "FPU",
+                        "FDE",
+                        "RU",
+                        "CN"
+                      ]
+                    },
+                    "isApplicableToJ4U": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              },
+              "storeGroupVersion": {
+                "type": "object",
+                "properties": {
+                  "instantWin": {
+                    "type": "object",
+                    "properties": {
+                      "numberOfPrizes": {
+                        "type": "integer"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "frequency": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "storeTag": {
+                    "type": "object",
+                    "properties": {
+                      "amount": {
+                        "type": "number"
+                      },
+                      "printJ4uTagEnabled": {
+                        "type": "boolean"
+                      },
+                      "comments": {
+                        "type": "string"
+                      },
+                      "multiple": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "offerPrototype": {
+                    "type": "string",
+                    "enum": [
+                      "ITEM_DISCOUNT",
+                      "BUYX_GETX",
+                      "BUYX_GETY",
+                      "MEAL_DEAL",
+                      "BUNDLE",
+                      "MUST_BUY",
+                      "FAB_5_OR_SCORE_4",
+                      "WOD_OR_POD",
+                      "REWARDS_ACCUMULATION",
+                      "REWARDS_FLAT",
+                      "CONTINUITY",
+                      "INSTANT_WIN",
+                      "ALASKA_AIRMILES",
+                      "STORE_CLOSURE",
+                      "ITEM_PLUS_BASKET",
+                      "CUSTOM"
+                    ]
+                  },
+                  "offerPrototypeDesc": {
+                    "type": "string"
+                  },
+                  "displayOrder": {
+                    "type": "integer"
+                  },
+                  "productGroupVersions": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "anyProduct": {
+                          "type": "boolean"
+                        },
+                        "discountVersion": {
+                          "type": "object",
+                          "properties": {
+                            "airMiles": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "tiers": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "name": {
+                                          "type": "string",
+                                          "enum": [
+                                            "ALASKA_AIRMILES"
+                                          ]
+                                        },
+                                        "points": {
+                                          "type": "integer"
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "displayOrder": {
+                                    "type": "integer"
+                                  },
+                                  "id": {
+                                    "type": "integer"
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "US_AIR_MILES"
+                                    ]
+                                  }
+                                }
+                              }
+                            },
+                            "discounts": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "excludeProductGroupName": {
+                                    "type": "string"
+                                  },
+                                  "includeProductGroupName": {
+                                    "type": "string"
+                                  },
+                                  "tiers": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "upTo": {
+                                          "type": "number"
+                                        },
+                                        "amount": {
+                                          "type": "number"
+                                        },
+                                        "receiptText": {
+                                          "type": "string"
+                                        },
+                                        "level": {
+                                          "type": "integer"
+                                        },
+                                        "itemLimit": {
+                                          "type": "integer"
+                                        },
+                                        "weightLimit": {
+                                          "type": "number"
+                                        },
+                                        "rewards": {
+                                          "type": "integer"
+                                        },
+                                        "dollarLimit": {
+                                          "type": "number"
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "benefitValueType": {
+                                    "type": "string",
+                                    "enum": [
+                                      "AMOUNT_OFF",
+                                      "PERCENT_OFF",
+                                      "FIXED_PRICE",
+                                      "REWARDS_POINTS",
+                                      "POINTS",
+                                      "AMOUNT_OFF_WEIGHT_VOLUME",
+                                      "PRICE_POINT_ITEMS",
+                                      "PRICE_POINT_WEIGHT_VOLUME",
+                                      "PERCENT_OFF_ITEMS",
+                                      "FREE"
+                                    ]
+                                  },
+                                  "displayOrder": {
+                                    "type": "integer"
+                                  },
+                                  "excludeProductGroupId": {
+                                    "type": "integer"
+                                  },
+                                  "benefitValueTypeDesc": {
+                                    "type": "string"
+                                  },
+                                  "discountType": {
+                                    "type": "string",
+                                    "enum": [
+                                      "ITEM_LEVEL",
+                                      "BASKET_LEVEL",
+                                      "DEPARTMENT_LEVEL"
+                                    ]
+                                  },
+                                  "discountTypeDesc": {
+                                    "type": "string"
+                                  },
+                                  "id": {
+                                    "type": "integer"
+                                  },
+                                  "includeProductGroupId": {
+                                    "type": "integer"
+                                  },
+                                  "chargebackDepartment": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            },
+                            "id": {
+                              "type": "integer"
+                            }
+                          }
+                        },
+                        "isGiftCard": {
+                          "type": "boolean"
+                        },
+                        "productGroup": {
+                          "type": "object",
+                          "properties": {
+                            "tiers": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "amount": {
+                                    "type": "number"
+                                  },
+                                  "level": {
+                                    "type": "integer"
+                                  }
+                                }
+                              }
+                            },
+                            "conjunction": {
+                              "type": "string"
+                            },
+                            "excludedProductGroupName": {
+                              "type": "string"
+                            },
+                            "uniqueproduct": {
+                              "type": "boolean"
+                            },
+                            "excludedProductGroupId": {
+                              "type": "integer"
+                            },
+                            "minPurchaseAmount": {
+                              "type": "number"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "displayOrder": {
+                              "type": "integer"
+                            },
+                            "inheritedFromOfferRequest": {
+                              "type": "boolean"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "quantityUnitType": {
+                              "type": "string",
+                              "enum": [
+                                "ITEMS",
+                                "DOLLARS",
+                                "WEIGHT_VOLUME",
+                                "QUANTITY_PRICE",
+                                "QUANTITY",
+                                "POUND",
+                                "AMOUNT"
+                              ]
+                            },
+                            "quantityUnitDesc": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "displayOrder": {
+                          "type": "integer"
+                        },
+                        "id": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  },
+                  "podDetails": {
+                    "type": "object",
+                    "properties": {
+                      "offerDetailsCode": {
+                        "type": "string"
+                      },
+                      "usageLimit": {
+                        "type": "string",
+                        "enum": [
+                          "UNLIMITED",
+                          "LIMITED",
+                          "ONCE_PER_OFFER",
+                          "ONCE_PER_DAY",
+                          "ONCE_PER_WEEK",
+                          "CUSTOM"
+                        ]
+                      },
+                      "scene7ImageId": {
+                        "type": "string"
+                      },
+                      "eventIds": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "categoryName": {
+                        "type": "string"
+                      },
+                      "ivieImageId": {
+                        "type": "string"
+                      },
+                      "displayStartDate": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "leftNavCategory": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "headline2": {
+                        "type": "string"
+                      },
+                      "offerDescription": {
+                        "type": "string"
+                      },
+                      "eventNames": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "shoppingListCategory": {
+                        "type": "object",
+                        "properties": {
+                          "code": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "headline": {
+                        "type": "string"
+                      },
+                      "priceText": {
+                        "type": "string"
+                      },
+                      "disclaimer": {
+                        "type": "string"
+                      },
+                      "categoryId": {
+                        "type": "string"
+                      },
+                      "displayEndDate": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    }
+                  },
+                  "id": {
+                    "type": "integer"
+                  },
+                  "storeGroup": {
+                    "type": "object",
+                    "properties": {
+                      "podStoreGroups": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      },
+                      "digitalRedemptionStoreGroups": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      },
+                      "nonDigitalRedemptionStoreGroups": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "signageInfo": {
+                "type": "object",
+                "properties": {
+                  "talker": {
+                    "type": "integer"
+                  },
+                  "display": {
+                    "type": "integer"
+                  },
+                  "sign": {
+                    "type": "string"
+                  },
+                  "bib": {
+                    "type": "string"
+                  },
+                  "moulding": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "id": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "templateType": {
+          "type": "string"
+        },
+        "repUPC": {
+          "type": "integer"
+        },
+        "deliveryChannel": {
+          "type": "string",
+          "enum": [
+            "CC",
+            "DO",
+            "ET",
+            "IS",
+            "PO"
+          ]
+        },
+        "nonDigitalStatusDesc": {
+          "type": "string"
+        },
+        "createdApplicationId": {
+          "type": "string"
+        },
+        "groupId": {
+          "type": "string"
+        },
+        "mobId": {
+          "type": "string"
+        },
+        "templateId": {
+          "type": "string"
+        },
+        "changeDetails": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "changeTimestamp": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "changeCategory": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "totalCount": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "changeType": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "totalCount": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "reasonComment": {
+                "type": "string"
+              },
+              "reasonType": {
+                "type": "string",
+                "enum": [
+                  "ZERO_ALLOCATION",
+                  "DISCO",
+                  "FUNDING",
+                  "LT_5_STORE",
+                  "MERGED_OFFERS",
+                  "OVER_BUDGET",
+                  "PROMO",
+                  "IMAGE",
+                  "RECALL",
+                  "REGION",
+                  "SEASONAL",
+                  "SUPPLY",
+                  "VENDOR",
+                  "OTHER",
+                  "CANCELLED_BY_APEX"
+                ]
+              },
+              "userId": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "nopaEndDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "statusReason": {
+          "type": "string"
+        },
+        "offerEffectiveEndDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "lastUpdateTs": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "rank": {
+          "type": "integer"
+        },
+        "createTs": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "createdUser": {
+          "type": "object",
+          "properties": {
+            "firstName": {
+              "type": "string"
+            },
+            "lastName": {
+              "type": "string"
+            },
+            "userId": {
+              "type": "string"
+            }
+          }
+        },
+        "otStatus": {
+          "type": "string"
+        },
+        "groupCode": {
+          "type": "string"
+        },
+        "offerRequestType": {
+          "type": "string",
+          "enum": [
+            "ITEM_DISCOUNT",
+            "BUYX_GETX",
+            "BUYX_GETY",
+            "MEAL_DEAL",
+            "BUNDLE",
+            "MUST_BUY",
+            "FAB_5_OR_SCORE_4",
+            "WOD_OR_POD",
+            "REWARDS_ACCUMULATION",
+            "REWARDS_FLAT",
+            "CONTINUITY",
+            "INSTANT_WIN",
+            "ALASKA_AIRMILES",
+            "STORE_CLOSURE",
+            "ITEM_PLUS_BASKET",
+            "CUSTOM"
+          ]
+        },
+        "nopaNumbers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "period": {
+          "type": "string"
+        },
+        "allocationCode": {
+          "type": "string"
+        },
+        "mobType": {
+          "type": "string"
+        },
+        "programCode": {
+          "type": "string",
+          "enum": [
+            "SC",
+            "MF",
+            "PD",
+            "GR",
+            "BPD",
+            "SPD",
+            "CCP"
+          ]
+        },
+        "reviewFlags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "boolean"
+          }
+        },
+        "subGroup": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "updatedUser": {
+          "type": "object",
+          "properties": {
+            "firstName": {
+              "type": "string"
+            },
+            "lastName": {
+              "type": "string"
+            },
+            "userId": {
+              "type": "string"
+            }
+          }
+        },
+        "brandAndSize": {
+          "type": "string"
+        },
+        "offerLimit": {
+          "type": "string"
+        },
+        "corporateItemCode": {
+          "type": "integer"
+        },
+        "priceUntil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "programSubType": {
+          "type": "string"
+        },
+        "businessGrpGenMgr": {
+          "type": "string"
+        },
+        "groupName": {
+          "type": "string"
+        },
+        "programCodeDesc": {
+          "type": "string"
+        },
+        "fulfillmentChannel": {
+          "type": "object",
+          "properties": {
+            "delivery": {
+              "type": "boolean"
+            },
+            "dug": {
+              "type": "boolean"
+            },
+            "wug": {
+              "type": "boolean"
+            },
+            "inStorePurchase": {
+              "type": "boolean"
+            }
+          }
+        },
+        "statusComments": {
+          "type": "string"
+        },
+        "allocationCodeName": {
+          "type": "string"
+        },
+        "customPeriod": {
+          "type": "string"
+        },
+        "productQty": {
+          "type": "string"
+        },
+        "businessUnitGrpMgmtGenMgr": {
+          "type": "string"
+        },
+        "regions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "regionId": {
+                "type": "string"
+              },
+              "regionName": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "setStatusUntil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "promoWeekId": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "pluTriggerBarcode": {
+          "type": "string"
+        },
+        "qualificationTime": {
+          "type": "object",
+          "properties": {
+            "start": {
+              "type": "string"
+            },
+            "end": {
+              "type": "string"
+            }
+          }
+        },
+        "offerEffectiveStartDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "nopaAssignStatus": {
+          "type": "string"
+        },
+        "digitalUser": {
+          "type": "object",
+          "properties": {
+            "firstName": {
+              "type": "string"
+            },
+            "lastName": {
+              "type": "string"
+            },
+            "userId": {
+              "type": "string"
+            }
+          }
+        },
+        "nonDigitalStatus": {
+          "type": "string"
+        },
+        "categoryDesc": {
+          "type": "string"
+        },
+        "numOfProducts": {
+          "type": "integer"
+        },
+        "mobName": {
+          "type": "string"
+        },
+        "lastUpdatedUserId": {
+          "type": "string"
+        },
+        "nonDigitalUser": {
+          "type": "object",
+          "properties": {
+            "firstName": {
+              "type": "string"
+            },
+            "lastName": {
+              "type": "string"
+            },
+            "userId": {
+              "type": "string"
+            }
+          }
+        },
+        "billingOptions": {
+          "type": "string"
+        },
+        "adType": {
+          "type": "string"
+        },
+        "isBilled": {
+          "type": "boolean"
+        },
+        "customerSegment": {
+          "type": "string"
+        },
+        "productUOM": {
+          "type": "string"
+        },
+        "justification": {
+          "type": "string"
+        },
+        "department": {
+          "type": "string"
+        },
+        "lastUpdatedApplicationId": {
+          "type": "string"
+        },
+        "periodId": {
+          "type": "string"
+        },
+        "programType": {
+          "type": "string"
+        },
+        "createdUserId": {
+          "type": "string"
+        },
+        "consumerPackagedGoods": {
+          "type": "string"
+        },
+        "deliveryChannelDesc": {
+          "type": "string"
+        },
+        "usageLimitTypePerUser": {
+          "type": "string"
+        },
+        "nopaStartDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "customOfferLimit": {
+          "type": "integer"
+        },
+        "numOfVersions": {
+          "type": "integer"
+        },
+        "digitalStatusDesc": {
+          "type": "string"
+        },
+        "customType": {
+          "type": "string"
+        },
+        "numOfTiers": {
+          "type": "integer"
+        },
+        "digitalStatus": {
+          "type": "string"
+        },
+        "rewardsRequired": {
+          "type": "integer"
+        },
+        "chargebackDepartment": {
+          "type": "string"
+        },
+        "categoryId": {
+          "type": "integer"
+        }
+      }
+    },
+    "entityType": {
+      "type": "string",
+      "enum": [
+        "PRODUCT_GROUP",
+        "STORE_GROUP",
+        "OFFER_REQUEST",
+        "OFFER_REQUESTS_LIST",
+        "OFFER",
+        "OFFERS_LIST",
+        "FAILED_EVENTS"
+      ]
+    },
+    "lastUpdateTs": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "totalPages": {
+      "type": "integer"
+    },
+    "entityId": {
+      "type": "string"
+    },
+    "payloadPart": {
+      "type": "string",
+      "enum": [
+        "PARTIAL",
+        "COMPLETE"
+      ]
+    },
+    "pageNum": {
+      "type": "integer"
+    },
+    "payLoadType": {
+      "type": "string"
+    },
+    "sourceAction": {
+      "type": "string",
+      "enum": [
+        "DRAFT",
+        "CREATE_AND_SUBMIT",
+        "SAVE",
+        "SUBMIT",
+        "SUBMIT_WITH_SAVE",
+        "ASSIGN",
+        "BULK_ASSIGN",
+        "UNASSIGN",
+        "BULK_UNASSIGN",
+        "DIGITAL_PROCESS",
+        "NON_DIGITAL_PROCESS",
+        "DIGITAL_AND_NON_DIGITAL_PROCESS",
+        "EDIT",
+        "DIGITAL_APPROVE",
+        "NON_DIGITAL_APPROVE",
+        "DIGITAL_CANCEL",
+        "NON_DIGITAL_CANCEL",
+        "REVERT_EDIT",
+        "DELETE",
+        "CREATE",
+        "UPDATE",
+        "DEPLOY",
+        "PREVIEW",
+        "PUBLISH",
+        "REMOVE",
+        "CANCEL",
+        "REMOVE_UNCLIPPED",
+        "PROCESSED",
+        "COMPLETE",
+        "PUSH_REPORTING_FAILURES"
+      ]
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,6 +1,10 @@
 package com.abs.edis.commons;
 
+import org.apache.avro.Schema;
+
 import com.ibm.broker.javacompute.MbJavaComputeNode;
+import com.ibm.broker.plugin.MbBLOB;
+import com.ibm.broker.plugin.MbElement;
 import com.ibm.broker.plugin.MbException;
 import com.ibm.broker.plugin.MbMessage;
 import com.ibm.broker.plugin.MbMessageAssembly;
@@ -17,10 +21,18 @@ public class AVRO_SCHEMA_GZIP_JAVA extends MbJavaComputeNode {
 		MbMessageAssembly outAssembly = null;
 		try {
 			// create new message as a copy of the input
-			MbMessage outMessage = new MbMessage(inMessage);
+			MbMessage outMessage = new MbMessage();
 			outAssembly = new MbMessageAssembly(inAssembly, outMessage);
 			// ----------------------------------------------------------
 			// Add user code below
+			
+			outMessage
+				.getRootElement()
+				.createElementAsLastChild(MbBLOB.PARSER_NAME)
+				.createElementAsLastChild(
+					MbElement.TYPE_NAME_VALUE,
+					"BLOB",
+					XmlToAvroConverter.zip(parse(inMessage).toString()));
 
 			// End of user code
 			// ----------------------------------------------------------
@@ -40,6 +52,11 @@ public class AVRO_SCHEMA_GZIP_JAVA extends MbJavaComputeNode {
 		// if not propagating message to the 'out' terminal
 		out.propagate(outAssembly);
 
+	}
+
+	private Schema parse(MbMessage inMessage) throws Exception {		
+		byte[] inRootBytes = inMessage.getRootElement().getLastChild().toBitstream(null, null, null, 0, 1208, 0);
+		return new Schema.Parser().parse(new String(inRootBytes));
 	}
 
 }

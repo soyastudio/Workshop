@@ -1,0 +1,1268 @@
+BROKER SCHEMA com.abs.azure.offerrequest
+
+CREATE COMPUTE MODULE ESED_OfferRequest_IH_Publisher_SF_Compute
+
+	-- Declare UDPs
+	DECLARE VERSION_ID EXTERNAL CHARACTER '2.3.2';
+	DECLARE SYSTEM_ENVIRONMENT_CODE EXTERNAL CHARACTER 'PROD';
+
+	-- Declare Namespace
+	DECLARE Abs NAMESPACE 'https://collab.safeway.com/it/architecture/info/default.aspx';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- Declare Input Message Root
+		DECLARE _inputRootNode REFERENCE TO InputRoot.JSON.Data;
+
+		-- Checking for mandatory field: $.payload.id
+		IF(_inputRootNode.payload.id IS NULL) THEN
+			THROW USER EXCEPTION VALUES('ESED','OfferRequest_BOD','OfferRequestId not Present');
+		END IF;
+
+		-- Checking for mandatory field: $.sourceAction
+		IF(_inputRootNode.sourceAction IS NULL) THEN
+			THROW USER EXCEPTION VALUES('ESED','OfferRequest_BOD','sourceAction not Present');
+		END IF;
+
+		-- Declare Output Message Root
+		CREATE LASTCHILD OF OutputRoot DOMAIN 'XMLNSC';
+
+		DECLARE GetOfferRequest_ REFERENCE TO OutputRoot.XMLNSC.GetOfferRequest;
+		CREATE LASTCHILD OF OutputRoot.XMLNSC AS GetOfferRequest_ TYPE XMLNSC.Folder NAME 'GetOfferRequest';
+		SET OutputRoot.XMLNSC.GetOfferRequest.(XMLNSC.NamespaceDecl)xmlns:Abs=Abs;
+
+		-- GetOfferRequest/DocumentData
+		DECLARE DocumentData_ REFERENCE TO GetOfferRequest_;
+		CREATE LASTCHILD OF GetOfferRequest_ AS DocumentData_ TYPE XMLNSC.Folder NAME 'Abs:DocumentData';
+
+			-- GetOfferRequest/DocumentData/Document
+			DECLARE Document_ REFERENCE TO DocumentData_;
+			CREATE LASTCHILD OF DocumentData_ AS Document_ TYPE XMLNSC.Folder NAME 'Abs:Document';
+
+				-- GetOfferRequest/DocumentData/Document/@VersionId
+				SET Document_.(XMLNSC.Attribute)VersionId = VERSION_ID;
+
+				-- GetOfferRequest/DocumentData/Document/@SystemEnvironmentCd
+				SET Document_.(XMLNSC.Attribute)SystemEnvironmentCd = SYSTEM_ENVIRONMENT_CODE;
+
+				-- GetOfferRequest/DocumentData/Document/InboundOutboundInd
+				SET Document_.(XMLNSC.Field)Abs:InboundOutboundInd = 'OUTBOUND FROM ALBERTSONS';
+
+				-- GetOfferRequest/DocumentData/Document/DocumentNm
+				SET Document_.(XMLNSC.Field)Abs:DocumentNm = 'GETOFFERREQUEST';
+
+				-- GetOfferRequest/DocumentData/Document/CreationDt
+				SET Document_.(XMLNSC.Field)Abs:CreationDt = CURRENT_TIMESTAMP;
+
+				-- GetOfferRequest/DocumentData/Document/Description
+				SET Document_.(XMLNSC.Field)Abs:Description = 'OFFERREQUEST';
+
+				-- GetOfferRequest/DocumentData/Document/SourceApplicationCd
+				SET Document_.(XMLNSC.Field)Abs:SourceApplicationCd = 'OMS';
+
+				-- GetOfferRequest/DocumentData/Document/TargetApplicationCd
+				SET Document_.(XMLNSC.Field)Abs:TargetApplicationCd = 'EDIS';
+
+				-- GetOfferRequest/DocumentData/Document/InternalFileTransferInd
+				SET Document_.(XMLNSC.Field)Abs:InternalFileTransferInd = 'Y';
+
+				-- GetOfferRequest/DocumentData/Document/DataClassification
+				DECLARE DataClassification_ REFERENCE TO Document_;
+				CREATE LASTCHILD OF Document_ AS DataClassification_ TYPE XMLNSC.Folder NAME 'Abs:DataClassification';
+
+					-- GetOfferRequest/DocumentData/Document/DataClassification/DataClassificationLevel
+					DECLARE DataClassificationLevel_ REFERENCE TO DataClassification_;
+					CREATE LASTCHILD OF DataClassification_ AS DataClassificationLevel_ TYPE XMLNSC.Folder NAME 'Abs:DataClassificationLevel';
+
+						-- GetOfferRequest/DocumentData/Document/DataClassification/DataClassificationLevel/Code
+						SET DataClassificationLevel_.(XMLNSC.Field)Abs:Code = 'INTERNAL';
+
+						-- GetOfferRequest/DocumentData/Document/DataClassification/DataClassificationLevel/ShortDescription
+						SET DataClassificationLevel_.(XMLNSC.Field)Abs:ShortDescription = 'OFFERREQUEST';
+
+					-- GetOfferRequest/DocumentData/Document/DataClassification/BusinessSensitivityLevel
+					DECLARE BusinessSensitivityLevel_ REFERENCE TO DataClassification_;
+					CREATE LASTCHILD OF DataClassification_ AS BusinessSensitivityLevel_ TYPE XMLNSC.Folder NAME 'Abs:BusinessSensitivityLevel';
+
+						-- GetOfferRequest/DocumentData/Document/DataClassification/BusinessSensitivityLevel/Code
+						SET BusinessSensitivityLevel_.(XMLNSC.Field)Abs:Code = 'LOW';
+
+					-- GetOfferRequest/DocumentData/Document/DataClassification/PHIdataInd
+					SET DataClassification_.(XMLNSC.Field)Abs:PHIdataInd = 'N';
+
+					-- GetOfferRequest/DocumentData/Document/DataClassification/PCIdataInd
+					SET DataClassification_.(XMLNSC.Field)Abs:PCIdataInd = 'N';
+
+					-- GetOfferRequest/DocumentData/Document/DataClassification/PIIdataInd
+					SET DataClassification_.(XMLNSC.Field)Abs:PIIdataInd = 'N';
+
+			-- GetOfferRequest/DocumentData/DocumentAction
+			DECLARE DocumentAction_ REFERENCE TO DocumentData_;
+			CREATE LASTCHILD OF DocumentData_ AS DocumentAction_ TYPE XMLNSC.Folder NAME 'Abs:DocumentAction';
+
+				-- GetOfferRequest/DocumentData/DocumentAction/ActionTypeCd
+				IF (_inputRootNode.sourceAction = 'DELETE') THEN
+					SET DocumentAction_.(XMLNSC.Field)Abs:ActionTypeCd = 'DELETE';
+
+				ELSE
+					SET DocumentAction_.(XMLNSC.Field)Abs:ActionTypeCd = 'UPDATE';
+
+				END IF;
+
+				-- GetOfferRequest/DocumentData/DocumentAction/RecordTypeCd
+				SET DocumentAction_.(XMLNSC.Field)Abs:RecordTypeCd = 'CHANGE';
+
+		-- GetOfferRequest/OfferRequestData
+		DECLARE OfferRequestData_ REFERENCE TO GetOfferRequest_;
+		CREATE LASTCHILD OF GetOfferRequest_ AS OfferRequestData_ TYPE XMLNSC.Folder NAME 'Abs:OfferRequestData';
+
+			-- GetOfferRequest/OfferRequestData/OfferRequestId
+			SET OfferRequestData_.(XMLNSC.Field)Abs:OfferRequestId = _inputRootNode.payload.id;
+
+			-- GetOfferRequest/OfferRequestData/OfferOrganization
+			DECLARE OfferOrganization_ REFERENCE TO OfferRequestData_;
+			CREATE LASTCHILD OF OfferRequestData_ AS OfferOrganization_ TYPE XMLNSC.Folder NAME 'Abs:OfferOrganization';
+
+				-- GetOfferRequest/OfferRequestData/OfferOrganization/Group
+				DECLARE Group_ REFERENCE TO OfferOrganization_;
+				CREATE LASTCHILD OF OfferOrganization_ AS Group_ TYPE XMLNSC.Folder NAME 'Abs:Group';
+
+					-- GetOfferRequest/OfferRequestData/OfferOrganization/Group/GroupId
+					SET Group_.(XMLNSC.Field)Abs:GroupId = _inputRootNode.payload.groupId;
+
+					-- GetOfferRequest/OfferRequestData/OfferOrganization/Group/GroupCd
+					SET Group_.(XMLNSC.Field)Abs:GroupCd = _inputRootNode.payload.groupCode;
+
+					-- GetOfferRequest/OfferRequestData/OfferOrganization/Group/GroupNm
+					SET Group_.(XMLNSC.Field)Abs:GroupNm = _inputRootNode.payload.groupName;
+
+					-- LOOP $.payload.subGroup[*] TO GetOfferRequest/OfferRequestData/OfferOrganization/Group/SubGroup
+					DECLARE _sub_group_item REFERENCE TO _inputRootNode.payload.subGroup.Item;
+					SUB_GROUP_LOOP : WHILE LASTMOVE(_sub_group_item) DO
+
+						-- GetOfferRequest/OfferRequestData/OfferOrganization/Group/SubGroup
+						DECLARE SubGroup_ REFERENCE TO Group_;
+						CREATE LASTCHILD OF Group_ AS SubGroup_ TYPE XMLNSC.Folder NAME 'Abs:SubGroup';
+
+							-- GetOfferRequest/OfferRequestData/OfferOrganization/Group/SubGroup/SubGroupId
+							SET SubGroup_.(XMLNSC.Field)Abs:SubGroupId = _sub_group_item.id;
+
+							-- GetOfferRequest/OfferRequestData/OfferOrganization/Group/SubGroup/SubGroupCd
+							SET SubGroup_.(XMLNSC.Field)Abs:SubGroupCd = _sub_group_item.code;
+
+							-- GetOfferRequest/OfferRequestData/OfferOrganization/Group/SubGroup/SubGroupNm
+							SET SubGroup_.(XMLNSC.Field)Abs:SubGroupNm = _sub_group_item.name;
+
+					MOVE _sub_group_item NEXTSIBLING;
+					END WHILE SUB_GROUP_LOOP;
+					-- END LOOP
+
+				-- LOOP $.payload.regions[*] TO GetOfferRequest/OfferRequestData/OfferOrganization/OfferRegion
+				DECLARE _offer_region_item REFERENCE TO _inputRootNode.payload.regions.Item;
+				OFFER_REGION_LOOP : WHILE LASTMOVE(_offer_region_item) DO
+
+					-- GetOfferRequest/OfferRequestData/OfferOrganization/OfferRegion
+					DECLARE OfferRegion_ REFERENCE TO OfferOrganization_;
+					CREATE LASTCHILD OF OfferOrganization_ AS OfferRegion_ TYPE XMLNSC.Folder NAME 'Abs:OfferRegion';
+
+						-- GetOfferRequest/OfferRequestData/OfferOrganization/OfferRegion/RegionId
+						SET OfferRegion_.(XMLNSC.Field)Abs:RegionId = _offer_region_item.regionId;
+
+						-- GetOfferRequest/OfferRequestData/OfferOrganization/OfferRegion/RegionNm
+						SET OfferRegion_.(XMLNSC.Field)Abs:RegionNm = _offer_region_item.regionName;
+
+				MOVE _offer_region_item NEXTSIBLING;
+				END WHILE OFFER_REGION_LOOP;
+				-- END LOOP
+
+			-- GetOfferRequest/OfferRequestData/OfferDeliveryChannelType
+			DECLARE OfferDeliveryChannelType_ REFERENCE TO OfferRequestData_;
+			CREATE LASTCHILD OF OfferRequestData_ AS OfferDeliveryChannelType_ TYPE XMLNSC.Folder NAME 'Abs:OfferDeliveryChannelType';
+
+				-- GetOfferRequest/OfferRequestData/OfferDeliveryChannelType/DeliveryChannelTypeCd
+				SET OfferDeliveryChannelType_.(XMLNSC.Field)Abs:DeliveryChannelTypeCd = _inputRootNode.payload.deliveryChannel;
+
+				-- GetOfferRequest/OfferRequestData/OfferDeliveryChannelType/DeliveryChannelTypeDsc
+				SET OfferDeliveryChannelType_.(XMLNSC.Field)Abs:DeliveryChannelTypeDsc = _inputRootNode.payload.deliveryChannelDesc;
+
+			-- GetOfferRequest/OfferRequestData/OfferFulfillmentChannel
+			DECLARE OfferFulfillmentChannel_ REFERENCE TO OfferRequestData_;
+			CREATE LASTCHILD OF OfferRequestData_ AS OfferFulfillmentChannel_ TYPE XMLNSC.Folder NAME 'Abs:OfferFulfillmentChannel';
+
+				-- GetOfferRequest/OfferRequestData/OfferFulfillmentChannel/FulfillmentChannelTypeCd
+				SET OfferFulfillmentChannel_.(XMLNSC.Field)Abs:FulfillmentChannelTypeCd = _inputRootNode.payload.fulfillmentChannel;
+
+				-- GetOfferRequest/OfferRequestData/OfferFulfillmentChannel/FulfillmentChannelInd
+				IF (_inputRootNode.payload.fulfillmentChannel IS NOT NULL) THEN
+					SET OfferFulfillmentChannel_.(XMLNSC.Field)Abs:FulfillmentChannelInd = 'true';
+
+				END IF;
+
+			-- GetOfferRequest/OfferRequestData/OfferBank
+			DECLARE OfferBank_ REFERENCE TO OfferRequestData_;
+			CREATE LASTCHILD OF OfferRequestData_ AS OfferBank_ TYPE XMLNSC.Folder NAME 'Abs:OfferBank';
+
+				-- GetOfferRequest/OfferRequestData/OfferBank/OfferBankTypeCd
+				SET OfferBank_.(XMLNSC.Field)Abs:OfferBankTypeCd = _inputRootNode.payload.mobType;
+
+				-- GetOfferRequest/OfferRequestData/OfferBank/OfferBankId
+				SET OfferBank_.(XMLNSC.Field)Abs:OfferBankId = _inputRootNode.payload.mobId;
+
+				-- GetOfferRequest/OfferRequestData/OfferBank/OfferBankNm
+				SET OfferBank_.(XMLNSC.Field)Abs:OfferBankNm = _inputRootNode.payload.mobName;
+
+			-- GetOfferRequest/OfferRequestData/OfferRequestTemplate
+			DECLARE OfferRequestTemplate_ REFERENCE TO OfferRequestData_;
+			CREATE LASTCHILD OF OfferRequestData_ AS OfferRequestTemplate_ TYPE XMLNSC.Folder NAME 'Abs:OfferRequestTemplate';
+
+				-- GetOfferRequest/OfferRequestData/OfferRequestTemplate/TemplateId
+				SET OfferRequestTemplate_.(XMLNSC.Field)Abs:TemplateId = _inputRootNode.payload.templateId;
+
+				-- GetOfferRequest/OfferRequestData/OfferRequestTemplate/TemplateNm
+				SET OfferRequestTemplate_.(XMLNSC.Field)Abs:TemplateNm = _inputRootNode.payload.templateType;
+
+			-- GetOfferRequest/OfferRequestData/OfferRequestTemplateStatus
+			DECLARE OfferRequestTemplateStatus_ REFERENCE TO OfferRequestData_;
+			CREATE LASTCHILD OF OfferRequestData_ AS OfferRequestTemplateStatus_ TYPE XMLNSC.Folder NAME 'Abs:OfferRequestTemplateStatus';
+
+				-- GetOfferRequest/OfferRequestData/OfferRequestTemplateStatus/StatusTypeCd
+				SET OfferRequestTemplateStatus_.(XMLNSC.Field)Abs:StatusTypeCd = _inputRootNode.payload.otStatus;
+
+				-- GetOfferRequest/OfferRequestData/OfferRequestTemplateStatus/Description
+				SET OfferRequestTemplateStatus_.(XMLNSC.Field)Abs:Description = _inputRootNode.payload.otStatus;
+
+			-- GetOfferRequest/OfferRequestData/DepartmentNm
+			SET OfferRequestData_.(XMLNSC.Field)Abs:DepartmentNm = _inputRootNode.payload.department;
+
+			-- GetOfferRequest/OfferRequestData/OfferRequestDsc
+			SET OfferRequestData_.(XMLNSC.Field)Abs:OfferRequestDsc = _inputRootNode.payload.description;
+
+			-- GetOfferRequest/OfferRequestData/BrandInfoTxt
+			SET OfferRequestData_.(XMLNSC.Field)Abs:BrandInfoTxt = _inputRootNode.payload.brandAndSize;
+
+			-- GetOfferRequest/OfferRequestData/CustomerSegmentInfoTxt
+			SET OfferRequestData_.(XMLNSC.Field)Abs:CustomerSegmentInfoTxt = _inputRootNode.payload.customerSegment;
+
+			-- GetOfferRequest/OfferRequestData/OfferRequestStatus
+			DECLARE OfferRequestStatus_ REFERENCE TO OfferRequestData_;
+			CREATE LASTCHILD OF OfferRequestData_ AS OfferRequestStatus_ TYPE XMLNSC.Folder NAME 'Abs:OfferRequestStatus';
+
+				-- GetOfferRequest/OfferRequestData/OfferRequestStatus/StatusTypeCd
+				SET OfferRequestStatus_.(XMLNSC.Field)Abs:StatusTypeCd = _inputRootNode.payload.digitalStatus;
+
+				-- GetOfferRequest/OfferRequestData/OfferRequestStatus/Description
+				SET OfferRequestStatus_.(XMLNSC.Field)Abs:Description = _inputRootNode.payload.digitalStatusDesc;
+
+				-- GetOfferRequest/OfferRequestData/OfferRequestStatus/OfferRequestStatusTypeCd
+				IF(_inputRootNode.payload.digitalStatus IS NOT NULL) THEN
+					SET OfferRequestStatus_.(XMLNSC.Field)Abs:OfferRequestStatusTypeCd = 'digital';
+
+				ELSEIF (_inputRootNode.payload.nonDigitalStatus IS NOT NULL) THEN
+					SET OfferRequestStatus_.(XMLNSC.Field)Abs:OfferRequestStatusTypeCd = 'nonDigital';
+
+				END IF;
+
+				-- GetOfferRequest/OfferRequestData/OfferRequestStatus/TimeZoneCd
+				SET OfferRequestStatus_.(XMLNSC.Field)Abs:TimeZoneCd = 'UTC';
+
+			-- LOOP $.payload.changeDetails[*] TO GetOfferRequest/OfferRequestData/OfferRequestChangeDetail
+			DECLARE _offer_request_change_detail_item REFERENCE TO _inputRootNode.payload.changeDetails.Item;
+			OFFER_REQUEST_CHANGE_DETAIL_LOOP : WHILE LASTMOVE(_offer_request_change_detail_item) DO
+
+				-- GetOfferRequest/OfferRequestData/OfferRequestChangeDetail
+				DECLARE OfferRequestChangeDetail_ REFERENCE TO OfferRequestData_;
+				CREATE LASTCHILD OF OfferRequestData_ AS OfferRequestChangeDetail_ TYPE XMLNSC.Folder NAME 'Abs:OfferRequestChangeDetail';
+
+					-- GetOfferRequest/OfferRequestData/OfferRequestChangeDetail/ChangeType
+					DECLARE ChangeType_ REFERENCE TO OfferRequestChangeDetail_;
+					CREATE LASTCHILD OF OfferRequestChangeDetail_ AS ChangeType_ TYPE XMLNSC.Folder NAME 'Abs:ChangeType';
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestChangeDetail/ChangeType/ChangeTypeCd
+						SET ChangeType_.(XMLNSC.Field)Abs:ChangeTypeCd = _offer_request_change_detail_item.changeType.name;
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestChangeDetail/ChangeType/ChangeTypeQty
+						SET ChangeType_.(XMLNSC.Field)Abs:ChangeTypeQty = _offer_request_change_detail_item.changeType.totalCount;
+
+					-- GetOfferRequest/OfferRequestData/OfferRequestChangeDetail/ChangeCategory
+					DECLARE ChangeCategory_ REFERENCE TO OfferRequestChangeDetail_;
+					CREATE LASTCHILD OF OfferRequestChangeDetail_ AS ChangeCategory_ TYPE XMLNSC.Folder NAME 'Abs:ChangeCategory';
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestChangeDetail/ChangeCategory/ChangeCategoryCd
+						SET ChangeCategory_.(XMLNSC.Field)Abs:ChangeCategoryCd = _offer_request_change_detail_item.changeCategory.name;
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestChangeDetail/ChangeCategory/ChangeCategoryQty
+						SET ChangeCategory_.(XMLNSC.Field)Abs:ChangeCategoryQty = _offer_request_change_detail_item.changeCategory.totalCount;
+
+					-- GetOfferRequest/OfferRequestData/OfferRequestChangeDetail/ReasonType
+					DECLARE ReasonType_ REFERENCE TO OfferRequestChangeDetail_;
+					CREATE LASTCHILD OF OfferRequestChangeDetail_ AS ReasonType_ TYPE XMLNSC.Folder NAME 'Abs:ReasonType';
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestChangeDetail/ReasonType/ReasonTypeCd
+						SET ReasonType_.(XMLNSC.Field)Abs:ReasonTypeCd = _offer_request_change_detail_item.reasonType;
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestChangeDetail/ReasonType/ReasonTypeDsc
+						SET ReasonType_.(XMLNSC.Field)Abs:ReasonTypeDsc = _offer_request_change_detail_item.reasonComment;
+
+					-- GetOfferRequest/OfferRequestData/OfferRequestChangeDetail/ChangeByType
+					DECLARE ChangeByType_ REFERENCE TO OfferRequestChangeDetail_;
+					CREATE LASTCHILD OF OfferRequestChangeDetail_ AS ChangeByType_ TYPE XMLNSC.Folder NAME 'Abs:ChangeByType';
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestChangeDetail/ChangeByType/UserId
+						SET ChangeByType_.(XMLNSC.Field)Abs:UserId = _offer_request_change_detail_item.userId;
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestChangeDetail/ChangeByType/ChangeByDtTm
+						SET ChangeByType_.(XMLNSC.Field)Abs:ChangeByDtTm = _offer_request_change_detail_item.changeTimestamp;
+
+			MOVE _offer_request_change_detail_item NEXTSIBLING;
+			END WHILE OFFER_REQUEST_CHANGE_DETAIL_LOOP;
+			-- END LOOP
+
+			-- GetOfferRequest/OfferRequestData/VendorPromotionType
+			DECLARE VendorPromotionType_ REFERENCE TO OfferRequestData_;
+			CREATE LASTCHILD OF OfferRequestData_ AS VendorPromotionType_ TYPE XMLNSC.Folder NAME 'Abs:VendorPromotionType';
+
+				-- GetOfferRequest/OfferRequestData/VendorPromotionType/VendorPromotionId
+				-- LOOP $.payload.nopaNumbers[*] TO GetOfferRequest/OfferRequestData/VendorPromotionType/VendorPromotionId
+				DECLARE _vendor_promotion_id_Item REFERENCE TO _inputRootNode.payload.nopaNumbers.Item;
+				DECLARE VendorPromotionId_ REFERENCE TO VendorPromotionType_;
+
+				VENDOR_PROMOTION_ID_LOOP : WHILE LASTMOVE(_vendor_promotion_id_Item) DO
+
+					-- GetOfferRequest/OfferRequestData/VendorPromotionType/VendorPromotionId
+					CREATE LASTCHILD OF VendorPromotionType_ AS VendorPromotionId_ TYPE XMLNSC.Folder NAME 'Abs:VendorPromotionId' VALUE _vendor_promotion_id_Item;
+
+				MOVE _vendor_promotion_id_Item NEXTSIBLING;
+				END WHILE VENDOR_PROMOTION_ID_LOOP;
+				-- END LOOP
+
+				-- GetOfferRequest/OfferRequestData/VendorPromotionType/NOPAStartDt
+				SET VendorPromotionType_.(XMLNSC.Field)Abs:NOPAStartDt = _inputRootNode.payload.nopaStartDate;
+
+				-- GetOfferRequest/OfferRequestData/VendorPromotionType/NOPAEndDt
+				SET VendorPromotionType_.(XMLNSC.Field)Abs:NOPAEndDt = _inputRootNode.payload.nopaEndDate;
+
+				-- GetOfferRequest/OfferRequestData/VendorPromotionType/BillingOptionType
+				DECLARE BillingOptionType_ REFERENCE TO VendorPromotionType_;
+				CREATE LASTCHILD OF VendorPromotionType_ AS BillingOptionType_ TYPE XMLNSC.Folder NAME 'Abs:BillingOptionType';
+
+					-- GetOfferRequest/OfferRequestData/VendorPromotionType/BillingOptionType/Code
+					SET BillingOptionType_.(XMLNSC.Field)Abs:Code = _inputRootNode.payload.billingOptions;
+
+				-- GetOfferRequest/OfferRequestData/VendorPromotionType/NOPAAssignStatus
+				DECLARE NOPAAssignStatus_ REFERENCE TO VendorPromotionType_;
+				CREATE LASTCHILD OF VendorPromotionType_ AS NOPAAssignStatus_ TYPE XMLNSC.Folder NAME 'Abs:NOPAAssignStatus';
+
+					-- GetOfferRequest/OfferRequestData/VendorPromotionType/NOPAAssignStatus/StatusTypeCd
+					SET NOPAAssignStatus_.(XMLNSC.Field)Abs:StatusTypeCd = _inputRootNode.payload.nopaAssignStatus;
+
+				-- GetOfferRequest/OfferRequestData/VendorPromotionType/BilledInd
+				SET VendorPromotionType_.(XMLNSC.Field)Abs:BilledInd = _inputRootNode.payload.isBilled;
+
+			-- GetOfferRequest/OfferRequestData/PromotionProgram
+			DECLARE PromotionProgram_ REFERENCE TO OfferRequestData_;
+			CREATE LASTCHILD OF OfferRequestData_ AS PromotionProgram_ TYPE XMLNSC.Folder NAME 'Abs:PromotionProgram';
+
+				-- GetOfferRequest/OfferRequestData/PromotionProgram/Code
+				SET PromotionProgram_.(XMLNSC.Field)Abs:Code = _inputRootNode.payload.programType;
+
+			-- GetOfferRequest/OfferRequestData/PromotionProgramType
+			DECLARE PromotionProgramType_ REFERENCE TO OfferRequestData_;
+			CREATE LASTCHILD OF OfferRequestData_ AS PromotionProgramType_ TYPE XMLNSC.Folder NAME 'Abs:PromotionProgramType';
+
+				-- GetOfferRequest/OfferRequestData/PromotionProgramType/Code
+				SET PromotionProgramType_.(XMLNSC.Field)Abs:Code = _inputRootNode.payload.programCode;
+
+				-- GetOfferRequest/OfferRequestData/PromotionProgramType/Name
+				SET PromotionProgramType_.(XMLNSC.Field)Abs:Name = _inputRootNode.payload.programCodeDesc;
+
+				-- GetOfferRequest/OfferRequestData/PromotionProgramType/ProgramSubType
+				DECLARE ProgramSubType_ REFERENCE TO PromotionProgramType_;
+				CREATE LASTCHILD OF PromotionProgramType_ AS ProgramSubType_ TYPE XMLNSC.Folder NAME 'Abs:ProgramSubType';
+
+					-- GetOfferRequest/OfferRequestData/PromotionProgramType/ProgramSubType/Code
+					SET ProgramSubType_.(XMLNSC.Field)Abs:Code = _inputRootNode.payload.programSubType;
+
+			-- GetOfferRequest/OfferRequestData/PromotionPeriodType
+			DECLARE PromotionPeriodType_ REFERENCE TO OfferRequestData_;
+			CREATE LASTCHILD OF OfferRequestData_ AS PromotionPeriodType_ TYPE XMLNSC.Folder NAME 'Abs:PromotionPeriodType';
+
+				-- GetOfferRequest/OfferRequestData/PromotionPeriodType/PromotionPeriodId
+				SET PromotionPeriodType_.(XMLNSC.Field)Abs:PromotionPeriodId = _inputRootNode.payload.periodId;
+
+				-- GetOfferRequest/OfferRequestData/PromotionPeriodType/PromotionPeriodNm
+				SET PromotionPeriodType_.(XMLNSC.Field)Abs:PromotionPeriodNm = _inputRootNode.payload.period;
+
+				-- GetOfferRequest/OfferRequestData/PromotionPeriodType/PromotionWeekId
+				SET PromotionPeriodType_.(XMLNSC.Field)Abs:PromotionWeekId = _inputRootNode.payload.promoWeekId;
+
+			-- GetOfferRequest/OfferRequestData/AdvertisementType
+			DECLARE AdvertisementType_ REFERENCE TO OfferRequestData_;
+			CREATE LASTCHILD OF OfferRequestData_ AS AdvertisementType_ TYPE XMLNSC.Folder NAME 'Abs:AdvertisementType';
+
+				-- GetOfferRequest/OfferRequestData/AdvertisementType/Code
+				SET AdvertisementType_.(XMLNSC.Field)Abs:Code = _inputRootNode.payload.adType;
+
+			-- GetOfferRequest/OfferRequestData/TriggerId
+			SET OfferRequestData_.(XMLNSC.Field)Abs:TriggerId = _inputRootNode.payload.pluTriggerBarcode;
+
+			-- GetOfferRequest/OfferRequestData/OfferPeriodType
+			DECLARE OfferPeriodType_ REFERENCE TO OfferRequestData_;
+			CREATE LASTCHILD OF OfferRequestData_ AS OfferPeriodType_ TYPE XMLNSC.Folder NAME 'Abs:OfferPeriodType';
+
+				-- GetOfferRequest/OfferRequestData/OfferPeriodType/OfferStartDt
+				SET OfferPeriodType_.(XMLNSC.Field)Abs:OfferStartDt = _inputRootNode.payload.offerEffectiveStartDate;
+
+				-- GetOfferRequest/OfferRequestData/OfferPeriodType/OfferEndDt
+				SET OfferPeriodType_.(XMLNSC.Field)Abs:OfferEndDt = _inputRootNode.payload.offerEffectiveEndDate;
+
+			-- GetOfferRequest/OfferRequestData/OfferRequestSource
+			DECLARE OfferRequestSource_ REFERENCE TO OfferRequestData_;
+			CREATE LASTCHILD OF OfferRequestData_ AS OfferRequestSource_ TYPE XMLNSC.Folder NAME 'Abs:OfferRequestSource';
+
+				-- GetOfferRequest/OfferRequestData/OfferRequestSource/SourceSystemId
+				SET OfferRequestSource_.(XMLNSC.Field)Abs:SourceSystemId = _inputRootNode.payload.createdUserId;
+
+				-- GetOfferRequest/OfferRequestData/OfferRequestSource/ApplicationId
+				SET OfferRequestSource_.(XMLNSC.Field)Abs:ApplicationId = _inputRootNode.payload.createdApplicationId;
+
+				-- GetOfferRequest/OfferRequestData/OfferRequestSource/UpdatedApplicationId
+				SET OfferRequestSource_.(XMLNSC.Field)Abs:UpdatedApplicationId = _inputRootNode.payload.lastUpdatedApplicationId;
+
+				-- GetOfferRequest/OfferRequestData/OfferRequestSource/UserUpdate
+				IF (_inputRootNode.payload.digitalUser IS NOT NULL) THEN
+					DECLARE UserUpdate_ REFERENCE TO OfferRequestSource_;
+					CREATE LASTCHILD OF OfferRequestSource_ AS UserUpdate_ TYPE XMLNSC.Folder NAME 'Abs:UserUpdate';
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestSource/UserUpdate/UserTypeCd
+						SET UserUpdate_.(XMLNSC.Field)Abs:UserTypeCd = 'digitalUser';
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestSource/UserUpdate/UserId
+						SET UserUpdate_.(XMLNSC.Field)Abs:UserId = _inputRootNode.payload.digitalUser.userId;
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestSource/UserUpdate/FirstNm
+						SET UserUpdate_.(XMLNSC.Field)Abs:FirstNm = _inputRootNode.payload.digitalUser.firstName;
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestSource/UserUpdate/LastNm
+						SET UserUpdate_.(XMLNSC.Field)Abs:LastNm = _inputRootNode.payload.digitalUser.lastName;
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestSource/UserUpdate/CreateTs
+						SET UserUpdate_.(XMLNSC.Field)Abs:CreateTs = _inputRootNode.payload.createTs;
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestSource/UserUpdate/UpdateTs
+						SET UserUpdate_.(XMLNSC.Field)Abs:UpdateTs = _inputRootNode.lastUpdateTs;
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestSource/UserUpdate/TimeZoneCd
+						SET UserUpdate_.(XMLNSC.Field)Abs:TimeZoneCd = 'UTC';
+
+				ELSEIF(_inputRootNode.payload.nonDigitalUser IS NOT NULL) THEN
+					DECLARE UserUpdate_ REFERENCE TO OfferRequestSource_;
+					CREATE LASTCHILD OF OfferRequestSource_ AS UserUpdate_ TYPE XMLNSC.Folder NAME 'Abs:UserUpdate';
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestSource/UserUpdate/UserTypeCd
+						SET UserUpdate_.(XMLNSC.Field)Abs:UserTypeCd = 'nonDigitalUser';
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestSource/UserUpdate/UserId
+						SET UserUpdate_.(XMLNSC.Field)Abs:UserId = _inputRootNode.payload.nonDigitalUser.userId;
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestSource/UserUpdate/FirstNm
+						SET UserUpdate_.(XMLNSC.Field)Abs:FirstNm = _inputRootNode.payload.nonDigitalUser.firstName;
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestSource/UserUpdate/LastNm
+						SET UserUpdate_.(XMLNSC.Field)Abs:LastNm = _inputRootNode.payload.nonDigitalUser.lastName;
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestSource/UserUpdate/CreateTs
+						SET UserUpdate_.(XMLNSC.Field)Abs:CreateTs = _inputRootNode.payload.createTs;
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestSource/UserUpdate/UpdateTs
+						SET UserUpdate_.(XMLNSC.Field)Abs:UpdateTs = _inputRootNode.lastUpdateTs;
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestSource/UserUpdate/TimeZoneCd
+						SET UserUpdate_.(XMLNSC.Field)Abs:TimeZoneCd = 'UTC';
+
+				ELSEIF(_inputRootNode.payload.updatedUser IS NOT NULL) THEN
+					DECLARE UserUpdate_ REFERENCE TO OfferRequestSource_;
+					CREATE LASTCHILD OF OfferRequestSource_ AS UserUpdate_ TYPE XMLNSC.Folder NAME 'Abs:UserUpdate';
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestSource/UserUpdate/UserTypeCd
+						SET UserUpdate_.(XMLNSC.Field)Abs:UserTypeCd = 'updatedUser';
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestSource/UserUpdate/UserId
+						SET UserUpdate_.(XMLNSC.Field)Abs:UserId = _inputRootNode.payload.updatedUser.userId;
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestSource/UserUpdate/FirstNm
+						SET UserUpdate_.(XMLNSC.Field)Abs:FirstNm = _inputRootNode.payload.updatedUser.firstName;
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestSource/UserUpdate/LastNm
+						SET UserUpdate_.(XMLNSC.Field)Abs:LastNm = _inputRootNode.payload.updatedUser.lastName;
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestSource/UserUpdate/CreateTs
+						SET UserUpdate_.(XMLNSC.Field)Abs:CreateTs = _inputRootNode.payload.createTs;
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestSource/UserUpdate/UpdateTs
+						SET UserUpdate_.(XMLNSC.Field)Abs:UpdateTs = _inputRootNode.lastUpdateTs;
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestSource/UserUpdate/TimeZoneCd
+						SET UserUpdate_.(XMLNSC.Field)Abs:TimeZoneCd = 'UTC';
+
+				ELSEIF(_inputRootNode.payload.createdUser IS NOT NULL) THEN
+					DECLARE UserUpdate_ REFERENCE TO OfferRequestSource_;
+					CREATE LASTCHILD OF OfferRequestSource_ AS UserUpdate_ TYPE XMLNSC.Folder NAME 'Abs:UserUpdate';
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestSource/UserUpdate/UserTypeCd
+						SET UserUpdate_.(XMLNSC.Field)Abs:UserTypeCd = 'createdUser';
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestSource/UserUpdate/UserId
+						SET UserUpdate_.(XMLNSC.Field)Abs:UserId = _inputRootNode.payload.createdUser.userId;
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestSource/UserUpdate/FirstNm
+						SET UserUpdate_.(XMLNSC.Field)Abs:FirstNm = _inputRootNode.payload.createdUser.firstName;
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestSource/UserUpdate/LastNm
+						SET UserUpdate_.(XMLNSC.Field)Abs:LastNm = _inputRootNode.payload.createdUser.lastName;
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestSource/UserUpdate/CreateTs
+						SET UserUpdate_.(XMLNSC.Field)Abs:CreateTs = _inputRootNode.payload.createTs;
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestSource/UserUpdate/UpdateTs
+						SET UserUpdate_.(XMLNSC.Field)Abs:UpdateTs = _inputRootNode.lastUpdateTs;
+
+						-- GetOfferRequest/OfferRequestData/OfferRequestSource/UserUpdate/TimeZoneCd
+						SET UserUpdate_.(XMLNSC.Field)Abs:TimeZoneCd = 'UTC';
+
+				END IF;
+
+			-- GetOfferRequest/OfferRequestData/OfferEffectiveDay
+			SET OfferRequestData_.(XMLNSC.Field)Abs:OfferEffectiveDay = _inputRootNode.payload.qualificationDay;
+
+			-- GetOfferRequest/OfferRequestData/OfferEffectiveTm
+			DECLARE OfferEffectiveTm_ REFERENCE TO OfferRequestData_;
+			CREATE LASTCHILD OF OfferRequestData_ AS OfferEffectiveTm_ TYPE XMLNSC.Folder NAME 'Abs:OfferEffectiveTm';
+
+				-- GetOfferRequest/OfferRequestData/OfferEffectiveTm/StartTm
+				SET OfferEffectiveTm_.(XMLNSC.Field)Abs:StartTm = _inputRootNode.payload.qualificationTime.start;
+
+				-- GetOfferRequest/OfferRequestData/OfferEffectiveTm/EndTm
+				SET OfferEffectiveTm_.(XMLNSC.Field)Abs:EndTm = _inputRootNode.payload.qualificationTime.end;
+
+				-- GetOfferRequest/OfferRequestData/OfferEffectiveTm/TimeZoneCd
+				SET OfferEffectiveTm_.(XMLNSC.Field)Abs:TimeZoneCd = 'UTC';
+
+			-- GetOfferRequest/OfferRequestData/OfferRestrictionType
+			DECLARE OfferRestrictionType_ REFERENCE TO OfferRequestData_;
+			CREATE LASTCHILD OF OfferRequestData_ AS OfferRestrictionType_ TYPE XMLNSC.Folder NAME 'Abs:OfferRestrictionType';
+
+				-- GetOfferRequest/OfferRequestData/OfferRestrictionType/UsageLimitTypeTxt
+				SET OfferRestrictionType_.(XMLNSC.Field)Abs:UsageLimitTypeTxt = _inputRootNode.payload.customType;
+
+				-- GetOfferRequest/OfferRequestData/OfferRestrictionType/UsageLimitPeriodNbr
+				SET OfferRestrictionType_.(XMLNSC.Field)Abs:UsageLimitPeriodNbr = _inputRootNode.payload.customPeriod;
+
+				-- GetOfferRequest/OfferRequestData/OfferRestrictionType/UsageLimitNbr
+				SET OfferRestrictionType_.(XMLNSC.Field)Abs:UsageLimitNbr = _inputRootNode.payload.customOfferLimit;
+
+			-- GetOfferRequest/OfferRequestData/RequirementType
+			DECLARE RequirementType_ REFERENCE TO OfferRequestData_;
+			CREATE LASTCHILD OF OfferRequestData_ AS RequirementType_ TYPE XMLNSC.Folder NAME 'Abs:RequirementType';
+
+				-- GetOfferRequest/OfferRequestData/RequirementType/RequiredQty
+				SET RequirementType_.(XMLNSC.Field)Abs:RequiredQty = _inputRootNode.payload.rewardsRequired;
+
+				-- GetOfferRequest/OfferRequestData/RequirementType/RequiredInd
+				IF (_inputRootNode.payload.rewardsRequired > 0) THEN
+					SET RequirementType_.(XMLNSC.Field)Abs:RequiredInd = 'true';
+
+				END IF;
+
+
+			-- LOOP $.payload.attachments[*] TO GetOfferRequest/OfferRequestData/AttachmentType
+			DECLARE _attachment_type_item REFERENCE TO _inputRootNode.payload.attachments.Item;
+			ATTACHMENT_TYPE_LOOP : WHILE LASTMOVE(_attachment_type_item) DO
+
+				-- GetOfferRequest/OfferRequestData/AttachmentType
+				DECLARE AttachmentType_ REFERENCE TO OfferRequestData_;
+				CREATE LASTCHILD OF OfferRequestData_ AS AttachmentType_ TYPE XMLNSC.Folder NAME 'Abs:AttachmentType';
+
+					-- GetOfferRequest/OfferRequestData/AttachmentType/FileNm
+					SET AttachmentType_.(XMLNSC.Field)Abs:FileNm = _attachment_type_item.fileName;
+
+					-- GetOfferRequest/OfferRequestData/AttachmentType/LinkURL
+					SET AttachmentType_.(XMLNSC.Field)Abs:LinkURL = _attachment_type_item.url;
+
+			MOVE _attachment_type_item NEXTSIBLING;
+			END WHILE ATTACHMENT_TYPE_LOOP;
+			-- END LOOP
+
+			-- GetOfferRequest/OfferRequestData/OfferRequestTypeCd
+			SET OfferRequestData_.(XMLNSC.Field)Abs:OfferRequestTypeCd = _inputRootNode.payload.offerRequestType;
+
+			-- GetOfferRequest/OfferRequestData/AllocationTypeCd
+			DECLARE AllocationTypeCd_ REFERENCE TO OfferRequestData_;
+			CREATE LASTCHILD OF OfferRequestData_ AS AllocationTypeCd_ TYPE XMLNSC.Folder NAME 'Abs:AllocationTypeCd';
+
+				-- GetOfferRequest/OfferRequestData/AllocationTypeCd/Code
+				SET AllocationTypeCd_.(XMLNSC.Field)Abs:Code = _inputRootNode.payload.allocationCode;
+
+				-- GetOfferRequest/OfferRequestData/AllocationTypeCd/Description
+				SET AllocationTypeCd_.(XMLNSC.Field)Abs:Description = _inputRootNode.payload.allocationCodeName;
+
+			-- GetOfferRequest/OfferRequestData/BusinessJustificationTxt
+			SET OfferRequestData_.(XMLNSC.Field)Abs:BusinessJustificationTxt = _inputRootNode.payload.justification;
+
+			-- LOOP $.payload.offerRequestOffers[*] TO GetOfferRequest/OfferRequestData/AttachedOfferType
+			DECLARE _attached_offer_type_item REFERENCE TO _inputRootNode.payload.offerRequestOffers.Item;
+			ATTACHED_OFFER_TYPE_LOOP : WHILE LASTMOVE(_attached_offer_type_item) DO
+
+				-- GetOfferRequest/OfferRequestData/AttachedOfferType
+				DECLARE AttachedOfferType_ REFERENCE TO OfferRequestData_;
+				CREATE LASTCHILD OF OfferRequestData_ AS AttachedOfferType_ TYPE XMLNSC.Folder NAME 'Abs:AttachedOfferType';
+
+					-- GetOfferRequest/OfferRequestData/AttachedOfferType/AttachedOfferTypeId
+					SET AttachedOfferType_.(XMLNSC.Field)Abs:AttachedOfferTypeId = _attached_offer_type_item.id;
+
+					-- GetOfferRequest/OfferRequestData/AttachedOfferType/StoreGroupVersionId
+					SET AttachedOfferType_.(XMLNSC.Field)Abs:StoreGroupVersionId = _attached_offer_type_item.storeGroupVersion.id;
+
+					-- GetOfferRequest/OfferRequestData/AttachedOfferType/DisplayOrderNbr
+					SET AttachedOfferType_.(XMLNSC.Field)Abs:DisplayOrderNbr = _attached_offer_type_item.storeGroupVersion.displayOrder;
+
+					-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProtoType
+					DECLARE ProtoType_ REFERENCE TO AttachedOfferType_;
+					CREATE LASTCHILD OF AttachedOfferType_ AS ProtoType_ TYPE XMLNSC.Folder NAME 'Abs:ProtoType';
+
+						-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProtoType/Code
+						SET ProtoType_.(XMLNSC.Field)Abs:Code = _attached_offer_type_item.storeGroupVersion.offerPrototype;
+
+						-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProtoType/Description
+						SET ProtoType_.(XMLNSC.Field)Abs:Description = _attached_offer_type_item.storeGroupVersion.offerPrototypeDesc;
+
+					-- LOOP $.payload.offerRequestOffers[*].podStoreGroups[*] TO GetOfferRequest/OfferRequestData/AttachedOfferType/StoreGroup
+					DECLARE _store_group_item REFERENCE TO _attached_offer_type_item.podStoreGroups.Item;
+					STORE_GROUP_LOOP : WHILE LASTMOVE(_store_group_item) DO
+
+						-- GetOfferRequest/OfferRequestData/AttachedOfferType/StoreGroup
+						DECLARE StoreGroup_ REFERENCE TO AttachedOfferType_;
+						CREATE LASTCHILD OF AttachedOfferType_ AS StoreGroup_ TYPE XMLNSC.Folder NAME 'Abs:StoreGroup';
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/StoreGroup/StoreGroupId
+							SET StoreGroup_.(XMLNSC.Field)Abs:StoreGroupId = _store_group_item.id;
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/StoreGroup/StoreGroupNm
+							SET StoreGroup_.(XMLNSC.Field)Abs:StoreGroupNm = _store_group_item.name;
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/StoreGroup/StoreGroupType
+							DECLARE StoreGroupType_ REFERENCE TO StoreGroup_;
+							CREATE LASTCHILD OF StoreGroup_ AS StoreGroupType_ TYPE XMLNSC.Folder NAME 'Abs:StoreGroupType';
+
+								-- GetOfferRequest/OfferRequestData/AttachedOfferType/StoreGroup/StoreGroupType/Code
+								SET StoreGroupType_.(XMLNSC.Field)Abs:Code = 'J4U';
+
+					MOVE _store_group_item NEXTSIBLING;
+					END WHILE STORE_GROUP_LOOP;
+					-- END LOOP
+
+					-- LOOP $.payload.offerRequestOffers[*].storeGroupVersion.storeGroup.digitalRedemptionStoreGroups[*] TO GetOfferRequest/OfferRequestData/AttachedOfferType/StoreGroup
+					DECLARE _store_group_item1 REFERENCE TO _attached_offer_type_item.storeGroupVersion.storeGroup.digitalRedemptionStoreGroups.Item;
+					STORE_GROUP_LOOP1 : WHILE LASTMOVE(_store_group_item1) DO
+
+						-- GetOfferRequest/OfferRequestData/AttachedOfferType/StoreGroup
+						DECLARE StoreGroup_ REFERENCE TO AttachedOfferType_;
+						CREATE LASTCHILD OF AttachedOfferType_ AS StoreGroup_ TYPE XMLNSC.Folder NAME 'Abs:StoreGroup';
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/StoreGroup/StoreGroupId
+							SET StoreGroup_.(XMLNSC.Field)Abs:StoreGroupId = _store_group_item1.id;
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/StoreGroup/StoreGroupNm
+							SET StoreGroup_.(XMLNSC.Field)Abs:StoreGroupNm = _store_group_item1.name;
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/StoreGroup/StoreGroupType
+							DECLARE StoreGroupType_ REFERENCE TO StoreGroup_;
+							CREATE LASTCHILD OF StoreGroup_ AS StoreGroupType_ TYPE XMLNSC.Folder NAME 'Abs:StoreGroupType';
+
+								-- GetOfferRequest/OfferRequestData/AttachedOfferType/StoreGroup/StoreGroupType/Code
+								SET StoreGroupType_.(XMLNSC.Field)Abs:Code = 'Digital';
+
+					MOVE _store_group_item1 NEXTSIBLING;
+					END WHILE STORE_GROUP_LOOP1;
+					-- END LOOP
+
+					-- LOOP $.payload.offerRequestOffers[*].storeGroupVersion.storeGroup.nonDigitalRedemptionStoreGroups[*] TO GetOfferRequest/OfferRequestData/AttachedOfferType/StoreGroup
+					DECLARE _store_group_item2 REFERENCE TO _attached_offer_type_item.storeGroupVersion.storeGroup.nonDigitalRedemptionStoreGroups.Item;
+					STORE_GROUP_LOOP2 : WHILE LASTMOVE(_store_group_item2) DO
+
+						-- GetOfferRequest/OfferRequestData/AttachedOfferType/StoreGroup
+						DECLARE StoreGroup_ REFERENCE TO AttachedOfferType_;
+						CREATE LASTCHILD OF AttachedOfferType_ AS StoreGroup_ TYPE XMLNSC.Folder NAME 'Abs:StoreGroup';
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/StoreGroup/StoreGroupId
+							SET StoreGroup_.(XMLNSC.Field)Abs:StoreGroupId = _store_group_item2.id;
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/StoreGroup/StoreGroupNm
+							SET StoreGroup_.(XMLNSC.Field)Abs:StoreGroupNm = _store_group_item2.name;
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/StoreGroup/StoreGroupType
+							DECLARE StoreGroupType_ REFERENCE TO StoreGroup_;
+							CREATE LASTCHILD OF StoreGroup_ AS StoreGroupType_ TYPE XMLNSC.Folder NAME 'Abs:StoreGroupType';
+
+								-- GetOfferRequest/OfferRequestData/AttachedOfferType/StoreGroup/StoreGroupType/Code
+								SET StoreGroupType_.(XMLNSC.Field)Abs:Code = 'NoneDigital';
+
+					MOVE _store_group_item2 NEXTSIBLING;
+					END WHILE STORE_GROUP_LOOP2;
+					-- END LOOP
+
+					-- LOOP $.payload.offerRequestOffers[*].storeGroupVersion.productGroupVersions[*] TO GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion
+					DECLARE _product_group_version_item REFERENCE TO _attached_offer_type_item.storeGroupVersion.productGroupVersions.Item;
+					PRODUCT_GROUP_VERSION_LOOP : WHILE LASTMOVE(_product_group_version_item) DO
+
+						-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion
+						DECLARE ProductGroupVersion_ REFERENCE TO AttachedOfferType_;
+						CREATE LASTCHILD OF AttachedOfferType_ AS ProductGroupVersion_ TYPE XMLNSC.Folder NAME 'Abs:ProductGroupVersion';
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup
+							DECLARE ProductGroup_ REFERENCE TO ProductGroupVersion_;
+							CREATE LASTCHILD OF ProductGroupVersion_ AS ProductGroup_ TYPE XMLNSC.Folder NAME 'Abs:ProductGroup';
+
+								-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup/ProductGroupId
+								SET ProductGroup_.(XMLNSC.Field)Abs:ProductGroupId = _product_group_version_item.productGroup.id;
+
+								-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup/ProductGroupVersionId
+								SET ProductGroup_.(XMLNSC.Field)Abs:ProductGroupVersionId = _product_group_version_item.id;
+
+								-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup/ProductGroupNm
+								SET ProductGroup_.(XMLNSC.Field)Abs:ProductGroupNm = _product_group_version_item.productGroup.name;
+
+								-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup/DisplayOrderNbr
+								SET ProductGroup_.(XMLNSC.Field)Abs:DisplayOrderNbr = _product_group_version_item.displayOrder;
+
+								-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup/UOM
+								DECLARE UOM_ REFERENCE TO ProductGroup_;
+								CREATE LASTCHILD OF ProductGroup_ AS UOM_ TYPE XMLNSC.Folder NAME 'Abs:UOM';
+
+									-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup/UOM/UOMNm
+									SET UOM_.(XMLNSC.Field)Abs:UOMNm = _product_group_version_item.productGroup.quantityUnitType;
+
+									-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup/UOM/UOMDsc
+									SET UOM_.(XMLNSC.Field)Abs:UOMDsc = _product_group_version_item.productGroup.quantityUnitDesc;
+
+								-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup/GiftCardInd
+								SET ProductGroup_.(XMLNSC.Field)Abs:GiftCardInd = _product_group_version_item.isGiftCard;
+
+								-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup/AnyProductInd
+								SET ProductGroup_.(XMLNSC.Field)Abs:AnyProductInd = _product_group_version_item.anyProduct;
+
+								-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup/UniqueItemInd
+								SET ProductGroup_.(XMLNSC.Field)Abs:UniqueItemInd = _product_group_version_item.uniqueproduct;
+
+								-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup/MinimumPurchaseAmt
+								SET ProductGroup_.(XMLNSC.Field)Abs:MinimumPurchaseAmt = _product_group_version_item.productGroup.minPurchaseAmount;
+
+								-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup/ExcludedProductGroup
+								DECLARE ExcludedProductGroup_ REFERENCE TO ProductGroup_;
+								CREATE LASTCHILD OF ProductGroup_ AS ExcludedProductGroup_ TYPE XMLNSC.Folder NAME 'Abs:ExcludedProductGroup';
+
+									-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup/ExcludedProductGroup/ProductGroupId
+									SET ExcludedProductGroup_.(XMLNSC.Field)Abs:ProductGroupId = _product_group_version_item.productGroup.excludedProductGroupId;
+
+									-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup/ExcludedProductGroup/ProductGroupNm
+									SET ExcludedProductGroup_.(XMLNSC.Field)Abs:ProductGroupNm = _product_group_version_item.productGroup.excludedProductGroupName;
+
+								-- LOOP $.payload.offerRequestOffers[*].storeGroupVersion.productGroupVersions[*].productGroup.tiers[*] TO GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup/ProductGroupTier
+								DECLARE _product_group_tier_item REFERENCE TO _product_group_version_item.productGroup.tiers.Item;
+								PRODUCT_GROUP_TIER_LOOP : WHILE LASTMOVE(_product_group_tier_item) DO
+
+									-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup/ProductGroupTier
+									DECLARE ProductGroupTier_ REFERENCE TO ProductGroup_;
+									CREATE LASTCHILD OF ProductGroup_ AS ProductGroupTier_ TYPE XMLNSC.Folder NAME 'Abs:ProductGroupTier';
+
+										-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup/ProductGroupTier/TierLevelId
+										SET ProductGroupTier_.(XMLNSC.Field)Abs:TierLevelId = _product_group_tier_item.level;
+
+										-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup/ProductGroupTier/TierLevelAmt
+										SET ProductGroupTier_.(XMLNSC.Field)Abs:TierLevelAmt = _product_group_tier_item.amount;
+
+								MOVE _product_group_tier_item NEXTSIBLING;
+								END WHILE PRODUCT_GROUP_TIER_LOOP;
+								-- END LOOP
+
+								-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup/ProductGroupItemType
+								DECLARE ProductGroupItemType_ REFERENCE TO ProductGroup_;
+								CREATE LASTCHILD OF ProductGroup_ AS ProductGroupItemType_ TYPE XMLNSC.Folder NAME 'Abs:ProductGroupItemType';
+
+									-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup/ProductGroupItemType/CorporateItemCd
+									SET ProductGroupItemType_.(XMLNSC.Field)Abs:CorporateItemCd = _inputRootNode.payload.corporateItemCode;
+
+									-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup/ProductGroupItemType/UPC
+									DECLARE UPC_ REFERENCE TO ProductGroupItemType_;
+									CREATE LASTCHILD OF ProductGroupItemType_ AS UPC_ TYPE XMLNSC.Folder NAME 'Abs:UPC';
+
+										-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup/ProductGroupItemType/UPC/UPCNbr
+										SET UPC_.(XMLNSC.Field)Abs:UPCNbr = _inputRootNode.payload.repUPC;
+
+										-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup/ProductGroupItemType/UPC/UPCTxt
+										SET UPC_.(XMLNSC.Field)Abs:UPCTxt = _inputRootNode.payload.repUPC;
+
+									-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup/ProductGroupItemType/RepresentativeStatus
+									DECLARE RepresentativeStatus_ REFERENCE TO ProductGroupItemType_;
+									CREATE LASTCHILD OF ProductGroupItemType_ AS RepresentativeStatus_ TYPE XMLNSC.Folder NAME 'Abs:RepresentativeStatus';
+
+										-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup/ProductGroupItemType/RepresentativeStatus/EffectiveEndTs
+										SET RepresentativeStatus_.(XMLNSC.Field)Abs:EffectiveEndTs = _inputRootNode.payload.setStatusUntil;
+
+									-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup/ProductGroupItemType/StatusReason
+									DECLARE StatusReason_ REFERENCE TO ProductGroupItemType_;
+									CREATE LASTCHILD OF ProductGroupItemType_ AS StatusReason_ TYPE XMLNSC.Folder NAME 'Abs:StatusReason';
+
+										-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup/ProductGroupItemType/StatusReason/Code
+										SET StatusReason_.(XMLNSC.Field)Abs:Code = _inputRootNode.payload.statusReason;
+
+										-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup/ProductGroupItemType/StatusReason/Description
+										SET StatusReason_.(XMLNSC.Field)Abs:Description = _inputRootNode.payload.statusComments;
+
+									-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup/ProductGroupItemType/ItemOfferPrice
+									DECLARE ItemOfferPrice_ REFERENCE TO ProductGroupItemType_;
+									CREATE LASTCHILD OF ProductGroupItemType_ AS ItemOfferPrice_ TYPE XMLNSC.Folder NAME 'Abs:ItemOfferPrice';
+
+										-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/ProductGroup/ProductGroupItemType/ItemOfferPrice/EffectiveEndTs
+										SET ItemOfferPrice_.(XMLNSC.Field)Abs:EffectiveEndTs = _inputRootNode.payload.priceUntil;
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion
+							DECLARE DiscountVersion_ REFERENCE TO ProductGroupVersion_;
+							CREATE LASTCHILD OF ProductGroupVersion_ AS DiscountVersion_ TYPE XMLNSC.Folder NAME 'Abs:DiscountVersion';
+
+								-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/DiscountVersionId
+								SET DiscountVersion_.(XMLNSC.Field)Abs:DiscountVersionId = _product_group_version_item.discountVersion.id;
+
+								-- LOOP $.payload.offerRequestOffers[*].storeGroupVersion.productGroupVersions[*].discountVersion.discounts[*] TO GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/Discount
+								DECLARE _discount_item REFERENCE TO _product_group_version_item.discountVersion.discounts.Item;
+								DISCOUNT_LOOP : WHILE LASTMOVE(_discount_item) DO
+
+									-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/Discount
+									DECLARE Discount_ REFERENCE TO DiscountVersion_;
+									CREATE LASTCHILD OF DiscountVersion_ AS Discount_ TYPE XMLNSC.Folder NAME 'Abs:Discount';
+
+										-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/Discount/DiscountId
+										SET Discount_.(XMLNSC.Field)Abs:DiscountId = _discount_item.id;
+
+										-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/Discount/DiscountType
+										DECLARE DiscountType_ REFERENCE TO Discount_;
+										CREATE LASTCHILD OF Discount_ AS DiscountType_ TYPE XMLNSC.Folder NAME 'Abs:DiscountType';
+
+											-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/Discount/DiscountType/Code
+											SET DiscountType_.(XMLNSC.Field)Abs:Code = _discount_item.discountType;
+
+											-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/Discount/DiscountType/Description
+											SET DiscountType_.(XMLNSC.Field)Abs:Description = _discount_item.discountTypeDesc;
+
+										-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/Discount/DisplayOrderNbr
+										SET Discount_.(XMLNSC.Field)Abs:DisplayOrderNbr = _discount_item.displayOrder;
+
+										-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/Discount/BenefitValueType
+										DECLARE BenefitValueType_ REFERENCE TO Discount_;
+										CREATE LASTCHILD OF Discount_ AS BenefitValueType_ TYPE XMLNSC.Folder NAME 'Abs:BenefitValueType';
+
+											-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/Discount/BenefitValueType/Code
+											SET BenefitValueType_.(XMLNSC.Field)Abs:Code = _discount_item.benefitValueType;
+
+											-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/Discount/BenefitValueType/Description
+											SET BenefitValueType_.(XMLNSC.Field)Abs:Description = _discount_item.benefitValueTypeDesc;
+
+										-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/Discount/IncludedProductGroupId
+										SET Discount_.(XMLNSC.Field)Abs:IncludedProductGroupId = _discount_item.includeProductGroupId;
+
+										-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/Discount/IncludedProductgroupNm
+										SET Discount_.(XMLNSC.Field)Abs:IncludedProductgroupNm = _discount_item.includeProductGroupName;
+
+										-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/Discount/ExcludedProductGroupId
+										SET Discount_.(XMLNSC.Field)Abs:ExcludedProductGroupId = _discount_item.excludeProductGroupId;
+
+										-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/Discount/ExcludedProductGroupNm
+										SET Discount_.(XMLNSC.Field)Abs:ExcludedProductGroupNm = _discount_item.excludeProductGroupName;
+
+										-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/Discount/ChargebackDepartmentId
+										SET Discount_.(XMLNSC.Field)Abs:ChargebackDepartmentId = _discount_item.chargebackDepartment;
+
+										-- LOOP $.payload.offerRequestOffers[*].storeGroupVersion.productGroupVersions[*].discountVersion.discounts[*].tiers[*] TO GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/Discount/DiscountTier
+										DECLARE _discount_tier_item REFERENCE TO _discount_item.tiers.Item;
+										DISCOUNT_TIER_LOOP : WHILE LASTMOVE(_discount_tier_item) DO
+
+											-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/Discount/DiscountTier
+											DECLARE DiscountTier_ REFERENCE TO Discount_;
+											CREATE LASTCHILD OF Discount_ AS DiscountTier_ TYPE XMLNSC.Folder NAME 'Abs:DiscountTier';
+
+												-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/Discount/DiscountTier/TierLevelnbr
+												SET DiscountTier_.(XMLNSC.Field)Abs:TierLevelnbr = _discount_tier_item.level;
+
+												-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/Discount/DiscountTier/DiscountAmt
+												SET DiscountTier_.(XMLNSC.Field)Abs:DiscountAmt = _discount_tier_item.amount;
+
+												-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/Discount/DiscountTier/LimitType
+												DECLARE LimitType_ REFERENCE TO DiscountTier_;
+												CREATE LASTCHILD OF DiscountTier_ AS LimitType_ TYPE XMLNSC.Folder NAME 'Abs:LimitType';
+
+													-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/Discount/DiscountTier/LimitType/LimitQty
+													SET LimitType_.(XMLNSC.Field)Abs:LimitQty = _discount_tier_item.itemLimit;
+
+													-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/Discount/DiscountTier/LimitType/LimitWt
+													SET LimitType_.(XMLNSC.Field)Abs:LimitWt = _discount_tier_item.weightLimit;
+
+													-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/Discount/DiscountTier/LimitType/LimitAmt
+													SET LimitType_.(XMLNSC.Field)Abs:LimitAmt = _discount_tier_item.dollarLimit;
+
+												-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/Discount/DiscountTier/RewardQty
+												SET DiscountTier_.(XMLNSC.Field)Abs:RewardQty = _discount_tier_item.rewards;
+
+												-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/Discount/DiscountTier/ReceiptTxt
+												SET DiscountTier_.(XMLNSC.Field)Abs:ReceiptTxt = _discount_tier_item.receiptText;
+
+												-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/Discount/DiscountTier/DiscountUptoQty
+												SET DiscountTier_.(XMLNSC.Field)Abs:DiscountUptoQty = _discount_tier_item.upTo;
+
+										MOVE _discount_tier_item NEXTSIBLING;
+										END WHILE DISCOUNT_TIER_LOOP;
+										-- END LOOP
+
+								MOVE _discount_item NEXTSIBLING;
+								END WHILE DISCOUNT_LOOP;
+								-- END LOOP
+
+								-- LOOP $.payload.offerRequestOffers[*].storeGroupVersion.productGroupVersions[*].discountVersion.airMiles[*] TO GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/AirMileProgram
+								DECLARE _air_mile_program_item REFERENCE TO _product_group_version_item.discountVersion.airMiles.Item;
+								AIR_MILE_PROGRAM_LOOP : WHILE LASTMOVE(_air_mile_program_item) DO
+
+									-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/AirMileProgram
+									DECLARE AirMileProgram_ REFERENCE TO DiscountVersion_;
+									CREATE LASTCHILD OF DiscountVersion_ AS AirMileProgram_ TYPE XMLNSC.Folder NAME 'Abs:AirMileProgram';
+
+										-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/AirMileProgram/AirMileProgramId
+										SET AirMileProgram_.(XMLNSC.Field)Abs:AirMileProgramId = _air_mile_program_item.id;
+
+										-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/AirMileProgram/AirMileProgramNm
+										SET AirMileProgram_.(XMLNSC.Field)Abs:AirMileProgramNm = _air_mile_program_item.type;
+
+										-- LOOP $.payload.offerRequestOffers[*].storeGroupVersion.productGroupVersions[*].discountVersion.airMiles[*].tiers[*] TO GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/AirMileProgram/AirMileTier
+										DECLARE _air_mile_tier_item REFERENCE TO _air_mile_program_item.tiers.Item;
+										AIR_MILE_TIER_LOOP : WHILE LASTMOVE(_air_mile_tier_item) DO
+
+											-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/AirMileProgram/AirMileTier
+											DECLARE AirMileTier_ REFERENCE TO AirMileProgram_;
+											CREATE LASTCHILD OF AirMileProgram_ AS AirMileTier_ TYPE XMLNSC.Folder NAME 'Abs:AirMileTier';
+
+												-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/AirMileProgram/AirMileTier/AirMileTierNm
+												SET AirMileTier_.(XMLNSC.Field)Abs:AirMileTierNm = _air_mile_tier_item.name;
+
+												-- GetOfferRequest/OfferRequestData/AttachedOfferType/ProductGroupVersion/DiscountVersion/AirMileProgram/AirMileTier/AirMilePointQty
+												SET AirMileTier_.(XMLNSC.Field)Abs:AirMilePointQty = _air_mile_tier_item.points;
+
+										MOVE _air_mile_tier_item NEXTSIBLING;
+										END WHILE AIR_MILE_TIER_LOOP;
+										-- END LOOP
+
+								MOVE _air_mile_program_item NEXTSIBLING;
+								END WHILE AIR_MILE_PROGRAM_LOOP;
+								-- END LOOP
+
+					MOVE _product_group_version_item NEXTSIBLING;
+					END WHILE PRODUCT_GROUP_VERSION_LOOP;
+					-- END LOOP
+
+					-- GetOfferRequest/OfferRequestData/AttachedOfferType/StoreTagType
+					DECLARE StoreTagType_ REFERENCE TO AttachedOfferType_;
+					CREATE LASTCHILD OF AttachedOfferType_ AS StoreTagType_ TYPE XMLNSC.Folder NAME 'Abs:StoreTagType';
+
+						-- GetOfferRequest/OfferRequestData/AttachedOfferType/StoreTagType/TagNbr
+						SET StoreTagType_.(XMLNSC.Field)Abs:TagNbr = _attached_offer_type_item.storeGroupVersion.storeTag.multiple;
+
+						-- GetOfferRequest/OfferRequestData/AttachedOfferType/StoreTagType/TagAmt
+						SET StoreTagType_.(XMLNSC.Field)Abs:TagAmt = _attached_offer_type_item.storeGroupVersion.storeTag.amount;
+
+						-- GetOfferRequest/OfferRequestData/AttachedOfferType/StoreTagType/LoyaltyPgmTagInd
+						SET StoreTagType_.(XMLNSC.Field)Abs:LoyaltyPgmTagInd = _attached_offer_type_item.storeGroupVersion.storeTag.printJ4uTagEnabled;
+
+						-- GetOfferRequest/OfferRequestData/AttachedOfferType/StoreTagType/TagDsc
+						SET StoreTagType_.(XMLNSC.Field)Abs:TagDsc = _attached_offer_type_item.storeGroupVersion.storeTag.comments;
+
+					-- GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType
+					DECLARE PODDetailType_ REFERENCE TO AttachedOfferType_;
+					CREATE LASTCHILD OF AttachedOfferType_ AS PODDetailType_ TYPE XMLNSC.Folder NAME 'Abs:PODDetailType';
+
+						-- GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/DisplayImage
+						DECLARE DisplayImage_ REFERENCE TO PODDetailType_;
+						CREATE LASTCHILD OF PODDetailType_ AS DisplayImage_ TYPE XMLNSC.Folder NAME 'Abs:DisplayImage';
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/DisplayImage/ImageTypeCd
+							SET DisplayImage_.(XMLNSC.Field)Abs:ImageTypeCd = _attached_offer_type_item.storeGroupVersion.podDetails.ivieImageId;
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/DisplayImage/ImageId
+							SET DisplayImage_.(XMLNSC.Field)Abs:ImageId = _attached_offer_type_item.storeGroupVersion.podDetails.scene7ImageId;
+
+						-- GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/HeadlineTxt
+						SET PODDetailType_.(XMLNSC.Field)Abs:HeadlineTxt = _attached_offer_type_item.storeGroupVersion.podDetails.headline;
+
+						-- GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/HeadlineSubTxt
+						SET PODDetailType_.(XMLNSC.Field)Abs:HeadlineSubTxt = _attached_offer_type_item.storeGroupVersion.podDetails.headline2;
+
+						-- GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/OfferDsc
+						SET PODDetailType_.(XMLNSC.Field)Abs:OfferDsc = _attached_offer_type_item.storeGroupVersion.podDetails.offerDescription;
+
+						-- GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/OfferDetail
+						DECLARE OfferDetail_ REFERENCE TO PODDetailType_;
+						CREATE LASTCHILD OF PODDetailType_ AS OfferDetail_ TYPE XMLNSC.Folder NAME 'Abs:OfferDetail';
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/OfferDetail/Code
+							SET OfferDetail_.(XMLNSC.Field)Abs:Code = _attached_offer_type_item.storeGroupVersion.podDetails.offerDetailsCode;
+
+						-- GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/PriceInfoTxt
+						SET PODDetailType_.(XMLNSC.Field)Abs:PriceInfoTxt = _attached_offer_type_item.storeGroupVersion.podDetails.priceText;
+
+						-- GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/ItemQty
+						SET PODDetailType_.(XMLNSC.Field)Abs:ItemQty = _inputRootNode.payload.productQty;
+
+						-- GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/UOM
+						DECLARE UOM_ REFERENCE TO PODDetailType_;
+						CREATE LASTCHILD OF PODDetailType_ AS UOM_ TYPE XMLNSC.Folder NAME 'Abs:UOM';
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/UOM/UOMCd
+							SET UOM_.(XMLNSC.Field)Abs:UOMCd = _inputRootNode.payload.productUOM;
+
+						-- GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/UsageLimitTypeTxt
+						SET PODDetailType_.(XMLNSC.Field)Abs:UsageLimitTypeTxt = _attached_offer_type_item.storeGroupVersion.podDetails.usageLimit;
+
+						-- GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/DisclaimerTxt
+						SET PODDetailType_.(XMLNSC.Field)Abs:DisclaimerTxt = _attached_offer_type_item.storeGroupVersion.podDetails.disclaimer;
+
+						-- GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/DisplayStartDt
+						SET PODDetailType_.(XMLNSC.Field)Abs:DisplayStartDt = _attached_offer_type_item.storeGroupVersion.podDetails.displayStartDate;
+
+						-- GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/DisplayEndDt
+						SET PODDetailType_.(XMLNSC.Field)Abs:DisplayEndDt = _attached_offer_type_item.storeGroupVersion.podDetails.displayEndDate;
+
+						-- LOOP $.payload.offerRequestOffers[*].storeGroupVersion.podDetails.eventIds[*] TO GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/SpecialEventType
+						DECLARE _special_event_type_item REFERENCE TO _attached_offer_type_item.storeGroupVersion.podDetails.eventIds.Item;
+						SPECIAL_EVENT_TYPE_LOOP : WHILE LASTMOVE(_special_event_type_item) DO
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/SpecialEventType
+							DECLARE SpecialEventType_ REFERENCE TO PODDetailType_;
+							CREATE LASTCHILD OF PODDetailType_ AS SpecialEventType_ TYPE XMLNSC.Folder NAME 'Abs:SpecialEventType';
+
+								-- GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/SpecialEventType/EventId
+								SET SpecialEventType_.(XMLNSC.Field)Abs:EventId = _special_event_type_item.items;
+
+						MOVE _special_event_type_item NEXTSIBLING;
+						END WHILE SPECIAL_EVENT_TYPE_LOOP;
+						-- END LOOP
+
+						-- LOOP $.payload.offerRequestOffers[*].storeGroupVersion.podDetails.eventNames[*] TO GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/SpecialEventType
+						DECLARE _special_event_type_item1 REFERENCE TO _attached_offer_type_item.storeGroupVersion.podDetails.eventNames.Item;
+						SPECIAL_EVENT_TYPE_LOOP1 : WHILE LASTMOVE(_special_event_type_item1) DO
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/SpecialEventType
+							DECLARE SpecialEventType_ REFERENCE TO PODDetailType_;
+							CREATE LASTCHILD OF PODDetailType_ AS SpecialEventType_ TYPE XMLNSC.Folder NAME 'Abs:SpecialEventType';
+
+								-- GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/SpecialEventType/EventNm
+								SET SpecialEventType_.(XMLNSC.Field)Abs:EventNm = _special_event_type_item1.items;
+
+						MOVE _special_event_type_item1 NEXTSIBLING;
+						END WHILE SPECIAL_EVENT_TYPE_LOOP1;
+						-- END LOOP
+
+						-- GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/CustomerFriendlyCategory
+						DECLARE CustomerFriendlyCategory_ REFERENCE TO PODDetailType_;
+						CREATE LASTCHILD OF PODDetailType_ AS CustomerFriendlyCategory_ TYPE XMLNSC.Folder NAME 'Abs:CustomerFriendlyCategory';
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/CustomerFriendlyCategory/Code
+							SET CustomerFriendlyCategory_.(XMLNSC.Field)Abs:Code = _attached_offer_type_item.storeGroupVersion.podDetails.categoryId;
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/CustomerFriendlyCategory/Description
+							SET CustomerFriendlyCategory_.(XMLNSC.Field)Abs:Description = _attached_offer_type_item.storeGroupVersion.podDetails.categoryName;
+
+						-- GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/ShoppingListCategory
+						DECLARE ShoppingListCategory_ REFERENCE TO PODDetailType_;
+						CREATE LASTCHILD OF PODDetailType_ AS ShoppingListCategory_ TYPE XMLNSC.Folder NAME 'Abs:ShoppingListCategory';
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/ShoppingListCategory/Code
+							SET ShoppingListCategory_.(XMLNSC.Field)Abs:Code = _attached_offer_type_item.storeGroupVersion.podDetails.shoppingListCategory.code;
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/ShoppingListCategory/Description
+							SET ShoppingListCategory_.(XMLNSC.Field)Abs:Description = _attached_offer_type_item.storeGroupVersion.podDetails.shoppingListCategory.name;
+
+						-- LOOP $.payload.offerRequestOffers[*].storeGroupVersion.podDetails.leftNavCategory[*] TO GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/PODCategory
+						DECLARE _p_o_d_category_item REFERENCE TO _attached_offer_type_item.storeGroupVersion.podDetails.leftNavCategory.Item;
+						P_O_D_CATEGORY_LOOP : WHILE LASTMOVE(_p_o_d_category_item) DO
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/PODCategory
+							DECLARE PODCategory_ REFERENCE TO PODDetailType_;
+							CREATE LASTCHILD OF PODDetailType_ AS PODCategory_ TYPE XMLNSC.Folder NAME 'Abs:PODCategory';
+
+								-- GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/PODCategory/Code
+								SET PODCategory_.(XMLNSC.Field)Abs:Code = _p_o_d_category_item.code;
+
+								-- GetOfferRequest/OfferRequestData/AttachedOfferType/PODDetailType/PODCategory/Description
+								SET PODCategory_.(XMLNSC.Field)Abs:Description = _p_o_d_category_item.name;
+
+						MOVE _p_o_d_category_item NEXTSIBLING;
+						END WHILE P_O_D_CATEGORY_LOOP;
+						-- END LOOP
+
+					-- GetOfferRequest/OfferRequestData/AttachedOfferType/InstantWinProgramType
+					DECLARE InstantWinProgramType_ REFERENCE TO AttachedOfferType_;
+					CREATE LASTCHILD OF AttachedOfferType_ AS InstantWinProgramType_ TYPE XMLNSC.Folder NAME 'Abs:InstantWinProgramType';
+
+						-- GetOfferRequest/OfferRequestData/AttachedOfferType/InstantWinProgramType/InstantWinProgramId
+						SET InstantWinProgramType_.(XMLNSC.Field)Abs:InstantWinProgramId = _attached_offer_type_item.storeGroupVersion.instantWin.id;
+
+						-- GetOfferRequest/OfferRequestData/AttachedOfferType/InstantWinProgramType/InstantWinVersionId
+						SET InstantWinProgramType_.(XMLNSC.Field)Abs:InstantWinVersionId = _attached_offer_type_item.storeGroupVersion.instantWin.Version;
+
+						-- GetOfferRequest/OfferRequestData/AttachedOfferType/InstantWinProgramType/PrizeItemQty
+						SET InstantWinProgramType_.(XMLNSC.Field)Abs:PrizeItemQty = _attached_offer_type_item.storeGroupVersion.instantWin.numberOfPrizes;
+
+						-- GetOfferRequest/OfferRequestData/AttachedOfferType/InstantWinProgramType/FrequencyDsc
+						SET InstantWinProgramType_.(XMLNSC.Field)Abs:FrequencyDsc = _attached_offer_type_item.storeGroupVersion.instantWin.frequency;
+
+					-- LOOP $.payload.offerRequestOffers[*].offers[*] TO GetOfferRequest/OfferRequestData/AttachedOfferType/AttachedOffer
+					DECLARE _attached_offer_item REFERENCE TO _attached_offer_type_item.offers.Item;
+					ATTACHED_OFFER_LOOP : WHILE LASTMOVE(_attached_offer_item) DO
+
+						-- GetOfferRequest/OfferRequestData/AttachedOfferType/AttachedOffer
+						DECLARE AttachedOffer_ REFERENCE TO AttachedOfferType_;
+						CREATE LASTCHILD OF AttachedOfferType_ AS AttachedOffer_ TYPE XMLNSC.Folder NAME 'Abs:AttachedOffer';
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/AttachedOffer/StoreGroupVersionId
+							SET AttachedOffer_.(XMLNSC.Field)Abs:StoreGroupVersionId = _attached_offer_item.storeGroupVersion;
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/AttachedOffer/ProductGroupVersionId
+							SET AttachedOffer_.(XMLNSC.Field)Abs:ProductGroupVersionId = _attached_offer_item.productGroupVersion;
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/AttachedOffer/DiscountVersionId
+							SET AttachedOffer_.(XMLNSC.Field)Abs:DiscountVersionId = _attached_offer_item.discountVersion;
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/AttachedOffer/DiscountId
+							SET AttachedOffer_.(XMLNSC.Field)Abs:DiscountId = _attached_offer_item.genericDiscountId;
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/AttachedOffer/OfferId
+							SET AttachedOffer_.(XMLNSC.Field)Abs:OfferId = _attached_offer_item.offerId;
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/AttachedOffer/ReferenceOfferId
+							SET AttachedOffer_.(XMLNSC.Field)Abs:ReferenceOfferId = _attached_offer_item.externalOfferId;
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/AttachedOffer/Status
+							DECLARE Status_ REFERENCE TO AttachedOffer_;
+							CREATE LASTCHILD OF AttachedOffer_ AS Status_ TYPE XMLNSC.Folder NAME 'Abs:Status';
+
+								-- GetOfferRequest/OfferRequestData/AttachedOfferType/AttachedOffer/Status/StatusTypeCd
+								SET Status_.(XMLNSC.Field)Abs:StatusTypeCd = _attached_offer_item.offerStatus;
+
+								-- GetOfferRequest/OfferRequestData/AttachedOfferType/AttachedOffer/Status/Description
+								SET Status_.(XMLNSC.Field)Abs:Description = _attached_offer_item.offerStatusDesc;
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/AttachedOffer/AppliedProgram
+							DECLARE AppliedProgram_ REFERENCE TO AttachedOffer_;
+							CREATE LASTCHILD OF AttachedOffer_ AS AppliedProgram_ TYPE XMLNSC.Folder NAME 'Abs:AppliedProgram';
+
+								-- GetOfferRequest/OfferRequestData/AttachedOfferType/AttachedOffer/AppliedProgram/ProgramNm
+								SET AppliedProgram_.(XMLNSC.Field)Abs:ProgramNm = '???';
+
+								-- GetOfferRequest/OfferRequestData/AttachedOfferType/AttachedOffer/AppliedProgram/AppliedInd
+								SET AppliedProgram_.(XMLNSC.Field)Abs:AppliedInd = '???';
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/AttachedOffer/DistinctId
+							SET AttachedOffer_.(XMLNSC.Field)Abs:DistinctId = _attached_offer_item.distinctIdentifier;
+
+							-- GetOfferRequest/OfferRequestData/AttachedOfferType/AttachedOffer/OfferRankNbr
+							SET AttachedOffer_.(XMLNSC.Field)Abs:OfferRankNbr = _inputRootNode.payload.rank;
+
+					MOVE _attached_offer_item NEXTSIBLING;
+					END WHILE ATTACHED_OFFER_LOOP;
+					-- END LOOP
+
+			MOVE _attached_offer_type_item NEXTSIBLING;
+			END WHILE ATTACHED_OFFER_TYPE_LOOP;
+			-- END LOOP
+
+			-- GetOfferRequest/OfferRequestData/VersionQty
+			SET OfferRequestData_.(XMLNSC.Field)Abs:VersionQty = _inputRootNode.payload.numOfVersions;
+
+			-- GetOfferRequest/OfferRequestData/TierQty
+			SET OfferRequestData_.(XMLNSC.Field)Abs:TierQty = _inputRootNode.payload.numOfTiers;
+
+			-- GetOfferRequest/OfferRequestData/ProductQty
+			SET OfferRequestData_.(XMLNSC.Field)Abs:ProductQty = _inputRootNode.payload.numOfProducts;
+
+			-- LOOP $.payload.deletedOffersInfo[*] TO GetOfferRequest/OfferRequestData/DeletedOfferType
+			DECLARE _deleted_offer_type_item REFERENCE TO _inputRootNode.payload.deletedOffersInfo.Item;
+			DELETED_OFFER_TYPE_LOOP : WHILE LASTMOVE(_deleted_offer_type_item) DO
+
+				-- GetOfferRequest/OfferRequestData/DeletedOfferType
+				DECLARE DeletedOfferType_ REFERENCE TO OfferRequestData_;
+				CREATE LASTCHILD OF OfferRequestData_ AS DeletedOfferType_ TYPE XMLNSC.Folder NAME 'Abs:DeletedOfferType';
+
+					-- GetOfferRequest/OfferRequestData/DeletedOfferType/StoreGroupVersionId
+					SET DeletedOfferType_.(XMLNSC.Field)Abs:StoreGroupVersionId = _deleted_offer_type_item.storeGroupVersion;
+
+					-- GetOfferRequest/OfferRequestData/DeletedOfferType/ProductGroupVersionId
+					SET DeletedOfferType_.(XMLNSC.Field)Abs:ProductGroupVersionId = _deleted_offer_type_item.productGroupVersion;
+
+					-- GetOfferRequest/OfferRequestData/DeletedOfferType/DiscountVersionId
+					SET DeletedOfferType_.(XMLNSC.Field)Abs:DiscountVersionId = _deleted_offer_type_item.discountVersion;
+
+					-- GetOfferRequest/OfferRequestData/DeletedOfferType/InstantWinVersionId
+					SET DeletedOfferType_.(XMLNSC.Field)Abs:InstantWinVersionId = _deleted_offer_type_item.instantWinVersion;
+
+					-- GetOfferRequest/OfferRequestData/DeletedOfferType/DiscountId
+					SET DeletedOfferType_.(XMLNSC.Field)Abs:DiscountId = _deleted_offer_type_item.genericDiscountId;
+
+					-- GetOfferRequest/OfferRequestData/DeletedOfferType/OfferId
+					SET DeletedOfferType_.(XMLNSC.Field)Abs:OfferId = _deleted_offer_type_item.offerId;
+
+					-- GetOfferRequest/OfferRequestData/DeletedOfferType/ReferenceOfferId
+					SET DeletedOfferType_.(XMLNSC.Field)Abs:ReferenceOfferId = _deleted_offer_type_item.externalOfferId;
+
+					-- GetOfferRequest/OfferRequestData/DeletedOfferType/Status
+					DECLARE Status_ REFERENCE TO DeletedOfferType_;
+					CREATE LASTCHILD OF DeletedOfferType_ AS Status_ TYPE XMLNSC.Folder NAME 'Abs:Status';
+
+						-- GetOfferRequest/OfferRequestData/DeletedOfferType/Status/StatusTypeCd
+						SET Status_.(XMLNSC.Field)Abs:StatusTypeCd = _deleted_offer_type_item.offerStatus;
+
+						-- GetOfferRequest/OfferRequestData/DeletedOfferType/Status/Description
+						SET Status_.(XMLNSC.Field)Abs:Description = _deleted_offer_type_item.offerStatusDesc;
+
+					-- GetOfferRequest/OfferRequestData/DeletedOfferType/AppliedProgram
+					DECLARE AppliedProgram_ REFERENCE TO DeletedOfferType_;
+					CREATE LASTCHILD OF DeletedOfferType_ AS AppliedProgram_ TYPE XMLNSC.Folder NAME 'Abs:AppliedProgram';
+
+						-- GetOfferRequest/OfferRequestData/DeletedOfferType/AppliedProgram/ProgramNm
+						SET AppliedProgram_.(XMLNSC.Field)Abs:ProgramNm = '???';
+
+						-- GetOfferRequest/OfferRequestData/DeletedOfferType/AppliedProgram/AppliedInd
+						SET AppliedProgram_.(XMLNSC.Field)Abs:AppliedInd = '???';
+
+					-- GetOfferRequest/OfferRequestData/DeletedOfferType/DistinctId
+					SET DeletedOfferType_.(XMLNSC.Field)Abs:DistinctId = _deleted_offer_type_item.distinctIdentifier;
+
+			MOVE _deleted_offer_type_item NEXTSIBLING;
+			END WHILE DELETED_OFFER_TYPE_LOOP;
+			-- END LOOP
+
+			-- GetOfferRequest/OfferRequestData/ChargeBackDepartment
+			DECLARE ChargeBackDepartment_ REFERENCE TO OfferRequestData_;
+			CREATE LASTCHILD OF OfferRequestData_ AS ChargeBackDepartment_ TYPE XMLNSC.Folder NAME 'Abs:ChargeBackDepartment';
+
+				-- GetOfferRequest/OfferRequestData/ChargeBackDepartment/DepartmentNm
+				SET ChargeBackDepartment_.(XMLNSC.Field)Abs:DepartmentNm = _inputRootNode.payload.chargebackDepartment;
+
+			-- GetOfferRequest/OfferRequestData/OfferReviewChecklist
+			DECLARE OfferReviewChecklist_ REFERENCE TO OfferRequestData_;
+			CREATE LASTCHILD OF OfferRequestData_ AS OfferReviewChecklist_ TYPE XMLNSC.Folder NAME 'Abs:OfferReviewChecklist';
+
+				-- GetOfferRequest/OfferRequestData/OfferReviewChecklist/ReviewChecklistTypeCd
+				SET OfferReviewChecklist_.(XMLNSC.Field)Abs:ReviewChecklistTypeCd = _inputRootNode.payload.reviewFlags;
+
+				-- GetOfferRequest/OfferRequestData/OfferReviewChecklist/ReviewChecklistInd
+				SET OfferReviewChecklist_.(XMLNSC.Field)Abs:ReviewChecklistInd = '???';
+
+		RETURN TRUE;
+	END;
+
+END MODULE;

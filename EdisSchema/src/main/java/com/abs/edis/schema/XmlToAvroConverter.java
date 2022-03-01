@@ -2,19 +2,22 @@ package com.abs.edis.schema;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
+
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.generic.GenericDatumWriter;
+import org.apache.avro.generic.GenericEnumSymbol;
 import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.generic.GenericRecordBuilder;
 import org.apache.avro.io.*;
-import org.apache.kafka.common.errors.SerializationException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -84,7 +87,10 @@ public class XmlToAvroConverter {
             try (GZIPOutputStream gzipOutputStream = new GZIPOutputStream(byteArrayOutputStream)) {
                 gzipOutputStream.write(str.getBytes(StandardCharsets.UTF_8));
             }
-            return byteArrayOutputStream.toByteArray();
+
+            byte[] bytes = byteArrayOutputStream.toByteArray();
+            return Base64.getEncoder().encode(bytes);
+
         } catch (IOException e) {
             throw new RuntimeException("Failed to zip content", e);
         }
@@ -129,10 +135,11 @@ public class XmlToAvroConverter {
         return new String(data);
     }
 
-    private static byte[] toAvroConfluent(GenericData.Record record, Schema schema, int id) throws IOException {
+    private static byte[] toAvroConfluent(GenericData.Record record, Schema schema, int id) throws IOException, ParserConfigurationException, SAXException {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         out.write(MAGIC_BYTE);
+
         out.write(ByteBuffer.allocate(ID_SIZE).putInt(id).array());
 
         BinaryEncoder encoder = EncoderFactory.get().directBinaryEncoder(out, null);
@@ -150,7 +157,7 @@ public class XmlToAvroConverter {
 
         ByteBuffer buffer = ByteBuffer.wrap(data);
         if (buffer.get() != MAGIC_BYTE) {
-            throw new SerializationException("Unknown magic byte!");
+            throw new RuntimeException("Unknown magic byte!");
         }
 
         int schemaId = buffer.getInt();
@@ -513,6 +520,147 @@ public class XmlToAvroConverter {
 
             builder.append("</").append(name).append(">");
         }
+    }
+
+    public static byte[] sampleRecordAsJson(Schema schema) {
+        return toJson(sampleRecord(schema));
+    }
+
+    public static GenericData.Record sampleRecord(Schema schema) {
+        GenericRecordBuilder builder = new GenericRecordBuilder(schema);
+        for (Schema.Field field : schema.getFields()) {
+            builder.set(field, generateObject(field.schema(), field.name()));
+        }
+        return builder.build();
+    }
+
+    private static Object generateObject(Schema schema, String fieldName) {
+
+        switch (schema.getType()) {
+            case ARRAY:
+                return generateArray(schema, fieldName);
+            case RECORD:
+                return sampleRecord(schema);
+            case UNION:
+                return generateUnion(schema, fieldName);
+
+            case BOOLEAN:
+                return generateBoolean();
+            case BYTES:
+                return generateBytes(fieldName);
+            case DOUBLE:
+                return generateDouble(fieldName);
+            case ENUM:
+                return generateEnumSymbol(schema);
+            case FLOAT:
+                return generateFloat(fieldName);
+            case INT:
+                return generateInt(fieldName);
+            case LONG:
+                return generateLong(fieldName);
+            case NULL:
+                return null;
+            case STRING:
+                return generateString(fieldName);
+
+            default:
+                throw new RuntimeException("Unrecognized schema type: " + schema.getType());
+        }
+    }
+
+    private static Collection<Object> generateArray(Schema schema, String fieldName) {
+        int length = 1;
+        Collection<Object> result = new ArrayList<>(length);
+        for (int i = 0; i < length; i++) {
+            result.add(generateObject(schema.getElementType(), fieldName));
+        }
+        return result;
+    }
+
+    private static Object generateUnion(Schema schema, String fieldName) {
+        List<Schema> schemas = schema.getTypes();
+        //return generateObject(schemas.get(random.nextInt(schemas.size())));
+        for(Schema sc: schemas) {
+            if(!Schema.Type.NULL.equals(sc.getType())) {
+                return generateObject(sc, fieldName);
+            }
+        }
+
+        return generateObject(schemas.get(0), fieldName);
+    }
+
+    private static GenericEnumSymbol generateEnumSymbol(Schema schema) {
+        List<String> enums = schema.getEnumSymbols();
+        return new
+                GenericData.EnumSymbol(schema, enums.get(0));
+    }
+
+    private static ByteBuffer generateBytes(String fieldName) {
+        return ByteBuffer.wrap(fieldName.getBytes());
+    }
+
+    private static Boolean generateBoolean() {
+        return Boolean.TRUE;
+    }
+
+    private static Double generateDouble(String fieldName) {
+        return 99.99;
+    }
+
+    private static Float generateFloat(String fieldName) {
+        return 19.99f;
+    }
+
+    private static Integer generateInt(String fieldName) {
+        return 987654321;
+    }
+
+    private static Long generateLong(String fieldName) {
+        return 987654321l;
+    }
+
+    private static String generateString(String fieldName) {
+        if(fieldName == null) {
+            return "string";
+        }
+
+        return valueOf(fieldName);
+
+    }
+
+    private static String valueOf(String fieldName) {
+        char[] arr = fieldName.toCharArray();
+        StringBuilder builder = new StringBuilder();
+        for(char c: arr) {
+            if(!Character.isAlphabetic(c)) {
+                builder.append(c);
+
+            } else if(Character.isUpperCase(c)) {
+                builder.append("_").append(c);
+
+            } else {
+                builder.append(Character.toUpperCase(c));
+            }
+        }
+
+        String value = builder.toString();
+        if(value.endsWith("_I_D")) {
+            value = value.replace("_I_D", "_ID");
+        }
+
+        if(value.endsWith("_T_S")) {
+            value = value.replace("_T_S", "_TS");
+        }
+
+        if(value.endsWith("_IND")) {
+            value = "Y";
+        }
+
+        if(value.endsWith("_DT_TM") || value.endsWith("_DT") || value.endsWith("_TM") || value.endsWith("_TS")) {
+            value = "2021-03-16T12:21:47.403Z";
+        }
+
+        return value;
     }
 
 }

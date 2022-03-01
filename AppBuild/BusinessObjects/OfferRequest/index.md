@@ -84,6 +84,7 @@ graph LR
 ```
 
 
-mqsiapplybaroverride -k ESED_DELIVERYSLOT_IH_Publisher -b ESED_DELIVERYSLOT_IH_Publisher.bar -p ESED_DELIVERYSLOT_IH_Publisher.BASE.override.properties
+mqsiapplybaroverride -k ESED_OfferRequest_IH_Publisher -b ESED_OfferRequest_IH_Publisher.bar -p ESED_OfferRequest_IH_Publisher.BASE.override.properties
 
-mqsireadbar -b ESED_DELIVERYSLOT_IH_Publisher.bar -r
+mqsireadbar -b ESED_OfferRequest_IH_Publisher.bar -r
+

@@ -1,6 +1,8 @@
 package com.abs.edis.commons;
 
 import com.ibm.broker.javacompute.MbJavaComputeNode;
+import com.ibm.broker.plugin.MbBLOB;
+import com.ibm.broker.plugin.MbElement;
 import com.ibm.broker.plugin.MbException;
 import com.ibm.broker.plugin.MbMessage;
 import com.ibm.broker.plugin.MbMessageAssembly;
@@ -16,11 +18,18 @@ public class AVRO_SCHEMA_UNZIP_JAVA extends MbJavaComputeNode {
 		MbMessage inMessage = inAssembly.getMessage();
 		MbMessageAssembly outAssembly = null;
 		try {
-			// create new message as a copy of the input
-			MbMessage outMessage = new MbMessage(inMessage);
+			MbMessage outMessage = new MbMessage();
 			outAssembly = new MbMessageAssembly(inAssembly, outMessage);
 			// ----------------------------------------------------------
 			// Add user code below
+						
+			outMessage
+				.getRootElement()
+				.createElementAsLastChild(MbBLOB.PARSER_NAME)
+				.createElementAsLastChild(
+						MbElement.TYPE_NAME_VALUE,
+						"BLOB",
+						XmlToAvroConverter.unzip(inMessage.getRootElement().getLastChild().toBitstream(null, null, null, 0, 1208, 0)).getBytes());
 
 			// End of user code
 			// ----------------------------------------------------------

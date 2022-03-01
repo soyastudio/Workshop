@@ -1,7 +1,5 @@
 package com.abs.edis.schema;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.apache.avro.Schema;
 import org.apache.avro.file.DataFileReader;
 import org.apache.avro.file.DataFileWriter;
@@ -10,24 +8,13 @@ import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.generic.GenericDatumWriter;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.DatumReader;
-import org.apache.avro.io.Decoder;
-import org.apache.avro.io.DecoderFactory;
-import org.apache.avro.specific.SpecificDatumReader;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class XmlToAvro {
 
@@ -71,7 +58,7 @@ public class XmlToAvro {
 
         } else {
             if (node.getNodeType() == Node.ELEMENT_NODE) {
-                System.out.println(node.getNodeName() );
+                System.out.println(node.getNodeName());
                 NodeList nodeList = node.getChildNodes();
                 for (int i = 0; i < nodeList.getLength(); i++) {
                     Node nd = nodeList.item(i);

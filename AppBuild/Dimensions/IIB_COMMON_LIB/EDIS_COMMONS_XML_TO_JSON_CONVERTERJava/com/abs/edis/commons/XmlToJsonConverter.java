@@ -102,8 +102,10 @@ public class XmlToJsonConverter {
                             Node child = list.item(i);
                             obj.add(this.getNodeName(child), estimate(child));
                         }
-
-                        array.add(obj);
+                        if(!isEmpty(obj)) {
+                        	array.add(obj);
+                        }
+                        
 
                     } else if (type.endsWith("_array")) {
                         String elementType = type.substring(0, type.lastIndexOf("_array"));
@@ -233,5 +235,15 @@ public class XmlToJsonConverter {
         }
 
         return name;
+    }
+    
+    private boolean isEmpty(JsonElement element) {
+    	
+    	if(element.isJsonObject()){
+    		JsonObject jo = (JsonObject)element;
+    		return jo.entrySet().size() == 0;
+    	}
+    	
+    	return false;
     }
 }
