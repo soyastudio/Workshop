@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by Devesh (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--!=============================================================================================-->
+	<!--!-->
+	<!--!-->
+	<!--!      MerchandisingBusinessUnit: -->
+	<!--!                                     Noun that represents the generated billing gross percentage at store/department count area level.             -->
+	<!--!-->
+	<!--!=============================================================================================-->
+	<!--V1.0 Devesh Kandpal- 02/02/2022 - ES-6439 -Initial version.-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="MerchandisingBusinessUnit" type="MerchandisingBusinessUnitType">
+		<xs:annotation>
+			<xs:documentation>root element.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="MerchandisingBusinessUnitType">
+		<xs:annotation>
+			<xs:documentation>Defines business units and groups(BUGM and BGGM) that owns and responsible for the procurement of items in a merchandise hierarchy level.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="BusinessGroupId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Business Group Number</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BusinessGroupNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Business group: a group of business units make up a business group. E.G. the Dairy/Refrigerated and Frozen business units make up the Dairy/Refrigerated/Frozen business group.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BusinessUnit" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="BusinessUnitId" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Business Unit Number</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="BusinessUnitNm" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Business unit: a group of retail sections make up a business unit. E.G. the Cheese, Refrigerated, Milk, and Eggs retail sections make up the Dairy/Refrigerated business unit.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="250"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SuperSection" minOccurs="0" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="SuperSectionId" type="xs:integer" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The unique identifying number is
+associated to a Super Section. A super section</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="SuperSectionNm" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>The identifying name associated to a Super Section. A super section is a grouping of stocking sections (one or more).</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="250"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="StockingSection" minOccurs="0" maxOccurs="unbounded">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="StockingSectionId" type="xs:integer" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Stocking section of a SMIC item in a warehouse.</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+												<xs:element name="StockingSectionNm" minOccurs="0">
+													<xs:annotation>
+														<xs:documentation>Super sections of stocking section in a warehouse.</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:maxLength value="250"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element name="HierarchyType" minOccurs="0" maxOccurs="unbounded">
+													<xs:complexType>
+														<xs:sequence>
+															<xs:element name="GroupId" type="xs:int" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>The unique identifier of a SMIC category, derived from Group Code + Category Code + Class Code + Sub Class Code + Sub Sub Class Code.
+Group Code is the first level in the SMIC classification.</xs:documentation>
+																</xs:annotation>
+															</xs:element>
+															<xs:element name="CatagoryId" type="xs:int" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>The unique identifier of a SMIC category, derived from Group Code + Category Code + Class Code + Sub Class Code + Sub Sub Class Code.
+Category Code is the second level in the SMIC classification.</xs:documentation>
+																</xs:annotation>
+															</xs:element>
+															<xs:element name="ClassId" type="xs:int" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>The unique identifier of a SMIC category, derived from Group Code + Category Code + Class Code + Sub Class Code + Sub Sub Class Code. Class Code is the third level in the SMIC classification for the Smatch system. SMIC = Safeway Merchandising Item Code</xs:documentation>
+																</xs:annotation>
+															</xs:element>
+															<xs:element name="SubClassId" type="xs:int" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>The unique identifier of a SMIC category, derived from Group Code + Category Code + Class Code + Sub Class Code + Sub Sub Class Code. Class Code is the third level in the
+SMIC classification for the Smatch system. SMIC = Safeway Merchandising Item Code</xs:documentation>
+																</xs:annotation>
+															</xs:element>
+															<xs:element name="SubSubClassId" type="xs:int" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>The unique identifier of a SMIC category, derived from Group Code + Category Code + Class Code + Sub Class Code + Sub Sub Class Code. Class Code is the third level in the SMIC classification for the Smatch system. SMIC = Safeway Merchandising Item Code</xs:documentation>
+																</xs:annotation>
+															</xs:element>
+															<xs:element name="PrimaryStockingSectionInd" type="xs:string" minOccurs="0"/>
+														</xs:sequence>
+													</xs:complexType>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2021 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by Devesh (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<!--v1.0 - Alex Nunes - 1/12/21 - Introduction of new system of record.-->
 	<!--v1.0 - Alex Nunes - 2/17/21 - Change on planogram shelf cardinality reverted to unbounded.-->
 	<!--v1.0 - Alex Nunes - 3/16/21 - Removed complex type AisleType -->
-		<!--v1.0 - Alex Nunes - 3/26/21 - Namespace change. -->
+	<!--v1.0 - Alex Nunes - 3/26/21 - Namespace change. -->
+	<!--v1.1 - Devesh Kandpal - 02/10/22 -  ES-6419 - Datatype changed for ShelfCoordinates , ShelfDimensions, ShelfThicknessNbr-->
 	<xs:complexType name="Schematic">
 		<xs:annotation>
 			<xs:documentation>Defines the drawings of retail store layout with special attention on product placement.</xs:documentation>
@@ -89,14 +90,7 @@
 						<xs:element name="ShelfCoordinates" type="CoordinatesType" minOccurs="0"/>
 						<xs:element name="ShelfPositionNbr" type="xs:integer" minOccurs="0"/>
 						<xs:element name="ShelfDimensions" type="DimensionsType" minOccurs="0"/>
-						<xs:element name="ShelfThicknessNbr" minOccurs="0">
-							<xs:simpleType>
-								<xs:restriction base="xs:decimal">
-									<xs:totalDigits value="9"/>
-									<xs:fractionDigits value="2"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
+						<xs:element name="ShelfThicknessNbr" type="xs:float" minOccurs="0"/>
 						<xs:element name="ShelfThicknessUOMCd" type="xs:string" minOccurs="0"/>
 						<xs:element name="ShelfSurface" type="CodeWithDescription" minOccurs="0"/>
 						<xs:element name="ShelfWellInd" minOccurs="0">
@@ -147,59 +141,17 @@
 	</xs:complexType>
 	<xs:complexType name="CoordinatesType">
 		<xs:sequence>
-			<xs:element name="XCoordinateNbr" minOccurs="0">
-				<xs:simpleType>
-					<xs:restriction base="xs:decimal">
-						<xs:totalDigits value="10"/>
-						<xs:fractionDigits value="3"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
-			<xs:element name="YCoordinateNbr" minOccurs="0">
-				<xs:simpleType>
-					<xs:restriction base="xs:decimal">
-						<xs:totalDigits value="10"/>
-						<xs:fractionDigits value="3"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
-			<xs:element name="ZCoordinateNbr" minOccurs="0">
-				<xs:simpleType>
-					<xs:restriction base="xs:decimal">
-						<xs:totalDigits value="10"/>
-						<xs:fractionDigits value="3"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
+			<xs:element name="XCoordinateNbr" type="xs:float" minOccurs="0"/>
+			<xs:element name="YCoordinateNbr" type="xs:float" minOccurs="0"/>
+			<xs:element name="ZCoordinateNbr" type="xs:float" minOccurs="0"/>
 			<xs:element name="CoordinateUOMCd" type="xs:string" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="DimensionsType">
 		<xs:sequence>
-			<xs:element name="Height" minOccurs="0">
-				<xs:simpleType>
-					<xs:restriction base="xs:decimal">
-						<xs:totalDigits value="10"/>
-						<xs:fractionDigits value="3"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
-			<xs:element name="Width" minOccurs="0">
-				<xs:simpleType>
-					<xs:restriction base="xs:decimal">
-						<xs:totalDigits value="10"/>
-						<xs:fractionDigits value="3"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
-			<xs:element name="Depth" minOccurs="0">
-				<xs:simpleType>
-					<xs:restriction base="xs:decimal">
-						<xs:totalDigits value="10"/>
-						<xs:fractionDigits value="3"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
+			<xs:element name="Height" type="xs:float" minOccurs="0"/>
+			<xs:element name="Width" type="xs:float" minOccurs="0"/>
+			<xs:element name="Depth" type="xs:float" minOccurs="0"/>
 			<xs:element name="UOMCd" type="xs:string" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>

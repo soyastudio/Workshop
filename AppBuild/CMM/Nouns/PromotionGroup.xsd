@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2021 rel. 2 sp1 (x64) (http://www.altova.com) by poliv02 (Albertsons) -->
+<!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by mgadd09 (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V2.0 - Monica Gaddam  3/24/2022- added RetailDivisionId,DealVendorName to the promotiongrouptype complex type. -->
 	<!--V1.1 Patrick Oliver 09/28/21 - Updated PromotionGroupId to string -->
 	<!--V1.0 - Patrick Oliver 7/27/2020 - Initial version.-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
@@ -14,6 +15,16 @@
 			<xs:documentation>This object defines data and attributes associated to Promotion Groups. A Promotion Group is a collection of items and/or Common Item Groups (CIGs) setup by Division, Group, and Category. Promotion Groups are tied to vendor companies that negotiate deals and own the promo groups for funding.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
+			<xs:element name="RetailDivisionId" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Retail Divison ID</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element name="PromotionGroupOrg">
 				<xs:annotation>
 					<xs:documentation>Organization structure for the Promotion Group. </xs:documentation>
@@ -146,6 +157,14 @@
 				<xs:annotation>
 					<xs:documentation>Vendor company that negotiates the deals and funding for the Promo Group.</xs:documentation>
 				</xs:annotation>
+			</xs:element>
+			<xs:element name="DealVendorName" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Deal Vendor Name.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
 			</xs:element>
 			<xs:element name="Broker" type="PromoGroupPartyType" minOccurs="0">
 				<xs:annotation>

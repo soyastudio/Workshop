@@ -6,7 +6,7 @@
    Dsc: contains commonly used Albertson's Purchase order schema.
    Name: /ABS_CMM_Platform/Nouns/StoreOrder.xsd
 -->
-<!-- edited with XMLSpy v2020 rel. 2 (http://www.altova.com) by Devesh Kandpal (Albertsons) -->
+<!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by Devesh (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<!--V1.0 1/21/2020 Alex Nunes Removed 'ProcessDt' element from storeorder details. Reversed the change on 5/19/2020.-->
 	<!--V1.1 Patrick Oliver 7/22/20 - Updated VendorId & VendorSubAccountNbr to string(20)-->
@@ -18,6 +18,7 @@
 	<!--v1.5 Alex Nunes 4/14/2021 - Added PurchaseOrderEdiTs at Header level -->
 	<!--v1.6 Alex Nunes 6/10/2021 - Added FirmOrderReleaseDt and ScheduleOverrideInd at Header level JIRA ES-911 -->
 	<!--v1.7 Devesh Kandpal 08/19/2021 - Added RestrictedItemInd at Detail level - CR#60  JIRA ES-3135-->
+	<!--V1.8 Devesh Kandpal 02/11/2022 - ES-6422 - Added new field OrderLimitQty-->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:element name="StoreOrder" type="StoreOrderType">
 		<xs:annotation>
@@ -716,6 +717,11 @@ It is sometimes referred to as Division Item Code.
 						<xs:maxLength value="1"/>
 					</xs:restriction>
 				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OrderLimitQty" type="xs:decimal" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Maximum order quantity to which an item can be ordered. </xs:documentation>
+				</xs:annotation>
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>

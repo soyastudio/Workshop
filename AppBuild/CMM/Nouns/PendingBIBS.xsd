@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2021 (x64) (http://www.altova.com) by Zafar Ullah (Albertsons) -->
+<!-- edited with XMLSpy v2021 (x64) (http://www.altova.com) by zulla00 (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.2 Zafar Ullah 3/23/2022 Adding SignHeaderId-->
+	<!--V1.1 Zafar Ullah 1/28/2022 UPCComponents segment has been changed to optional-->
 	<!--V1.0  Zafar Ullah 12/28/2021 Initial version -->
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:element name="PendingBIBS">
@@ -26,7 +28,7 @@
 					<xs:documentation>Shows which of the Consumer, Multipack, or Case UPCs is used to make up the right 5 digitis of the UPC. One of these must be chosen.Called UNIT_TYPE in legacy systems.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="UPCComponents" type="UPCComponentsType"/>
+			<xs:element name="UPCComponents" type="UPCComponentsType" minOccurs="0"/>
 			<xs:element name="BIBStatus" type="CodeWithDescription" minOccurs="0"/>
 			<xs:element name="BIBType" type="CodeWithDescription"/>
 			<xs:element name="BIBCouponAmt" type="xs:decimal" nillable="false" minOccurs="0"/>
@@ -52,9 +54,18 @@
 					<xs:documentation>The value of this column is originated from DemandTec s Promotion Price Optimization (PPO) application and is maintained throughout the promotion s lifecycle to uniquely identify the promotion</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="BIBPriceAreaCd" type="xs:string">
+			<xs:element name="PriceAreaCd" type="xs:string">
 				<xs:annotation>
 					<xs:documentation>Price areas are groups of stores within a ROG that have the same Pricing structure. This is the individual price area within the Price Area group. Price areas are found on the Price Area Facility Table (SSPAFACL_TABLE).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SignHeaderId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Sign header number of the current LT, AD, DC of AV sign
+LT=Limited Time Special
+AD=Advertised Special
+DC=Decline
+AV=Advance</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="SignCountType" minOccurs="0" maxOccurs="unbounded">

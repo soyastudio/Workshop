@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2021 rel. 2 sp1 (x64) (http://www.altova.com) by poliv02 (Albertsons) -->
+<!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by Monica Gaddam (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.6 Monica Gaddam 04/06/22: LR-924 - PromotionStatus cardinality updated to unbounded. -->
+	<!--V1.5 Devesh Kandpal 02/17/22: ES-6493 - Added 2 new fields under StoreLevelPromotion - DeleteInd , CouponUpdateTs -->
 	<!--V1.4 Patrick Oliver 07/20/21: Updated CouponBookInd to stirng(3) -->
 	<!--V1.3 Rosabel Macario 11/04/2020 - Added tag to resolve dateTimeStamp issue-->
 	<!--V1.2 Patrick Oliver 7/22/20 - Updated VendorId & VendorSubAccntId to string(20)-->
@@ -493,6 +495,16 @@ Some of the reasons a Vendor may have several WIMS Vendor records are:
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
+			<xs:element name="DeleteInd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>When an ongoing promotion needs to be immediately stopped, this field is set to Y so that the promotion will be stopped being sent to store.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CouponUpdateTs" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>represents the time when the coupon record was updated</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="ROGLevelPromotionType">
@@ -663,7 +675,7 @@ Some of the reasons a Vendor may have several WIMS Vendor records are:
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="PromotionStatus" type="CodeWithDescription" minOccurs="0">
+			<xs:element name="PromotionStatus" type="CodeWithDescription" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:documentation>Status of the promotion.
 Active, Ended, Open, Reopened</xs:documentation>

@@ -1,0 +1,323 @@
+BROKER SCHEMA com.abs.ocrp.esed
+
+/* ----------------------------------------------------------------------------
+APPLICATION ID 	: ESED
+INTERFACE NAME 	: ESED_PartnerRewardTransaction_OCRP_IH_Publisher
+FLOW NAME 		: ESED_PartnerRewardTransaction_OCRP_IH_Publisher
+DESCRIPTION 	: OCRP from Kafka to Kafka
+AUTHOR 			: azhou01
+CREATED DT 		: 29/03/2021
+-- ----------------------------------------------------------------------------
+Program History
+Version      Change Owner   	Date 		Description
+---------    ------------    ----------     -----------------------------------
+1.2.1.001 	  azhou01        29/03/2021     Initial version
+1.2.2.001     azhou01		 30/03/2021		Timestamp output field required UTC format
+1.3.2.002     azhou01		 06/04/2021     Updated StatusTypeCd to StatusCd, Renamed PartnerLocationData to PartnerData;
+											SiteId to PartnerSiteId; ParticipantId to PartnerParticipantId; RewardTransaction to PartnerTransaction;
+											Add decimal fields validation if null no output tag is required
+1.3.3.003     azhou01		 19/04/2021     set decimal field to match xsd
+1.4.1.003     azhou01		 26/04/2021     updated PurchDiscLimitQty to integer in XSD
+1.4.1.004     azhou01		 29/04/2021     Skip PurchDiscLimitQty tag if source is passing null value (integer)
+
+1.5.1.011     qwen002		 27/03/2022     DivisionId, StatusCd
+-----------------------------------------------------------------------------*/
+CREATE COMPUTE MODULE ESED_PartnerPartnerTransaction_CMM_Transformer_Compute
+	-- Declare UDPs
+	DECLARE VERSION_ID CHAR '1.5.1.011';
+	DECLARE SysEnvCd CHAR '';
+	DECLARE utcPattern CHARACTER 'yyyy-MM-dd''T''HH:mm:ss.SSS''Z''';
+
+	-- Declare Namespace
+	DECLARE Abs NAMESPACE 'https://collab.safeway.com/it/architecture/info/default.aspx';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- Declare Input Message Root
+		DECLARE _inputRootNode REFERENCE TO InputRoot.JSON.Data;
+
+		-- Declare Output Message Root
+		CREATE LASTCHILD OF OutputRoot DOMAIN 'XMLNSC';
+
+		DECLARE xmlDocRoot REFERENCE TO OutputRoot.XMLNSC.GetPartnerRewardTransaction;
+		CREATE LASTCHILD OF OutputRoot.XMLNSC AS xmlDocRoot TYPE XMLNSC.Folder NAME 'GetPartnerRewardTransaction';
+		SET OutputRoot.XMLNSC.GetPartnerRewardTransaction.(XMLNSC.NamespaceDecl)xmlns:Abs=Abs;
+
+		-- GetPartnerRewardTransaction/DocumentData
+		DECLARE DocumentData_ REFERENCE TO xmlDocRoot;
+		CREATE LASTCHILD OF xmlDocRoot AS DocumentData_ TYPE XMLNSC.Folder NAME 'DocumentData';
+
+			-- GetPartnerRewardTransaction/DocumentData/Document
+			DECLARE Document_ REFERENCE TO DocumentData_;
+			CREATE LASTCHILD OF DocumentData_ AS Document_ TYPE XMLNSC.Folder NAME 'Document';
+
+				-- GetPartnerRewardTransaction/DocumentData/Document/@VersionId
+				SET Document_.(XMLNSC.Attribute)VersionId = VERSION_ID;
+
+				-- Depending upon Environment where code is deployed map it as DEV, QA, PROD
+				IF BrokerName like '%DV%' THEN
+					SET SysEnvCd = 'DEV';
+				ELSEIF BrokerName like '%QA%' THEN
+					SET SysEnvCd = 'QA';
+				ELSEIF BrokerName like '%PR%' THEN
+					SET SysEnvCd = 'PROD';
+				END IF;
+
+				-- GetPartnerRewardTransaction/DocumentData/Document/@SystemEnvironmentCd
+				SET Document_.(XMLNSC.Attribute)SystemEnvironmentCd = SysEnvCd;
+
+				-- GetPartnerRewardTransaction/DocumentData/Document/DocumentID
+				SET Document_.(XMLNSC.Field)Abs:DocumentID = 'ESED_C01_PartnerRewardTransaction';
+
+				-- GetPartnerRewardTransaction/DocumentData/Document/AlternateDocumentID
+				SET Document_.(XMLNSC.Field)Abs:AlternateDocumentID = InputLocalEnvironment.Kafka.Input.topicName||'_'||InputLocalEnvironment.Kafka.Input.partition||'_'||InputLocalEnvironment.Kafka.Input.offset||'_'||CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT 'YYYYMMddHHmmssSSSSSS');
+
+				-- GetPartnerRewardTransaction/DocumentData/Document/InboundOutboundInd
+				SET Document_.(XMLNSC.Field)Abs:InboundOutboundInd = 'Outbound from Albertsons';
+
+				-- GetPartnerRewardTransaction/DocumentData/Document/DocumentNm
+				SET Document_.(XMLNSC.Field)Abs:DocumentNm = 'GetPartnerRewardTransaction';
+
+				-- GetPartnerRewardTransaction/DocumentData/Document/CreationDt
+				SET Document_.(XMLNSC.Field)Abs:CreationDt = CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT utcPattern);
+
+				-- GetPartnerRewardTransaction/DocumentData/Document/Description
+				SET Document_.(XMLNSC.Field)Abs:Description = 'PartnerRewardTransactionData';
+
+				-- GetPartnerRewardTransaction/DocumentData/Document/SourceApplicationCd
+				SET Document_.(XMLNSC.Field)Abs:SourceApplicationCd = 'OCRP';
+
+				-- GetPartnerRewardTransaction/DocumentData/Document/TargetApplicationCd
+				SET Document_.(XMLNSC.Field)Abs:TargetApplicationCd = 'EDIS';
+
+				-- GetPartnerRewardTransaction/DocumentData/Document/InternalFileTransferInd
+				SET Document_.(XMLNSC.Field)Abs:InternalFileTransferInd = 'Y';
+
+				-- GetPartnerRewardTransaction/DocumentData/Document/DataClassification
+				DECLARE DataClassification_ REFERENCE TO Document_;
+				CREATE LASTCHILD OF Document_ AS DataClassification_ TYPE XMLNSC.Folder NAME 'Abs:DataClassification';
+
+					-- GetPartnerRewardTransaction/DocumentData/Document/DataClassification/DataClassificationLevel
+					DECLARE DataClassificationLevel_ REFERENCE TO DataClassification_;
+					CREATE LASTCHILD OF DataClassification_ AS DataClassificationLevel_ TYPE XMLNSC.Folder NAME 'Abs:DataClassificationLevel';
+
+						-- GetPartnerRewardTransaction/DocumentData/Document/DataClassification/DataClassificationLevel/Code
+						SET DataClassificationLevel_.(XMLNSC.Field)Abs:Code = 'INTERNAL';
+
+					-- GetPartnerRewardTransaction/DocumentData/Document/DataClassification/BusinessSensitivityLevel
+					DECLARE BusinessSensitivityLevel_ REFERENCE TO DataClassification_;
+					CREATE LASTCHILD OF DataClassification_ AS BusinessSensitivityLevel_ TYPE XMLNSC.Folder NAME 'Abs:BusinessSensitivityLevel';
+
+						-- GetPartnerRewardTransaction/DocumentData/Document/DataClassification/BusinessSensitivityLevel/Code
+						SET BusinessSensitivityLevel_.(XMLNSC.Field)Abs:Code = 'High';
+
+					-- GetPartnerRewardTransaction/DocumentData/Document/DataClassification/PHIdataInd
+					SET DataClassification_.(XMLNSC.Field)Abs:PHIdataInd = 'Y';
+
+					-- GetPartnerRewardTransaction/DocumentData/Document/DataClassification/PCIdataInd
+					SET DataClassification_.(XMLNSC.Field)Abs:PCIdataInd = 'N';
+
+					-- GetPartnerRewardTransaction/DocumentData/Document/DataClassification/PIIdataInd
+					SET DataClassification_.(XMLNSC.Field)Abs:PIIdataInd = 'Y';
+
+			-- GetPartnerRewardTransaction/DocumentData/DocumentAction
+			DECLARE DocumentAction_ REFERENCE TO DocumentData_;
+			CREATE LASTCHILD OF DocumentData_ AS DocumentAction_ TYPE XMLNSC.Folder NAME 'DocumentAction';
+
+				-- GetPartnerRewardTransaction/DocumentData/DocumentAction/ActionTypeCd
+				SET DocumentAction_.(XMLNSC.Field)Abs:ActionTypeCd = 'UPDATE';
+
+				-- GetPartnerRewardTransaction/DocumentData/DocumentAction/RecordTypeCd
+				SET DocumentAction_.(XMLNSC.Field)Abs:RecordTypeCd = 'CHANGE';
+
+		-- GetPartnerRewardTransaction/PartnerRewardTransactionData
+		DECLARE PartnerRewardTransactionData_ REFERENCE TO xmlDocRoot;
+		CREATE LASTCHILD OF xmlDocRoot AS PartnerRewardTransactionData_ TYPE XMLNSC.Folder NAME 'PartnerRewardTransactionData';
+
+			-- GetPartnerRewardTransaction/PartnerRewardTransactionData/PartnerId
+			--Mandatory Field check
+			IF (FIELDVALUE(_inputRootNode.partner_id) IS NULL OR FIELDTYPE(_inputRootNode.partner_id) IS NULL) THEN
+				THROW USER EXCEPTION VALUES('OCRP','Mandatory Field Exception','partner_id field is not present.');
+			ELSE
+				SET PartnerRewardTransactionData_.(XMLNSC.Field)Abs:PartnerId = _inputRootNode.partner_id;
+			END IF;
+
+			-- GetPartnerRewardTransaction/PartnerRewardTransactionData/TransactionType
+			DECLARE TransactionType_ REFERENCE TO PartnerRewardTransactionData_;
+			CREATE LASTCHILD OF PartnerRewardTransactionData_ AS TransactionType_ TYPE XMLNSC.Folder NAME 'Abs:TransactionType';
+
+				-- GetPartnerRewardTransaction/PartnerRewardTransactionData/TransactionType/TransactionId
+				--Mandatory Field check
+				IF (FIELDVALUE(_inputRootNode.transaction_id) IS NULL OR FIELDTYPE(_inputRootNode.transaction_id) IS NULL) THEN
+					THROW USER EXCEPTION VALUES('OCRP','Mandatory Field Exception','transaction_id field is not present.');
+				ELSE
+					SET TransactionType_.(XMLNSC.Field)Abs:TransactionId = _inputRootNode.transaction_id;
+				END IF;
+
+				-- GetPartnerRewardTransaction/PartnerRewardTransactionData/TransactionType/TransactionTs
+				-- validate UTC format
+				DECLARE transactionTs CHARACTER CAST(_inputRootNode.safeway_event_ts AS CHARACTER);
+				IF (LENGTH(transactionTs) <> 24 OR SUBSTRING(transactionTs FROM 24 FOR 1) <> 'Z' OR SUBSTRING(transactionTs FROM 11 FOR 1) <> 'T') THEN
+					THROW USER EXCEPTION VALUES('OCRP','Timestamp UTC Exception','safeway_event_ts field '||transactionTs||' is not UTC format.');
+				ELSE
+					SET TransactionType_.(XMLNSC.Field)Abs:TransactionTs = transactionTs;
+				END IF;
+
+				-- GetPartnerRewardTransaction/PartnerRewardTransactionData/TransactionType/TransactionTypeCd/Code
+				DECLARE TransactionTypeCd_ REFERENCE TO TransactionType_;
+				CREATE LASTCHILD OF TransactionType_ AS TransactionTypeCd_ TYPE XMLNSC.Folder NAME 'Abs:TransactionTypeCd';
+
+					-- GetPartnerRewardTransaction/PartnerRewardTransactionData/TransactionType/TransactionTypeCd/Code
+					SET TransactionTypeCd_.(XMLNSC.Field)Abs:Code = _inputRootNode.transaction_type;
+
+				--GetPartnerRewardTransaction/PartnerRewardTransactionData/TransactionType/AltTransaction
+				DECLARE AltTransaction_ REFERENCE TO TransactionType_;
+				CREATE LASTCHILD OF TransactionType_ AS AltTransaction_ TYPE XMLNSC.Folder NAME 'Abs:AltTransaction';
+
+					-- GetPartnerRewardTransaction/PartnerRewardTransactionData/TransactionType/AltTransaction/AltTransactionId
+					SET AltTransaction_.(XMLNSC.Field)Abs:AltTransactionId = _inputRootNode.partner_transaction_id;
+
+					-- GetPartnerRewardTransaction/PartnerRewardTransactionData/TransactionType/AltTransaction/AltTransactionTs
+					-- validate UTC format
+					DECLARE partnerEventTs CHARACTER CAST(_inputRootNode.partner_event_ts AS CHARACTER);
+					IF (LENGTH(partnerEventTs) <> 24 OR SUBSTRING(partnerEventTs FROM 24 FOR 1) <> 'Z' OR SUBSTRING(partnerEventTs FROM 11 FOR 1) <> 'T') THEN
+						THROW USER EXCEPTION VALUES('OCRP','Timestamp UTC Exception','partner_event_ts field '||partnerEventTs||' is not UTC format.');
+					ELSE
+						SET AltTransaction_.(XMLNSC.Field)Abs:AltTransactionTs = partnerEventTs;
+					END IF;
+
+			-- GetPartnerRewardTransaction/PartnerRewardTransactionData/PartnerData
+			DECLARE PartnerData_ REFERENCE TO PartnerRewardTransactionData_;
+			CREATE LASTCHILD OF PartnerRewardTransactionData_ AS PartnerData_ TYPE XMLNSC.Folder NAME 'Abs:PartnerData';
+
+				-- GetPartnerRewardTransaction/PartnerRewardTransactionData/PartnerData/PartnerSiteId
+				SET PartnerData_.(XMLNSC.Field)Abs:PartnerSiteId = _inputRootNode.site_id;
+
+				-- GetPartnerRewardTransaction/PartnerRewardTransactionData/PartnerData/PartnerParticipantId
+				SET PartnerData_.(XMLNSC.Field)Abs:PartnerParticipantId = _inputRootNode.participant_id;
+
+				-- Since v1.5.1
+				-- GetPartnerRewardTransaction/PartnerRewardTransactionData/PartnerData/DivisionId
+				SET PartnerData_.(XMLNSC.Field)Abs:DivisionId = _inputRootNode.location_sale_divsion_id;
+
+				-- GetPartnerRewardTransaction/PartnerRewardTransactionData/PartnerData/PostalZoneCd
+				SET PartnerData_.(XMLNSC.Field)Abs:PostalZoneCd = _inputRootNode.postal_cd;
+
+			-- GetPartnerRewardTransaction/PartnerRewardTransactionData/CustomerData
+			DECLARE CustomerData_ REFERENCE TO PartnerRewardTransactionData_;
+			CREATE LASTCHILD OF PartnerRewardTransactionData_ AS CustomerData_ TYPE XMLNSC.Folder NAME 'Abs:CustomerData';
+
+				-- GetPartnerRewardTransaction/PartnerRewardTransactionData/CustomerData/DivisionId
+				SET CustomerData_.(XMLNSC.Field)Abs:DivisionId = _inputRootNode.customer_division_id;
+
+				-- GetPartnerRewardTransaction/PartnerRewardTransactionData/CustomerData/HouseholdId
+				IF (FIELDVALUE(_inputRootNode.hhid) IS NOT NULL) THEN
+					SET CustomerData_.(XMLNSC.Field)Abs:HouseholdId = CAST(_inputRootNode.hhid AS DECIMAL(14, 0));
+				END IF;
+
+				-- GetPartnerRewardTransaction/PartnerRewardTransactionData/CustomerData/ClubCardNbr
+				IF (FIELDVALUE(_inputRootNode.club_card_num) IS NOT NULL) THEN
+					SET CustomerData_.(XMLNSC.Field)Abs:ClubCardNbr = CAST(_inputRootNode.club_card_num AS DECIMAL(14, 0));
+				END IF;
+
+				-- GetPartnerRewardTransaction/PartnerRewardTransactionData/CustomerData/OldClubCardNbr
+				IF (FIELDVALUE(_inputRootNode.resolved_club_card_num) IS NOT NULL) THEN
+					SET CustomerData_.(XMLNSC.Field)Abs:OldClubCardNbr = CAST(_inputRootNode.resolved_club_card_num AS DECIMAL(14, 0));
+				END IF;
+
+				-- PII
+				-- GetPartnerRewardTransaction/PartnerRewardTransactionData/CustomerData/PhoneNbr
+				SET CustomerData_.(XMLNSC.Field)Abs:PhoneNbr = _inputRootNode.phone_num;
+
+				-- GetPartnerRewardTransaction/PartnerRewardTransactionData/CustomerData/CustomerId
+				SET CustomerData_.(XMLNSC.Field)Abs:CustomerId = _inputRootNode.customer_id;
+
+			-- GetPartnerRewardTransaction/PartnerRewardTransactionData/StatusType
+			DECLARE StatusType_ REFERENCE TO PartnerRewardTransactionData_;
+			CREATE LASTCHILD OF PartnerRewardTransactionData_ AS StatusType_ TYPE XMLNSC.Folder NAME 'Abs:StatusType';
+
+				-- Since v1.5.1
+				-- GetPartnerRewardTransaction/PartnerRewardTransactionData/StatusType/StatusCd
+				SET StatusType_.(XMLNSC.Field)Abs:StatusCd = _inputRootNode.record_activity_status_cd;
+
+			-- GetPartnerRewardTransaction/PartnerRewardTransactionData/PartnerTransaction
+			DECLARE PartnerTransaction_ REFERENCE TO PartnerRewardTransactionData_;
+			CREATE LASTCHILD OF PartnerRewardTransactionData_ AS PartnerTransaction_ TYPE XMLNSC.Folder NAME 'Abs:PartnerTransaction';
+
+				-- GetPartnerRewardTransaction/PartnerRewardTransactionData/PartnerTransaction/FuelGradeCd
+				DECLARE FuelGradeCd_ REFERENCE TO PartnerTransaction_;
+				CREATE LASTCHILD OF PartnerTransaction_ AS FuelGradeCd_ TYPE XMLNSC.Folder NAME 'Abs:FuelGradeCd';
+
+					-- GetPartnerRewardTransaction/PartnerRewardTransactionData/PartnerTransaction/FuelGradeCd/Code
+					SET FuelGradeCd_.(XMLNSC.Field)Abs:Code = _inputRootNode.fuel_grade_cd;
+
+				-- GetPartnerRewardTransaction/PartnerRewardTransactionData/PartnerTransaction/RewardTokenOfferedQty
+				SET PartnerTransaction_.(XMLNSC.Field)Abs:RewardTokenOfferedQty = _inputRootNode.rwrd_token_offered_qty;
+
+				-- GetPartnerRewardTransaction/PartnerRewardTransactionData/PartnerTransaction/TotalPurchQty
+				IF (FIELDVALUE(_inputRootNode.total_purchase_qty) IS NOT NULL) THEN
+					SET PartnerTransaction_.(XMLNSC.Field)Abs:TotalPurchQty = CAST(_inputRootNode.total_purchase_qty AS DECIMAL(18, 3));
+				END IF;
+
+				-- GetPartnerRewardTransaction/PartnerRewardTransactionData/PartnerTransaction/PurchUOMCd
+				DECLARE PurchUOMCd_ REFERENCE TO PartnerTransaction_;
+				CREATE LASTCHILD OF PartnerTransaction_ AS PurchUOMCd_ TYPE XMLNSC.Folder NAME 'Abs:PurchUOMCd';
+
+					-- GetPartnerRewardTransaction/PartnerRewardTransactionData/PartnerTransaction/PurchUOMCd/UOMCd
+					SET PurchUOMCd_.(XMLNSC.Field)Abs:UOMCd = _inputRootNode.purchase_limit_uom_cd;
+
+				-- GetPartnerRewardTransaction/PartnerRewardTransactionData/PartnerTransaction/PurchDiscLimitQty
+				IF (FIELDVALUE(_inputRootNode.purchase_discnt_limit_qty) IS NOT NULL) THEN
+					SET PartnerTransaction_.(XMLNSC.Field)Abs:PurchDiscLimitQty = _inputRootNode.purchase_discnt_limit_qty;
+				END IF;
+
+				-- GetPartnerRewardTransaction/PartnerRewardTransactionData/PartnerTransaction/PurchDiscLimitAmt
+				DECLARE PurchDiscLimitAmt_ REFERENCE TO PartnerTransaction_;
+				CREATE LASTCHILD OF PartnerTransaction_ AS PurchDiscLimitAmt_ TYPE XMLNSC.Folder NAME 'Abs:PurchDiscLimitAmt';
+
+					-- GetPartnerRewardTransaction/PartnerRewardTransactionData/PartnerTransaction/PurchDiscLimitAmt/TransactionAmt
+					IF (FIELDVALUE(_inputRootNode.purchase_discount_limit_amnt) IS NOT NULL) THEN
+						SET PurchDiscLimitAmt_.(XMLNSC.Field)Abs:TransactionAmt = CAST(_inputRootNode.purchase_discount_limit_amnt AS DECIMAL(18, 2));
+					END IF;
+
+				-- GetPartnerRewardTransaction/PartnerRewardTransactionData/PartnerTransaction/TotalSavingsValAmt
+				DECLARE TotalSavingsValAmt_ REFERENCE TO PartnerTransaction_;
+				CREATE LASTCHILD OF PartnerTransaction_ AS TotalSavingsValAmt_ TYPE XMLNSC.Folder NAME 'Abs:TotalSavingsValAmt';
+
+					-- GetPartnerRewardTransaction/PartnerRewardTransactionData/PartnerTransaction/TotalSavingsValAmt/TransactionAmt
+					IF (FIELDVALUE(_inputRootNode.total_savings_val_amt) IS NOT NULL) THEN
+						SET TotalSavingsValAmt_.(XMLNSC.Field)Abs:TransactionAmt = CAST(_inputRootNode.total_savings_val_amt AS DECIMAL(18, 2));
+					END IF;
+
+			-- GetPartnerRewardTransaction/PartnerRewardTransactionData/AuditData
+			DECLARE AuditData_ REFERENCE TO PartnerRewardTransactionData_;
+			CREATE LASTCHILD OF PartnerRewardTransactionData_ AS AuditData_ TYPE XMLNSC.Folder NAME 'Abs:AuditData';
+
+				-- GetPartnerRewardTransaction/PartnerRewardTransactionData/AuditData/CreateTs
+				-- Validate UTC timestamp
+				DECLARE createTs CHARACTER CAST(_inputRootNode.create_ts AS CHARACTER);
+				IF (LENGTH(createTs) <> 24 OR SUBSTRING(createTs FROM 24 FOR 1) <> 'Z' OR SUBSTRING(createTs FROM 11 FOR 1) <> 'T') THEN
+					THROW USER EXCEPTION VALUES('OCRP','Timestamp UTC Exception','create_ts field '||createTs||' is not UTC format.');
+				ELSE
+					SET AuditData_.(XMLNSC.Field)Abs:CreateTs = createTs;
+				END IF;
+
+				-- GetPartnerRewardTransaction/PartnerRewardTransactionData/AuditData/CreateUserId
+				SET AuditData_.(XMLNSC.Field)Abs:CreateUserId = _inputRootNode.create_user;
+
+				-- GetPartnerRewardTransaction/PartnerRewardTransactionData/AuditData/UpdateTs
+				-- Validate UTC timestamp
+				DECLARE modifiedTs CHARACTER CAST(_inputRootNode.modified_ts AS CHARACTER);
+				IF (LENGTH(modifiedTs) <> 24 OR SUBSTRING(modifiedTs FROM 24 FOR 1) <> 'Z' OR SUBSTRING(modifiedTs FROM 11 FOR 1) <> 'T') THEN
+					THROW USER EXCEPTION VALUES('OCRP','Timestamp UTC Exception','modified_ts field '||modifiedTs||' is not UTC format.');
+				ELSE
+					SET AuditData_.(XMLNSC.Field)Abs:UpdateTs = modifiedTs;
+				END IF;
+				--SET AuditData_.(XMLNSC.Field)Abs:UpdateTs = CAST(CAST(_inputRootNode.modified_ts AS TIMESTAMP) AS CHARACTER FORMAT tsPattern);
+
+				-- GetPartnerRewardTransaction/PartnerRewardTransactionData/AuditData/UpdateUserId
+				SET AuditData_.(XMLNSC.Field)Abs:UpdateUserId = _inputRootNode.modified_user;
+
+		RETURN TRUE;
+	END;
+END MODULE;

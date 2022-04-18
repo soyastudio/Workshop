@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by mgadd09 (Albertsons) -->
 <xs:schema xmlns="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://www.openapplications.org/oagis/9" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
-	<!--V1.1 Rosabel Macario 11/04/2020 - Added tag to resolve dateTimeStamp issue-->
+	<!--V1.0 Monica Gaddam 01/07/2022 - Created Initial Version-->
 	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/RetailCustomer.xsd"/>
 	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:element name="GetBusinessPartnerCustomer">
@@ -32,22 +32,33 @@
 					<xs:complexContent>
 						<xs:extension base="Abs:RetailCustomerType">
 							<xs:sequence>
-								<xs:element name="PartnerId" minOccurs="0">
-									<xs:annotation>
-										<xs:documentation>Business Partner Identification</xs:documentation>
-									</xs:annotation>
+								<xs:element name="BusinessPartner" minOccurs="0">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="PartnerId" type="xs:string" minOccurs="0">
+												<xs:annotation>
+													<xs:documentation>Business Partner Identification</xs:documentation>
+												</xs:annotation>
+											</xs:element>
+											<xs:element name="PartnerNm" type="xs:string" minOccurs="0">
+												<xs:annotation>
+													<xs:documentation>Business Partner Name</xs:documentation>
+												</xs:annotation>
+											</xs:element>
+											<xs:element name="PartnerTypeCd" type="Abs:CodeWithDescription" minOccurs="0">
+												<xs:annotation>
+													<xs:documentation>Business partner types (Fuel partner, Delivery partner, Fullfillment partner, Picker partner, etc. ). </xs:documentation>
+												</xs:annotation>
+											</xs:element>
+										</xs:sequence>
+									</xs:complexType>
 								</xs:element>
-								<xs:element name="PartnerNm" minOccurs="0">
-									<xs:annotation>
-										<xs:documentation>Business Partner Name</xs:documentation>
-									</xs:annotation>
-								</xs:element>
-								<xs:element name="ShareInfoOptionInd" minOccurs="0">
+								<xs:element name="ShareInfoOptionInd" type="xs:boolean" minOccurs="0">
 									<xs:annotation>
 										<xs:documentation>Indicator as to whether the customer has opted in to share personal information (e.g. 0- FALSE; 1-TRUE)</xs:documentation>
 									</xs:annotation>
 								</xs:element>
-								<xs:element name="WhiteLabelInd" minOccurs="0">
+								<xs:element name="WhiteLabelInd" type="xs:boolean" minOccurs="0">
 									<xs:annotation>
 										<xs:documentation>- This is a label to indicate if an item was ordered from a White Label (or Powered by Instacart) storefront (if applicable) or from the Instacart Marketplace storefront. If the item was ordered from the White Label storefront the value will be “TRUE”. If the item was ordered from the Instacart Marketplace storefront the value with be “FALSE.” If you do not have a White Label site enabled, this column will not appear in your t-log reports. 0 - FALSE ; 1 - TRUE.</xs:documentation>
 									</xs:annotation>

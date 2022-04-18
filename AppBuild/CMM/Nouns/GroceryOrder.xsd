@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Nitika Dhingra (Albertsons) -->
+<!-- edited with XMLSpy v2022 rel. 2 (x64) (http://www.altova.com) by kvisa02 (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<!--V1.0 Jayson Leo Soliman 08/14/19 Initial Version-->
 	<!--V1.1 Alex Nunes 4/14/2020 Changes during review with system of record stakeholder: Remove Person Delivery: In Order Capture there is no such data available. This is part of downstram applications. Shorten complex types such as Customer and Facility. Add customer order addresses which are different from customer addresses master data.-->
@@ -52,6 +52,13 @@ V2.0 Patrick Oliver 09/21:
 • ShipMethodSubType (White Glove Delivery)
 • Added OrderCancellationData
  -->
+	<!--V2.1 Kumar Visalakshi Sekar 03/23/22: Added the following fields at the GroceryOrderDetail level
+• Added OrderedWeightUOM and its UOMType as child elements
+• Added OrderedItemWeight
+• Added ItemMinimumWeight-->
+	<!--V2.2 Kumar Visalakshi Sekar 03/25/22: Added the following fields at GroceryOrderDetail.DeliveredItem level
+• Added OrderedWeightUOM and its UOMType as child elements
+• Added OrderedItemWeight-->
 	<xs:include schemaLocation="../Global/AbsGlobalComponents.xsd"/>
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:include schemaLocation="RetailCustomer.xsd"/>
@@ -904,6 +911,23 @@ Ex: For SNAP items this is can be 10% of the item price.</xs:documentation>
 			<xs:element ref="Quantity" minOccurs="0"/>
 			<xs:element ref="UOM" minOccurs="0"/>
 			<xs:element ref="SellByWeightType" minOccurs="0"/>
+			<xs:element name="OrderedWeightUOM" type="UOMType" minOccurs="0"/>
+			<xs:element name="OrderedItemWeight" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ItemMinimumWeight" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="14"/>
+						<xs:fractionDigits value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
 			<xs:element name="AvgItemWeight" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>For random weight items shows the average weight</xs:documentation>
@@ -1220,6 +1244,15 @@ Supplemental-Nutrition Assistance-Program eligible  or not.</xs:documentation>
 							<xs:annotation>
 								<xs:documentation>For random weight items shows the average weight</xs:documentation>
 							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="OrderedWeightUOM" type="UOMType" minOccurs="0"/>
+						<xs:element name="OrderedItemWeight" minOccurs="0">
 							<xs:simpleType>
 								<xs:restriction base="xs:decimal">
 									<xs:totalDigits value="14"/>
@@ -2669,7 +2702,7 @@ ex: not enough stock, or offer not valid</xs:documentation>
 					</xs:complexContent>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="InternalPartnerInd" type="xs:boolean" minOccurs="0">
+			<xs:element name="InternalParnterInd" type="xs:boolean" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Flag to indicate if partner is internal to Albertsons. (ex: ABS-GROCERY)</xs:documentation>
 				</xs:annotation>

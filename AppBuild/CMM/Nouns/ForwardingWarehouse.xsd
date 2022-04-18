@@ -5,6 +5,7 @@
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<!--V 1.0 Sridhar Katkuri 9/1/2021  Designed ForwardingWarehouse BOD from GetWarehouse BOD-->
 	<!--V 1.1 Sridhar Katkuri 9/17/2021 - Changed WarehouseId to Facility ID-->
+	<!--V 1.1 Sridhar Katkuri 9/17/2021 - Changed Vendor_Id, Vendor_Sub_Account_Id and Wims_Sub_Vendor_Nbr as Mandatory-->
 	<xs:include schemaLocation=""/>
 	<xs:complexType name="ForwardingWarehouse">
 		<xs:annotation>
@@ -87,7 +88,7 @@
 								</xs:sequence>
 							</xs:complexType>
 						</xs:element>
-						<xs:element name="VendorId" nillable="false" minOccurs="0">
+						<xs:element name="VendorId" nillable="false">
 							<xs:annotation>
 								<xs:documentation>Vendor Identifier. It&apos;s a six character field with zeros (left) padded.&#10;</xs:documentation>
 							</xs:annotation>
@@ -97,7 +98,7 @@
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
-						<xs:element name="VendorSubAccntId" nillable="false" minOccurs="0">
+						<xs:element name="VendorSubAccntId" nillable="false">
 							<xs:annotation>
 								<xs:documentation>Vendor Sub Account Id</xs:documentation>
 							</xs:annotation>
@@ -107,7 +108,7 @@
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
-						<xs:element name="WimsSubVendorNbr" nillable="false" minOccurs="0">
+						<xs:element name="WimsSubVendorNbr" nillable="false">
 							<xs:annotation>
 								<xs:documentation>Identifies the WIMS Vendor number set up by the Buyer. The first character of the number indicates the location e.g. V - Vancouver, E - Edmonton.  Buyer/Merchandisers may break a Vendor outlet into different WIMS Vendors to suit their own purposes. Some of the reasons a Vendor may have several WIMS Vendor records are: 1. Several Buyers buying from the same Vendor. 2. A buyer buying different commodity groups from the same Vendor. 3. A Vendor offering different purchasing terms on different product lines. 4. A Buyer buying some products through a Broker and some directly from the Vendor.</xs:documentation>
 							</xs:annotation>

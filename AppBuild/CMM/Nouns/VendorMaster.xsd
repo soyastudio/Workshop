@@ -6,8 +6,9 @@
    Dsc: contains commonly used Albertson's Purchase order schema.
    Name: /ABS_CMM_Platform/Nouns/PurchaseOrder.xsd
 -->
-<!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by Devesh (Albertsons) -->
+<!-- edited with XMLSpy v2022 rel. 2 (x64) (http://www.altova.com) by asara37 (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V3.3 Arundhatee Sarangi - ES-6375 / SEM-95 - PACSVendorNbr is added under VendorWarehouse and removed from root level. As it will have one to many relationship with driver table APVMAS-->
 	<!--V3.2 Devesh Kandpal 10/08/2021 - ES-4770 - Added new columns from DSDTERMS  under 'VendorBackdoorReceiving'-->
 	<!--V3.1 Sai Added aditional attributes at VendorSite level.-->
 	<!--V3.0 Patrick Oliver 01/11/21: Changed AddressTypeCd to AddressPurposes and moved this under parent SiteAddress -->
@@ -369,16 +370,6 @@
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
 						<xs:maxLength value="1"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
-			<xs:element name="PACSVendorNbr" nillable="true" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>PACS Application - Vendor Number</xs:documentation>
-				</xs:annotation>
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="20"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -2239,6 +2230,16 @@ Y = Yes</xs:documentation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
 						<xs:maxLength value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PACSVendorNbr" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>PACS Application - Vendor Number</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="20"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>

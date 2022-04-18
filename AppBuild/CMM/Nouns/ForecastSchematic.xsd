@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2021 (x64) (http://www.altova.com) by zulla00 (Albertsons) -->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<!--v1.0 - Zafar Ullah - 3/25/22 - Initial Version-->
+	<xs:complexType name="ForecastSchematic">
+		<xs:sequence>
+			<xs:element name="StockSectionId" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Stocking Section Identifier
+
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StockSectionNm" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Stocking Section Name</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DivisionNm" nillable="false">
+				<xs:annotation>
+					<xs:documentation>Name of the Safeway Divisionex: Norcal, Denver, Dominick&apos;s, Supply, Safeway Direct.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SubDivisionNm" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Banner or the subdivision where the stocking activity is taking place</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CalendarYearDt" type="xs:date">
+				<xs:annotation>
+					<xs:documentation>Denotes the Calendar Year 
+i.e. 2022 etc</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ActivityTypeCd" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Denotes Scope of the activity i.e. reset or new item cut in</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReviewType" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Source system there the activity takes place in i.e. Core Base etc</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WaveNbrData" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Schematic wave in which stocking activity taking place
+i.e. wave in which the current activity was originally scheduled in or
+wave in which the current activity was changed to</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="WaveNbrType">
+							<xs:sequence>
+								<xs:element name="WaveNbr" type="xs:integer"/>
+								<xs:element name="MoveFrom" type="xs:integer" minOccurs="0"/>
+								<xs:element name="MoveTo" type="xs:integer" minOccurs="0"/>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Week" type="WeekType" minOccurs="0"/>
+			<xs:element name="ChildSectTypeCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Denotes any stocking sections related to the main stock_sect_id.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SectionAssignment" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Denotes at which level the activity schematics are generated, national or divisional</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StockingSectionHoursData" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Denotes
+-hours per store stocking activity has taken in the past
+-hours per store current stocking activity is expected to take</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="StockActivityDurationType">
+							<xs:sequence>
+								<xs:element name="HistoricalHr" type="xs:decimal" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Denotes how many hours per store this activity has taken in the past</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="EstimatedHr" type="xs:decimal" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Denotes how many hours per store this current activity is expected to take.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="StartTs" type="xs:dateTime" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Start timestamp indicating the starting point of the event.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="EndTs" type="xs:dateTime" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Is the ending timestamp of the event.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="TimeZoneCd" minOccurs="0">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="20"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CommentTxt" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Hold any special comments from the Calendar Manager</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ActivityStatusCd" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Denotes if the activity is new or modified</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WeekType">
+		<xs:sequence minOccurs="0">
+			<xs:element name="WeekNbr" type="xs:integer">
+				<xs:annotation>
+					<xs:documentation>Week number.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WeekDsc" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Week description for reporting purposes.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="30"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="WeekDayNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the weekday.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="12"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="WeekOfMonthNbr" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Week number within a month.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WeekDayShortNm" type="DateBaseType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Short name of the weekday. Ex: MON, TUE.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WeekStartDt" type="DateBaseType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Week start date.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WeekEndDt" type="DateBaseType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Week end date.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WaveNbrType"/>
+	<xs:complexType name="StockActivityDurationType"/>
+</xs:schema>

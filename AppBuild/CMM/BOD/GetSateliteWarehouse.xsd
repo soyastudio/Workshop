@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by Devesh (Albertsons) -->
+<xs:schema xmlns="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://www.openapplications.org/oagis/9" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--!=============================================================================================-->
+	<!--!-->
+	<!--!-->
+	<!--!      GetSateliteWarehouse: -->
+	<!--!                                     This BOD represents Albertson's owned or rented facility to store inventory which is not accomodated in the main warehouse due to lack of space or equipments (for ex)      -->
+	<!--!-->
+	<!--!=============================================================================================-->
+	<!--V1.0 Devesh Kandpal - 01/13/2022 - Initial version - - ES-6089-->
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/SateliteWarehouse.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:element name="GetSateliteWarehouse" type="GetSateliteWarehouseType">
+		<xs:annotation>
+			<xs:documentation>BOD represents Albertson's owned or rented facility to store inventory which is not accomodated in the main warehouse due to lack of space or </xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetSateliteWarehouseType">
+		<xs:annotation>
+			<xs:documentation>Albertson's owned or rented facility to store inventory which is not accomodated in the main warehouse due to lack of space or equipments (for ex)</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="SateliteWarehouseData" type="Abs:SateliteWarehouseType"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

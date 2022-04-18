@@ -6,9 +6,8 @@
    Dsc: contains commonly used Albertson's Purchase order schema.
    Name: /ABS_CMM_Platform/Nouns/PurchaseOrder.xsd
 -->
-<!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by Devesh (Albertsons) -->
+<!-- edited with XMLSpy v2021 (x64) (http://www.altova.com) by Zafar Ullah (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
-	<!--V1.13 Hari Prasad 12/28/2021 : Added 'FreightChargeInd' and 'ExtendedAmt' to ReceiveDeliveryHeader-->
 	<!--V1.12 Devesh Kandpal 12/08/2021 : ES-5721 - Added 'PhysicalWarehouseId' to ShipFrom and ShipTo-->
 	<!--V1.11 Devesh Kandpal 10/01/2021 : ES-4260 - Added 'PurchaseOrderSourceInd' in the header level-->
 	<!--V1.10 Alex Nunes 7/27/2021: Data type chage for ReceiveDelivery/ReceiveDeliveryHeader/Invoice/VerificationInd and //element(*,AbsReceiveDeliveryType)/ReceiveDeliveryDetail/SpecialOrderItemInd-->
@@ -1074,16 +1073,6 @@ ex retail dept nbr for DSD BDR receiving</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="OrgMasterNameType" type="OrgMasterNameType" minOccurs="0" maxOccurs="unbounded"/>
-			<xs:element name="ExtendedAmt" type="xs:decimal" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Identfies the net vendor payable. This is an extended dollar amount.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="FreightChargeInd" type="xs:string" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Identifies whether the freight charges are included in cost or not.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
 			<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>

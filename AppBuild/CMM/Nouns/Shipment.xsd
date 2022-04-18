@@ -8,6 +8,8 @@
 -->
 <!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by Devesh (Albertsons) -->
 <xs:schema xmlns:oa="http://www.openapplications.org/oagis/9" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V2.2 Devesh Kandpal 02/02/2022 - JIRA - ES-6242 Removed ProcessType and instead added ReplenishmentDt -->
+	<!--V2.1 Devesh Kandpal 01/26/2022 - JIRA - ES-6242 Added new element ExpiryDt, ProcessType to cater various Shipment process, Added ShipFrom, ShitpToFacilityType, ShipToFacilityId-->
 	<!--V2.0 Monica Gaddam 12/2/2021 Update the data type for customerid from integer to String-->
 	<!--V1.9 Monica Gaddam 11/16/2021 Added WholesaleOrderNbr to Shipment Order complex type-->
 	<!--V1.8 Devesh Kandpal 09/23/2021 ES-4089 - Added 'PhysicalWarehouseId’ which represent actual warehouse building and 'InvoiceDtTm' at header-->
@@ -178,6 +180,17 @@ distribution center (warehouse).</xs:documentation>
 							</xs:simpleType>
 						</xs:element>
 						<xs:element ref="WarehouseId" minOccurs="0"/>
+						<xs:element name="PhysicalWarehouseId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Physical warehouse in a distribution Center</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ShipFromFacilityType" type="CodeWithDescription" minOccurs="0"/>
 						<xs:element name="ShipFromFacilityId" minOccurs="0">
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
@@ -227,16 +240,6 @@ distribution center (warehouse).</xs:documentation>
 							</xs:complexType>
 						</xs:element>
 						<xs:element name="ShipFromAddress" type="AddressType" minOccurs="0"/>
-						<xs:element name="PhysicalWarehouseId" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Physical warehouse in a distribution Center</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="2"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
@@ -268,6 +271,12 @@ distribution center (warehouse).</xs:documentation>
 							</xs:simpleType>
 						</xs:element>
 						<xs:element ref="WarehouseId" minOccurs="0"/>
+						<xs:element name="PhysicalWarehouseId" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Physical warehouse in a distribution Center</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ShipToFacilityType" type="CodeWithDescription" minOccurs="0"/>
 						<xs:element name="ShipToFacilityId" minOccurs="0">
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
@@ -1008,6 +1017,16 @@ position</xs:documentation>
 						<xs:fractionDigits value="4"/>
 					</xs:restriction>
 				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ExpiryDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Expery date of an item . Expiry dates are sometimes captured at lot or pallet level for a received item. Different pallets can have different expiry dates and captured during receiving in a warehouse or retail facility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReplenishmentDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date when Pallets are moved from reserve slot to pick slot in warehouse facility</xs:documentation>
+				</xs:annotation>
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>

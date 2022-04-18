@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2021 (x64) (http://www.altova.com) by Zafar Ullah (Albertsons) -->
+<!-- edited with XMLSpy v2022 rel. 2 (x64) (http://www.altova.com) by asara37 (Albertsons) -->
 <!-- edited with XMLSpy v2021 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
 <!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by Sridhar Katkuri (Safeway) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.29.1 Monica Gaddam 04/06/2022 - LR-2032- CORP,DST_CNTR,DIVISION,FACILITY reversed to mandatory.-->
+	<!--V1.29 Monica Gaddam 04/06/2022 - LR-2032- CORP,DST_CNTR,DIVISION,FACILITY made as optional.-->
+	<!--V1.28 Arundhatee Sarangi 03/28/2022 - SEM-112 / ES-6895 / Project 26130 - New Element CodeDateIncr and COOL_Text  is added to support Item Interface for EXE Modernization project-->
+	<!--V1.27 Monica Gaddam 3/16/22- Updated Definition of component Item as a part DisplayItemBOD change.-->
+	<!--V1.26 Patrick Oliver 03/14/22: Added MarketPlaceItem complex type-->
+	<!--V1.25 - Devesh Kandpal 14/02/22: EB-669 - Removed BusinessUnitType and child elements as they are now part of different New BOD-GetMerchandisingBusinessUnit.Added generic type to cater for various indicators-->
+	<!--v1.24 - Zafar Ullah     2/1/22- ES-6314- Adding new field 'BracketOrdQtyRoundingCd', 'ServiceLevelOverrideInd', 'OrderQuantityType', 'TimeSupplyDaysType' and 'ForceJointOrderCd' -->
 	<!--V1.23 - Devesh Kandpal 12/01/21 ES-5659 - Added new field 'ItemValidDt' , AuditData to SupplyChainItemType for WDS.DATE_NEW-->
 	<!--V1.22 - Patrick Oliver 11/30/21: In MerchHierarchyType removed ParentStockingSection and added SuperStockingSectionId and SuperStockingSectionNm-->
 	<!--V1.21 Zafar Ullah -11/04/2021-Zafar Ullah-ES-5274-Adding SupplyOnHandDaysCnt and DeseasonalizedDemandQty to ItemForecastType-->
@@ -309,665 +316,8 @@ Ex:6.49 to 10.50-oz. Selected varieties.
 			<xs:documentation>Corporateitemcd type</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
+			<xs:element name="Qualifier" type="xs:string" minOccurs="0"/>
 			<xs:element ref="CorporateItemCd" minOccurs="0"/>
-		</xs:sequence>
-		<xs:attribute name="Qualifier"/>
-	</xs:complexType>
-	<xs:complexType name="CatalogItem">
-		<xs:annotation>
-			<xs:documentation>Defines items published in online catalog like e-commerce site or any other medium.</xs:documentation>
-		</xs:annotation>
-		<xs:sequence>
-			<xs:element ref="Abs:CorporationId" minOccurs="0"/>
-			<xs:element ref="Abs:DivisionId" minOccurs="0"/>
-			<xs:element name="GeoLocationType" minOccurs="0" maxOccurs="unbounded">
-				<xs:annotation>
-					<xs:documentation>Catalogs can be pulished at a geographic location level as well instead of a store or store group. Geo location can be a city, county, state.</xs:documentation>
-				</xs:annotation>
-				<xs:complexType>
-					<xs:sequence minOccurs="0">
-						<xs:element name="GeoLocationTypeNm" type="xs:string" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Type of the geo loation, ex city, county or state.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="GeoLocationValue" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Actual value of the geo location where the item catalog is effective.
-Ex:  name of the city, county or a state.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="RetailStoreGroup" type="RetailStoreGroup" minOccurs="0" maxOccurs="unbounded">
-				<xs:annotation>
-					<xs:documentation>Catalog items can be published at a group of stores level or at an individual store level.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="FacilityId" type="xs:string" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Can be any facility like a retail store or micro fullfillment center or any other Albertsons location facility from where items published in catalog can be picked to fulfill a customer online order.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="FacilityType" type="CodeWithDescription" minOccurs="0"/>
-			<xs:element ref="EffectiveTimePeriod" minOccurs="0"/>
-			<xs:element name="CatalogId">
-				<xs:annotation>
-					<xs:documentation>Unique identifier for the published catalog either at a facility or location level.</xs:documentation>
-				</xs:annotation>
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="50"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
-			<xs:element ref="BaseProductNbr"/>
-			<xs:element name="FacilityItemStatus" type="StatusType" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Item status in a facility liek store or MFC.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="CatalogItemStatus" type="StatusType" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Indicates the status of an item in a catlog as active or Inactive.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="CeatedDt" type="xs:dateTime" minOccurs="0"/>
-			<xs:element name="PublishedDt" type="xs:dateTime" minOccurs="0"/>
-			<xs:element name="BlockStatus" type="StatusType" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Bolck or Unblock to publish in catalog.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="UPC" type="UPC" maxOccurs="unbounded">
-				<xs:annotation>
-					<xs:documentation>Digital catalog items are published bt BPN Nbr and each BPN is acollection of UPCs. One of the UPC is identiifed as primary UPC.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="CIC" type="CICType" minOccurs="0" maxOccurs="unbounded"/>
-			<xs:element name="PriceLookUpCd" nillable="false" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>This is the PLU to be used for the paper coupon This is the PLU for the item in this ROG. It is used by stores to enter into the cashiers scanner instead of the UPC for items that have no UPC, such as produce items.</xs:documentation>
-				</xs:annotation>
-				<xs:simpleType>
-					<xs:restriction base="xs:decimal">
-						<xs:totalDigits value="5"/>
-						<xs:fractionDigits value="0"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
-			<xs:element name="CatalogItemNm" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Name of the item in Catalog.</xs:documentation>
-				</xs:annotation>
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="100"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
-			<xs:element name="CatalogItemDetail" minOccurs="0">
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element name="CatalogItemDsc" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Detail description of the catalog item.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string"/>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="EnrichedDsc" type="xs:string" minOccurs="0"/>
-						<xs:element name="ProductDsc" type="xs:string" minOccurs="0"/>
-						<xs:element name="WarningTxt" type="xs:string" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>ike contains peanuts, cashews..etc</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="IngredientTxt" type="xs:string" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Dairy, penuts..etc</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="DirectionTxt" type="xs:string" minOccurs="0"/>
-						<xs:element name="IndicationTxt" type="xs:string" minOccurs="0"/>
-						<xs:element name="InteractionTxt" type="xs:string" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>like drug interactions.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="VintageTxt" type="xs:string" minOccurs="0"/>
-						<xs:element name="AllergyInfoTxt" type="xs:string" minOccurs="0"/>
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="DisplayType" type="CodeWithDescription" minOccurs="0"/>
-			<xs:element name="Dimensions" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>ContainsCatalog Item measurements</xs:documentation>
-				</xs:annotation>
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element name="ShelfUnitSizeDsc" nillable="false" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>The generic size of goods. It may be actual size Example: 340 g or a unit type (packet). For SSITMSGNTABLE - Common Sign Size, the size Dsc associated with the Common Sign Cd for the Common Retail Cd.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="30"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="SizeQty" nillable="false" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>The size of the product as a numeric quantity that can be used in in calculations as compared to SIZE-DESC, which is a descriptive size for printing.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:decimal">
-									<xs:totalDigits value="12"/>
-									<xs:fractionDigits value="4"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="SizeUOM" type="CodeWithDescription" nillable="false" minOccurs="0"/>
-						<xs:element name="AlternateSizeInd" nillable="false" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Specifies that an alternate size may be substituted.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="1"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="AlternateSizeDsc" nillable="false" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>This column allows user to specify an alternate size Dsc for an item on a purchase order.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="30"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="ItemHeight" nillable="false" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>The height of the actual shelf item.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:decimal">
-									<xs:totalDigits value="5"/>
-									<xs:fractionDigits value="2"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="ItemDepth" nillable="false" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>The depth of the actual shelf item.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:decimal">
-									<xs:totalDigits value="5"/>
-									<xs:fractionDigits value="2"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="ItemWidth" nillable="false" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>The width of the actual shelf item.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:decimal">
-									<xs:totalDigits value="5"/>
-									<xs:fractionDigits value="2"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="ItemPackUOMCd" nillable="false" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>UOM for shelf item pack measuremenmts.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="20"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="ItemAverageWt" type="ItemAverageWtType" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Average weight of a weighted item.
- Ex wt of each banana, though bananas are sold by weight.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="ItemMinimumWt" minOccurs="0">
-							<xs:simpleType>
-								<xs:restriction base="xs:decimal">
-									<xs:totalDigits value="14"/>
-									<xs:fractionDigits value="4"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="ItemMaximumWt" minOccurs="0">
-							<xs:simpleType>
-								<xs:restriction base="xs:decimal">
-									<xs:totalDigits value="14"/>
-									<xs:fractionDigits value="4"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="ItemUnitWt" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Unit by which permissible sizes within the range of min to max weight are displayed. E.g. If a product has a minimum weight of 5 lb and and max of 10 lb and the increment is 1 lb, then the possible package sizes are 5 lb, 6 lb, 7 lb, 8 lb, 9 lb, 10 lb. </xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:decimal">
-									<xs:totalDigits value="14"/>
-									<xs:fractionDigits value="4"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="ItemWt" minOccurs="0">
-							<xs:simpleType>
-								<xs:restriction base="xs:decimal">
-									<xs:totalDigits value="14"/>
-									<xs:fractionDigits value="4"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="ItemWtUOM" minOccurs="0">
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="20"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="InnerPackQty" nillable="false" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>The Nbr of non-decomposable units in the selling unit.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:decimal">
-									<xs:totalDigits value="4"/>
-									<xs:fractionDigits value="0"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="ShelfPackageCd" type="xs:short" nillable="false" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>type of shelf package in which an item is sold (box, can, bottle, etc.). This is also used to show the type of material of which a container is made (glass, plastic, aluminum, etc.).</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="ItemPickTypeCd" type="CodeWithDescription" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>This attribute has the following values :
-• 1 - Item picked by numbers and sold by weight
-• 2 - Item picked and sold by weight
-• 3 - Pre-packaged and picked by each, but the package has a price which is based on the weight. (eg. Ground beef) 
-</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="ProductHierarchy" minOccurs="0">
-				<xs:complexType>
-					<xs:complexContent>
-						<xs:extension base="ProductHierarchy">
-							<xs:sequence>
-								<xs:element name="SMICDsc" type="xs:string" minOccurs="0">
-									<xs:annotation>
-										<xs:documentation>Description of the product hierarchy as in SMIC (Safeway MerchandiseItem Configuaration) system</xs:documentation>
-									</xs:annotation>
-								</xs:element>
-							</xs:sequence>
-						</xs:extension>
-					</xs:complexContent>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="Brand" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Contains item brand information.</xs:documentation>
-				</xs:annotation>
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element name="BrandCd" nillable="false" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>This Cd is used to indicate the brand Nm of an item.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:decimal">
-									<xs:totalDigits value="5"/>
-									<xs:fractionDigits value="0"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="BrandNm" type="xs:string" nillable="false" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Brand Name</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="ManufacturerType" minOccurs="0">
-				<xs:complexType>
-					<xs:complexContent>
-						<xs:extension base="ManufacturerTypeType">
-							<xs:sequence>
-								<xs:element name="CopyrightTxt" type="xs:string" minOccurs="0">
-									<xs:annotation>
-										<xs:documentation>copyright for the manufactured published item info.</xs:documentation>
-									</xs:annotation>
-								</xs:element>
-							</xs:sequence>
-						</xs:extension>
-					</xs:complexContent>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="RestrictionsType" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>restrictions like transaction limits or customer limits.</xs:documentation>
-				</xs:annotation>
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element name="LimitQty" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Maximum qty that can be purchased.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:decimal">
-									<xs:totalDigits value="10"/>
-									<xs:fractionDigits value="4"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="SalesRestrictionCd" nillable="false" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Indicates if sale of the item is to be restricted when the store activates limited sales. (eg. no alcohol on Sundays).  Remark: Refer to the store level options as well.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:decimal">
-									<xs:totalDigits value="1"/>
-									<xs:fractionDigits value="0"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="DepartmentOverride" type="CodeWithDescription" minOccurs="0"/>
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="Features" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>general features of the item</xs:documentation>
-				</xs:annotation>
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element name="OrganicItemInd" type="xs:string" minOccurs="0"/>
-						<xs:element name="EthnicItemType" type="CodeWithDescription" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>A 2-character code that identifies the ethnicity by which an item might be classified. AS-Asian; CA-Canadian; CH-Chinese; IN-Indian; MX-Mexican, etc.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="SalesRankNbr" type="xs:int" minOccurs="0"/>
-						<xs:element name="ImageURLTxt" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>URL for the catalog item image.</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="500"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="ManufacturerTypeInd" nillable="false" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation> This column is used to indicate if an item is either:
- C = Coupon 
- G = Generic item 
- H = House brand item
- L = Local
- N = National Brand Item</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="1"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="OfferType" type="CodeWithDescription" minOccurs="0"/>
-			<xs:element name="NutritionalInfoType" minOccurs="0" maxOccurs="unbounded">
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element name="NutritionalFact" type="IdWithNameType" minOccurs="0"/>
-						<xs:element name="FactQty" minOccurs="0">
-							<xs:simpleType>
-								<xs:restriction base="xs:decimal">
-									<xs:totalDigits value="10"/>
-									<xs:fractionDigits value="4"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="FactUOM" minOccurs="0">
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="20"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="FactPct" minOccurs="0">
-							<xs:simpleType>
-								<xs:restriction base="xs:decimal">
-									<xs:totalDigits value="7"/>
-									<xs:fractionDigits value="4"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="ContainsTxt" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>text message like 'item contains peanuts'</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="20"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="ConsumerWarningType" minOccurs="0" maxOccurs="unbounded">
-				<xs:annotation>
-					<xs:documentation>Any regulatory consumer warnings like prop65 associated with the item</xs:documentation>
-				</xs:annotation>
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element name="WarningMessage" type="CodeWithDescription" minOccurs="0"/>
-						<xs:element name="DisplayInd" minOccurs="0">
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="1"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="ServingSizeType" minOccurs="0" maxOccurs="unbounded">
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element name="ServingsPerContainerTxt" minOccurs="0">
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="20"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="ServingSizeTxt" minOccurs="0">
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="100"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="ServingSizeUOM" minOccurs="0">
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="20"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="AddedItemTxt" minOccurs="0">
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="20"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="LocationType" minOccurs="0" maxOccurs="unbounded">
-				<xs:annotation>
-					<xs:documentation>location of the item in retail faclity for consumer pickup or online order fulfillment pickup.</xs:documentation>
-				</xs:annotation>
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element name="LocationType" type="CodeWithDescription" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Idenitifies the loaction type.
-Ex: Dept, Section, Aisle, Shelf..etc</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="LocationId" minOccurs="0">
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="20"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="LocationNm" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Name of the location. 
-It is a department name like 'Produce' if LocationType is 'Dept'</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="100"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="LocationURLTxt" minOccurs="0">
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="500"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="LocationImageURLTxt" minOccurs="0">
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="500"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="TemperatureZone" type="CodeWithDescription" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>A 2 char code telling store pickers what temperature the picked item needs kept at prior and during delivery to the  customer.  Available codes are:
-CH - Chilled
-AM - Ambient (room temperature)
-FZ - Frozen </xs:documentation>
-							</xs:annotation>
-						</xs:element>
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="ItemPrice" minOccurs="0" maxOccurs="unbounded">
-				<xs:annotation>
-					<xs:documentation>pricing details of the catlog item. They depend on promotions and type of delivery to the customer.</xs:documentation>
-				</xs:annotation>
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element name="DeliveryType" type="CodeWithDescription" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Item delivery type like Home dleivery or Drive Up and Go (DUG) or third party delivery. Item prices epend on delivery type.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="PriceAmt" minOccurs="0">
-							<xs:simpleType>
-								<xs:restriction base="xs:decimal">
-									<xs:totalDigits value="14"/>
-									<xs:fractionDigits value="4"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="RegularPriceAmt" minOccurs="0">
-							<xs:simpleType>
-								<xs:restriction base="xs:decimal">
-									<xs:totalDigits value="14"/>
-									<xs:fractionDigits value="4"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="UnitPriceAmt" minOccurs="0">
-							<xs:simpleType>
-								<xs:restriction base="xs:decimal">
-									<xs:totalDigits value="14"/>
-									<xs:fractionDigits value="4"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="LimitQty" type="xs:integer" minOccurs="0"/>
-						<xs:element name="UOMCd" type="CodeWithDescription" minOccurs="0"/>
-						<xs:element name="RingTypeCd" nillable="false" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Indicates how the price is determined for items with PLUs and UPCs.Indicates how an item is being sold by, like each or by random wieght.
-Valid Ring Type Codes are:
-• "0" - Price on file
-• "1" - Random Dollar - weight 
-• "2" - Random Weight 
-• "3" - Store Coupon
-• "4" - Vendor Coupon   
-• "5" - Random Dollar – each</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="xs:decimal">
-									<xs:totalDigits value="1"/>
-									<xs:fractionDigits value="0"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="SellByWeightInd" minOccurs="0">
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:maxLength value="1"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="PromotionType" type="CodeWithDescription" minOccurs="0"/>
-						<xs:element name="PromotionDsc" type="xs:string" minOccurs="0"/>
-						<xs:element name="PromotionPeriod" minOccurs="0">
-							<xs:complexType>
-								<xs:sequence>
-									<xs:element name="StartDt" type="xs:dateTime" minOccurs="0"/>
-									<xs:element name="EndDt" type="xs:dateTime" minOccurs="0"/>
-								</xs:sequence>
-							</xs:complexType>
-						</xs:element>
-						<xs:element name="TriggerQty" minOccurs="0">
-							<xs:simpleType>
-								<xs:restriction base="xs:decimal">
-									<xs:totalDigits value="14"/>
-									<xs:fractionDigits value="4"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="CorporateItemType">
@@ -2082,6 +1432,11 @@ a normal item.
 								<xs:documentation>This identifies the Classification for a COOL UP/PLU. For example BEEF LAMB PORK FARM FISH WILD FISH will each be considered distinct classifications for COOL. The information is used in the scale UI to control what options are available to create Custom COOL.  This field will having the following values (but not limited to these values)  000 - All Categories  001 - Beef  002 - Lamb  003 - Pork  004 - Wild Fish  005 - Farm Fish  006 - Other Category  ...  999 - Other Category</xs:documentation>
 							</xs:annotation>
 						</xs:element>
+						<xs:element name="CountryOfOriginLabelingTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This field represents the COOL text that was assigned to the item on Host from Country of Origin Labeling Audit Trail Record Maintenance Table MECOAUDT</xs:documentation>
+							</xs:annotation>
+						</xs:element>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
@@ -2615,6 +1970,11 @@ a normal item.
 			<xs:element name="MadeToOrderItemInd" type="xs:string" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Indicates of the item can be made with in the store facilty by an Order. Ex : Sandwiches in Deli and Cakes in Bakery.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CodeDateIncr" type="xs:short" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Value added to the pack date entered at receiving to calculate the actual code date of the product.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="AuditData" type="RecordAuditData" minOccurs="0"/>
@@ -4071,6 +3431,663 @@ L = Limit Quantity Pricing – if customer purchases an amount under the limit (
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
+	<xs:complexType name="CatalogItem">
+		<xs:annotation>
+			<xs:documentation>Defines items published in online catalog like e-commerce site or any other medium.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="Abs:CorporationId" minOccurs="0"/>
+			<xs:element ref="Abs:DivisionId" minOccurs="0"/>
+			<xs:element name="GeoLocationType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Catalogs can be pulished at a geographic location level as well instead of a store or store group. Geo location can be a city, county, state.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence minOccurs="0">
+						<xs:element name="GeoLocationTypeNm" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Type of the geo loation, ex city, county or state.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="GeoLocationValue" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Actual value of the geo location where the item catalog is effective.
+Ex:  name of the city, county or a state.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="RetailStoreGroup" type="RetailStoreGroup" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Catalog items can be published at a group of stores level or at an individual store level.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityId" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Can be any facility like a retail store or micro fullfillment center or any other Albertsons location facility from where items published in catalog can be picked to fulfill a customer online order.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityType" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element ref="EffectiveTimePeriod" minOccurs="0"/>
+			<xs:element name="CatalogId">
+				<xs:annotation>
+					<xs:documentation>Unique identifier for the published catalog either at a facility or location level.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="BaseProductNbr"/>
+			<xs:element name="FacilityItemStatus" type="StatusType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Item status in a facility liek store or MFC.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CatalogItemStatus" type="StatusType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates the status of an item in a catlog as active or Inactive.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CeatedDt" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="PublishedDt" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="BlockStatus" type="StatusType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Bolck or Unblock to publish in catalog.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UPC" type="UPC" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Digital catalog items are published bt BPN Nbr and each BPN is acollection of UPCs. One of the UPC is identiifed as primary UPC.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CIC" type="CICType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="PriceLookUpCd" nillable="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is the PLU to be used for the paper coupon This is the PLU for the item in this ROG. It is used by stores to enter into the cashiers scanner instead of the UPC for items that have no UPC, such as produce items.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:decimal">
+						<xs:totalDigits value="5"/>
+						<xs:fractionDigits value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CatalogItemNm" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Name of the item in Catalog.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CatalogItemDetail" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="CatalogItemDsc" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Detail description of the catalog item.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string"/>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="EnrichedDsc" type="xs:string" minOccurs="0"/>
+						<xs:element name="ProductDsc" type="xs:string" minOccurs="0"/>
+						<xs:element name="WarningTxt" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>ike contains peanuts, cashews..etc</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="IngredientTxt" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Dairy, penuts..etc</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="DirectionTxt" type="xs:string" minOccurs="0"/>
+						<xs:element name="IndicationTxt" type="xs:string" minOccurs="0"/>
+						<xs:element name="InteractionTxt" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>like drug interactions.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="VintageTxt" type="xs:string" minOccurs="0"/>
+						<xs:element name="AllergyInfoTxt" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="DisplayType" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="Dimensions" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>ContainsCatalog Item measurements</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ShelfUnitSizeDsc" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The generic size of goods. It may be actual size Example: 340 g or a unit type (packet). For SSITMSGNTABLE - Common Sign Size, the size Dsc associated with the Common Sign Cd for the Common Retail Cd.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SizeQty" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The size of the product as a numeric quantity that can be used in in calculations as compared to SIZE-DESC, which is a descriptive size for printing.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="12"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SizeUOM" type="CodeWithDescription" nillable="false" minOccurs="0"/>
+						<xs:element name="AlternateSizeInd" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Specifies that an alternate size may be substituted.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AlternateSizeDsc" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This column allows user to specify an alternate size Dsc for an item on a purchase order.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ItemHeight" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The height of the actual shelf item.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="5"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ItemDepth" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The depth of the actual shelf item.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="5"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ItemWidth" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The width of the actual shelf item.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="5"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ItemPackUOMCd" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>UOM for shelf item pack measuremenmts.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ItemAverageWt" type="ItemAverageWtType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Average weight of a weighted item.
+ Ex wt of each banana, though bananas are sold by weight.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ItemMinimumWt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ItemMaximumWt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ItemUnitWt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Unit by which permissible sizes within the range of min to max weight are displayed. E.g. If a product has a minimum weight of 5 lb and and max of 10 lb and the increment is 1 lb, then the possible package sizes are 5 lb, 6 lb, 7 lb, 8 lb, 9 lb, 10 lb. </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ItemWt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ItemWtUOM" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="InnerPackQty" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The Nbr of non-decomposable units in the selling unit.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="4"/>
+									<xs:fractionDigits value="0"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ShelfPackageCd" type="xs:short" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>type of shelf package in which an item is sold (box, can, bottle, etc.). This is also used to show the type of material of which a container is made (glass, plastic, aluminum, etc.).</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ItemPickTypeCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This attribute has the following values :
+• 1 - Item picked by numbers and sold by weight
+• 2 - Item picked and sold by weight
+• 3 - Pre-packaged and picked by each, but the package has a price which is based on the weight. (eg. Ground beef) 
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ProductHierarchy" minOccurs="0">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="ProductHierarchy">
+							<xs:sequence>
+								<xs:element name="SMICDsc" type="xs:string" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Description of the product hierarchy as in SMIC (Safeway MerchandiseItem Configuaration) system</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Brand" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains item brand information.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="BrandCd" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This Cd is used to indicate the brand Nm of an item.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="5"/>
+									<xs:fractionDigits value="0"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="BrandNm" type="xs:string" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Brand Name</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ManufacturerType" minOccurs="0">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="ManufacturerTypeType">
+							<xs:sequence>
+								<xs:element name="CopyrightTxt" type="xs:string" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>copyright for the manufactured published item info.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="RestrictionsType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>restrictions like transaction limits or customer limits.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="LimitQty" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Maximum qty that can be purchased.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="10"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SalesRestrictionCd" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates if sale of the item is to be restricted when the store activates limited sales. (eg. no alcohol on Sundays).  Remark: Refer to the store level options as well.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="1"/>
+									<xs:fractionDigits value="0"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DepartmentOverride" type="CodeWithDescription" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Features" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>general features of the item</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="OrganicItemInd" type="xs:string" minOccurs="0"/>
+						<xs:element name="EthnicItemType" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>A 2-character code that identifies the ethnicity by which an item might be classified. AS-Asian; CA-Canadian; CH-Chinese; IN-Indian; MX-Mexican, etc.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SalesRankNbr" type="xs:int" minOccurs="0"/>
+						<xs:element name="ImageURLTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>URL for the catalog item image.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="500"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ManufacturerTypeInd" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation> This column is used to indicate if an item is either:
+ C = Coupon 
+ G = Generic item 
+ H = House brand item
+ L = Local
+ N = National Brand Item</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="OfferType" type="CodeWithDescription" minOccurs="0"/>
+			<xs:element name="NutritionalInfoType" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="NutritionalFact" type="IdWithNameType" minOccurs="0"/>
+						<xs:element name="FactQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="10"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="FactUOM" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="FactPct" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="7"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ContainsTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>text message like 'item contains peanuts'</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ConsumerWarningType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Any regulatory consumer warnings like prop65 associated with the item</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="WarningMessage" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="DisplayInd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ServingSizeType" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ServingsPerContainerTxt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ServingSizeTxt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ServingSizeUOM" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AddedItemTxt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="LocationType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>location of the item in retail faclity for consumer pickup or online order fulfillment pickup.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="LocationType" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Idenitifies the loaction type.
+Ex: Dept, Section, Aisle, Shelf..etc</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="LocationId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LocationNm" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Name of the location. 
+It is a department name like 'Produce' if LocationType is 'Dept'</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LocationURLTxt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="500"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LocationImageURLTxt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="500"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="TemperatureZone" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>A 2 char code telling store pickers what temperature the picked item needs kept at prior and during delivery to the  customer.  Available codes are:
+CH - Chilled
+AM - Ambient (room temperature)
+FZ - Frozen </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ItemPrice" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>pricing details of the catlog item. They depend on promotions and type of delivery to the customer.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="DeliveryType" type="CodeWithDescription" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Item delivery type like Home dleivery or Drive Up and Go (DUG) or third party delivery. Item prices epend on delivery type.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="PriceAmt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="RegularPriceAmt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="UnitPriceAmt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="LimitQty" type="xs:integer" minOccurs="0"/>
+						<xs:element name="UOMCd" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="RingTypeCd" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates how the price is determined for items with PLUs and UPCs.Indicates how an item is being sold by, like each or by random wieght.
+Valid Ring Type Codes are:
+• "0" - Price on file
+• "1" - Random Dollar - weight 
+• "2" - Random Weight 
+• "3" - Store Coupon
+• "4" - Vendor Coupon   
+• "5" - Random Dollar – each</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="1"/>
+									<xs:fractionDigits value="0"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SellByWeightInd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="PromotionType" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="PromotionDsc" type="xs:string" minOccurs="0"/>
+						<xs:element name="PromotionPeriod" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="StartDt" type="xs:dateTime" minOccurs="0"/>
+									<xs:element name="EndDt" type="xs:dateTime" minOccurs="0"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="TriggerQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
 	<xs:complexType name="PharmacyItemType">
 		<xs:annotation>
 			<xs:documentation>Contains Pharmacy drug item information</xs:documentation>
@@ -4263,6 +4280,7 @@ Delivery Item in a ROG and Price Area.                        </xs:documentation
 					<xs:sequence>
 						<xs:element name="ProductGroup" type="IdWithNameType" minOccurs="0"/>
 						<xs:element name="RollOut" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element ref="ItemSpecificationType" minOccurs="0" maxOccurs="unbounded"/>
 						<xs:element name="ProductCategoryCd" minOccurs="0" maxOccurs="unbounded">
 							<xs:complexType>
 								<xs:sequence>
@@ -4281,70 +4299,25 @@ Delivery Item in a ROG and Price Area.                        </xs:documentation
 									</xs:element>
 									<xs:element name="SizeUOM" type="CodeWithDescription" minOccurs="0"/>
 									<xs:element name="RollOut" type="CodeWithDescription" minOccurs="0"/>
+									<xs:element ref="ItemSpecificationType" minOccurs="0" maxOccurs="unbounded"/>
 									<xs:element name="ProductClass" minOccurs="0" maxOccurs="unbounded">
 										<xs:complexType>
 											<xs:sequence>
 												<xs:element name="ProductClass" type="IdWithNameType" minOccurs="0"/>
 												<xs:element name="RollOut" type="CodeWithDescription" minOccurs="0"/>
+												<xs:element ref="ItemSpecificationType" minOccurs="0" maxOccurs="unbounded"/>
 												<xs:element name="ProductSubClassLevel1" minOccurs="0" maxOccurs="unbounded">
 													<xs:complexType>
 														<xs:sequence>
 															<xs:element name="ProductSubClassLevel1" type="IdWithNameType" minOccurs="0"/>
 															<xs:element name="RollOut" type="CodeWithDescription" minOccurs="0"/>
+															<xs:element ref="ItemSpecificationType" minOccurs="0" maxOccurs="unbounded"/>
 															<xs:element name="ProductSubClassLevel2" minOccurs="0" maxOccurs="unbounded">
 																<xs:complexType>
 																	<xs:sequence>
 																		<xs:element name="ProductSubClassLevel2" type="IdWithNameType" minOccurs="0"/>
 																		<xs:element name="RollOut" type="CodeWithDescription" minOccurs="0"/>
-																		<xs:sequence/>
-																		<xs:element name="BusinessUnitType" minOccurs="0">
-																			<xs:annotation>
-																				<xs:documentation>Defines business units and groups(BUGM and BGGM) that owns and responsible for the procurement of items in a merchandise hierarchy level.</xs:documentation>
-																			</xs:annotation>
-																			<xs:complexType>
-																				<xs:sequence>
-																					<xs:element name="StockingSection" minOccurs="0" maxOccurs="unbounded">
-																						<xs:complexType>
-																							<xs:sequence>
-																								<xs:element ref="StockingSectionId" minOccurs="0"/>
-																								<xs:element ref="StockingSectionNm" minOccurs="0"/>
-																								<xs:element name="PrimaryStockingSectionInd" type="xs:boolean" minOccurs="0"/>
-																								<xs:element name="SuperStockingSectionId" type="xs:integer" minOccurs="0"/>
-																								<xs:element name="SuperStockingSectionNm" minOccurs="0">
-																									<xs:simpleType>
-																										<xs:restriction base="xs:string">
-																											<xs:maxLength value="250"/>
-																										</xs:restriction>
-																									</xs:simpleType>
-																								</xs:element>
-																							</xs:sequence>
-																						</xs:complexType>
-																					</xs:element>
-																					<xs:element name="BusinessUnitId" type="xs:integer" minOccurs="0"/>
-																					<xs:element name="BusinessUnitNm" minOccurs="0">
-																						<xs:annotation>
-																							<xs:documentation>Business unit: a group of retail sections make up a business unit. E.G. the Cheese, Refrigerated, Milk, and Eggs retail sections make up the Dairy/Refrigerated business unit.</xs:documentation>
-																						</xs:annotation>
-																						<xs:simpleType>
-																							<xs:restriction base="xs:string">
-																								<xs:maxLength value="250"/>
-																							</xs:restriction>
-																						</xs:simpleType>
-																					</xs:element>
-																					<xs:element name="BusinessGroupId" type="xs:integer" minOccurs="0"/>
-																					<xs:element name="BusinessGroupNm" minOccurs="0">
-																						<xs:annotation>
-																							<xs:documentation>Business group: a group of business units make up a business group. E.G. the Dairy/Refrigerated and Frozen business units make up the Dairy/Refrigerated/Frozen business group.</xs:documentation>
-																						</xs:annotation>
-																						<xs:simpleType>
-																							<xs:restriction base="xs:string">
-																								<xs:maxLength value="250"/>
-																							</xs:restriction>
-																						</xs:simpleType>
-																					</xs:element>
-																				</xs:sequence>
-																			</xs:complexType>
-																		</xs:element>
+																		<xs:element ref="ItemSpecificationType" minOccurs="0" maxOccurs="unbounded"/>
 																	</xs:sequence>
 																</xs:complexType>
 															</xs:element>
@@ -4775,6 +4748,35 @@ but in most cases, people don't want to know the actual service level % of the i
 						<xs:fractionDigits value="2"/>
 					</xs:restriction>
 				</xs:simpleType>
+			</xs:element>
+			<xs:element name="BracketOrdQtyRoundingCd" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Bracket Order Quantity Rounding Code</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ServiceLevelOverrideInd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Service Level Override Indicator</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrderQuantityType" type="OrderQuantityType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="TimeSupplyDaysType" type="TimeSupplyDaysType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ForceJointOrderCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Force Joint Order, an item-level code indicating that you want to force an order without using service calculations to determine whether the order is required; valid values: 
+
+G: Force a joint order that includes all items as needed 
+S: Force a joint order including only selected items (SELECTSW = S) 
+
+T: Force a joint order including only non-selected items (SELECTSW = N) 
+
+N: Do not force an order </xs:documentation>
+				</xs:annotation>
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
@@ -6199,7 +6201,7 @@ The store just puts that whole "display case" out on sales floor somewhere</xs:d
 					<xs:sequence>
 						<xs:element name="DisplayItem" minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>main CIC for a dispaly group.</xs:documentation>
+								<xs:documentation>main CIC for a display group.</xs:documentation>
 							</xs:annotation>
 							<xs:complexType>
 								<xs:sequence>
@@ -6217,7 +6219,7 @@ The store just puts that whole "display case" out on sales floor somewhere</xs:d
 						</xs:element>
 						<xs:element name="ComponentItem" minOccurs="0" maxOccurs="unbounded">
 							<xs:annotation>
-								<xs:documentation>Component items included within a pre packed display item. One display CIC can have multiple component CICs.</xs:documentation>
+								<xs:documentation>Component items included within a pre packed display item. Component Items are at CI UPC level and there are no Component CICs</xs:documentation>
 							</xs:annotation>
 							<xs:complexType>
 								<xs:sequence>
@@ -6673,6 +6675,816 @@ O - other expenses (non-wrap) - expense items that are used in the store (e.g. f
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
 									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OrderQuantityType">
+		<xs:annotation>
+			<xs:documentation>This indicates differrent types of Quantity types
+  -Order Quantity
+  -Raw Order Quantity
+  -Calculated Economic    Order Quantity
+  -Item Specified Stockout Quantity
+  - Item Expected Stockout</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="OrderQuantityTypeCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Order Quantity type are the following
+  -Order Quantity
+  -Raw Order Quantity
+  -Calculated Economic Order Quantity
+  -Item Specified Stockout Quantity
+  - Item Expected Stockout Quantity</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrderQtyNbr" type="xs:decimal" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Order Quantity amount</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UOMCD" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Unit of Measure i.e. lb, kg etc</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TimeSupplyDaysType">
+		<xs:sequence>
+			<xs:element name="SupplyDayTypeCd" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Different time it takes in terms of days when order arrives and it is based on
+  -Time supply Available with Safety Stock Days
+ -Time supply New available with Safety Stock Days
+ -Time supply on Order days
+ -Time Supply Safety Stock Days</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SupplyDaysNbr" type="xs:decimal" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Number of days it takes to arrive when order is placed</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="ItemSpecificationType">
+		<xs:annotation>
+			<xs:documentation>Contains Special Item specifications likes Alcohal percentage , Cigrette indicator etc</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence minOccurs="0">
+				<xs:element name="ItemSpecificationTypeCd" type="xs:string" minOccurs="0"/>
+				<xs:element name="ItemSpecificationValueTxt" type="xs:string" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="MarketPlaceItem">
+		<xs:annotation>
+			<xs:documentation>Business object that defines items published within the Market Place e-commerce site. Market Place is an online platform where vendors can host their virtual shops and offer their products to sell to customers.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="VendorId">
+				<xs:annotation>
+					<xs:documentation>Market Place Vendor Number.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="VendorNm" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="UPC">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="UPCTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>UPC as text</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="14"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="UPCNbr" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>UPC as decimal(14)</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="0"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="UPCDsc" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>UPC full description.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="120"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element ref="UPCType" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="MarketPlaceItemId">
+				<xs:annotation>
+					<xs:documentation>Marketplace item identification provided by the Vendor. Also referred to as 'VariantId'. </xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ProductSKU" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="GTIN" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="14"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="VendorSKU" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element ref="BaseProductNbr" minOccurs="0"/>
+			<xs:element name="MarketPlaceItemStatus" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates the status of an item in MarketPlace as active or Inactive</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="StatusTypeCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Status Code.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
+									<xs:enumeration value="CC"/>
+									<xs:enumeration value="DO"/>
+									<xs:enumeration value="ET"/>
+									<xs:enumeration value="IS"/>
+									<xs:enumeration value="PO"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="StatusDsc" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="EffectiveDtTm" type="xs:dateTime" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ItemDetail" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains various types of MarketPlace item details. </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ProductDsc" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Detailed description of the Item</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="TitleDsc" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Dsc used for titles within MarketPlace.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="EnrichedDsc" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Additional information for product description.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="WarningTxt" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>ike contains peanuts, cashews..etc</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="IngredientTxt" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Dairy, penuts..etc</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="DirectionTxt" type="xs:string" minOccurs="0"/>
+						<xs:element name="IndicationTxt" type="xs:string" minOccurs="0"/>
+						<xs:element name="InteractionTxt" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>like drug interactions.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="VintageTxt" type="xs:string" minOccurs="0"/>
+						<xs:element name="AllergyInfoTxt" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GraphicData" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ImageID" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Item Image ID from Marketplacer.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ImageNm" type="xs:string" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Item Image name</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ImageSize" type="xs:integer" minOccurs="0"/>
+						<xs:element name="ImagePositionNbr" type="xs:integer" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Image Position for that item like first image, 2nd etc.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ImageURLTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Image URL from where Albertsons can download the product.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="500"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ItemHierarchy" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains Albertsons Merchandising Item Classification(SMIC) data.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="SMICGroupCd" type="xs:string" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Item Hierarchy Group Code.  Group Cd is the first level in the SMIC classification. SMIC = Safeway Merchandising Item Cd.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SMICGroupNm" type="xs:string" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Item Hierarchy Group Description</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SMICCategoryCd" type="xs:string" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Item Hierarchy Category Code. Category Cd is the second level in the SMIC classification. SMIC = Safeway Merchandising Item Cd.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SMICCategoryNm" type="xs:string" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Item Hierarchy Category Description.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SMICClassCd" type="xs:string" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Item Hierarchy Class Code. Class Cd is the third level in the SMIC classification. SMIC = Safeway Merchandising Item Cd.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SMICClassNm" type="xs:string" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Item Hierarchy Class Description</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SMICSubClassCd" type="xs:string" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Item Hierarchy/Subclass Code. Sub Class Cd is the fourth level in the SMIC classification. SMIC = Safeway Merchandising Item Cd.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SMICSubClassNm" type="xs:string" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Item Hierarchy Subclass Description</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SMICSubSubClassCd" type="xs:string" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Item Hierarchy/SubSubClass Code. Sub Sub Class Cd is the fifth level in the SMIC classification. SMIC = Safeway Merchandising Item Cd.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SMICSubSubClassNm" type="xs:string" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Item Hierarchy SubSubClass Description</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Features" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>General features of the item.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="OrganicItemInd" type="xs:boolean" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates if item contains organic materials.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="EnrichedItemInd" type="xs:boolean" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicator if item contains specific nutrients.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ExtendedItemInd" type="xs:boolean" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicator for extended item information provided by suppliers for shoppers. This can be additonal dimensional data such incrWgt, maxWgt etc. </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="HouseholdCleaningItemInd" type="xs:boolean" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicator for Household Cleaning items.  </xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="EthnicItemType" type="CodeWithDescription" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Identifies the ethnicity by which an item might be sold. Ex: Asian, Canadian, Indian, Mexican, etc.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="AutoReplenishtemInd" type="xs:boolean" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Indicates that this item can be Auto replenished.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="SalesRankNbr" type="xs:int" minOccurs="0"/>
+						<xs:element name="ManufacturerTypeInd" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation> This column is used to indicate if an item is either:
+ C = Coupon 
+ G = Generic item 
+ H = House brand item
+ L = Local
+ N = National Brand Item</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Dimensions" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains MarketPlace Item measurements</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ShelfUnitSizeDsc" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The generic size of goods. It may be actual size Example: 340 g or a unit type (packet). For SSITMSGNTABLE - Common Sign Size, the size Dsc associated with the Common Sign Cd for the Common Retail Cd.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SizeQty" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The size of the product as a numeric quantity that can be used in in calculations as compared to SIZE-DESC, which is a descriptive size for printing.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="12"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="SizeUOM" type="CodeWithDescription" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Unit of measure for item size dimensions.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="AlternateSizeInd" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Specifies that an alternate size may be substituted.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AlternateSizeDsc" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This column allows user to specify an alternate size Dsc for an item on a purchase order.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="30"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ItemDistanceUOM" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Unit of measusre for item distance dimensions.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ItemHeight" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The height of the actual shelf item.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="5"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ItemDepth" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The depth of the actual shelf item.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="5"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ItemWidth" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The width of the actual shelf item.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="5"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ItemPackUOMCd" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>UOM for shelf item pack measuremenmts.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ItemWtUOM" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Unit of measure for item weight dimensions.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ItemWt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Weight of item in standard UOM. </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ItemAverageWt" type="ItemAverageWtType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Average weight of a weighted item.
+ Ex wt of each banana, though bananas are sold by weight.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ItemMinimumWt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Minimum weight of an item. Generally part of extended item dimension information.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ItemMaximumWt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Maximum weight of an item. Generally part of extended item dimension information.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="IncrementalWt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Weight of item by which something increases or grows.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ItemUnitWt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Unit by which permissible sizes within the range of min to max weight are displayed. E.g. If a product has a minimum weight of 5 lb and and max of 10 lb and the increment is 1 lb, then the possible package sizes are 5 lb, 6 lb, 7 lb, 8 lb, 9 lb, 10 lb. </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="InnerPackQty" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The Nbr of non-decomposable units in the selling unit.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="4"/>
+									<xs:fractionDigits value="0"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ShelfPackageCd" type="xs:short" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>type of shelf package in which an item is sold (box, can, bottle, etc.). This is also used to show the type of material of which a container is made (glass, plastic, aluminum, etc.).</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CostData" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="CurrencyCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Currency code used in for shipping amounts. </xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="25"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ShippingCostAmt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Domestic Shipping cost of the product.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="10"/>
+									<xs:fractionDigits value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="FreeShippingInd" type="xs:boolean" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Has domestic free shipping cost or not.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="TaxData" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Indicates the tax for the object associated.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="TaxTypeCd" type="xs:string" default="" minOccurs="0"/>
+						<xs:element name="TaxPct" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Tax percentage</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="6"/>
+									<xs:fractionDigits value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="TaxAmt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Tax amount</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="14"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="TaxCurrency" type="CodeWithDescription" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="NutritionalInfoType" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="NutritionalFact" type="IdWithNameType" minOccurs="0"/>
+						<xs:element name="FactQty" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="10"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="FactUOM" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="FactPct" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="7"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ContainsTxt" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>text message like 'item contains peanuts'</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ServingSizeType" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ServingsPerContainerTxt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ServingSizeTxt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="100"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ServingSizeUOM" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AddedItemTxt" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="20"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Brand" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Contains item brand information.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="BrandCd" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>This Cd is used to indicate the brand Nm of an item.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:totalDigits value="5"/>
+									<xs:fractionDigits value="0"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="BrandNm" type="xs:string" nillable="false" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Brand Name</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ConsumerWarningType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Any regulatory consumer warnings like prop65 associated with the item</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="WarningMessage" type="CodeWithDescription" minOccurs="0"/>
+						<xs:element name="DisplayInd" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ProductSourceCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identifies source of item as 1st Party or 3rd Party product, default 3P</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DeliveryServiceType" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Item delivery service type. ex Home delivery, Door delivery, Drivr up and Go (DUG), etc.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ItemPickTypeCd" type="CodeWithDescription" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This attribute has the following values :
+• 1 - Item picked by numbers and sold by weight
+• 2 - Item picked and sold by weight
+• 3 - Pre-packaged and picked by each, but the package has a price which is based on the weight. (eg. Ground beef) 
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AuditData" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="CreateDtTm" type="xs:dateTime" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Date and time when the record was created in the source system.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CreateTs" type="xs:dateTime" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>the record create timestamp in the source system.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="CreateUserId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="UpdateDtTm" type="xs:dateTime" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Date and time when the record was last updated in the source system.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="UpdateTs" type="xs:dateTime" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Last updated timestamp of the source sytem record.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="UpdateUserId" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50"/>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>

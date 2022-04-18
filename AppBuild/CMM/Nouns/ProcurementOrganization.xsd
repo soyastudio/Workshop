@@ -77,6 +77,18 @@
 				<xs:complexType>
 					<xs:sequence minOccurs="0">
 						<xs:element ref="CorporationId" minOccurs="0"/>
+						<xs:element ref="DivisionId" minOccurs="0"/>
+						<xs:element name="DistributionCenterGMCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Distribution Center General Manager
+Code</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
 						<xs:element name="BuyerNbr">
 							<xs:annotation>
 								<xs:documentation>This identifies the buyer of this item or
@@ -89,6 +101,20 @@ accept as the variance.</xs:documentation>
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
 									<xs:maxLength value="2"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DistributionCenterGMNm" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>DC General Manager Name should
+contain a name but in cases when the
+person is not yet named a placeholder
+may be used.
+</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="34"/>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
@@ -182,6 +208,27 @@ Report or not.</xs:documentation>
 							<xs:simpleType>
 								<xs:restriction base="xs:string">
 									<xs:maxLength value="1"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="RegionCd" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Each retail belongs to a region.its a
+character .. like S for south
+ N for north
+REGION - Region Code. Example “S”
+is the South Region. Each retail
+division belongs to a single Region.”
+· NORTH
+· SOUTH
+· SWY
+· ABS
+For CPS, the regions are SWY for
+Safeway and ABS for Albertsons.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10"/>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
@@ -346,31 +393,6 @@ information for a buyer number.
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="DistributionCenterGMNm" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>DC General Manager Name should
-contain a name but in cases when the
-person is not yet named a placeholder
-may be used.
-</xs:documentation>
-				</xs:annotation>
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="34"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
-			<xs:element name="DistributionCenterGMCd" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Distribution Center General Manager
-Code</xs:documentation>
-				</xs:annotation>
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="2"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
 			<xs:element name="RegionalDirectorNm" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Regional Director Name</xs:documentation>
@@ -378,27 +400,6 @@ Code</xs:documentation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
 						<xs:maxLength value="23"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
-			<xs:element name="RegionCd" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Each retail belongs to a region.its a
-character .. like S for south
- N for north
-REGION - Region Code. Example “S”
-is the South Region. Each retail
-division belongs to a single Region.”
-· NORTH
-· SOUTH
-· SWY
-· ABS
-For CPS, the regions are SWY for
-Safeway and ABS for Albertsons.</xs:documentation>
-				</xs:annotation>
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="10"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -421,7 +422,6 @@ being purchased via codes. </xs:documentation>
 						<xs:element name="ManagerNm" type="xs:string" minOccurs="0"/>
 						<xs:element name="ManagerCd" type="xs:string" minOccurs="0"/>
 						<xs:element ref="CorporationId" minOccurs="0"/>
-						<xs:element ref="DivisionId" minOccurs="0"/>
 						<xs:element ref="DistributionCenterId" minOccurs="0"/>
 					</xs:sequence>
 				</xs:complexType>

@@ -6,8 +6,10 @@
    Dsc: contains commonly used Albertson's Purchase order schema.
    Name: /ABS_CMM_Platform/Nouns/StoreOrder.xsd
 -->
-<!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by Devesh (Albertsons) -->
+<!-- edited with XMLSpy v2022 rel. 2 (x64) (http://www.altova.com) by asara37 (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<!--V1.4 Arundhatee Sarangi 03/28/2022 - SEM-112 / ES-6895 HACCPDsc added to support Item Interface as per EXE modernization project-->
+	<!--V1.3 Devesh Kandpal 01/26/22  - ES-6245- Removed GTINID, VendorProductID . Introduced VendorUPCComponents ,BuyerNbr,VendorOrderCd-->
 	<!--V1.2 Devesh Kandpal 01/05/22 - Updated Annotaton for GTIN and removed other elements from within ItemId-->
 	<!--V1.1 Devesh Kandpal 12/1/21 - Added New complex type Brand-->
 	<!--V1.0 Devesh Kandpal 9/27/21 -  ES-4263 - Draft Version-->
@@ -24,7 +26,6 @@
 		<xs:sequence>
 			<xs:element ref="CorporationId"/>
 			<xs:element ref="CorporateItemCd"/>
-			<xs:element name="ItemId" type="ItemId" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="ProductHierarchy" type="ProductHierarchy" minOccurs="0"/>
 			<xs:element name="SMIC" minOccurs="0">
 				<xs:annotation>
@@ -555,6 +556,11 @@ N New item</xs:documentation>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
+			<xs:element name="HACCPDsc" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This field will contain the valid Hazard Analysis and Critical Control Point (HACCP) descriptions.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="EthnicItemTypeCd" nillable="false" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>A 2-character Cd that identifies the ethnicity by which an item might be classified.  Example: IT, MX, AS, IN</xs:documentation>
@@ -603,6 +609,11 @@ N New item</xs:documentation>
 			<xs:element name="BuyerComment" type="xs:string" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Iinformation the buyer wants to record about the Vendor</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BuyerNbr" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This identifies the buyer of this item or a person who handles bouncers that is items in which the discrepancy between our cost and the vendor's cost exceeds the threshold of what we accept as the variance. See JOB-FUNCTION to determine which a given BUYER-NUM identifies.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="MadeToOrderItemInd" type="xs:string" minOccurs="0">
@@ -1247,17 +1258,12 @@ O - other expenses (non-wrap) - expense items that are used in the store (e.g. f
 					<xs:documentation>Factor used to convert a vendor pack to a warehouse pack.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="VendorUPC" nillable="false" minOccurs="0">
+			<xs:element name="VendorOrderCd" type="xs:string" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Identifies thevendor UPC.</xs:documentation>
+					<xs:documentation>This is also known as Vendor UPC.</xs:documentation>
 				</xs:annotation>
-				<xs:simpleType>
-					<xs:restriction base="xs:decimal">
-						<xs:totalDigits value="14"/>
-						<xs:fractionDigits value="0"/>
-					</xs:restriction>
-				</xs:simpleType>
 			</xs:element>
+			<xs:element name="VendorUPCComponents" type="UPCComponentsType" minOccurs="0"/>
 			<xs:element name="VendorProductNbr" nillable="false" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>A short version of the Nbr used by the vendor to identify their products.  When it was found that vendors had internal reference Nbrs that were larger than 6, a new CHAR(12) element was set up, VEND-PROD-CDE on the SSITMVPL table. The shorter VEND-PROD-NUM element was kept because of the many programs that have to be changed to use the longer version. text line:  USE VEND-PROD-CDE rather than VEND-PROD-NUM in new tables.</xs:documentation>

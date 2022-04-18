@@ -1,219 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-   Schema Owner: 	Safeway Inc
-   Date Created:      11 Jan 2017
-   Author:		Sai Nuthakki
-   Dsc: contains commonly used Albertson's Purchase order schema.
-   Name: /ABS_CMM_Platform/Nouns/StoreOrder.xsd
--->
 <!-- edited with XMLSpy v2021 rel. 2 sp1 (x64) (http://www.altova.com) by poliv02 (Albertsons) -->
-<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
-	<!--V1.3 Patrick Oliver 11/08/21: Udpated EffectiveStartDt, EffectiveEndDt to EffectiveStartTs, EffectiveEndTs-->
-	<!--V1.2 Patrick Oliver 10/27/21: Updated child tag FulfillmentAuthorizationItem to AuthorizedItemData-->
-	<!--V1.1 Patrick Oliver 09/22/21 - Initial version-->
+<xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
-	<xs:complexType name="Facility">
-		<xs:annotation>
-			<xs:documentation>Facilities with in a division/district. Like retail stores, warehouses, admin offices..etc</xs:documentation>
-		</xs:annotation>
-		<xs:sequence>
-			<xs:element name="FacilityId" type="xs:string" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Unique identifier for a facility.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="FacilityTypeCd" type="xs:string" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Defines the facility type as Retail store, warehouse, manufacturing plant, admin office..etc</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="FacilityTypeDsc" type="xs:string" minOccurs="0"/>
-			<xs:element name="FacilityNm" type="xs:string" minOccurs="0"/>
-			<xs:element name="BannerCd" minOccurs="0"/>
-			<xs:element name="BannerNm" type="xs:string" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Identiifes the banner name of the retail facility.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="ParentBannerNm" type="xs:string" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Identiifes parent banner name like SWY or ABS. When SWY and ABS merged, each company has their own banners and parent banner will help in idenifying it as SWY banner or ABS banner.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="CompanyNbr" type="xs:string" minOccurs="0"/>
-			<xs:element name="FacilityAddress" type="AddressType" minOccurs="0"/>
-			<xs:element name="ManagerNm" type="xs:string" minOccurs="0"/>
-			<xs:element name="FacilityStatusCd" type="xs:string" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Status of the facility as open, close, temp close..etc</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="OpenDt" type="xs:date" minOccurs="0"/>
-			<xs:element name="CloseDt" type="xs:date" minOccurs="0"/>
-			<xs:element name="TempCloseDt" type="xs:date" minOccurs="0"/>
-			<xs:element name="ReOpenDt" type="xs:date" minOccurs="0"/>
-			<xs:element name="FacilityDUNSNbr" minOccurs="0">
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="20"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
-		</xs:sequence>
-	</xs:complexType>
-	<xs:complexType name="OrgMaster">
-		<xs:annotation>
-			<xs:documentation>Contains data related to Albertsons Organization Master like corp, Div, OA, Districts..etc</xs:documentation>
-		</xs:annotation>
-		<xs:sequence>
-			<xs:element name="Corporation" nillable="false">
-				<xs:complexType>
-					<xs:complexContent>
-						<xs:extension base="CorporationType">
-							<xs:sequence>
-								<xs:element name="Division" nillable="false" maxOccurs="unbounded">
-									<xs:annotation>
-										<xs:documentation>Information related to the operating division. Ex Norcal with Div Id 25 </xs:documentation>
-									</xs:annotation>
-									<xs:complexType>
-										<xs:complexContent>
-											<xs:extension base="DivisionType">
-												<xs:sequence>
-													<xs:element name="Facility" maxOccurs="unbounded">
-														<xs:complexType>
-															<xs:complexContent>
-																<xs:extension base="Facility">
-																	<xs:sequence>
-																		<xs:element name="Region" type="RegionType" minOccurs="0"/>
-																		<xs:element name="District" minOccurs="0" maxOccurs="unbounded">
-																			<xs:complexType>
-																				<xs:complexContent>
-																					<xs:extension base="DistrictType">
-																						<xs:sequence/>
-																					</xs:extension>
-																				</xs:complexContent>
-																			</xs:complexType>
-																		</xs:element>
-																		<xs:element name="RetailOrderGroup" type="RetailOrderGroupType" minOccurs="0" maxOccurs="unbounded"/>
-																		<xs:element name="OperatingArea" type="OperatingAreaType" minOccurs="0" maxOccurs="unbounded">
-																			<xs:annotation>
-																				<xs:documentation>Organization layer within the operating division. Generally it contains one or more operating districts.</xs:documentation>
-																			</xs:annotation>
-																		</xs:element>
-																	</xs:sequence>
-																</xs:extension>
-															</xs:complexContent>
-														</xs:complexType>
-													</xs:element>
-												</xs:sequence>
-											</xs:extension>
-										</xs:complexContent>
-									</xs:complexType>
-								</xs:element>
-							</xs:sequence>
-						</xs:extension>
-					</xs:complexContent>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="Company" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Company information for accounting.</xs:documentation>
-				</xs:annotation>
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element name="CompanyId" type="xs:long" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Company Identification for accounting purposes.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="CompanyNm" type="xs:string" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Name of the company for accounting purposes.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="AccountingDivision" minOccurs="0">
-							<xs:annotation>
-								<xs:documentation>Accounting Division.</xs:documentation>
-							</xs:annotation>
-							<xs:complexType>
-								<xs:sequence>
-									<xs:element name="DivisionAccountUnitCd" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Division ID in the accounting system.</xs:documentation>
-										</xs:annotation>
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:length value="20"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:element>
-									<xs:element name="DivisionAccountUnitDsc" type="xs:string" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Description of the account unit code.</xs:documentation>
-										</xs:annotation>
-									</xs:element>
-									<xs:element name="AccountingFacility" type="Facility" minOccurs="0">
-										<xs:annotation>
-											<xs:documentation>Accounting Facility.</xs:documentation>
-										</xs:annotation>
-									</xs:element>
-								</xs:sequence>
-							</xs:complexType>
-						</xs:element>
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
-		</xs:sequence>
-	</xs:complexType>
-	<xs:complexType name="ResponsibleParty">
-		<xs:annotation>
-			<xs:documentation>Party responsible for managing the OM component like div or corp. Ex President, VP</xs:documentation>
-		</xs:annotation>
-		<xs:sequence>
-			<xs:element name="ResponsiblePartyType" type="CodeWithName" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Party type that is responsible for the management of the organization.
-Vales: CEO, President, VP, Director, Manager..etc</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="ResponsiblePartyId" minOccurs="0">
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="20"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
-			<xs:element name="ResponsiblePartyNm" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Name of the responsible party person.
-ex: name of the president of a division.</xs:documentation>
-				</xs:annotation>
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element name="FirstNm" type="xs:string" minOccurs="0"/>
-						<xs:element name="MiddleNm" type="xs:string" minOccurs="0"/>
-						<xs:element name="LastNm" type="xs:string" minOccurs="0"/>
-						<xs:element name="PreferredNm" type="xs:string" minOccurs="0"/>
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="EffectivePeriod" type="EffectivePeriodType" minOccurs="0"/>
-			<xs:element name="PhoneNbr" minOccurs="0">
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="20"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
-			<xs:element name="EmailAddressTxt" minOccurs="0">
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="255"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
-		</xs:sequence>
-	</xs:complexType>
 	<xs:complexType name="EffectivePeriodType">
 		<xs:annotation>
 			<xs:documentation>Time period in effective for a version of the record.</xs:documentation>
@@ -221,6 +9,61 @@ ex: name of the president of a division.</xs:documentation>
 		<xs:sequence>
 			<xs:element name="StartDt" type="xs:date" minOccurs="0"/>
 			<xs:element name="EndDt" type="xs:date" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ActivePeriodType">
+		<xs:annotation>
+			<xs:documentation>Time period during which the OM component is active.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="FirstActiveDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date when a OM component like Corp, Div or facility is first active.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LastActiveDt" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date when a OM component like Corp, Div or facility is last active.
+generally defaulted to 9999-12-31 for all active OM components.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OMDistrictType">
+		<xs:annotation>
+			<xs:documentation>A district is a group of facilities. Retail facilities will be grouped into "Districts", so that the Distri
+Manager is able to personally visit the facilities on a timely basis. Manufacturing plants and non-operating facilites also grouped to a district level.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="CorporationId"/>
+			<xs:element ref="DivisionId"/>
+			<xs:element name="OperatingAreaCd" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DistrictId">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DistrictNm">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DistrictType" type="CodeWithName"/>
+			<xs:element name="EffectivePeriod" type="EffectivePeriodType">
+				<xs:annotation>
+					<xs:documentation>Time period in effective for a version of the record.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
 </xs:schema>

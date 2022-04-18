@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by Devesh (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
-	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<!--!=============================================================================================-->
 	<!--!-->
-	<!--!      Noun: TrailerMovement-->
-	<!--!                                     Business object that provides various trailer operational movement in a warehouse facility. -->
+	<!--!-->
+	<!--!      TrailerMovement-->
+	<!--!                                     Noun that  provides various trailer operational movement in a warehouse facility. -->
 	<!--!-->
 	<!--!=============================================================================================-->
-	<!--11/15/2021 - v1.2 - Devesh Kandpal - JIRA ES-5497 - Moved EventStatus at root level ; Added EquipmentSubType; Removed GateIn/GateOut-->
+	<!--11/15/2021 - v1.2 - Devesh Kandpal - JIRA ES-5497 - Moved EventStatus at root level ; Added EquipmentSubType; Removed GateIn/GateOut; Made PurchaseOrderNbr as unbounded-->
 	<!--10/25/2021 - v1.1 - Devesh Kandpal - JIRA ES-4259 - Added few attributes for new source PINC-->
 	<!--07/13/2021 - v1.0 - Devesh Kandpal - Initial version.-->
+	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<xs:element name="TrailerMovement" type="TrailerMovementType">
 		<xs:annotation>
-			<xs:documentation>represeents various trailer operational movement in a warehouse facility. For Ex Request , Release , Re-assign Trailer etc</xs:documentation>
+			<xs:documentation>root element.</xs:documentation>
 		</xs:annotation>
 	</xs:element>
 	<xs:complexType name="TrailerMovementType">
 		<xs:annotation>
-			<xs:documentation>This BOD represeents various trailer operational movement in a warehouse facility. For Ex Request , Release , Re-assign Trailer etc</xs:documentation>
+			<xs:documentation>This structure represents the generated billing gross percentage at store/department count area level.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element ref="CorporationId"/>
@@ -231,7 +232,7 @@ have a new asset_visit_id</xs:documentation>
 											<xs:documentation>Bill of lading number only external customer delivery</xs:documentation>
 										</xs:annotation>
 									</xs:element>
-									<xs:element name="PurchaseOrderNbr" type="xs:string" minOccurs="0">
+									<xs:element name="PurchaseOrderNbr" type="xs:string" minOccurs="0" maxOccurs="unbounded">
 										<xs:annotation>
 											<xs:documentation>Identifying number for Purchase Order assigned by the orderer/purchaser</xs:documentation>
 										</xs:annotation>

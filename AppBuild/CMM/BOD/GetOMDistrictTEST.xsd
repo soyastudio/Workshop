@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 (x64) (http://www.altova.com) by  (Albertsons) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
+	<xs:import namespace="http://collab.safeway.com/it/architecture/info/default.aspx" schemaLocation="../Nouns/OrgMasterTEST.xsd"/>
+	<xs:element name="GetOMDistrictTEST" type="GetOMDistrictTESTType">
+		<xs:annotation>
+			<xs:documentation>root</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="GetOMDistrictTESTType">
+		<xs:annotation>
+			<xs:documentation>Business object that contains Journal Entries.
+
+A journal represents a change in the balances of a business's financial accounts.  Many tasks or transactions throughout an enterprise will result in the creation of a journal.  Some examples are creating a customer invoice, paying a vendor, transferring inventory, or paying employees.  
+
+Journal Entries are posted to General Ledger for the following:
+Updating expense and liability accounts
+For revenue, cash payments, deductions, finance charges and tax accruals
+For bank account transaction entries and reconciliation adjustments entered in Cash Management application
+For each addition, adjustment, transfer, disposal and depreciation of assets</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="DocumentData">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Document" type="Abs:DocumentType"/>
+						<xs:element name="DocumentAction" type="Abs:DocumentActionType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="OMDistrictTESTData" type="Abs:OMDistrictType"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

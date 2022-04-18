@@ -6,7 +6,7 @@
    Dsc: contains commonly used Albertson's Purchase order schema.
    Name: /ABS_CMM_Platform/Nouns/StoreOrder.xsd
 -->
-<!-- edited with XMLSpy v2020 rel. 2 sp1 (x64) (http://www.altova.com) by Alex Nunes (Albertsons) -->
+<!-- edited with XMLSpy v2021 rel. 3 (x64) (http://www.altova.com) by Devesh (Albertsons) -->
 <xs:schema xmlns="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:Abs="http://collab.safeway.com/it/architecture/info/default.aspx" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://collab.safeway.com/it/architecture/info/default.aspx" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
 	<xs:include schemaLocation="../AbsMaster/AbsOmMaster.xsd"/>
 	<!-- V1.2 7/10/2020 - Alex Nunes - Add elements to support UWARE DSD Order. Change to optional total count elements.-->
@@ -14,6 +14,7 @@
 	<!--V1.4 11/05/2020 - Rosabel Macario - Added tag to resolve dateTimeStamp issue-->
 	<!--V1.5 11/18/2020 - Alex Nunes - Data Type mismatches for wholesale DSD JIRA: - EBC-12858-->
 	<!--V1.6 11/20/2020  - Alex Nunes - Added Potential Suppliers at the header level.-->
+	<!--V1.7 02/14/2022 - Devesh Kandpal - ES-6452 - Added 'PurchaseOrderReferenceNbr' at header level.-->
 	<xs:element name="CustomerOrder" type="CustomerOrderType">
 		<xs:annotation>
 			<xs:documentation>root</xs:documentation>
@@ -468,10 +469,10 @@ Tax.
 			<xs:element name="Customer" minOccurs="0">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="CustomerId" minOccurs="0"/>
+						<xs:element name="CustomerId" type="xs:string" minOccurs="0"/>
 						<xs:element name="CustomerAccountId" minOccurs="0"/>
 						<xs:element name="CustomerSubAccountId" minOccurs="0"/>
-						<xs:element name="CustomerNm" minOccurs="0"/>
+						<xs:element name="CustomerNm" type="xs:string" minOccurs="0"/>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
@@ -602,6 +603,16 @@ Tax.
 						<xs:maxLength value="30"/>
 					</xs:restriction>
 				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PurchaseOrderReferenceNbr" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This is External customer system generated PO#</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PurchaseOrderDt" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date of the purchase order.</xs:documentation>
+				</xs:annotation>
 			</xs:element>
 			<xs:element name="InventoryRunNbr" type="xs:integer" minOccurs="0">
 				<xs:annotation>
@@ -763,7 +774,13 @@ values 'Y'/'N'
 								</xs:sequence>
 							</xs:complexType>
 						</xs:element>
-						<xs:element name="ShipToAddress" type="AddressType" minOccurs="0"/>
+						<xs:element name="ShipToAddress" minOccurs="0">
+							<xs:complexType>
+								<xs:complexContent>
+									<xs:extension base="AddressType"/>
+								</xs:complexContent>
+							</xs:complexType>
+						</xs:element>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
@@ -995,11 +1012,6 @@ This indicator will only effect orders, receivings, receiving adjustments and in
 						<xs:element name="VendorAddress" type="AddressBaseType" minOccurs="0"/>
 					</xs:sequence>
 				</xs:complexType>
-			</xs:element>
-			<xs:element name="PurchaseOrderDt" type="xs:dateTime" minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>Date of the purchase order.</xs:documentation>
-				</xs:annotation>
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
